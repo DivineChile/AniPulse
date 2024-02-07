@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import SearchBar from "../SearchBar/SearchBar";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 const Navbar = () => {
   const location = useLocation().pathname;
@@ -52,7 +53,8 @@ const Navbar = () => {
       justifyContent="space-between"
       background="var(--primary-background-color)"
       width={{ base: "100%" }}
-      p="20px 100px"
+      p={{ base: "15px 20px", lg: "20px 80px", xl: "20, 100px" }}
+      pos="relative"
     >
       <Box>
         <Heading m="0">
@@ -73,11 +75,21 @@ const Navbar = () => {
 
       <Box display="flex" alignItems="center" gap="0 20px">
         <List
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+          display={{ base: "flex" }}
+          flexDir={{ base: "column", lg: "row" }}
+          alignItems={{ base: "flex-start", lg: "center" }}
+          justifyContent={{ base: "flex-start", lg: "center" }}
+          backgroundColor="var(--primary-background-color)"
+          width={{ base: "100%", lg: "fit-content" }}
           flexWrap="wrap"
+          pos={{ base: "absolute", lg: "initial" }}
+          left="0"
+          top={{ base: "70.89px", md: "74px", lg: "none" }}
+          p={{ base: "20px", lg: "0" }}
+          gap={{ base: "10px 0", lg: "0" }}
+          h={{ base: "250px", lg: "initial" }}
         >
+          <SearchBar above="lg" />
           {NavList.map((item, key) => {
             return (
               <ListItem
@@ -93,7 +105,14 @@ const Navbar = () => {
           })}
         </List>
 
-        <SearchBar />
+        <SearchBar below="lg" />
+        <HamburgerIcon
+          h="30px"
+          w="19.5px"
+          color="var(--text-color)"
+          cursor="pointer"
+          hideFrom="lg"
+        />
       </Box>
     </Box>
   );

@@ -13,12 +13,16 @@ const Hero = () => {
       <Box
         background={`url(${Bg})`}
         backgroundPosition="center"
-        backgroundSize="100%"
+        backgroundSize="cover"
         backgroundBlendMode="overlay"
         backgroundColor="rgba(0,0,0,0.65)"
         backgroundRepeat="no-repeat"
         w="100%"
-        h="calc(100vh - 84px)"
+        h={{
+          base: "calc(100vh - 70.89px)",
+          md: "calc(100vh - 74px)",
+          lg: "calc(100vh - 84px)",
+        }}
       >
         {/* Anime Recommendation */}
         <Flex px="100px" h="100%" alignItems="center">

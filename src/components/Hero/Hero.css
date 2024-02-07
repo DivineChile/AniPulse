@@ -23,8 +23,8 @@ a.play-now-btn:hover {
     border: 2px solid var(--secondary-accent-color);
     background-color: transparent;
     color: var(--link-color) !important;
-    width: 206px;
-    height: 50px;
+    width: 206.28px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
