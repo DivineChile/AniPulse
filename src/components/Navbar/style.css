@@ -1,0 +1,36 @@
+.navbar .logo {
+  font-size: 30px;
+}
+
+.navbar ul li a {
+  color: var(--text-color);
+  font-size: 16.75px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: 0.5px;
+  transition: all ease 0.25s;
+  text-transform: capitalize;
+}
+
+.navbar ul li a:hover {
+  color: var(--link-hover-color);
+}
+
+.navbar ul li.active a {
+  color: var(--primary-accent-color);
+}
+
+.navbar ul li::after {
+  content: "";
+  display: block;
+  height: 2.5px;
+  width: 0;
+  transition: width 0.4s ease-in-out;
+}
+
+.navbar ul li.active::after,
+.navbar ul li:hover::after {
+  width: 100%;
+  background: var(--link-hover-color);
+  border-radius: 2.5px;
+}
