@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import SearchBar from "../SearchBar/SearchBar";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 
 const Navbar = () => {
   const location = useLocation().pathname;
@@ -108,6 +108,13 @@ const Navbar = () => {
         <SearchBar below="lg" />
         <HamburgerIcon
           h="30px"
+          w="19.5px"
+          color="var(--text-color)"
+          cursor="pointer"
+          hideFrom="lg"
+        />
+        <CloseIcon
+          h="15px"
           w="19.5px"
           color="var(--text-color)"
           cursor="pointer"

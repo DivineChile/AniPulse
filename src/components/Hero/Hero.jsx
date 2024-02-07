@@ -25,7 +25,11 @@ const Hero = () => {
         }}
       >
         {/* Anime Recommendation */}
-        <Flex px="100px" h="100%" alignItems="center">
+        <Flex
+          px={{ base: "20px", lg: "80px", xl: "100px" }}
+          h="100%"
+          alignItems="center"
+        >
           {/* Anime Details */}
           <VStack
             width="550px"
