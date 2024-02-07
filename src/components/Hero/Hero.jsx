@@ -2,6 +2,7 @@ import { Box, Flex, HStack, Heading, Text, VStack } from "@chakra-ui/react";
 import Navbar from "../Navbar/Navbar";
 import Bg from "../../assets/banner-img-1.png";
 import { Link } from "react-router-dom";
+import "./Hero.css";
 
 const Hero = () => {
   return (
@@ -14,7 +15,7 @@ const Hero = () => {
         backgroundPosition="center"
         backgroundSize="100%"
         backgroundBlendMode="overlay"
-        backgroundColor="rgba(0,0,0,0.45)"
+        backgroundColor="rgba(0,0,0,0.65)"
         backgroundRepeat="no-repeat"
         w="100%"
         h="calc(100vh - 84px)"
@@ -135,22 +136,7 @@ const Hero = () => {
             </Text>
 
             <Box width="100%" my="10px">
-              <Link
-                to="/stream"
-                className="play-now-btn"
-                style={{
-                  border: "2px solid var(--secondary-accent-color)",
-                  backgroundColor: "transparent",
-                  color: "var(--primary-accent-color)",
-                  width: "300px",
-                  height: "50px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "25px",
-                  borderRadius: "10px",
-                }}
-              >
+              <Link to="/stream" className="play-now-btn">
                 PLAY NOW
               </Link>
             </Box>
