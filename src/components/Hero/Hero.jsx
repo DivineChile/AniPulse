@@ -42,7 +42,7 @@ const Hero = () => {
               color="var(--text-color)"
               textTransform="uppercase"
               fontWeight="600"
-              fontSize="79.06px"
+              fontSize={{ base: "40px" }}
               lineHeight="88px"
               letterSpacing="1.5px"
               fontFamily="var(--font-family)"

@@ -5,9 +5,15 @@ import "../../index.css";
 import "./style.css";
 import SearchBar from "../SearchBar/SearchBar";
 import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation().pathname;
+
+  const openNavbar = () => {
+    setIsOpen(!isOpen);
+  };
 
   const navLinks = document.querySelectorAll(".navbar ul li.nav-item");
 
@@ -75,21 +81,26 @@ const Navbar = () => {
 
       <Box display="flex" alignItems="center" gap="0 20px">
         <List
-          display={{ base: "flex" }}
+          display={isOpen ? { base: "flex" } : { base: "flex", lg: "block" }}
           flexDir={{ base: "column", lg: "row" }}
           alignItems={{ base: "flex-start", lg: "center" }}
           justifyContent={{ base: "flex-start", lg: "center" }}
           backgroundColor="var(--primary-background-color)"
+          transition="all ease 0.5s"
           width={{ base: "100%", lg: "fit-content" }}
           flexWrap="wrap"
           pos={{ base: "absolute", lg: "initial" }}
           left="0"
           top={{ base: "70.89px", md: "74px", lg: "none" }}
-          p={{ base: "20px", lg: "0" }}
+          p={isOpen ? { base: "20px", lg: "0" } : { base: "0 20px", lg: "0" }}
           gap={{ base: "10px 0", lg: "0" }}
-          h={{ base: "250px", lg: "initial" }}
+          h={
+            isOpen
+              ? { base: "250px", lg: "initial" }
+              : { base: "0", lg: "initial" }
+          }
         >
-          <SearchBar above="lg" />
+          <SearchBar above="lg" displayProp={isOpen ? "block" : "none"} />
           {NavList.map((item, key) => {
             return (
               <ListItem
@@ -98,6 +109,11 @@ const Navbar = () => {
                 mx={{ base: "5px", md: "10px" }}
                 px={{ base: "5px", md: "10px" }}
                 key={key}
+                display={
+                  isOpen
+                    ? { base: "block", lg: "none" }
+                    : { base: "none", lg: "inline-block" }
+                }
               >
                 <Link to={item.to}>{item.label}</Link>
               </ListItem>
@@ -106,20 +122,25 @@ const Navbar = () => {
         </List>
 
         <SearchBar below="lg" />
-        <HamburgerIcon
-          h="30px"
-          w="19.5px"
-          color="var(--text-color)"
-          cursor="pointer"
-          hideFrom="lg"
-        />
-        <CloseIcon
-          h="15px"
-          w="19.5px"
-          color="var(--text-color)"
-          cursor="pointer"
-          hideFrom="lg"
-        />
+        {isOpen ? (
+          <CloseIcon
+            h="15px"
+            w="19.5px"
+            color="var(--text-color)"
+            cursor="pointer"
+            hideFrom="lg"
+            onClick={openNavbar}
+          />
+        ) : (
+          <HamburgerIcon
+            h="30px"
+            w="19.5px"
+            color="var(--text-color)"
+            cursor="pointer"
+            hideFrom="lg"
+            onClick={openNavbar}
+          />
+        )}
       </Box>
     </Box>
   );

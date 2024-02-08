@@ -3,12 +3,13 @@ import { Box, Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { Form } from "react-router-dom";
 import "../../index.css";
 
-const SearchBar = ({ above, below }) => {
+const SearchBar = ({ above, below, displayProp }) => {
   return (
     <Box
       hideBelow={below}
       hideFrom={above}
       width={{ base: "100%", lg: "250px", "2xl": "400px" }}
+      display={displayProp}
     >
       <Form>
         <InputGroup h="40px" w={{ base: "100%", lg: "250px", "2xl": "400px" }}>
