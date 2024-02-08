@@ -32,7 +32,7 @@ const Hero = () => {
         >
           {/* Anime Details */}
           <VStack
-            width="550px"
+            width={{ base: "100%", lg: "550px" }}
             display="flex"
             flexDir="column"
             alignItems="flex-start"
@@ -42,8 +42,14 @@ const Hero = () => {
               color="var(--text-color)"
               textTransform="uppercase"
               fontWeight="600"
-              fontSize={{ base: "40px" }}
-              lineHeight="88px"
+              fontSize={{
+                base: "40px",
+                sm: "50px",
+                md: "65px",
+                lg: "67px",
+                "2xl": "76.25px",
+              }}
+              lineHeight={{ base: "48px", md: "68px", "2xl": "88px" }}
               letterSpacing="1.5px"
               fontFamily="var(--font-family)"
             >
@@ -55,10 +61,11 @@ const Hero = () => {
               textTransform="uppercase"
               color="var(--text-color)"
               fontFamily="var(--font-family)"
-              fontSize="37.97px"
-              lineHeight="40px"
+              fontSize={{ base: "20.97px", md: "29px", "2xl": "37.97px" }}
+              lineHeight={{ base: "33px", md: "35px", "2xl": "40px" }}
               letterSpacing="0.5px"
               fontWeight="400"
+              mt={{ base: "10px", "2xl": "15px" }}
             >
               Season 3
             </Heading>
@@ -73,7 +80,7 @@ const Hero = () => {
                 bgColor="var(--secondary-accent-color)"
                 borderRadius="8px"
                 border="2px solid var(--secondary-accent-color)"
-                fontSize="16.63px"
+                fontSize={{ base: "14.63px", md: "16.63px" }}
                 lineHeight="24px"
                 letterSpacing="0.5px"
               >
@@ -91,7 +98,7 @@ const Hero = () => {
                 }}
                 borderRadius="8px"
                 border="2px solid var(--secondary-accent-color)"
-                fontSize="16.63px"
+                fontSize={{ base: "14.63px", md: "16.63px" }}
                 lineHeight="24px"
                 letterSpacing="0.5px"
               >
@@ -109,7 +116,7 @@ const Hero = () => {
                 }}
                 borderRadius="8px"
                 border="2px solid var(--secondary-accent-color)"
-                fontSize="16.63px"
+                fontSize={{ base: "14.63px", md: "16.63px" }}
                 lineHeight="24px"
                 letterSpacing="0.5px"
               >
@@ -122,8 +129,8 @@ const Hero = () => {
               textTransform="uppercase"
               color="var(--text-color)"
               fontFamily="var(--font-family)"
-              fontSize="28.95px"
-              lineHeight="40px"
+              fontSize={{ base: "19.38px", md: "24px", "2xl": "28.95px" }}
+              lineHeight={{ base: "30px", md: "35px", "2xl": "40px" }}
               letterSpacing="0.5px"
               fontWeight="400"
             >
@@ -132,10 +139,12 @@ const Hero = () => {
             {/* Description */}
             <Text
               as="p"
-              fontSize="15.38px"
-              lineHeight="24px"
+              fontSize={{ base: "13.56px", md: "14.38px", "2xl": "15.38px" }}
+              lineHeight={{ base: "21px", md: "22px", "2xl": "24px" }}
               letterSpacing="0.5px"
               color="var(--text-color)"
+              my="10px"
+              fontWeight={{ base: "300", md: "normal" }}
             >
               At vero eos et accusamus et iusto odio dignissimos ducimus qui
               blanditiis praesentium voluptatum deleniti atque corrupti quos
@@ -143,7 +152,7 @@ const Hero = () => {
               provident.
             </Text>
 
-            <Box width="100%" my="10px">
+            <Box width="100%" my={{ base: "15px", md: "10px" }}>
               <Link to="/stream" className="play-now-btn">
                 PLAY NOW
               </Link>
