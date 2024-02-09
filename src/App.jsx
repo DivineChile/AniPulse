@@ -10,7 +10,7 @@ import {
 import Home from "./pages/Home/Home";
 import Trending from "./pages/Trending/Trending";
 import Movies from "./pages/Movies/Movies";
-import Popular from "./pages/Home/Popular/Popular";
+import Popular from "./pages/Popular/Popular";
 import Stream from "./pages/Stream/Stream";
 
 const router = createBrowserRouter(

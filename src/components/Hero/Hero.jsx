@@ -3,16 +3,84 @@ import Navbar from "../Navbar/Navbar";
 import Bg from "../../assets/banner-img-1.png";
 import { Link } from "react-router-dom";
 import "./Hero.css";
+import { useEffect, useState } from "react";
+import Error from "../ErrorPage/Error";
 
 const Hero = () => {
+  const [imageIndex, setImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [bgImages, setBgImages] = useState([]);
+  const [animeTitles, setAnimeTitles] = useState([]);
+  const [animeStatus, setAnimeStatus] = useState([]);
+  const [animeDesc, setAnimeDesc] = useState([]);
+  const [animeYear, setAnimeYear] = useState([]);
+  const [animeGenres, setAnimeGenres] = useState([]);
+
+  useEffect(() => {
+    const fetchRecomendedAnime = async () => {
+      try {
+        const response = await fetch(
+          "https://api-amvstrm.nyt92.eu.org/api/v2/trending"
+        );
+
+        if (!response.ok) {
+          setError("Please Check Connection");
+          setIsLoading(false);
+        }
+        const data = await response.json();
+
+        setBgImages(data.results.map((item) => item.coverImage.extraLarge));
+        setAnimeTitles(data.results.map((item) => item.title.userPreferred));
+        setAnimeStatus(data.results.map((item) => item.status));
+        setAnimeDesc(data.results.map((item) => item.description));
+        setAnimeYear(data.results.map((item) => item.seasonYear));
+        setAnimeGenres(data.results.map((item) => item.genres));
+        setIsLoading(false);
+      } catch (error) {
+        setError("Failed to fetch data");
+        setIsLoading(false);
+      }
+    };
+
+    fetchRecomendedAnime();
+  }, [bgImages]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const nextIndex = imageIndex + 1;
+
+      if (nextIndex > bgImages.length) {
+        setImageIndex(0);
+      } else {
+        setImageIndex(nextIndex);
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+      setBgImages([]);
+    };
+  }, [imageIndex]);
+
+  const currentImage = bgImages.length > 0 ? bgImages[imageIndex] : "";
+  const currentTitle = animeTitles.length > 0 ? animeTitles[imageIndex] : "";
+  const currentStatus = animeStatus.length > 0 ? animeStatus[imageIndex] : "";
+  const currentGenre = animeGenres.length > 0 ? animeGenres[imageIndex] : [];
+  const currentRelease = animeYear.length > 0 ? animeYear[imageIndex] : "";
+  const currentDesc = animeDesc.length > 0 ? animeDesc[imageIndex] : "";
+
+  console.log(currentImage);
   return (
     <Box w="100%" h="100vh">
+      <Error msg={error} loadingState={isLoading} />
       <Box>
         <Navbar />
       </Box>
       <Box
-        background={`url(${Bg})`}
+        background={`url(${currentImage})`}
         backgroundPosition="center"
+        transition="background ease 0.25s"
         backgroundSize="cover"
         backgroundBlendMode="overlay"
         backgroundColor="rgba(0,0,0,0.65)"
@@ -29,6 +97,7 @@ const Hero = () => {
           px={{ base: "20px", lg: "80px", xl: "100px" }}
           h="100%"
           alignItems="center"
+          justifyContent="space-between"
         >
           {/* Anime Details */}
           <VStack
@@ -52,10 +121,13 @@ const Hero = () => {
               lineHeight={{ base: "48px", md: "68px", "2xl": "88px" }}
               letterSpacing="1.5px"
               fontFamily="var(--font-family)"
+              transition="all ease 0.25s"
             >
-              Attack on Titans
+              {currentTitle.length > 30
+                ? `${currentTitle.slice(0, 25)}...`
+                : currentTitle}
             </Heading>
-            {/* Anime Season */}
+            {/* Anime status */}
             <Heading
               as="h4"
               textTransform="uppercase"
@@ -66,62 +138,33 @@ const Hero = () => {
               letterSpacing="0.5px"
               fontWeight="400"
               mt={{ base: "10px", "2xl": "15px" }}
+              transition="all ease 0.25s"
             >
-              Season 3
+              status: {currentStatus}
             </Heading>
             {/* PG / Dub / Sub */}
             <HStack my="10px" gap="0 10px">
-              <Text
-                as="span"
-                cursor="pointer"
-                p="3px 10px"
-                transition="all ease 0.25s"
-                color="var(--text-color)"
-                bgColor="var(--secondary-accent-color)"
-                borderRadius="8px"
-                border="2px solid var(--secondary-accent-color)"
-                fontSize={{ base: "14.63px", md: "16.63px" }}
-                lineHeight="24px"
-                letterSpacing="0.5px"
-              >
-                PG-13
-              </Text>
-              <Text
-                as="span"
-                color="var(--secondary-accent-color)"
-                cursor="pointer"
-                p="3px 10px"
-                transition="all ease 0.25s"
-                _hover={{
-                  color: "var(--text-color)",
-                  bgColor: "var(--secondary-accent-color)",
-                }}
-                borderRadius="8px"
-                border="2px solid var(--secondary-accent-color)"
-                fontSize={{ base: "14.63px", md: "16.63px" }}
-                lineHeight="24px"
-                letterSpacing="0.5px"
-              >
-                DUB
-              </Text>
-              <Text
-                as="span"
-                color="var(--secondary-accent-color)"
-                cursor="pointer"
-                p="3px 10px"
-                transition="all ease 0.25s"
-                _hover={{
-                  color: "var(--text-color)",
-                  bgColor: "var(--secondary-accent-color)",
-                }}
-                borderRadius="8px"
-                border="2px solid var(--secondary-accent-color)"
-                fontSize={{ base: "14.63px", md: "16.63px" }}
-                lineHeight="24px"
-                letterSpacing="0.5px"
-              >
-                SUB
-              </Text>
+              {Object.entries(currentGenre).map(([key, value]) => (
+                <Text
+                  as="span"
+                  color="var(--secondary-accent-color)"
+                  cursor="pointer"
+                  p="3px 10px"
+                  transition="all ease 0.25s"
+                  _hover={{
+                    color: "var(--text-color)",
+                    bgColor: "var(--secondary-accent-color)",
+                  }}
+                  borderRadius="8px"
+                  border="2px solid var(--secondary-accent-color)"
+                  fontSize={{ base: "14.63px", md: "16.63px" }}
+                  lineHeight="24px"
+                  letterSpacing="0.5px"
+                  key={key}
+                >
+                  {value}
+                </Text>
+              ))}
             </HStack>
             {/* Release Date */}
             <Heading
@@ -133,8 +176,9 @@ const Hero = () => {
               lineHeight={{ base: "30px", md: "35px", "2xl": "40px" }}
               letterSpacing="0.5px"
               fontWeight="400"
+              transition="all ease 0.25s"
             >
-              april 07, 2013
+              Release year: {currentRelease}
             </Heading>
             {/* Description */}
             <Text
@@ -145,11 +189,11 @@ const Hero = () => {
               color="var(--text-color)"
               my="10px"
               fontWeight={{ base: "300", md: "normal" }}
+              transition="all ease 0.25s"
             >
-              At vero eos et accusamus et iusto odio dignissimos ducimus qui
-              blanditiis praesentium voluptatum deleniti atque corrupti quos
-              dolores et quas molestias excepturi sint occaecati cupiditate non
-              provident.
+              {currentDesc.length > 65
+                ? `${currentDesc.slice(0, 200)}...`
+                : currentDesc}
             </Text>
 
             <Box width="100%" my={{ base: "15px", md: "10px" }}>
@@ -158,6 +202,19 @@ const Hero = () => {
               </Link>
             </Box>
           </VStack>
+
+          <Box hideBelow="xl">
+            <Box
+              background={`url(${currentImage})`}
+              w={{ lg: "550px", "2xl": "770px" }}
+              h={{ lg: "450px", "2xl": "600px" }}
+              backgroundSize="cover"
+              borderRadius="20px"
+              backgroundPosition="center"
+              transition="background ease 0.25s"
+              backgroundRepeat="no-repeat"
+            ></Box>
+          </Box>
         </Flex>
       </Box>
     </Box>
