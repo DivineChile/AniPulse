@@ -1,10 +1,11 @@
 import { Box, Flex, HStack, Heading, Text, VStack } from "@chakra-ui/react";
 import Navbar from "../Navbar/Navbar";
-import Bg from "../../assets/banner-img-1.png";
+// import Bg from "../../assets/banner-img-1.png";
 import { Link } from "react-router-dom";
 import "./Hero.css";
 import { useEffect, useState } from "react";
 import Error from "../ErrorPage/Error";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const Hero = () => {
   const [imageIndex, setImageIndex] = useState(0);
@@ -16,6 +17,7 @@ const Hero = () => {
   const [animeDesc, setAnimeDesc] = useState([]);
   const [animeYear, setAnimeYear] = useState([]);
   const [animeGenres, setAnimeGenres] = useState([]);
+  const [animeID, setAnimeID] = useState([]);
 
   useEffect(() => {
     const fetchRecomendedAnime = async () => {
@@ -36,32 +38,29 @@ const Hero = () => {
         setAnimeDesc(data.results.map((item) => item.description));
         setAnimeYear(data.results.map((item) => item.seasonYear));
         setAnimeGenres(data.results.map((item) => item.genres));
+        setAnimeID(data.results.map((item) => item.id));
         setIsLoading(false);
       } catch (error) {
-        setError("Failed to fetch data");
+        setError("Failed to get anime details");
         setIsLoading(false);
       }
     };
 
     fetchRecomendedAnime();
-  }, [bgImages]);
 
-  useEffect(() => {
     const intervalId = setInterval(() => {
-      const nextIndex = imageIndex + 1;
-
-      if (nextIndex > bgImages.length) {
+      if (imageIndex === bgImages.length - 1) {
         setImageIndex(0);
       } else {
-        setImageIndex(nextIndex);
+        setImageIndex(imageIndex + 1);
       }
     }, 5000);
 
     return () => {
       clearInterval(intervalId);
-      setBgImages([]);
+      //   setBgImages([]);
     };
-  }, [imageIndex]);
+  }, [imageIndex, bgImages]);
 
   const currentImage = bgImages.length > 0 ? bgImages[imageIndex] : "";
   const currentTitle = animeTitles.length > 0 ? animeTitles[imageIndex] : "";
@@ -69,11 +68,27 @@ const Hero = () => {
   const currentGenre = animeGenres.length > 0 ? animeGenres[imageIndex] : [];
   const currentRelease = animeYear.length > 0 ? animeYear[imageIndex] : "";
   const currentDesc = animeDesc.length > 0 ? animeDesc[imageIndex] : "";
+  const currentID = animeID.length > 0 ? animeID[imageIndex] : "";
 
-  console.log(currentImage);
+  const handlePrevClick = () => {
+    if (imageIndex === 0) {
+      setImageIndex(bgImages.length - 1);
+    } else {
+      setImageIndex(imageIndex + 1);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (imageIndex === bgImages.length - 1) {
+      setImageIndex(0);
+    } else {
+      setImageIndex(imageIndex + 1);
+    }
+  };
+
   return (
     <Box w="100%" h="100vh">
-      <Error msg={error} loadingState={isLoading} />
+      <Error msg={error} loadingState={isLoading} error={error} />
       <Box>
         <Navbar />
       </Box>
@@ -99,6 +114,32 @@ const Hero = () => {
           alignItems="center"
           justifyContent="space-between"
         >
+          {/* Buttons for Moving Content */}
+          <Box pos="absolute" left="20px" hideBelow="lg">
+            <ChevronLeftIcon
+              color="var(--text-color)"
+              h="60px"
+              w="60px"
+              opacity="0.2"
+              _hover={{ opacity: "1" }}
+              cursor="pointer"
+              transition="all ease 0.25s"
+              onClick={handlePrevClick}
+            />
+          </Box>
+
+          <Box pos="absolute" right="20px" hideBelow="lg">
+            <ChevronRightIcon
+              color="var(--text-color)"
+              h="60px"
+              w="60px"
+              opacity="0.2"
+              _hover={{ opacity: "1" }}
+              cursor="pointer"
+              transition="all ease 0.25s"
+              onClick={handleNextClick}
+            />
+          </Box>
           {/* Anime Details */}
           <VStack
             width={{ base: "100%", lg: "550px" }}
@@ -143,7 +184,7 @@ const Hero = () => {
               status: {currentStatus}
             </Heading>
             {/* PG / Dub / Sub */}
-            <HStack my="10px" gap="0 10px">
+            <HStack my="10px" gap="10px 10px" display="flex" flexWrap="wrap">
               {Object.entries(currentGenre).map(([key, value]) => (
                 <Text
                   as="span"
@@ -197,7 +238,7 @@ const Hero = () => {
             </Text>
 
             <Box width="100%" my={{ base: "15px", md: "10px" }}>
-              <Link to="/stream" className="play-now-btn">
+              <Link to={`stream/${currentID}`} className="play-now-btn">
                 PLAY NOW
               </Link>
             </Box>

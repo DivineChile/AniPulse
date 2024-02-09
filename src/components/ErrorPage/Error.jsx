@@ -1,7 +1,7 @@
 import { Box, Heading, Spinner } from "@chakra-ui/react";
 
-const Error = ({ msg, loadingState }) => {
-  return loadingState ? (
+const Error = ({ msg, loadingState, error }) => {
+  return (
     <Box
       h={{
         base: "calc(100vh - 70.89px)",
@@ -18,24 +18,29 @@ const Error = ({ msg, loadingState }) => {
       justifyContent="center"
       zIndex="1"
     >
-      <Box>
-        <Spinner
-          color="var(--primary-accent-color)"
-          h="100px"
-          w="100px"
-          thickness="10px"
-        />
-      </Box>
-      {msg ? (
-        <Heading as="h1" fontSize="30px" color="var(--text-color)">
+      {loadingState ? (
+        <Box>
+          <Spinner
+            color="var(--primary-accent-color)"
+            h={{ base: "50px", md: "80px", lg: "100px" }}
+            w={{ base: "50px", md: "80px", lg: "100px" }}
+            thickness={{ base: "5px", md: "10px" }}
+            transition="all ease 0.25s"
+          />
+        </Box>
+      ) : error ? (
+        <Heading
+          as="h1"
+          fontSize={{ base: "20px", md: "30px" }}
+          color="var(--text-color)"
+          transition="all ease 0.25s"
+        >
           {msg}
         </Heading>
       ) : (
         <></>
       )}
     </Box>
-  ) : (
-    <></>
   );
 };
 

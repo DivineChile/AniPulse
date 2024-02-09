@@ -1,7 +1,7 @@
 a.play-now-btn {
   border: 2px solid var(--secondary-accent-color);
   background-color: transparent;
-  color: var(--link-color);
+  color: var(--primary-accent-color);
   width: 405px;
   height: 68px;
   display: flex;
@@ -19,7 +19,7 @@ a.play-now-btn:hover {
 }
 
 a.play-now-btn::after {
-  content: "PLAY NOW";
+  content: "";
   position: absolute;
   width: 100%;
   height: 0%;
@@ -35,6 +35,7 @@ a.play-now-btn::after {
 }
 
 a.play-now-btn:hover::after {
+  content: "PLAY NOW";
   height: 100%;
   z-index: 0;
   color: var(--text-color);
@@ -44,8 +45,8 @@ a.play-now-btn:hover::after {
   a.play-now-btn {
     border: 2px solid var(--secondary-accent-color);
     background-color: transparent;
-    color: var(--link-color) !important;
-    width: 206.28px;
+    color: var(--text-color) !important;
+    width: 206.28px !important;
     height: 48px;
     display: flex;
     align-items: center;
