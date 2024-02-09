@@ -20,7 +20,7 @@ const router = createBrowserRouter(
       <Route path="/trending" index element={<Trending />} />
       <Route path="/movies" index element={<Movies />} />
       <Route path="/popular" element={<Popular />} />
-      <Route path="/stream" element={<Stream />} />
+      <Route path="/stream/:id" element={<Stream />} />
     </>
   )
 );

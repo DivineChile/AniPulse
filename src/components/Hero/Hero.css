@@ -1,7 +1,7 @@
 a.play-now-btn {
   border: 2px solid var(--secondary-accent-color);
   background-color: transparent;
-  color: var(--primary-accent-color);
+  color: var(--text-color);
   width: 405px;
   height: 68px;
   display: flex;
@@ -66,7 +66,7 @@ a.play-now-btn:hover::after {
   a.play-now-btn {
     border: 2px solid var(--secondary-accent-color);
     background-color: transparent;
-    color: var(--link-color);
+    color: var(--text-color);
     width: 300px;
     position: relative;
     height: 50px;

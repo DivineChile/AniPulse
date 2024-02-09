@@ -100,6 +100,7 @@ const Navbar = () => {
               ? { base: "250px", lg: "initial" }
               : { base: "0", lg: "initial" }
           }
+          zIndex="1"
         >
           <SearchBar above="lg" displayProp={isOpen ? "block" : "none"} />
           {NavList.map((item, key) => {
