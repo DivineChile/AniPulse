@@ -41,7 +41,7 @@ const Hero = () => {
         setAnimeID(data.results.map((item) => item.id));
         setIsLoading(false);
       } catch (error) {
-        setError("Failed to get anime details");
+        setError("Still Working...");
         setIsLoading(false);
       }
     };

@@ -34,7 +34,19 @@ const Error = ({ msg, loadingState, error }) => {
           fontSize={{ base: "20px", md: "30px" }}
           color="var(--text-color)"
           transition="all ease 0.25s"
+          display="flex"
+          flexDir={{ base: "column", sm: "row" }}
+          alignItems="center"
+          gap="10px"
+          fontWeight="500"
         >
+          <Spinner
+            color="var(--primary-accent-color)"
+            h={{ base: "30px", md: "40px", lg: "50px" }}
+            w={{ base: "30px", md: "40px", lg: "50px" }}
+            thickness={{ base: "5px", md: "5px" }}
+            transition="all ease 0.25s"
+          />
           {msg}
         </Heading>
       ) : (
