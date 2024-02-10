@@ -14,7 +14,43 @@ import { useParams, Link as ReactRouterLink } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 
 const View = () => {
-  const { id } = useParams;
+  const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [animeInfo, setAnimeInfo] = useState([]);
+  const [animeTitle, setAnimeTitle] = useState([]);
+  const [animeStudio, setAnimeStudio] = useState([]);
+  const [animeGenre, setAnimeGenre] = useState([]);
+  const [animeId, setAnimeId] = useState([]);
+
+  useEffect(() => {
+    const fetchAnimeData = async () => {
+      try {
+        const animeRes = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v2/info/${id}`
+        );
+        const animeData = await animeRes.json();
+        setAnimeInfo(animeData);
+        setAnimeId(animeData.id);
+        setAnimeTitle(Object.entries(animeData.title).map((item) => item[1]));
+        setAnimeStudio(animeData.studios.map((item) => item.name));
+        setAnimeGenre(
+          animeInfo.genres.map((item) => {
+            item;
+          })
+        );
+        setIsLoading(false);
+      } catch {
+        setIsLoading(false);
+        setError(true);
+      }
+    };
+    fetchAnimeData();
+  }, []);
+  //   console.group(animeInfo);
+  console.group(animeTitle);
+  console.group(animeStudio);
+  console.group(animeId);
 
   return (
     <Box>
@@ -63,13 +99,16 @@ const View = () => {
                 {/* Anime Image */}
                 <Box
                   w={{ base: "100%", md: "55%" }}
-                  bg={`url()`}
+                  bg={{
+                    base: `url(${animeInfo.bannerImage})`,
+                    // md: `url(${animeInfo.coverImage.large})`,
+                  }}
                   bgSize="cover"
                   bgPos="center"
                   bgRepeat="no-repeat"
                   h={{ base: "217.64px", sm: "300px", md: "377.5px" }}
                   borderRadius="10px"
-                  border="1px solid var(--link-color)"
+                  //   border="1px solid var(--link-color)"
                 ></Box>
                 {/* Anime Desc */}
                 <Box
@@ -85,7 +124,7 @@ const View = () => {
                     letterSpacing="1.5px"
                     lineHeight="38.5px"
                   >
-                    Solo Leveling
+                    {animeTitle[1]}
                   </Heading>
                   <Text
                     as="h3"
@@ -94,7 +133,7 @@ const View = () => {
                     lineHeight="37.5px"
                     color="var(--text-color)"
                   >
-                    Episodes : 12
+                    Episodes : {animeInfo.episodes}
                   </Text>
                   {/* Anime Summary */}
                   <Box mt="20px">
@@ -117,10 +156,11 @@ const View = () => {
                       lineHeight="24px"
                       letterSpacing="0.5px"
                     >
-                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                      Veritatis deserunt consequuntur impedit officiis ipsa et
-                      magni, sed iusto ipsam, animi explicabo rem vitae itaque
-                      earum sint? Possimus dolorem aut sed.
+                      {window.innerWidth > 768
+                        ? animeInfo.description.length > 150
+                          ? `${animeInfo.description.slice(0, 250)}...`
+                          : animeInfo.description
+                        : animeInfo.description}
                     </Text>
                   </Box>
                   <Box w="100%" h="47px">
@@ -184,7 +224,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      Bones
+                      {`${animeStudio[0]}, ${animeStudio[1]}, ${animeStudio[2]}`}
                     </Text>
                   </Box>
                   {/* Anime Studio */}
@@ -226,7 +266,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      2024
+                      {animeInfo.year}
                     </Text>
                   </Box>
                   {/* Status */}
@@ -247,7 +287,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      Completed
+                      {animeInfo.status}
                     </Text>
                   </Box>
                   {/* Genres */}
@@ -263,15 +303,7 @@ const View = () => {
                     </Text>
                     {/* Genre */}
                     <Box display="flex" gap="2px" flexWrap="wrap">
-                      <Text
-                        color="var(--text-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        lineHeight="24px"
-                      >
-                        Action,
-                      </Text>
+                      {console.log(animeGenre)}
                       <Text
                         color="var(--text-color)"
                         as="span"
@@ -301,7 +333,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      Views:{"  "}
+                      Score:{"  "}
                     </Text>
                     <Text
                       color="var(--text-color)"
@@ -310,7 +342,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      123456
+                      {animeInfo.score.decimalScore}
                     </Text>
                   </Box>
                   {/* Next Release Date */}
