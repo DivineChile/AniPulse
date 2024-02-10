@@ -238,8 +238,8 @@ const Hero = () => {
             </Text>
 
             <Box width="100%" my={{ base: "15px", md: "10px" }}>
-              <Link to={`stream/${currentID}`} className="play-now-btn">
-                PLAY NOW
+              <Link to={`anime/${currentID}`} className="play-now-btn">
+                VIEW MORE
               </Link>
             </Box>
           </VStack>

@@ -12,6 +12,7 @@ import Trending from "./pages/Trending/Trending";
 import Movies from "./pages/Movies/Movies";
 import Popular from "./pages/Popular/Popular";
 import Stream from "./pages/Stream/Stream";
+import View from "./components/ViewAnime/View";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,7 +21,8 @@ const router = createBrowserRouter(
       <Route path="/trending" index element={<Trending />} />
       <Route path="/movies" index element={<Movies />} />
       <Route path="/popular" element={<Popular />} />
-      <Route path="/stream/:id" element={<Stream />} />
+      <Route path="/anime/:id" element={<View />} />
+      <Route path="/watch/:id" element={<Stream />} />
     </>
   )
 );

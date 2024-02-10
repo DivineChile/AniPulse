@@ -6,17 +6,78 @@ import {
   Grid,
   GridItem,
   Image,
+  Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
 import playIcon from "../../assets/playIcon.svg";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const Stream = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
+  const [episodeId, setEpisodeId] = useState([]);
+  const [episodeData, setEpisodeData] = useState([]);
+
+  const [videoData, setVideoData] = useState([]);
+
+  const [currentEp, setCurrentEp] = useState({});
+
+  useEffect(() => {
+    const fetchEpisodes = async () => {
+      setIsLoading(true);
+      try {
+        const responseEp = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${id}`
+        );
+        const dataEp = await responseEp.json();
+        setEpisodeData(dataEp.episodes.map((item) => item));
+        setEpisodeId(dataEp.episodes.map((item) => item.id));
+
+        // console.log(episodeId);
+        setIsLoading(false);
+      } catch (err) {
+        setError(true);
+        setIsLoading(false);
+      }
+      console.group(episodeId);
+
+      // for (let i = 0; i < episodeId.length; i++) {
+      //   setCurrentEp(episodeId[i]);
+      //   console.log(episodeData);
+      // }
+    };
+
+    const fetchVideos = async () => {
+      setIsLoading(true);
+
+      try {
+        const responseVideo = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v1/stream/${currentEp}`
+        );
+        const dataVideo = await responseVideo.json();
+        setVideoData(dataVideo.sources.map((item) => item.url));
+
+        setIsLoading(false);
+      } catch (error) {
+        setError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchEpisodes();
+    fetchVideos();
+  }, []);
+
+  // useEffect(() => {
+
+  // }, []);
+
+  console.log(episodeId);
+
   return (
     <Box>
       <Navbar />
@@ -94,6 +155,8 @@ const Stream = () => {
                     alignItems="center"
                     justifyContent="center"
                     cursor="pointer"
+                    transition="transform ease 0.25s"
+                    _hover={{ transform: "scale(1.1)" }}
                   >
                     <Image
                       src={playIcon}
@@ -119,7 +182,68 @@ const Stream = () => {
                   h="100%"
                   bg="var(--secondary-accent-color)"
                   borderRadius="10px"
-                ></Box>
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  overflowY="scroll"
+                >
+                  {/* Season box */}
+                  <Box p="40px 20px">
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap="0 10px"
+                      cursor="pointer"
+                    >
+                      <Text
+                        color="var(--text-color)"
+                        fontSize="17.58px"
+                        lineHeight="24px"
+                      >
+                        Season 1
+                      </Text>
+                      <ChevronDownIcon
+                        h="18px"
+                        w="18px"
+                        color="var(--text-color)"
+                      />
+                    </Box>
+                    <Box
+                      p="20px 10px"
+                      display="flex"
+                      flexDir="column"
+                      gap="15px 0"
+                    >
+                      {isLoading ? (
+                        <Text color="var(--text-color)">Loading...</Text>
+                      ) : error ? (
+                        <Text color="var(--text-color)">{error}</Text>
+                      ) : (
+                        (() => {
+                          const elements = [];
+
+                          for (let i = 0; i < episodeData.length; i++) {
+                            const item = episodeData[i];
+                            // setEpisodeId(item.id);
+
+                            // Use item properties in JSX
+                            elements.push(
+                              <Link key={item.number} to={`/stream/${item.id}`}>
+                                <Text
+                                  color="var(--text-color)"
+                                  _hover={{ color: "var(--link-hover-color)" }}
+                                >{`Episode ${item.number}`}</Text>
+                              </Link>
+                            );
+                          }
+
+                          console.log(elements);
+                          return elements;
+                        })()
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
               </GridItem>
             </Grid>
           </Box>
