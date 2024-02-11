@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import Error from "../ErrorPage/Error";
+import moment from "moment";
 
 const View = () => {
   const { id } = useParams();
@@ -26,6 +27,11 @@ const View = () => {
   const [animeId, setAnimeId] = useState([]);
   const [animeScore, setAnimeScore] = useState([]);
   const [animeDesc, setAnimeDesc] = useState("");
+  const [animeEp, setAnimeEp] = useState([]);
+  const [animeEpId, setAnimeEpId] = useState([]);
+  const [animeEpNum, setAnimeEpNum] = useState([]);
+  const [epLength, setEpLength] = useState(0);
+  const [epError, setEpError] = useState(null);
 
   const [nextAirDate, setNextAirDate] = useState(0);
 
@@ -52,7 +58,7 @@ const View = () => {
               : animeData.description
             : animeData.description
         );
-        setNextAirDate(animeData.nextair.timeUntilAiring);
+        setNextAirDate(animeData.nextair.airingAt);
         setIsLoading(false);
         setError(false);
       } catch {
@@ -61,24 +67,39 @@ const View = () => {
       }
     };
 
+    const fetchEpisodes = async () => {
+      try {
+        const response = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeId}`
+        );
+        const data = await response.json();
+
+        setAnimeEp(data.episodes.map((item) => item));
+        setAnimeEpNum(data.episodes.map((item) => item.number));
+        setAnimeEpId(data.episodes.map((item) => item.id));
+        setEpLength(animeEpNum.length);
+      } catch {
+        setEpError(true);
+      }
+    };
+
     fetchAnimeData();
+    fetchEpisodes();
   }, []);
 
-  const calculateTimeRemaining = (targetDate) => {
-    const now = new Date().getTime();
-    const difference = targetDate - now;
+  const targetDate = moment(nextAirDate);
 
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  const calculateTimeRemaining = () => {
+    const now = moment();
+    const difference = moment.duration(targetDate.diff(now));
+    // console.log(targetDate);
+    // console.log(nextAirDate - Date.now());
 
-    const dayOfWeek = new Date(targetDate).toLocaleDateString("en-US", {
-      weekday: "long",
-    });
-
+    const days = difference.days();
+    const hours = difference.hours();
+    const minutes = difference.minutes();
+    const seconds = difference.seconds();
+    const dayOfWeek = targetDate.format("dddd");
     return {
       days,
       hours,
@@ -87,9 +108,7 @@ const View = () => {
       dayOfWeek,
     };
   };
-  const [timeRemaining, setTimeRemaining] = useState(
-    calculateTimeRemaining(nextAirDate)
-  );
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,7 +116,10 @@ const View = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [nextAirDate]);
+
+  console.log(animeEpId);
+  console.log(animeEpNum);
 
   return (
     <Box>
@@ -108,6 +130,7 @@ const View = () => {
           loadingState={isLoading}
           error={error}
           msg="Still Working..."
+          pos="fixed"
         />
       ) : (
         <></>
@@ -162,7 +185,6 @@ const View = () => {
                   bgRepeat="no-repeat"
                   h={{ base: "217.64px", sm: "300px", md: "377.5px" }}
                   borderRadius="10px"
-                  //   border="1px solid var(--link-color)"
                 ></Box>
                 {/* Anime Desc */}
                 <Box
@@ -243,7 +265,7 @@ const View = () => {
                 </Box>
               </GridItem>
               {/* Anime Details */}
-              <GridItem colSpan={{ base: 7, md: 3, "2xl": 2 }}>
+              <GridItem colSpan={{ base: 7, md: 3, lg: 4, "2xl": 2 }}>
                 <Box display="flex" flexDir="column" gap="9px 0">
                   <Text
                     as="h3"
@@ -375,7 +397,6 @@ const View = () => {
                           );
                         }
 
-                        console.log(elements);
                         return elements;
                       })()}
                     </Box>
@@ -419,72 +440,72 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      123456
+                      {timeRemaining.days}
                     </Text>
                   </Box>
                 </Box>
               </GridItem>
               {/* Episodes List */}
               <GridItem
-                colSpan={{ base: 7, md: 4, lg: 4, "2xl": 5 }}
+                colSpan={{ base: 7, md: 4, lg: 3, "2xl": 5 }}
                 mt={{ base: "20px", md: 0 }}
                 id="episodes"
               >
                 <Box>
                   <Heading
                     color="var(--text-color)"
-                    fontSize="37.5px"
+                    fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
                     fontWeight="700"
-                    lineHeight="44px"
+                    lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
                     letterSpacing="1.5px"
                   >
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    <ChakraLink
-                      as={ReactRouterLink}
-                      to="/stream/"
-                      _hover={{
-                        textDecor: "none",
-                        color: "var(--link-hover-color)",
-                        borderBottomColor: "var(--link-hover-color)",
-                      }}
-                      color="var(--text-color)"
-                      borderBottom="1px solid var(--text-color)"
-                      w="100%"
-                      display="block"
-                      py="5px"
-                      fontSize="19.38px"
-                      fontWeight="300"
-                      lineHeight="22px"
-                      letterSpacing="1.5px"
-                      transition="all ease 0.25s"
-                      mb="10px"
-                    >
-                      Episode 1
-                    </ChakraLink>
-                    <ChakraLink
-                      as={ReactRouterLink}
-                      to="/stream/"
-                      _hover={{
-                        textDecor: "none",
-                        color: "var(--link-hover-color)",
-                        borderBottomColor: "var(--link-hover-color)",
-                      }}
-                      color="var(--text-color)"
-                      borderBottom="1px solid var(--text-color)"
-                      w="100%"
-                      display="block"
-                      py="5px"
-                      fontSize="19.38px"
-                      fontWeight="300"
-                      lineHeight="22px"
-                      letterSpacing="1.5px"
-                      transition="all ease 0.25s"
-                      mb="10px"
-                    >
-                      Episode 1
-                    </ChakraLink>
+                    {(() => {
+                      const elements = [];
+
+                      for (let i = 0; i < epLength; i++) {
+                        const itemNum = animeEpNum[i];
+                        const itemId = animeEpId[i];
+
+                        elements.push(
+                          <ChakraLink
+                            as={ReactRouterLink}
+                            to={`watch/${itemId}`}
+                            _hover={{
+                              textDecor: "none",
+                              color: "var(--link-hover-color)",
+                              borderBottomColor: "var(--link-hover-color)",
+                            }}
+                            color="var(--text-color)"
+                            borderBottom="1px solid var(--text-color)"
+                            w="100%"
+                            display="block"
+                            py="5px"
+                            fontSize={{
+                              base: "15.63px",
+                              md: "17px",
+                              lg: "19.38px",
+                            }}
+                            fontWeight="300"
+                            lineHeight={{
+                              base: "17.6px",
+                              md: "19px",
+                              lg: "22px",
+                            }}
+                            letterSpacing="1.5px"
+                            transition="all ease 0.25s"
+                            mb="10px"
+                            key={itemNum[i]}
+                          >
+                            {`Episode ${itemNum}`}
+                          </ChakraLink>
+                        );
+                      }
+
+                      return elements;
+                    })()}
                   </Box>
                 </Box>
               </GridItem>
