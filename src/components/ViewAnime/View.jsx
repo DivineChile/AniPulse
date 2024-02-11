@@ -59,16 +59,7 @@ const View = () => {
             : animeData.description
         );
         setNextAirDate(animeData.nextair.airingAt);
-        setIsLoading(false);
-        setError(false);
-      } catch {
-        setIsLoading(false);
-        setError(true);
-      }
-    };
 
-    const fetchEpisodes = async () => {
-      try {
         const response = await fetch(
           `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeId}`
         );
@@ -78,13 +69,15 @@ const View = () => {
         setAnimeEpNum(data.episodes.map((item) => item.number));
         setAnimeEpId(data.episodes.map((item) => item.id));
         setEpLength(animeEpNum.length);
+        setIsLoading(false);
+        setError(false);
       } catch {
-        setEpError(true);
+        setIsLoading(false);
+        setError(true);
       }
     };
 
     fetchAnimeData();
-    fetchEpisodes();
   }, []);
 
   const targetDate = moment(nextAirDate);
@@ -392,7 +385,7 @@ const View = () => {
                               lineHeight="24px"
                               key={item[i]}
                             >
-                              {item},
+                              {`${item}, `}
                             </Text>
                           );
                         }
@@ -462,50 +455,60 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    {(() => {
-                      const elements = [];
+                    {isLoading
+                      ? "Loading..."
+                      : (() => {
+                          const elements = [];
 
-                      for (let i = 0; i < epLength; i++) {
-                        const itemNum = animeEpNum[i];
-                        const itemId = animeEpId[i];
+                          const reversedAnimeEpNum = animeEpNum
+                            .slice()
+                            .reverse();
+                          const reversedAnimeEpId = animeEpId.slice().reverse();
 
-                        elements.push(
-                          <ChakraLink
-                            as={ReactRouterLink}
-                            to={`watch/${itemId}`}
-                            _hover={{
-                              textDecor: "none",
-                              color: "var(--link-hover-color)",
-                              borderBottomColor: "var(--link-hover-color)",
-                            }}
-                            color="var(--text-color)"
-                            borderBottom="1px solid var(--text-color)"
-                            w="100%"
-                            display="block"
-                            py="5px"
-                            fontSize={{
-                              base: "15.63px",
-                              md: "17px",
-                              lg: "19.38px",
-                            }}
-                            fontWeight="300"
-                            lineHeight={{
-                              base: "17.6px",
-                              md: "19px",
-                              lg: "22px",
-                            }}
-                            letterSpacing="1.5px"
-                            transition="all ease 0.25s"
-                            mb="10px"
-                            key={itemNum[i]}
-                          >
-                            {`Episode ${itemNum}`}
-                          </ChakraLink>
-                        );
-                      }
+                          for (let i = 0; i < epLength; i++) {
+                            const itemNum = reversedAnimeEpNum[i];
+                            const itemId = reversedAnimeEpId[i];
 
-                      return elements;
-                    })()}
+                            itemNum
+                              ? elements.push(
+                                  <ChakraLink
+                                    as={ReactRouterLink}
+                                    to={`watch/${itemId}`}
+                                    _hover={{
+                                      textDecor: "none",
+                                      color: "var(--link-hover-color)",
+                                      borderBottomColor:
+                                        "var(--link-hover-color)",
+                                    }}
+                                    color="var(--text-color)"
+                                    borderBottom="1px solid var(--text-color)"
+                                    w="100%"
+                                    display="block"
+                                    py="5px"
+                                    fontSize={{
+                                      base: "15.63px",
+                                      md: "17px",
+                                      lg: "19.38px",
+                                    }}
+                                    fontWeight="300"
+                                    lineHeight={{
+                                      base: "17.6px",
+                                      md: "19px",
+                                      lg: "22px",
+                                    }}
+                                    letterSpacing="1.5px"
+                                    transition="all ease 0.25s"
+                                    mb="10px"
+                                    key={itemNum[i]}
+                                  >
+                                    {`Episode ${itemNum}`}
+                                  </ChakraLink>
+                                )
+                              : elements.push("Loading...");
+                          }
+
+                          return elements;
+                        })()}
                   </Box>
                 </Box>
               </GridItem>
