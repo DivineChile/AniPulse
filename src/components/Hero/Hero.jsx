@@ -88,7 +88,16 @@ const Hero = () => {
 
   return (
     <Box w="100%" h="100vh">
-      <Error msg={error} loadingState={isLoading} error={error} />
+      <Error
+        msg={error}
+        loadingState={isLoading}
+        error={error}
+        height={{
+          base: "calc(100vh - 70.89px)",
+          md: "calc(100vh - 74px)",
+          lg: "calc(100vh - 84px)",
+        }}
+      />
       <Box>
         <Navbar />
       </Box>

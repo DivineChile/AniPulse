@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
+import Error from "../ErrorPage/Error";
 
 const View = () => {
   const { id } = useParams();
@@ -20,8 +21,13 @@ const View = () => {
   const [animeInfo, setAnimeInfo] = useState([]);
   const [animeTitle, setAnimeTitle] = useState([]);
   const [animeStudio, setAnimeStudio] = useState([]);
-  const [animeGenre, setAnimeGenre] = useState([]);
+  const [animeImg, setAnimeImg] = useState([]);
+  const [animeGenre, setAnimeGenre] = useState(0);
   const [animeId, setAnimeId] = useState([]);
+  const [animeScore, setAnimeScore] = useState([]);
+  const [animeDesc, setAnimeDesc] = useState("");
+
+  const [nextAirDate, setNextAirDate] = useState(0);
 
   useEffect(() => {
     const fetchAnimeData = async () => {
@@ -33,28 +39,79 @@ const View = () => {
         setAnimeInfo(animeData);
         setAnimeId(animeData.id);
         setAnimeTitle(Object.entries(animeData.title).map((item) => item[1]));
-        setAnimeStudio(animeData.studios.map((item) => item.name));
-        setAnimeGenre(
-          animeInfo.genres.map((item) => {
-            item;
-          })
+        setAnimeImg(
+          Object.entries(animeData.coverImage).map((item) => item[1])
         );
+        setAnimeStudio(animeData.studios.map((item) => item.name));
+        setAnimeGenre(animeData.genres.length);
+        setAnimeScore(Object.entries(animeData.score).map((item) => item[1]));
+        setAnimeDesc(
+          window.innerWidth > 768
+            ? animeData.description.length > 150
+              ? animeData.description.slice(0, 150)
+              : animeData.description
+            : animeData.description
+        );
+        setNextAirDate(animeData.nextair.timeUntilAiring);
         setIsLoading(false);
+        setError(false);
       } catch {
         setIsLoading(false);
         setError(true);
       }
     };
+
     fetchAnimeData();
   }, []);
-  //   console.group(animeInfo);
-  console.group(animeTitle);
-  console.group(animeStudio);
-  console.group(animeId);
+
+  const calculateTimeRemaining = (targetDate) => {
+    const now = new Date().getTime();
+    const difference = targetDate - now;
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    const dayOfWeek = new Date(targetDate).toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
+    return {
+      days,
+      hours,
+      minutes,
+      seconds,
+      dayOfWeek,
+    };
+  };
+  const [timeRemaining, setTimeRemaining] = useState(
+    calculateTimeRemaining(nextAirDate)
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Box>
       <Navbar />
+      {isLoading ? (
+        <Error
+          height="100%"
+          loadingState={isLoading}
+          error={error}
+          msg="Still Working..."
+        />
+      ) : (
+        <></>
+      )}
 
       <Box background="var(--primary-background-color)">
         <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
@@ -99,10 +156,7 @@ const View = () => {
                 {/* Anime Image */}
                 <Box
                   w={{ base: "100%", md: "55%" }}
-                  bg={{
-                    base: `url(${animeInfo.bannerImage})`,
-                    // md: `url(${animeInfo.coverImage.large})`,
-                  }}
+                  bg={`url(${animeImg[0]})`}
                   bgSize="cover"
                   bgPos="center"
                   bgRepeat="no-repeat"
@@ -156,11 +210,7 @@ const View = () => {
                       lineHeight="24px"
                       letterSpacing="0.5px"
                     >
-                      {window.innerWidth > 768
-                        ? animeInfo.description.length > 150
-                          ? `${animeInfo.description.slice(0, 250)}...`
-                          : animeInfo.description
-                        : animeInfo.description}
+                      {animeDesc ? `${animeDesc}...` : "Loading..."}
                     </Text>
                   </Box>
                   <Box w="100%" h="47px">
@@ -224,10 +274,12 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      {`${animeStudio[0]}, ${animeStudio[1]}, ${animeStudio[2]}`}
+                      {animeStudio[0]
+                        ? `${animeStudio[0]}, ${animeStudio[1]}, ${animeStudio[2]}`
+                        : "Loading..."}
                     </Text>
                   </Box>
-                  {/* Anime Studio */}
+                  {/* Anime Season */}
                   <Box display="flex" gap="0 10px">
                     <Text
                       as="p"
@@ -236,7 +288,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      Author:{"  "}
+                      Season:{"  "}
                     </Text>
                     <Text
                       color="var(--secondary-accent-color)"
@@ -245,7 +297,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      Bones
+                      {animeInfo.season ? animeInfo.season : "Loading..."}
                     </Text>
                   </Box>
                   {/* Release Year */}
@@ -266,7 +318,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      {animeInfo.year}
+                      {animeInfo.year ? animeInfo.year : "Loading..."}
                     </Text>
                   </Box>
                   {/* Status */}
@@ -287,7 +339,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      {animeInfo.status}
+                      {animeInfo.status ? animeInfo.status : "Loading..."}
                     </Text>
                   </Box>
                   {/* Genres */}
@@ -303,25 +355,29 @@ const View = () => {
                     </Text>
                     {/* Genre */}
                     <Box display="flex" gap="2px" flexWrap="wrap">
-                      {console.log(animeGenre)}
-                      <Text
-                        color="var(--text-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        lineHeight="24px"
-                      >
-                        Action,
-                      </Text>
-                      <Text
-                        color="var(--text-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        lineHeight="24px"
-                      >
-                        Action
-                      </Text>
+                      {(() => {
+                        const elements = [];
+
+                        for (let i = 0; i < animeGenre; i++) {
+                          const item = animeInfo.genres[i];
+
+                          elements.push(
+                            <Text
+                              color="var(--text-color)"
+                              as="span"
+                              fontSize="15px"
+                              fontWeight="300"
+                              lineHeight="24px"
+                              key={item[i]}
+                            >
+                              {item},
+                            </Text>
+                          );
+                        }
+
+                        console.log(elements);
+                        return elements;
+                      })()}
                     </Box>
                   </Box>
                   {/* Views */}
@@ -342,7 +398,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                     >
-                      {animeInfo.score.decimalScore}
+                      {animeScore[1] ? animeScore[1] : "Loading..."}
                     </Text>
                   </Box>
                   {/* Next Release Date */}
