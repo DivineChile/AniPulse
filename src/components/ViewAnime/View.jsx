@@ -111,8 +111,8 @@ const View = () => {
     return () => clearInterval(interval);
   }, [nextAirDate]);
 
-  console.log(animeEpId);
-  console.log(animeEpNum);
+  // console.log(animeEpId);
+  // console.log(animeEpNum);
 
   return (
     <Box>
