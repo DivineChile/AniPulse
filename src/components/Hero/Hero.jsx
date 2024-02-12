@@ -40,8 +40,9 @@ const Hero = () => {
         setAnimeGenres(data.results.map((item) => item.genres));
         setAnimeID(data.results.map((item) => item.id));
         setIsLoading(false);
+        setError(false);
       } catch (error) {
-        setError("Still Working...");
+        setError(true);
         setIsLoading(false);
       }
     };
@@ -88,25 +89,41 @@ const Hero = () => {
 
   return (
     <Box w="100%" h="100vh">
-      {isLoading ? (
+      {isLoading && (
         <Error
-          msg={error}
+          // msg={"Still Working..."}
           loadingState={isLoading}
           height={{
             base: "calc(100vh - 70.89px)",
             md: "calc(100vh - 74px)",
             lg: "calc(100vh - 84px)",
           }}
+          error={error}
           pos="absolute"
         />
-      ) : (
-        <></>
       )}
+
+      {error && (
+        <Error
+          msg={"Still Working..."}
+          loadingState={isLoading}
+          height={{
+            base: "calc(100vh - 70.89px)",
+            md: "calc(100vh - 74px)",
+            lg: "calc(100vh - 84px)",
+          }}
+          error={error}
+          pos="absolute"
+        />
+      )}
+
       <Box>
         <Navbar />
       </Box>
       <Box
-        background={`url(${currentImage})`}
+        background={
+          currentImage ? `url(${currentImage})` : "rgba(25, 27, 40, 0.7)"
+        }
         backgroundPosition="center"
         transition="background ease 0.25s"
         backgroundSize="cover"
@@ -259,7 +276,9 @@ const Hero = () => {
 
           <Box hideBelow="xl">
             <Box
-              background={`url(${currentImage})`}
+              background={
+                currentImage ? `url(${currentImage})` : "rgba(25, 27, 40, 0.7)"
+              }
               w={{ lg: "550px", "2xl": "770px" }}
               h={{ lg: "450px", "2xl": "600px" }}
               backgroundSize="cover"

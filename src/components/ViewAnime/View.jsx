@@ -111,22 +111,30 @@ const View = () => {
     return () => clearInterval(interval);
   }, [nextAirDate]);
 
-  // console.log(animeEpId);
+  console.log(targetDate.format("HH:mm:ss"));
   // console.log(animeEpNum);
 
   return (
     <Box>
       <Navbar />
-      {isLoading ? (
+      {isLoading && (
         <Error
-          height="100%"
+          // msg={"Still Working..."}
           loadingState={isLoading}
+          height="100%"
           error={error}
-          msg="Still Working..."
           pos="fixed"
         />
-      ) : (
-        <></>
+      )}
+
+      {error && (
+        <Error
+          msg={"Still Working..."}
+          loadingState={isLoading}
+          height="100%"
+          error={error}
+          pos="fixed"
+        />
       )}
 
       <Box background="var(--primary-background-color)">
@@ -172,11 +180,16 @@ const View = () => {
                 {/* Anime Image */}
                 <Box
                   w={{ base: "100%", md: "55%" }}
-                  bg={`url(${animeImg[0]})`}
+                  bg={
+                    animeImg[0]
+                      ? `url(${animeImg[0]})`
+                      : "rgba(25, 27, 40, 0.7)"
+                  }
                   bgSize="cover"
                   bgPos="center"
                   bgRepeat="no-repeat"
                   h={{ base: "217.64px", sm: "300px", md: "377.5px" }}
+                  transition="background ease 0.25s"
                   borderRadius="10px"
                 ></Box>
                 {/* Anime Desc */}
@@ -192,6 +205,7 @@ const View = () => {
                     color="var(--text-color)"
                     letterSpacing="1.5px"
                     lineHeight="38.5px"
+                    transition="background ease 0.25s"
                   >
                     {animeTitle[1]}
                   </Heading>
@@ -201,6 +215,7 @@ const View = () => {
                     fontWeight="300"
                     lineHeight="37.5px"
                     color="var(--text-color)"
+                    transition="background ease 0.25s"
                   >
                     Episodes : {animeInfo.episodes}
                   </Text>
@@ -224,6 +239,7 @@ const View = () => {
                       fontWeight="300"
                       lineHeight="24px"
                       letterSpacing="0.5px"
+                      transition="background ease 0.25s"
                     >
                       {animeDesc ? `${animeDesc}...` : "Loading..."}
                     </Text>
@@ -288,6 +304,7 @@ const View = () => {
                       fontSize="15px"
                       fontWeight="300"
                       lineHeight="24px"
+                      transition="background ease 0.25s"
                     >
                       {animeStudio[0]
                         ? `${animeStudio[0]}, ${animeStudio[1]}, ${animeStudio[2]}`
@@ -311,6 +328,7 @@ const View = () => {
                       fontSize="15px"
                       fontWeight="300"
                       lineHeight="24px"
+                      transition="background ease 0.25s"
                     >
                       {animeInfo.season ? animeInfo.season : "Loading..."}
                     </Text>
@@ -331,6 +349,7 @@ const View = () => {
                       as="span"
                       fontSize="15px"
                       fontWeight="300"
+                      transition="background ease 0.25s"
                       lineHeight="24px"
                     >
                       {animeInfo.year ? animeInfo.year : "Loading..."}
@@ -353,6 +372,7 @@ const View = () => {
                       fontSize="15px"
                       fontWeight="300"
                       lineHeight="24px"
+                      transition="background ease 0.25s"
                     >
                       {animeInfo.status ? animeInfo.status : "Loading..."}
                     </Text>
@@ -383,6 +403,7 @@ const View = () => {
                               fontSize="15px"
                               fontWeight="300"
                               lineHeight="24px"
+                              transition="background ease 0.25s"
                               key={item[i]}
                             >
                               {`${item}, `}
@@ -402,6 +423,7 @@ const View = () => {
                       fontSize="15px"
                       fontWeight="300"
                       lineHeight="24px"
+                      transition="background ease 0.25s"
                     >
                       Score:{"  "}
                     </Text>
@@ -422,6 +444,7 @@ const View = () => {
                       color="var(--text-color)"
                       fontSize="15px"
                       fontWeight="300"
+                      transition="background ease 0.25s"
                       lineHeight="24px"
                     >
                       Est. Episode At:{"  "}

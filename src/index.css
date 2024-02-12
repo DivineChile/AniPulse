@@ -18,13 +18,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--link-hover-color);
+    background: #353535;
     border-radius: 2px;
     margin: 10px 5px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--secondary-accent-color);
+    background: #191919;
   }
 
   ::-webkit-scrollbar-thumb:hover {
