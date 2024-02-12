@@ -16,7 +16,7 @@ import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const Stream = () => {
-  const { id } = useParams();
+  const { epUrl, animeId, watchId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
@@ -56,7 +56,7 @@ const Stream = () => {
 
       try {
         const responseVideo = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v1/stream/${currentEp}`
+          `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${id}`
         );
         const dataVideo = await responseVideo.json();
         setVideoData(dataVideo.sources.map((item) => item.url));

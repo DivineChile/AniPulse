@@ -14,6 +14,7 @@ import { useParams, Link as ReactRouterLink } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import Error from "../ErrorPage/Error";
 import moment from "moment";
+import EpisodeList from "../EpisodeList/EpisodeList";
 
 const View = () => {
   const { id } = useParams();
@@ -30,9 +31,12 @@ const View = () => {
   const [animeEp, setAnimeEp] = useState([]);
   const [animeEpId, setAnimeEpId] = useState([]);
   const [animeEpNum, setAnimeEpNum] = useState([]);
+  const [animeData, setAnimeData] = useState([]);
+  const [coverImage, setCoverImage] = useState([]);
   const [epLength, setEpLength] = useState(0);
   const [epError, setEpError] = useState(null);
 
+  const [airDate, setAirDate] = useState(0);
   const [nextAirDate, setNextAirDate] = useState(0);
 
   useEffect(() => {
@@ -44,6 +48,11 @@ const View = () => {
         const animeData = await animeRes.json();
         setAnimeInfo(animeData);
         setAnimeId(animeData.id);
+        const response = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeData.id}`
+        );
+        const data = await response.json();
+        setAnimeData(data);
         setAnimeTitle(Object.entries(animeData.title).map((item) => item[1]));
         setAnimeImg(
           Object.entries(animeData.coverImage).map((item) => item[1])
@@ -58,50 +67,39 @@ const View = () => {
               : animeData.description
             : animeData.description
         );
-        setNextAirDate(animeData.nextair.airingAt);
-
-        const response = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeId}`
-        );
-        const data = await response.json();
+        setAirDate(animeData.nextair.airingAt);
+        setNextAirDate(animeData.nextair.timeUntilAiring);
 
         setAnimeEp(data.episodes.map((item) => item));
         setAnimeEpNum(data.episodes.map((item) => item.number));
         setAnimeEpId(data.episodes.map((item) => item.id));
         setEpLength(animeEpNum.length);
+        setCoverImage(data.episodes.map((item) => item.image));
         setIsLoading(false);
-        setError(false);
+        setEpError(false);
       } catch {
         setIsLoading(false);
-        setError(true);
+        setEpError(true);
       }
     };
 
     fetchAnimeData();
   }, []);
 
-  const targetDate = moment(nextAirDate);
-
   const calculateTimeRemaining = () => {
     const now = moment();
-    const difference = moment.duration(targetDate.diff(now));
-    // console.log(targetDate);
-    // console.log(nextAirDate - Date.now());
+    const setCurrentDate = moment(airDate);
+    const setNextDate = moment(nextAirDate);
+    const duration = moment.duration(now.diff(setCurrentDate));
 
-    const days = difference.days();
-    const hours = difference.hours();
-    const minutes = difference.minutes();
-    const seconds = difference.seconds();
-    const dayOfWeek = targetDate.format("dddd");
-    return {
-      days,
-      hours,
-      minutes,
-      seconds,
-      dayOfWeek,
-    };
+    const days = Math.floor(duration.asDays());
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+    const seconds = duration.seconds();
+
+    return { days, hours, minutes, seconds };
   };
-  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -109,10 +107,21 @@ const View = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [nextAirDate]);
+  }, []);
 
-  console.log(targetDate.format("HH:mm:ss"));
-  // console.log(animeEpNum);
+  // console.log(timeRemaining.days);
+  // console.log(timeRemaining.minutes);
+  // console.log(Date.now());
+  console.log(animeEpId);
+  // console.log(1707917400 + 167150);
+  // 1708084550;
+  // 1707754029547;
+
+  // const elements = [];
+
+  const reversedAnimeEpNum = animeEpNum.slice().reverse();
+  const reversedAnimeEpId = animeEpId.slice().reverse();
+  const reversedAnimeImg = coverImage.slice().reverse();
 
   return (
     <Box>
@@ -121,21 +130,21 @@ const View = () => {
         <Error
           // msg={"Still Working..."}
           loadingState={isLoading}
-          height="100%"
+          height="100vh"
           error={error}
           pos="fixed"
         />
       )}
 
-      {error && (
+      {/* {epError && (
         <Error
           msg={"Still Working..."}
           loadingState={isLoading}
           height="100%"
-          error={error}
+          error={setEpError}
           pos="fixed"
         />
-      )}
+      )} */}
 
       <Box background="var(--primary-background-color)">
         <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
@@ -478,60 +487,13 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    {isLoading
-                      ? "Loading..."
-                      : (() => {
-                          const elements = [];
-
-                          const reversedAnimeEpNum = animeEpNum
-                            .slice()
-                            .reverse();
-                          const reversedAnimeEpId = animeEpId.slice().reverse();
-
-                          for (let i = 0; i < epLength; i++) {
-                            const itemNum = reversedAnimeEpNum[i];
-                            const itemId = reversedAnimeEpId[i];
-
-                            itemNum
-                              ? elements.push(
-                                  <ChakraLink
-                                    as={ReactRouterLink}
-                                    to={`watch/${itemId}`}
-                                    _hover={{
-                                      textDecor: "none",
-                                      color: "var(--link-hover-color)",
-                                      borderBottomColor:
-                                        "var(--link-hover-color)",
-                                    }}
-                                    color="var(--text-color)"
-                                    borderBottom="1px solid var(--text-color)"
-                                    w="100%"
-                                    display="block"
-                                    py="5px"
-                                    fontSize={{
-                                      base: "15.63px",
-                                      md: "17px",
-                                      lg: "19.38px",
-                                    }}
-                                    fontWeight="300"
-                                    lineHeight={{
-                                      base: "17.6px",
-                                      md: "19px",
-                                      lg: "22px",
-                                    }}
-                                    letterSpacing="1.5px"
-                                    transition="all ease 0.25s"
-                                    mb="10px"
-                                    key={itemNum[i]}
-                                  >
-                                    {`Episode ${itemNum}`}
-                                  </ChakraLink>
-                                )
-                              : elements.push("Loading...");
-                          }
-
-                          return elements;
-                        })()}
+                    <EpisodeList
+                      items={animeEpId}
+                      itemImg={reversedAnimeImg}
+                      itemId={reversedAnimeEpId}
+                      id={id}
+                      itemNum={reversedAnimeEpNum}
+                    />
                   </Box>
                 </Box>
               </GridItem>

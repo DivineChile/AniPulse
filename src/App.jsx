@@ -22,7 +22,7 @@ const router = createBrowserRouter(
       <Route path="/movies" index element={<Movies />} />
       <Route path="/popular" element={<Popular />} />
       <Route path="/anime/:id" element={<View />} />
-      <Route path="/watch/:id" element={<Stream />} />
+      <Route path="/watch/:epUrl/:animeId/:watchId" element={<Stream />} />
     </>
   )
 );
