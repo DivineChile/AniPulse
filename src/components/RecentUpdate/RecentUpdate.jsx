@@ -11,14 +11,20 @@ import {
   Tab,
   TabPanel,
   Image,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
+import { Link as ReactRouterLink } from "react-router-dom";
 import animeImg from "../../assets/img-2.png";
 import { useEffect, useState } from "react";
+import Recents from "../RecentList/Recents";
 
 const RecentUpdate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [subAnimeData, setSubAimeData] = useState([]);
+  const [subAnimeTitle, setSubAnimeTitle] = useState([]);
+  const [subAnimeImg, setSubAnimeImg] = useState([]);
+  const [subAnimeEpId, setSubAnimeEpId] = useState([]);
   const [dubAnimeData, setDubAimeData] = useState([]);
   const [CnAnimeData, setCnAimeData] = useState([]);
 
@@ -36,7 +42,10 @@ const RecentUpdate = () => {
           setIsLoading(false);
         }
         const subData = await responseSub.json();
-        setSubAimeData(subData.results);
+        setSubAimeData(subData.results.map((item) => item));
+        setSubAnimeEpId(subAnimeData.map((item) => item.episode_id));
+        setSubAnimeImg(subAnimeData.map((item) => item.image_url));
+        setSubAnimeTitle(subAnimeData.map((item) => item.title));
 
         //Dubbed Api
         const responseDub = await fetch(
@@ -69,7 +78,33 @@ const RecentUpdate = () => {
     fetchRecentReleaseAnime();
   }, []);
 
-  console.log(subAnimeData);
+  const getCurrentDate = () => {
+    const today = new Date();
+
+    const dayOfWeek = today.getDay();
+
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    const fullDayName = daysOfWeek[dayOfWeek];
+
+    const fullDate = today.toDateString().split(" ");
+    fullDate.shift();
+    const newFullDate = fullDate.join(" ");
+
+    return { dayOfWeek, fullDayName, newFullDate };
+  };
+
+  const { dayOfWeek, fullDayName, newFullDate } = getCurrentDate();
+
+  console.log(subAnimeTitle);
   console.log(dubAnimeData);
   console.log(CnAnimeData);
   return (
@@ -110,7 +145,7 @@ const RecentUpdate = () => {
           m="0"
           textTransform="uppercase"
         >
-          Sunday 01 Jan 2023
+          {`${fullDayName} ${newFullDate}`}
         </Text>
       </Box>
       {/* Recent Animes Released */}
@@ -121,7 +156,7 @@ const RecentUpdate = () => {
           variant="unstyled"
           align="end"
           defaultIndex={0}
-          //   isLazy="true"
+          isLazy="true"
         >
           <TabList mb="20px" gap="0 10px">
             <Tab
@@ -182,111 +217,93 @@ const RecentUpdate = () => {
 
           <TabPanels>
             <TabPanel transition="all ease 0.25s">
-              {/* <Grid
-                display={{ base: "initial", md: "grid" }}
+              <Grid
+                display={{ base: "grid", md: "grid" }}
                 justifyItems="flex-start"
                 gridTemplateColumns={{
                   base: "100%",
                   md: "repeat(3, 1fr)",
                   xl: "repeat(4, 1fr)",
                 }}
-                gap={{ base: "10px 0", md: "15px 25px" }}
+                gap={{ base: "20px 0", md: "15px 25px" }}
               >
-                
-              </Grid> */}
+                {/* <GridItem w={{ base: "100%", md: "306px" }}>
+                  <Box
+                    as={ReactRouterLink}
+                    pos="relative"
+                    overflow="hidden!important"
+                  >
+                    Anime Img
+                    <Image
+                      // src={}
+                      bg={"#191919"}
+                      w="100%"
+                      borderRadius="10px"
+                      transition="all ease 0.45s"
+                      h={{ base: "488.23px", md: "408.19px" }}
+                      _hover={{ transform: "scale(1.2)" }}
+                      border="1px solid red"
+                    />
+
+                    Overlay
+                    <Box
+                      pos="absolute"
+                      top="0"
+                      left="0"
+                      width="100%"
+                      height="100%"
+                      background="rgba(0,0,0,0.5)"
+                      opacity="0"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      transition="opacity 0.2s"
+                      border="1px solid blue"
+                      _hover={{ opacity: "1" }}
+                    >
+                      <ChakraLink
+                        as={ReactRouterLink}
+                        to={"/"}
+                        color="var(--text-color)"
+                        _hover={{
+                          color: "var(--secondary-accent-color)",
+                          transition: "all ease 0.25s",
+                        }}
+                        fontSize="22.88px"
+                        lineHeight="36px"
+                        letterSpacing="0.5px"
+                        fontWeight="500"
+                      >
+                        Play Now
+                      </ChakraLink>
+                    </Box>
+                  </Box>
+                  <ChakraLink as={ReactRouterLink}>
+                    Anime Name
+                    <Text
+                      as="p"
+                      fontSize="22.88px"
+                      lineHeight="36px"
+                      letterSpacing="0.5px"
+                      fontWeight="500"
+                      color="var(--text-color)"
+                      textAlign="start"
+                    >
+                      Hello
+                    </Text>
+                  </ChakraLink>
+                </GridItem> */}
+                <Recents
+                  item={subAnimeTitle}
+                  itemId={subAnimeEpId}
+                  itemImg={subAnimeImg}
+                  itemTitle={subAnimeTitle}
+                />
+              </Grid>
             </TabPanel>
           </TabPanels>
         </Tabs>
-        <Text fontSize="100px">Hello World</Text>
       </Box>
-      {subAnimeData.map((item) => {
-        //   <GridItem w={{ base: "100%", md: "306px" }} key={item.id}>
-        //     {/* Anime Img */}
-        //     <Box
-        //       bg={`url(${item.image_url})`}
-        //       bgRepeat="no-repeat"
-        //       bgPos="center"
-        //       bgSize="cover"
-        //       borderRadius="10px"
-        //       h={{ base: "488.23px", md: "408.19px" }}
-        //     ></Box>
-        //     {/* Details */}
-        //     <Flex gap="10px" mt="10px" mb="5px" alignItems="center">
-        //       <Text
-        //         as="span"
-        //         color="var(--secondary-accent-color)"
-        //         cursor="pointer"
-        //         p="3px 10px"
-        //         transition="all ease 0.25s"
-        //         _hover={{
-        //           color: "var(--text-color)",
-        //           bgColor: "var(--secondary-accent-color)",
-        //         }}
-        //         borderRadius="6px"
-        //         border="2px solid var(--secondary-accent-color)"
-        //         fontSize={{ base: "16.03px", md: "14.25px" }}
-        //         lineHeight="24px"
-        //         letterSpacing="0.5px"
-        //         textTransform="uppercase"
-        //       >
-        //         Dub
-        //       </Text>
-        //       <Text
-        //         as="span"
-        //         color="var(--secondary-accent-color)"
-        //         cursor="pointer"
-        //         p="3px 10px"
-        //         transition="all ease 0.25s"
-        //         _hover={{
-        //           color: "var(--text-color)",
-        //           bgColor: "var(--secondary-accent-color)",
-        //         }}
-        //         borderRadius="6px"
-        //         border="2px solid var(--secondary-accent-color)"
-        //         fontSize={{ base: "16.03px", md: "14.25px" }}
-        //         lineHeight="24px"
-        //         letterSpacing="0.5px"
-        //         textTransform="uppercase"
-        //       >
-        //         sub
-        //       </Text>
-        //       <Text
-        //         fontSize={{ base: "12.69px", lg: "17px" }}
-        //         lineHeight={{ base: "24px" }}
-        //         color="var(--text-color)"
-        //       >
-        //         TV
-        //       </Text>
-        //     </Flex>
-        //     <Text
-        //       as="p"
-        //       fontSize="22.88px"
-        //       lineHeight="36px"
-        //       letterSpacing="0.5px"
-        //       fontWeight="500"
-        //       color="var(--text-color)"
-        //       textAlign="start"
-        //     >
-        //       {console.log(item.title)}
-        //     </Text>
-        //     <Text border="1px solid red" fontSize="1000px">
-        //       Hello
-        //     </Text>
-        //   </GridItem>;
-
-        <Heading fontSize="1000px">{item.title}</Heading>;
-        <Box
-          bg={`url(${animeImg})`}
-          bgRepeat="no-repeat"
-          bgPos="center"
-          bgSize="cover"
-          borderRadius="10px"
-          h={{ base: "488.23px", md: "408.19px" }}
-          border="1px solid red"
-        >
-          <Heading fontSize="1000px">Hello </Heading>
-        </Box>;
-      })}
     </Box>
   );
 };

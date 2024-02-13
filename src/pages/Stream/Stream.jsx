@@ -3,6 +3,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Flex,
   Grid,
   GridItem,
   Image,
@@ -12,8 +13,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
+import Error from "../../components/ErrorPage/Error";
 import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import EpisodeList from "../../components/EpisodeList/EpisodeList";
 
 const Stream = () => {
   const { epUrl, animeId, watchId } = useParams();
@@ -31,32 +34,28 @@ const Stream = () => {
       setIsLoading(true);
       try {
         const responseEp = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${id}`
+          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeId}`
         );
         const dataEp = await responseEp.json();
         setEpisodeData(dataEp.episodes.map((item) => item));
         setEpisodeId(dataEp.episodes.map((item) => item.id));
 
-        // console.log(episodeId);
+        console.log(episodeData);
         setIsLoading(false);
       } catch (err) {
         setError(true);
         setIsLoading(false);
       }
-      console.group(episodeId);
-
-      // for (let i = 0; i < episodeId.length; i++) {
-      //   setCurrentEp(episodeId[i]);
-      //   console.log(episodeData);
-      // }
     };
+
+    console.log(episodeData);
 
     const fetchVideos = async () => {
       setIsLoading(true);
 
       try {
         const responseVideo = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${id}`
+          `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
         );
         const dataVideo = await responseVideo.json();
         setVideoData(dataVideo.sources.map((item) => item.url));
@@ -72,15 +71,28 @@ const Stream = () => {
     fetchVideos();
   }, []);
 
-  // useEffect(() => {
-
-  // }, []);
-
-  console.log(episodeId);
-
   return (
     <Box>
       <Navbar />
+      {isLoading && (
+        <Error
+          // msg={"Still Working..."}
+          loadingState={isLoading}
+          height="100%"
+          // error={error}
+          pos="fixed"
+        />
+      )}
+
+      {error && (
+        <Error
+          msg={"Still Working..."}
+          // loadingState={isLoading}
+          height="100%"
+          error={error}
+          pos="fixed"
+        />
+      )}
 
       <Box background="var(--primary-background-color)">
         <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
@@ -210,37 +222,40 @@ const Stream = () => {
                     </Box>
                     <Box
                       p="20px 10px"
-                      display="flex"
-                      flexDir="column"
-                      gap="15px 0"
+                      display={{ base: "grid" }}
+                      gridTemplateColumns={{
+                        base: "100%",
+                        sm: "repeat(3, 1fr)",
+                        md: "repeat(6, 1fr)",
+                      }}
+                      flexDir={{ base: "row", md: "column" }}
+                      flexWrap="wrap"
+                      gap={{ base: "15px", sm: "15px 25px", md: "15px 0" }}
                     >
-                      {isLoading ? (
-                        <Text color="var(--text-color)">Loading...</Text>
-                      ) : error ? (
-                        <Text color="var(--text-color)">{error}</Text>
-                      ) : (
-                        (() => {
-                          const elements = [];
+                      {(() => {
+                        const elements = [];
 
-                          for (let i = 0; i < episodeData.length; i++) {
-                            const item = episodeData[i];
-                            // setEpisodeId(item.id);
+                        for (let i = 0; i < episodeData.length; i++) {
+                          const item = episodeData[i];
+                          // setEpisodeId(item.id);
 
-                            // Use item properties in JSX
-                            elements.push(
-                              <Link key={item.number} to={`/stream/${item.id}`}>
-                                <Text
-                                  color="var(--text-color)"
-                                  _hover={{ color: "var(--link-hover-color)" }}
-                                >{`Episode ${item.number}`}</Text>
-                              </Link>
-                            );
-                          }
+                          // Use item properties in JSX
+                          elements.push(
+                            <Link
+                              key={item.number}
+                              to={`/watch/${item.image}/${animeId}/${item.id}`}
+                            >
+                              <Text
+                                color="var(--text-color)"
+                                _hover={{ color: "var(--link-hover-color)" }}
+                              >{`Episode ${item.number}`}</Text>
+                            </Link>
+                          );
+                        }
 
-                          console.log(elements);
-                          return elements;
-                        })()
-                      )}
+                        console.log(elements);
+                        return elements;
+                      })()}
                     </Box>
                   </Box>
                 </Box>

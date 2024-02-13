@@ -136,7 +136,7 @@ const View = () => {
         />
       )}
 
-      {/* {epError && (
+      {epError && (
         <Error
           msg={"Still Working..."}
           loadingState={isLoading}
@@ -144,7 +144,7 @@ const View = () => {
           error={setEpError}
           pos="fixed"
         />
-      )} */}
+      )}
 
       <Box background="var(--primary-background-color)">
         <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
