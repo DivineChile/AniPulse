@@ -3,17 +3,28 @@ import { useState } from "react";
 
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
 
-const EpisodeList = ({ items, itemImg, id, itemId, itemNum }) => {
+const EpisodeList = ({ items, itemId }) => {
   const [showAll, setShowAll] = useState(false);
+
   const episodes = [];
 
-  const endIndex = showAll ? items.length : 15;
+  const endIndex = showAll
+    ? items.length > 15
+      ? items.length
+      : 15
+    : items.length > 15
+    ? 15
+    : items.length;
 
   for (let i = 0; i < endIndex; i++) {
+    const epArray = itemId[i].split("-");
+    // console.log(epArray);
+    const newItemID = `Episode ${epArray.pop()}`;
+    console.log(newItemID);
     episodes.push(
       <ChakraLink
         as={ReactRouterLink}
-        to={`/watch/${encodeURIComponent(itemImg[i])}/${id}/${itemId[i]}`}
+        to={`/watch/${itemId[i]}`}
         _hover={{
           textDecor: "none",
           color: "var(--link-hover-color)",
@@ -40,7 +51,7 @@ const EpisodeList = ({ items, itemImg, id, itemId, itemNum }) => {
         mb="10px"
         key={i}
       >
-        {`Episode ${itemNum[i]}`}
+        {newItemID}
       </ChakraLink>
     );
   }

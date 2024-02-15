@@ -71,6 +71,9 @@ const Hero = () => {
   const currentDesc = animeDesc.length > 0 ? animeDesc[imageIndex] : "";
   const currentID = animeID.length > 0 ? animeID[imageIndex] : "";
 
+  const mainDesc =
+    currentDesc.length > 60 ? `${currentDesc.slice(0, 200)}...` : currentDesc;
+
   const handlePrevClick = () => {
     if (imageIndex === 0) {
       setImageIndex(bgImages.length - 1);
@@ -100,6 +103,9 @@ const Hero = () => {
           }}
           error={error}
           pos="absolute"
+          left="0"
+          top={{ base: "70.89px", md: "74px", lg: "84px" }}
+          width="100%"
         />
       )}
 
@@ -114,6 +120,9 @@ const Hero = () => {
           }}
           error={error}
           pos="absolute"
+          left="0"
+          top={{ base: "70.89px", md: "74px", lg: "84px" }}
+          width="100%"
         />
       )}
 
@@ -262,9 +271,10 @@ const Hero = () => {
               fontWeight={{ base: "300", md: "normal" }}
               transition="all ease 0.25s"
             >
-              {currentDesc.length > 65
+              {/* {currentDesc.length > 65
                 ? `${currentDesc.slice(0, 200)}...`
-                : currentDesc}
+                : currentDesc} */}
+              {mainDesc}
             </Text>
 
             <Box width="100%" my={{ base: "15px", md: "10px" }}>

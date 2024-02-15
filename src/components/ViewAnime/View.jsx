@@ -49,7 +49,7 @@ const View = () => {
         setAnimeInfo(animeData);
         setAnimeId(animeData.id);
         const response = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeData.id}`
+          `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeData.id_provider.idGogo}`
         );
         const data = await response.json();
         setAnimeData(data);
@@ -112,7 +112,6 @@ const View = () => {
   // console.log(timeRemaining.days);
   // console.log(timeRemaining.minutes);
   // console.log(Date.now());
-  console.log(animeEpId);
   // console.log(1707917400 + 167150);
   // 1708084550;
   // 1707754029547;
@@ -121,7 +120,6 @@ const View = () => {
 
   const reversedAnimeEpNum = animeEpNum.slice().reverse();
   const reversedAnimeEpId = animeEpId.slice().reverse();
-  const reversedAnimeImg = coverImage.slice().reverse();
 
   return (
     <Box>
@@ -130,9 +128,13 @@ const View = () => {
         <Error
           // msg={"Still Working..."}
           loadingState={isLoading}
-          height="100vh"
+          height="100%"
           error={error}
           pos="fixed"
+          top={{ base: "70.89px", md: "74px", lg: "84px" }}
+          left="0"
+          // top="0"
+          width="100%"
         />
       )}
 
@@ -143,6 +145,9 @@ const View = () => {
           height="100%"
           error={setEpError}
           pos="fixed"
+          top={{ base: "70.89px", md: "74px", lg: "84px" }}
+          left="0"
+          width="100%"
         />
       )}
 
@@ -315,9 +320,29 @@ const View = () => {
                       lineHeight="24px"
                       transition="background ease 0.25s"
                     >
-                      {animeStudio[0]
-                        ? `${animeStudio[0]}, ${animeStudio[1]}, ${animeStudio[2]}`
-                        : "Loading..."}
+                      {(() => {
+                        const elements = [];
+
+                        for (let i = 0; i < animeStudio.length; i++) {
+                          const item = animeInfo.studios[i].name;
+
+                          elements.push(
+                            <Text
+                              color="var(--secondary-accent-color)"
+                              as="span"
+                              fontSize="15px"
+                              fontWeight="300"
+                              lineHeight="24px"
+                              transition="background ease 0.25s"
+                              key={item[i]}
+                            >
+                              {`${item}, `}
+                            </Text>
+                          );
+                        }
+
+                        return elements;
+                      })()}
                     </Text>
                   </Box>
                   {/* Anime Season */}
@@ -487,13 +512,8 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    <EpisodeList
-                      items={animeEpId}
-                      itemImg={reversedAnimeImg}
-                      itemId={reversedAnimeEpId}
-                      id={id}
-                      itemNum={reversedAnimeEpNum}
-                    />
+                    {console.log(reversedAnimeEpId)}
+                    <EpisodeList items={animeEpId} itemId={animeEpId} />
                   </Box>
                 </Box>
               </GridItem>

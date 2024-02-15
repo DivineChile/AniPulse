@@ -16,10 +16,9 @@ import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import EpisodeList from "../../components/EpisodeList/EpisodeList";
 
 const Stream = () => {
-  const { epUrl, animeId, watchId } = useParams();
+  const { animeId, watchId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
@@ -81,6 +80,9 @@ const Stream = () => {
           height="100%"
           // error={error}
           pos="fixed"
+          top="0"
+          left="0"
+          width="100%"
         />
       )}
 
@@ -91,6 +93,9 @@ const Stream = () => {
           height="100%"
           error={error}
           pos="fixed"
+          top="0"
+          left="0"
+          width="100%"
         />
       )}
 

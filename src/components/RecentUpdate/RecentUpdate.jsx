@@ -17,14 +17,13 @@ import { Link as ReactRouterLink } from "react-router-dom";
 import animeImg from "../../assets/img-2.png";
 import { useEffect, useState } from "react";
 import Recents from "../RecentList/Recents";
+import Error from "../ErrorPage/Error";
 
 const RecentUpdate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [subAnimeData, setSubAimeData] = useState([]);
   const [subAnimeTitle, setSubAnimeTitle] = useState([]);
-  const [subAnimeImg, setSubAnimeImg] = useState([]);
-  const [subAnimeEpId, setSubAnimeEpId] = useState([]);
   const [dubAnimeData, setDubAimeData] = useState([]);
   const [CnAnimeData, setCnAimeData] = useState([]);
 
@@ -46,6 +45,7 @@ const RecentUpdate = () => {
         setSubAnimeEpId(subAnimeData.map((item) => item.episode_id));
         setSubAnimeImg(subAnimeData.map((item) => item.image_url));
         setSubAnimeTitle(subAnimeData.map((item) => item.title));
+        setSubAnimeEp(subAnimeData.map((item) => item.episode));
 
         //Dubbed Api
         const responseDub = await fetch(
@@ -70,8 +70,11 @@ const RecentUpdate = () => {
         }
         const cnData = await responseCn.json();
         setCnAimeData(cnData.results);
+        setIsLoading(false);
+        setError(false);
       } catch (error) {
-        setError("Still Working...");
+        setError(true);
+        setIsLoading(false);
       }
     }
     // Fetch Dubbed Anime
@@ -104,9 +107,6 @@ const RecentUpdate = () => {
 
   const { dayOfWeek, fullDayName, newFullDate } = getCurrentDate();
 
-  console.log(subAnimeTitle);
-  console.log(dubAnimeData);
-  console.log(CnAnimeData);
   return (
     // Recent Release
     <Box
@@ -215,90 +215,44 @@ const RecentUpdate = () => {
             </Tab>
           </TabList>
 
-          <TabPanels>
-            <TabPanel transition="all ease 0.25s">
+          <TabPanels transition="all ease 0.5s">
+            <TabPanel transition="all ease 0.5s">
               <Grid
                 display={{ base: "grid", md: "grid" }}
                 justifyItems="flex-start"
                 gridTemplateColumns={{
                   base: "100%",
+                  sm: "repeat(2, 1fr)",
                   md: "repeat(3, 1fr)",
-                  xl: "repeat(4, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                  "2xl": "repeat(5, 1fr)",
                 }}
-                gap={{ base: "20px 0", md: "15px 25px" }}
+                gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
+                pos="relative"
               >
-                {/* <GridItem w={{ base: "100%", md: "306px" }}>
-                  <Box
-                    as={ReactRouterLink}
-                    pos="relative"
-                    overflow="hidden!important"
-                  >
-                    Anime Img
-                    <Image
-                      // src={}
-                      bg={"#191919"}
-                      w="100%"
-                      borderRadius="10px"
-                      transition="all ease 0.45s"
-                      h={{ base: "488.23px", md: "408.19px" }}
-                      _hover={{ transform: "scale(1.2)" }}
-                      border="1px solid red"
-                    />
-
-                    Overlay
-                    <Box
-                      pos="absolute"
-                      top="0"
-                      left="0"
-                      width="100%"
-                      height="100%"
-                      background="rgba(0,0,0,0.5)"
-                      opacity="0"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      transition="opacity 0.2s"
-                      border="1px solid blue"
-                      _hover={{ opacity: "1" }}
-                    >
-                      <ChakraLink
-                        as={ReactRouterLink}
-                        to={"/"}
-                        color="var(--text-color)"
-                        _hover={{
-                          color: "var(--secondary-accent-color)",
-                          transition: "all ease 0.25s",
-                        }}
-                        fontSize="22.88px"
-                        lineHeight="36px"
-                        letterSpacing="0.5px"
-                        fontWeight="500"
-                      >
-                        Play Now
-                      </ChakraLink>
-                    </Box>
-                  </Box>
-                  <ChakraLink as={ReactRouterLink}>
-                    Anime Name
-                    <Text
-                      as="p"
-                      fontSize="22.88px"
-                      lineHeight="36px"
-                      letterSpacing="0.5px"
-                      fontWeight="500"
-                      color="var(--text-color)"
-                      textAlign="start"
-                    >
-                      Hello
-                    </Text>
-                  </ChakraLink>
-                </GridItem> */}
-                <Recents
-                  item={subAnimeTitle}
-                  itemId={subAnimeEpId}
-                  itemImg={subAnimeImg}
-                  itemTitle={subAnimeTitle}
-                />
+                {/* {isLoading && (
+                  <Error
+                    // error={error}
+                    loadingState={isLoading}
+                    pos="absolute"
+                    // msg={""}
+                    height="fit-content"
+                    width="100%"
+                    left="0"
+                  />
+                )}
+                {error && (
+                  <Error
+                    error={error}
+                    // loadingState={isLoading}
+                    pos="absolute"
+                    msg={"Still Working..."}
+                    height="fit-content"
+                    width="100%"
+                    left="0"
+                  />
+                )} */}
+                {subAnimeData && <Recents />}
               </Grid>
             </TabPanel>
           </TabPanels>

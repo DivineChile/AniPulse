@@ -1,14 +1,14 @@
 import { Box, Heading, Spinner } from "@chakra-ui/react";
 
-const Error = ({ msg, loadingState, error, height, pos }) => {
+const Error = ({ msg, loadingState, error, height, pos, top, left, width }) => {
   return (
     <Box
       h={height}
-      w="100%"
-      background="rgba(25, 27, 40, 1)"
+      w={width}
+      background="#3f3fff"
       pos={pos}
-      top={{ base: "70.89px", md: "74px", lg: "84px" }}
-      left="0"
+      top={top}
+      left={left}
       display="flex"
       alignItems="center"
       justifyContent="center"
