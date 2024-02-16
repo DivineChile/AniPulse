@@ -1,8 +1,6 @@
 import {
   Box,
-  Flex,
   Grid,
-  GridItem,
   Heading,
   Text,
   Tabs,
@@ -10,76 +8,18 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Image,
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import animeImg from "../../assets/img-2.png";
 import { useEffect, useState } from "react";
-import Recents from "../RecentList/Recents";
+import RecentSub from "../RecentList/RecentSub";
 import Error from "../ErrorPage/Error";
+import RecentDub from "../RecentList/RecentDub";
+import RecentCn from "../RecentList/RecentCn";
 
 const RecentUpdate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [subAnimeData, setSubAimeData] = useState([]);
-  const [subAnimeTitle, setSubAnimeTitle] = useState([]);
-  const [dubAnimeData, setDubAimeData] = useState([]);
-  const [CnAnimeData, setCnAimeData] = useState([]);
-
-  useEffect(() => {
-    // Fecth Subbed Anime
-    async function fetchRecentReleaseAnime() {
-      try {
-        //Subbed Api
-        const responseSub = await fetch(
-          "https://api-amvstrm.nyt92.eu.org/api/v1/recentepisode/sub"
-        );
-
-        if (!responseSub.ok) {
-          setError("Please Check Connection");
-          setIsLoading(false);
-        }
-        const subData = await responseSub.json();
-        setSubAimeData(subData.results.map((item) => item));
-        setSubAnimeEpId(subAnimeData.map((item) => item.episode_id));
-        setSubAnimeImg(subAnimeData.map((item) => item.image_url));
-        setSubAnimeTitle(subAnimeData.map((item) => item.title));
-        setSubAnimeEp(subAnimeData.map((item) => item.episode));
-
-        //Dubbed Api
-        const responseDub = await fetch(
-          "https://api-amvstrm.nyt92.eu.org/api/v1/recentepisode/dub"
-        );
-
-        if (!responseDub.ok) {
-          setError("Please Check Connection");
-          setIsLoading(false);
-        }
-        const dubData = await responseDub.json();
-        setDubAimeData(dubData.results);
-
-        //Subbed Api
-        const responseCn = await fetch(
-          "https://api-amvstrm.nyt92.eu.org/api/v1/recentepisode/cn"
-        );
-
-        if (!responseCn.ok) {
-          setError("Please Check Connection");
-          setIsLoading(false);
-        }
-        const cnData = await responseCn.json();
-        setCnAimeData(cnData.results);
-        setIsLoading(false);
-        setError(false);
-      } catch (error) {
-        setError(true);
-        setIsLoading(false);
-      }
-    }
-    // Fetch Dubbed Anime
-    fetchRecentReleaseAnime();
-  }, []);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -156,7 +96,6 @@ const RecentUpdate = () => {
           variant="unstyled"
           align="end"
           defaultIndex={0}
-          isLazy="true"
         >
           <TabList mb="20px" gap="0 10px">
             <Tab
@@ -252,7 +191,85 @@ const RecentUpdate = () => {
                     left="0"
                   />
                 )} */}
-                {subAnimeData && <Recents />}
+                {<RecentSub />}
+              </Grid>
+            </TabPanel>
+            <TabPanel transition="all ease 0.5s">
+              <Grid
+                display={{ base: "grid", md: "grid" }}
+                justifyItems="flex-start"
+                gridTemplateColumns={{
+                  base: "100%",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                  "2xl": "repeat(5, 1fr)",
+                }}
+                gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
+                pos="relative"
+              >
+                {/* {isLoading && (
+                  <Error
+                    // error={error}
+                    loadingState={isLoading}
+                    pos="absolute"
+                    // msg={""}
+                    height="fit-content"
+                    width="100%"
+                    left="0"
+                  />
+                )}
+                {error && (
+                  <Error
+                    error={error}
+                    // loadingState={isLoading}
+                    pos="absolute"
+                    msg={"Still Working..."}
+                    height="fit-content"
+                    width="100%"
+                    left="0"
+                  />
+                )} */}
+                {<RecentDub />}
+              </Grid>
+            </TabPanel>
+            <TabPanel transition="all ease 0.5s">
+              <Grid
+                display={{ base: "grid", md: "grid" }}
+                justifyItems="flex-start"
+                gridTemplateColumns={{
+                  base: "100%",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                  "2xl": "repeat(5, 1fr)",
+                }}
+                gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
+                pos="relative"
+              >
+                {/* {isLoading && (
+                  <Error
+                    // error={error}
+                    loadingState={isLoading}
+                    pos="absolute"
+                    // msg={""}
+                    height="fit-content"
+                    width="100%"
+                    left="0"
+                  />
+                )}
+                {error && (
+                  <Error
+                    error={error}
+                    // loadingState={isLoading}
+                    pos="absolute"
+                    msg={"Still Working..."}
+                    height="fit-content"
+                    width="100%"
+                    left="0"
+                  />
+                )} */}
+                {<RecentCn />}
               </Grid>
             </TabPanel>
           </TabPanels>

@@ -9,13 +9,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import Player from "../../components/VideoPlayer/Player";
+import "./style.css";
 
 const Stream = () => {
   const { watchId } = useParams();
@@ -25,7 +26,7 @@ const Stream = () => {
   const [episodeData, setEpisodeData] = useState([]);
 
   const [videoData, setVideoData] = useState([]);
-  // const [videoUrl, setVideoUrl] = useState("");
+  const location = useLocation();
 
   const newAnimeId = watchId.split("-").slice(0, -2);
   const newAnimeIdVal = newAnimeId.join("-");
@@ -176,7 +177,7 @@ const Stream = () => {
                   bg="var(--secondary-accent-color)"
                   borderRadius="10px"
                 >
-                  <Player />
+                  <Player playIcon={<Image src={playIcon} />} />
                 </Box>
                 {/* Overlay
                 <Box
@@ -283,8 +284,14 @@ const Stream = () => {
                           elements.push(
                             <Link key={item[i]} to={`/watch/${item.id}`}>
                               <Text
+                                as="span"
                                 color="var(--text-color)"
                                 _hover={{ color: "var(--link-hover-color)" }}
+                                className={
+                                  location.pathname == `watch/${item.id}`
+                                    ? "active"
+                                    : ""
+                                }
                               >
                                 {newItemID}
                               </Text>

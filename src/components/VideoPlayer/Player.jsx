@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ReactPlayer from "react-player";
+import Error from "../ErrorPage/Error";
 
-const Player = () => {
+const Player = ({ playIcon }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(false);
@@ -37,16 +38,28 @@ const Player = () => {
 
   return (
     <div className="player-wrapper">
-      {currentUrl && (
-        <ReactPlayer
-          controls
-          url={currentUrl}
-          width="100%"
+      {loading && (
+        <Error
+          // msg="Still Loading"
+          loadingState={loading}
           height="100%"
-          style={{ width: "100%", height: "100%", borderRadius: "10px" }}
-          playing
+          width="100%"
+          // error={err}
+          pos="absolute"
+          top="0"
+          left="0"
         />
       )}
+
+      <ReactPlayer
+        light={playIcon}
+        controls
+        url={currentUrl}
+        width="100%"
+        height="100%"
+        style={{ width: "100%", height: "100%", borderRadius: "10px" }}
+        playing
+      />
     </div>
   );
 };
