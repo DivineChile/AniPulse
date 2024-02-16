@@ -12,7 +12,7 @@ import "./style.css";
 const RecentCn = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [cnAnimeData, setCnAimeData] = useState([]);
+  const [cnAnimeData, setCnAimeData] = useState(null);
   const [cnAnimeTitle, setCnAnimeTitle] = useState([]);
   const [cnAnimeImg, setCnAnimeImg] = useState([]);
   const [cnAnimeEp, setCnAnimeEp] = useState(undefined);
@@ -60,8 +60,9 @@ const RecentCn = () => {
         ? `${cnAnimeTitle[i].slice(0, 30)}...`
         : cnAnimeTitle[i];
 
-    cnAnimeData
-      ? recentAnime.push(
+    cnAnimeData === null
+      ? recentAnime.push(<></>)
+      : recentAnime.push(
           <GridItem w={{ base: "100%" }} key={cnAnimeEpId[i]}>
             <Box
               as={ReactRouterLink}
@@ -112,9 +113,9 @@ const RecentCn = () => {
                   <ChakraLink
                     as={ReactRouterLink}
                     to={`/watch/${cnAnimeEpId[i]}`}
-                    color="var(--text-color)"
+                    color="var(--link-color)"
                     _hover={{
-                      color: "var(--secondary-accent-color)",
+                      color: "var(--link-color)",
                       transition: "all ease 0.25s",
                     }}
                     fontSize="22.88px"
@@ -130,7 +131,7 @@ const RecentCn = () => {
             <Box
               display="flex"
               flexDir="column"
-              alignItems={{ base: "flex-start", md: "center" }}
+              alignItems={{ base: "flex-start" }}
               mt="10px"
             >
               <Text
@@ -155,28 +156,27 @@ const RecentCn = () => {
                   fontSize={{
                     base: "17px",
                     sm: "19px",
-                    md: "21px",
-                    lg: "22.88px",
+                    lg: "20px",
+                    "2xl": "22.88px",
                   }}
                   lineHeight="26px"
-                  mt="5px"
+                  // mt="5px"
                   letterSpacing="0.5px"
                   fontWeight="500"
-                  textAlign={{ base: "start", md: "center" }}
-                  color="var(--text-color)"
+                  textAlign={{ base: "start" }}
+                  color="var(--link-color)"
                   transition="all ease 0.25s"
-                  _hover={{ color: "var(--secondary-accent-color)" }}
+                  _hover={{ color: "var(--link-hover-color)" }}
                 >
                   {epLength}
                 </Text>
               </ChakraLink>
             </Box>
           </GridItem>
-        )
-      : recentAnime.push(<></>);
+        );
   }
 
-  const showAllLink = cnAnimeData.length > 10;
+  const showAllLink = cnAnimeData?.length > 10;
 
   const handleShowAllClick = () => {
     setShowAll((prevShowAll) => !prevShowAll);

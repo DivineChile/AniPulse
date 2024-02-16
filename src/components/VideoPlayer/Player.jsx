@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import ReactPlayer from "react-player";
+import ReactPlayer from "react-player/lazy";
 import Error from "../ErrorPage/Error";
 
 const Player = ({ playIcon }) => {
@@ -52,8 +52,9 @@ const Player = ({ playIcon }) => {
       )}
 
       <ReactPlayer
-        light={playIcon}
+        light={true}
         controls
+        playIcon={playIcon}
         url={currentUrl}
         width="100%"
         height="100%"

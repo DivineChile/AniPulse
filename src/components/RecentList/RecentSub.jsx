@@ -62,7 +62,7 @@ const Recents = () => {
         : subAnimeTitle[i];
 
     subAnimeData === null
-      ? recentAnime.push(<Text color="--text-color">Loading...</Text>)
+      ? recentAnime.push(<></>)
       : recentAnime.push(
           <GridItem w={{ base: "100%" }} key={subAnimeEpId[i]}>
             <Box
@@ -114,9 +114,9 @@ const Recents = () => {
                   <ChakraLink
                     as={ReactRouterLink}
                     to={`/watch/${subAnimeEpId[i]}`}
-                    color="var(--text-color)"
+                    color="var(--link-color)"
                     _hover={{
-                      color: "var(--secondary-accent-color)",
+                      color: "var(--link-color)",
                       transition: "all ease 0.25s",
                     }}
                     fontSize="22.88px"
@@ -132,13 +132,13 @@ const Recents = () => {
             <Box
               display="flex"
               flexDir="column"
-              alignItems={{ base: "flex-start", md: "center" }}
+              alignItems={{ base: "flex-start" }}
               mt="10px"
             >
               <Text
                 as="p"
                 color="var(--text-color)"
-                fontSize={{ base: "15.91px", md: "17.97px" }}
+                fontSize={{ base: "15.91px", "2xl": "17.97px" }}
                 lineHeight="24px"
                 letterSpacing="0.5px"
               >
@@ -157,17 +157,17 @@ const Recents = () => {
                   fontSize={{
                     base: "17px",
                     sm: "19px",
-                    md: "21px",
-                    lg: "22.88px",
+                    lg: "20px",
+                    "2xl": "22.88px",
                   }}
                   lineHeight="26px"
-                  mt="5px"
+                  // mt="5px"
                   letterSpacing="0.5px"
                   fontWeight="500"
-                  textAlign={{ base: "start", md: "center" }}
-                  color="var(--text-color)"
+                  textAlign={{ base: "start" }}
+                  color="var(--link-color)"
                   transition="all ease 0.25s"
-                  _hover={{ color: "var(--secondary-accent-color)" }}
+                  _hover={{ color: "var(--link-hover-color)" }}
                 >
                   {epLength}
                 </Text>

@@ -72,7 +72,7 @@ const Hero = () => {
   const currentID = animeID.length > 0 ? animeID[imageIndex] : "";
 
   const mainDesc =
-    currentDesc.length > 60 ? `${currentDesc.slice(0, 200)}...` : currentDesc;
+    currentDesc?.length > 60 ? `${currentDesc.slice(0, 200)}...` : currentDesc;
 
   const handlePrevClick = () => {
     if (imageIndex === 0) {

@@ -12,7 +12,7 @@ import "./style.css";
 const RecentDub = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dubAnimeData, setDubAimeData] = useState([]);
+  const [dubAnimeData, setDubAimeData] = useState(null);
   const [dubAnimeTitle, setDubAnimeTitle] = useState([]);
   const [dubAnimeImg, setDubAnimeImg] = useState([]);
   const [dubAnimeEp, setDubAnimeEp] = useState(undefined);
@@ -61,8 +61,9 @@ const RecentDub = () => {
         ? `${dubAnimeTitle[i].slice(0, 30)}...`
         : dubAnimeTitle[i];
 
-    dubAnimeData
-      ? recentAnime.push(
+    dubAnimeData === null
+      ? recentAnime.push(<></>)
+      : recentAnime.push(
           <GridItem w={{ base: "100%" }} key={dubAnimeEpId[i]}>
             <Box
               as={ReactRouterLink}
@@ -113,9 +114,9 @@ const RecentDub = () => {
                   <ChakraLink
                     as={ReactRouterLink}
                     to={`/watch/${dubAnimeEpId[i]}`}
-                    color="var(--text-color)"
+                    color="var(--link-color)"
                     _hover={{
-                      color: "var(--secondary-accent-color)",
+                      color: "var(--link-color)",
                       transition: "all ease 0.25s",
                     }}
                     fontSize="22.88px"
@@ -131,7 +132,7 @@ const RecentDub = () => {
             <Box
               display="flex"
               flexDir="column"
-              alignItems={{ base: "flex-start", md: "center" }}
+              alignItems={{ base: "flex-start" }}
               mt="10px"
             >
               <Text
@@ -156,28 +157,27 @@ const RecentDub = () => {
                   fontSize={{
                     base: "17px",
                     sm: "19px",
-                    md: "21px",
-                    lg: "22.88px",
+                    lg: "20px",
+                    "2xl": "22.88px",
                   }}
                   lineHeight="26px"
-                  mt="5px"
+                  // mt="5px"
                   letterSpacing="0.5px"
                   fontWeight="500"
-                  textAlign={{ base: "start", md: "center" }}
-                  color="var(--text-color)"
+                  textAlign={{ base: "start" }}
+                  color="var(--link-color)"
                   transition="all ease 0.25s"
-                  _hover={{ color: "var(--secondary-accent-color)" }}
+                  _hover={{ color: "var(--link-hover-color)" }}
                 >
                   {epLength}
                 </Text>
               </ChakraLink>
             </Box>
           </GridItem>
-        )
-      : recentAnime.push(<></>);
+        );
   }
 
-  const showAllLink = dubAnimeData.length > 10;
+  const showAllLink = dubAnimeData?.length > 10;
 
   const handleShowAllClick = () => {
     setShowAll((prevShowAll) => !prevShowAll);
