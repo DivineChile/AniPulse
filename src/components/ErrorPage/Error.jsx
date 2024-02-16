@@ -1,6 +1,17 @@
 import { Box, Heading, Spinner } from "@chakra-ui/react";
 
-const Error = ({ msg, loadingState, error, height, pos, top, left, width }) => {
+const Error = ({
+  msg,
+  loadingState,
+  error,
+  height,
+  pos,
+  top,
+  left,
+  width,
+  radius,
+  index,
+}) => {
   return (
     <Box
       h={height}
@@ -13,6 +24,7 @@ const Error = ({ msg, loadingState, error, height, pos, top, left, width }) => {
       alignItems="center"
       justifyContent="center"
       zIndex="1"
+      borderRadius={radius}
     >
       {loadingState && (
         <Box>

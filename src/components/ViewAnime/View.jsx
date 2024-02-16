@@ -512,7 +512,6 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    {console.log(reversedAnimeEpId)}
                     <EpisodeList items={animeEpId} itemId={animeEpId} />
                   </Box>
                 </Box>

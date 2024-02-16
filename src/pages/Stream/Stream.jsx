@@ -3,7 +3,6 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  Flex,
   Grid,
   GridItem,
   Image,
@@ -11,43 +10,43 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
+import Player from "../../components/VideoPlayer/Player";
+
 const Stream = () => {
-  const { animeId, watchId } = useParams();
+  const { watchId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
   const [episodeData, setEpisodeData] = useState([]);
 
   const [videoData, setVideoData] = useState([]);
+  // const [videoUrl, setVideoUrl] = useState("");
 
-  const [currentEp, setCurrentEp] = useState({});
+  const newAnimeId = watchId.split("-").slice(0, -2);
+  const newAnimeIdVal = newAnimeId.join("-");
 
   useEffect(() => {
     const fetchEpisodes = async () => {
       setIsLoading(true);
       try {
         const responseEp = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${animeId}`
+          `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${newAnimeIdVal}`
         );
         const dataEp = await responseEp.json();
         setEpisodeData(dataEp.episodes.map((item) => item));
         setEpisodeId(dataEp.episodes.map((item) => item.id));
 
-        console.log(episodeData);
         setIsLoading(false);
       } catch (err) {
         setError(true);
         setIsLoading(false);
       }
     };
-
-    console.log(episodeData);
 
     const fetchVideos = async () => {
       setIsLoading(true);
@@ -57,9 +56,9 @@ const Stream = () => {
           `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
         );
         const dataVideo = await responseVideo.json();
-        setVideoData(dataVideo.sources.map((item) => item.url));
-
-        setIsLoading(false);
+        setVideoData(dataVideo);
+        // setVideoUrl(videoData.stream.multi.main);
+        document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode}`;
       } catch (error) {
         setError(true);
         setIsLoading(false);
@@ -69,6 +68,8 @@ const Stream = () => {
     fetchEpisodes();
     fetchVideos();
   }, []);
+
+  // console.log(videoData.stream.multi.main.url);
 
   return (
     <Box>
@@ -80,7 +81,7 @@ const Stream = () => {
           height="100%"
           // error={error}
           pos="fixed"
-          top="0"
+          top={{ base: "70.89px", md: "74px", lg: "84px" }}
           left="0"
           width="100%"
         />
@@ -89,11 +90,11 @@ const Stream = () => {
       {error && (
         <Error
           msg={"Still Working..."}
-          // loadingState={isLoading}
+          loadingState={isLoading}
           height="100%"
           error={error}
           pos="fixed"
-          top="0"
+          top={{ base: "70.89px", md: "74px", lg: "84px" }}
           left="0"
           width="100%"
         />
@@ -131,7 +132,7 @@ const Stream = () => {
           <Box>
             <Grid
               gridTemplateColumns="repeat(6, 1fr)"
-              gap={{ base: "20px 0", md: "0 10px" }}
+              gap={{ base: "60px 0", md: "0 10px" }}
             >
               {/* Anime Video */}
               <GridItem
@@ -140,18 +141,44 @@ const Stream = () => {
                   base: "250px",
                   sm: "300px",
                   md: "350px",
-                  lg: "450px",
-                  "2xl": "600px",
+                  lg: "450px!important",
+                  "2xl": "600px!important",
                 }}
                 pos="relative"
               >
+                {/* {isLoading && (
+                  <Error
+                    // error={error}
+                    loadingState={isLoading}
+                    pos="absolute"
+                    top="0"
+                    left="0"
+                    width="100%"
+                    height="100%"
+                    radius="10px"
+                  />
+                )}
+                {error && (
+                  <Error
+                    error={error}
+                    msg="Still Working..."
+                    pos="absolute"
+                    top="0"
+                    left="0"
+                    width="100%"
+                    height="100%"
+                    radius="10px"
+                  />
+                )} */}
                 <Box
                   w="100%"
                   h="100%"
                   bg="var(--secondary-accent-color)"
                   borderRadius="10px"
-                ></Box>
-                {/* Overlay */}
+                >
+                  <Player />
+                </Box>
+                {/* Overlay
                 <Box
                   bg="rgba(25, 27, 40, 0.7)"
                   pos="absolute"
@@ -181,7 +208,7 @@ const Stream = () => {
                       w={{ base: "35px", lg: "44px" }}
                     />
                   </Box>
-                </Box>
+                </Box> */}
               </GridItem>
               {/* Anime Episodes */}
               <GridItem
@@ -200,9 +227,9 @@ const Stream = () => {
                   bg="var(--secondary-accent-color)"
                   borderRadius="10px"
                   display="flex"
-                  alignItems="center"
-                  justifyContent="center"
                   overflowY="scroll"
+                  alignItems="center"
+                  justifyContent={{ base: "flex-start", md: "center" }}
                 >
                   {/* Season box */}
                   <Box p="40px 20px">
@@ -216,6 +243,9 @@ const Stream = () => {
                         color="var(--text-color)"
                         fontSize="17.58px"
                         lineHeight="24px"
+                        // height="47px"
+                        // display="flex"
+                        // justifyContent="center"
                       >
                         Season 1
                       </Text>
@@ -228,12 +258,13 @@ const Stream = () => {
                     <Box
                       p="20px 10px"
                       display={{ base: "grid" }}
-                      gridTemplateColumns={{
-                        base: "100%",
-                        sm: "repeat(3, 1fr)",
-                        md: "repeat(6, 1fr)",
-                      }}
+                      // gridTemplateColumns={{
+                      //   base: "100%",
+                      //   sm: "repeat(3, 1fr)",
+                      //   md: "repeat(6, 1fr)",
+                      // }}
                       flexDir={{ base: "row", md: "column" }}
+                      justifyContent="start"
                       flexWrap="wrap"
                       gap={{ base: "15px", sm: "15px 25px", md: "15px 0" }}
                     >
@@ -242,23 +273,25 @@ const Stream = () => {
 
                         for (let i = 0; i < episodeData.length; i++) {
                           const item = episodeData[i];
+                          const epArray = item.id.split("-");
+
+                          const newItemID = `Episode ${epArray.pop()}`;
+
                           // setEpisodeId(item.id);
 
                           // Use item properties in JSX
                           elements.push(
-                            <Link
-                              key={item.number}
-                              to={`/watch/${item.image}/${animeId}/${item.id}`}
-                            >
+                            <Link key={item[i]} to={`/watch/${item.id}`}>
                               <Text
                                 color="var(--text-color)"
                                 _hover={{ color: "var(--link-hover-color)" }}
-                              >{`Episode ${item.number}`}</Text>
+                              >
+                                {newItemID}
+                              </Text>
                             </Link>
                           );
                         }
 
-                        console.log(elements);
                         return elements;
                       })()}
                     </Box>

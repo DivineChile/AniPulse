@@ -9,18 +9,18 @@ const EpisodeList = ({ items, itemId }) => {
   const episodes = [];
 
   const endIndex = showAll
-    ? items.length > 15
+    ? items.length > 5
       ? items.length
-      : 15
-    : items.length > 15
-    ? 15
+      : 5
+    : items.length > 5
+    ? 5
     : items.length;
 
   for (let i = 0; i < endIndex; i++) {
     const epArray = itemId[i].split("-");
-    // console.log(epArray);
+
     const newItemID = `Episode ${epArray.pop()}`;
-    console.log(newItemID);
+
     episodes.push(
       <ChakraLink
         as={ReactRouterLink}
@@ -49,7 +49,7 @@ const EpisodeList = ({ items, itemId }) => {
         letterSpacing="1.5px"
         transition="all ease 0.25s"
         mb="10px"
-        key={i}
+        key={i + 1}
       >
         {newItemID}
       </ChakraLink>
@@ -57,7 +57,7 @@ const EpisodeList = ({ items, itemId }) => {
   }
 
   //check if there are more than 15 items and "Show More" link is not clicked
-  const showMoreLink = items.length > 8;
+  const showMoreLink = items.length > 5;
 
   // Define the onClick handler for the "Show More" link
   const handleShowMoreClick = () => {

@@ -271,9 +271,6 @@ const Hero = () => {
               fontWeight={{ base: "300", md: "normal" }}
               transition="all ease 0.25s"
             >
-              {/* {currentDesc.length > 65
-                ? `${currentDesc.slice(0, 200)}...`
-                : currentDesc} */}
               {mainDesc}
             </Text>
 
