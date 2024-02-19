@@ -3,6 +3,8 @@ import Hero from "../../components/Hero/Hero";
 import RecentUpdate from "../../components/RecentUpdate/RecentUpdate";
 
 const Home = () => {
+  document.title = "Home - AniPulse";
+
   return (
     <Box>
       <Box>

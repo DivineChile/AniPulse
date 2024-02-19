@@ -53,7 +53,6 @@ const RecentDub = () => {
   }, [dubAnimeData]);
 
   const endIndex = showAll ? dubAnimeData.length : 10;
-  console.log(dubAnimeData);
 
   for (let i = 0; i < endIndex; i++) {
     const epLength =
@@ -76,7 +75,7 @@ const RecentDub = () => {
                 base: "400.23px",
                 sm: "380.23px",
                 md: "350px",
-                lg: "380px",
+                lg: "360px",
                 "2xl": "408.19px",
               }}
               display="flex"

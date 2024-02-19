@@ -130,9 +130,7 @@ const Hero = () => {
         <Navbar />
       </Box>
       <Box
-        background={
-          currentImage ? `url(${currentImage})` : "rgba(25, 27, 40, 0.7)"
-        }
+        background={currentImage ? `url(${currentImage})` : "#191919"}
         backgroundPosition="center"
         transition="background ease 0.25s"
         backgroundSize="cover"

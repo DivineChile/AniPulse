@@ -53,7 +53,6 @@ const Recents = () => {
   }, [subAnimeData]);
 
   const endIndex = showAll ? subAnimeData.length : 10;
-  console.log(subAnimeData);
 
   for (let i = 0; i < endIndex; i++) {
     const epLength =
@@ -76,7 +75,7 @@ const Recents = () => {
                 base: "400.23px",
                 sm: "380.23px",
                 md: "350px",
-                lg: "380px",
+                lg: "360px",
                 "2xl": "408.19px",
               }}
               display="flex"

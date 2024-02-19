@@ -31,9 +31,10 @@ const View = () => {
   const [animeEp, setAnimeEp] = useState([]);
   const [animeEpId, setAnimeEpId] = useState([]);
   const [animeEpNum, setAnimeEpNum] = useState([]);
-  const [animeData, setAnimeData] = useState([]);
+  const [animeDataEP, setAnimeDataEP] = useState([]);
   const [coverImage, setCoverImage] = useState([]);
   const [epLength, setEpLength] = useState(0);
+  const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
 
   const [airDate, setAirDate] = useState(0);
@@ -41,6 +42,7 @@ const View = () => {
 
   useEffect(() => {
     const fetchAnimeData = async () => {
+      setIsLoading(true);
       try {
         const animeRes = await fetch(
           `https://api-amvstrm.nyt92.eu.org/api/v2/info/${id}`
@@ -48,11 +50,7 @@ const View = () => {
         const animeData = await animeRes.json();
         setAnimeInfo(animeData);
         setAnimeId(animeData.id);
-        const response = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeData.id_provider.idGogo}`
-        );
-        const data = await response.json();
-        setAnimeData(data);
+
         setAnimeTitle(Object.entries(animeData.title).map((item) => item[1]));
         setAnimeImg(
           Object.entries(animeData.coverImage).map((item) => item[1])
@@ -69,21 +67,37 @@ const View = () => {
         );
         setAirDate(animeData.nextair.airingAt);
         setNextAirDate(animeData.nextair.timeUntilAiring);
+        setIsLoading(false);
+        setError(false);
+      } catch {
+        setIsLoading(false);
+        setError(true);
+      }
+    };
 
+    const fetchAnimeEpisodes = async () => {
+      setEpLoading(true);
+      try {
+        const response = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${id}`
+        );
+        const data = await response.json();
+        setAnimeDataEP(data);
         setAnimeEp(data.episodes.map((item) => item));
         setAnimeEpNum(data.episodes.map((item) => item.number));
         setAnimeEpId(data.episodes.map((item) => item.id));
         setEpLength(animeEpNum.length);
         setCoverImage(data.episodes.map((item) => item.image));
-        setIsLoading(false);
+        setEpLoading(false);
         setEpError(false);
       } catch {
-        setIsLoading(false);
         setEpError(true);
+        setEpLoading(false);
       }
     };
 
     fetchAnimeData();
+    fetchAnimeEpisodes();
   }, []);
 
   const calculateTimeRemaining = () => {
@@ -109,6 +123,8 @@ const View = () => {
     return () => clearInterval(interval);
   }, []);
 
+  document.title = `${animeTitle} - AniPulse`;
+
   // console.log(timeRemaining.days);
   // console.log(timeRemaining.minutes);
   // console.log(Date.now());
@@ -118,8 +134,7 @@ const View = () => {
 
   // const elements = [];
 
-  const reversedAnimeEpNum = animeEpNum.slice().reverse();
-  const reversedAnimeEpId = animeEpId.slice().reverse();
+  const reversedId = animeEpId.reverse();
 
   return (
     <Box>
@@ -141,7 +156,6 @@ const View = () => {
       {epError && (
         <Error
           msg={"Still Working..."}
-          loadingState={isLoading}
           height="100%"
           error={setEpError}
           pos="fixed"
@@ -512,7 +526,7 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    <EpisodeList items={animeEpId} itemId={animeEpId} />
+                    <EpisodeList items={reversedId} itemId={reversedId} />
                   </Box>
                 </Box>
               </GridItem>

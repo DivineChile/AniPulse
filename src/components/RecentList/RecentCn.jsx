@@ -52,7 +52,6 @@ const RecentCn = () => {
   }, [cnAnimeData]);
 
   const endIndex = showAll ? cnAnimeData.length : 10;
-  console.log(cnAnimeData);
 
   for (let i = 0; i < endIndex; i++) {
     const epLength =
@@ -75,7 +74,7 @@ const RecentCn = () => {
                 base: "400.23px",
                 sm: "380.23px",
                 md: "350px",
-                lg: "380px",
+                lg: "360px",
                 "2xl": "408.19px",
               }}
               display="flex"

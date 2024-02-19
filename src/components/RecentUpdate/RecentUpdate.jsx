@@ -96,6 +96,7 @@ const RecentUpdate = () => {
           variant="unstyled"
           align="end"
           defaultIndex={0}
+          isLazy
         >
           <TabList mb="20px" gap="0 10px">
             <Tab
