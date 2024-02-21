@@ -8,6 +8,7 @@ import {
 import { Link as ReactRouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./style.css";
+import Error from "../ErrorPage/Error";
 
 const Recents = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -192,7 +193,7 @@ const Recents = () => {
         key="showMore"
         color="var(--text-color)"
         fontSize={{ base: "15px", md: "17px", lg: "19px", "2xl": "22.96px" }}
-        border="3px solid var(--secondary-color)"
+        border="1px solid var(--secondary-color)"
         borderRadius="5px"
         padding="5px 15px"
         transition="all ease 0.25s"

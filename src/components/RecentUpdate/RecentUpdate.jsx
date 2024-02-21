@@ -10,16 +10,11 @@ import {
   TabPanel,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
 import RecentSub from "../RecentList/RecentSub";
-import Error from "../ErrorPage/Error";
 import RecentDub from "../RecentList/RecentDub";
 import RecentCn from "../RecentList/RecentCn";
 
 const RecentUpdate = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const getCurrentDate = () => {
     const today = new Date();
 

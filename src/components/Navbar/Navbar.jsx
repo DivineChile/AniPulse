@@ -86,6 +86,10 @@ const Navbar = () => {
           flexDir={{ base: "column", lg: "row" }}
           alignItems={{ base: "flex-start", lg: "center" }}
           justifyContent={{ base: "flex-start", lg: "center" }}
+          boxShadow={{
+            base: "0px 2px 4px 0px var(--secondary-color)",
+            lg: "none",
+          }}
           backgroundColor="var(--primary-background-color)"
           transition="all ease 0.5s"
           width={{ base: "100%", lg: "fit-content" }}

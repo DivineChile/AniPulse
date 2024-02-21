@@ -15,11 +15,11 @@
   --link-hover-color: #66ffcc;
 
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #353535;
+    background: var(--secondary-color);
     border-radius: 2px;
     margin: 10px 5px;
   }

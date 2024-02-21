@@ -21,7 +21,9 @@ import "./style.css";
 const Stream = () => {
   const { watchId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [epLoading, setEpLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [epError, setEpError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
   const [episodeData, setEpisodeData] = useState([]);
 
@@ -33,7 +35,7 @@ const Stream = () => {
 
   useEffect(() => {
     const fetchEpisodes = async () => {
-      setIsLoading(true);
+      setEpLoading(true);
       try {
         const responseEp = await fetch(
           `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${newAnimeIdVal}`
@@ -42,10 +44,10 @@ const Stream = () => {
         setEpisodeData(dataEp.episodes.map((item) => item));
         setEpisodeId(dataEp.episodes.map((item) => item.id));
 
-        setIsLoading(false);
-      } catch (err) {
-        setError(true);
-        setIsLoading(false);
+        setEpLoading(false);
+      } catch {
+        setEpError(true);
+        setEpLoading(false);
       }
     };
 
@@ -75,7 +77,7 @@ const Stream = () => {
   return (
     <Box>
       <Navbar />
-      {isLoading && (
+      {/* {isLoading && (
         <Error
           // msg={"Still Working..."}
           loadingState={isLoading}
@@ -99,7 +101,7 @@ const Stream = () => {
           left="0"
           width="100%"
         />
-      )}
+      )} */}
 
       <Box background="var(--primary-background-color)">
         <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
@@ -122,7 +124,7 @@ const Stream = () => {
               fontSize={{ base: "15.13px", lg: "18.75px" }}
               lineHeight={{ base: "24px", lg: "30px" }}
               letterSpacing="0.5px"
-              color="var(--link-color)"
+              color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
               <BreadcrumbLink>Stream</BreadcrumbLink>
@@ -147,37 +149,30 @@ const Stream = () => {
                 }}
                 pos="relative"
               >
-                {/* {isLoading && (
-                  <Error
-                    // error={error}
-                    loadingState={isLoading}
-                    pos="absolute"
-                    top="0"
-                    left="0"
-                    width="100%"
-                    height="100%"
-                    radius="10px"
-                  />
-                )}
-                {error && (
-                  <Error
-                    error={error}
-                    msg="Still Working..."
-                    pos="absolute"
-                    top="0"
-                    left="0"
-                    width="100%"
-                    height="100%"
-                    radius="10px"
-                  />
-                )} */}
                 <Box
                   w="100%"
                   h="100%"
-                  bg="var(--secondary-accent-color)"
+                  bg="transparent"
+                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
                   borderRadius="10px"
+                  pos="relative"
                 >
-                  <Player playIcon={<Image src={playIcon} />} />
+                  <Player
+                    playIcon={
+                      <Box
+                        height="70px"
+                        width="70px"
+                        border="2px solid var(--secondary-color)"
+                        pos="absolute"
+                        borderRadius="50%"
+                        top="50%"
+                        left="50%"
+                        transform="translate(-50%, -50%)"
+                      >
+                        <Image src={playIcon} height="100%" width="100%" />
+                      </Box>
+                    }
+                  />
                 </Box>
                 {/* Overlay
                 <Box
@@ -225,7 +220,8 @@ const Stream = () => {
                 <Box
                   w="100%"
                   h="100%"
-                  bg="var(--secondary-accent-color)"
+                  bg="transparent"
+                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
                   borderRadius="10px"
                   display="flex"
                   overflowY="scroll"
@@ -237,13 +233,35 @@ const Stream = () => {
                     <Box
                       display="flex"
                       alignItems="center"
+                      justifyContent="center"
                       gap="0 10px"
                       cursor="pointer"
+                      pos="relative"
                     >
+                      {epLoading && (
+                        <Error
+                          loadingState={epLoading}
+                          width="fit-content"
+                          height="fit-content"
+                          pos="initial"
+                        />
+                      )}
+                      {epError && (
+                        <Error
+                          error={epError}
+                          msg=""
+                          width="fit-content"
+                          height="fit-content"
+                        />
+                      )}
+
                       <Text
                         color="var(--text-color)"
                         fontSize="17.58px"
                         lineHeight="24px"
+                        display={
+                          epLoading ? "none" : epError ? "none" : "block"
+                        }
                         // height="47px"
                         // display="flex"
                         // justifyContent="center"
@@ -254,6 +272,9 @@ const Stream = () => {
                         h="18px"
                         w="18px"
                         color="var(--text-color)"
+                        display={
+                          epLoading ? "none" : epError ? "none" : "block"
+                        }
                       />
                     </Box>
                     <Box

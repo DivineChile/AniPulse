@@ -192,7 +192,7 @@ const RecentDub = () => {
         key="showMore"
         color="var(--text-color)"
         fontSize={{ base: "15px", md: "17px", lg: "19px", "2xl": "22.96px" }}
-        border="3px solid var(--secondary-accent-color)"
+        border="1px solid var(--secondary-accent-color)"
         borderRadius="5px"
         padding="5px 15px"
         transition="all ease 0.25s"

@@ -137,7 +137,7 @@ const SearchBar = ({ above, below, displayProp }) => {
         <Box
           bg="var(--primary-background-color)"
           p="20px"
-          boxShadow="0px 1px 10px 0px var(--secondary-color)"
+          boxShadow="0px 0px 4px 0px var(--secondary-color)"
           pos="absolute!important"
           borderRadius="10px"
           width={{ base: "100%", sm: "400px", md: "500px" }}

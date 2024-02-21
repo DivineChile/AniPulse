@@ -125,15 +125,6 @@ const View = () => {
 
   document.title = `${animeTitle} - AniPulse`;
 
-  // console.log(timeRemaining.days);
-  // console.log(timeRemaining.minutes);
-  // console.log(Date.now());
-  // console.log(1707917400 + 167150);
-  // 1708084550;
-  // 1707754029547;
-
-  // const elements = [];
-
   const reversedId = animeEpId.reverse();
 
   return (
@@ -186,7 +177,7 @@ const View = () => {
               fontSize={{ base: "15.13px", lg: "18.75px" }}
               lineHeight={{ base: "24px", lg: "30px" }}
               letterSpacing="0.5px"
-              color="var(--link-color)"
+              color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
               <BreadcrumbLink>Anime</BreadcrumbLink>
@@ -242,7 +233,7 @@ const View = () => {
                     fontSize="24.02px"
                     fontWeight="300"
                     lineHeight="37.5px"
-                    color="var(--text-color)"
+                    color="var(--secondary-color)"
                     transition="background ease 0.25s"
                   >
                     Episodes : {animeInfo.episodes}
@@ -277,14 +268,15 @@ const View = () => {
                       href="#episodes"
                       w="100%"
                       h="47px!important"
-                      color="var(--text-color)"
-                      border="1px solid var(--secondary-accent-color)"
+                      color="var(--link-color)"
+                      border="1px solid var(--secondary-color)"
                       borderRadius="10px"
                       transition="all ease 0.25s"
                       _hover={{
-                        color: "var(--text-color)",
+                        color: "var(--background-color)",
                         textDecoration: "none",
-                        background: "var(--link-color)",
+                        background: "var(--link-hover-color)",
+                        border: "none",
                       }}
                       display="flex"
                       alignItems="center"
@@ -327,7 +319,7 @@ const View = () => {
                       Studio:{"  "}
                     </Text>
                     <Text
-                      color="var(--secondary-accent-color)"
+                      color="var(--accent-color)"
                       as="span"
                       fontSize="15px"
                       fontWeight="300"
@@ -342,7 +334,7 @@ const View = () => {
 
                           elements.push(
                             <Text
-                              color="var(--secondary-accent-color)"
+                              color="var(--accent-color)"
                               as="span"
                               fontSize="15px"
                               fontWeight="300"
@@ -371,7 +363,7 @@ const View = () => {
                       Season:{"  "}
                     </Text>
                     <Text
-                      color="var(--secondary-accent-color)"
+                      color="var(--accent-color)"
                       as="span"
                       fontSize="15px"
                       fontWeight="300"
@@ -415,7 +407,7 @@ const View = () => {
                       Status:{"  "}
                     </Text>
                     <Text
-                      color="var(--secondary-accent-color)"
+                      color="var(--accent-color)"
                       as="span"
                       fontSize="15px"
                       fontWeight="300"

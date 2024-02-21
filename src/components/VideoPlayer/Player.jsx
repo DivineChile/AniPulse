@@ -50,6 +50,17 @@ const Player = ({ playIcon }) => {
           left="0"
         />
       )}
+      {err && (
+        <Error
+          msg=""
+          height="100%"
+          width="100%"
+          error={err}
+          pos="absolute"
+          top="0"
+          left="0"
+        />
+      )}
 
       <ReactPlayer
         light={true}
