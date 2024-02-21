@@ -8,10 +8,9 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Link as ChakraLink,
 } from "@chakra-ui/react";
-import { Link as ReactRouterLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import RecentSub from "../RecentList/RecentSub";
 import Error from "../ErrorPage/Error";
 import RecentDub from "../RecentList/RecentDub";
@@ -70,7 +69,7 @@ const RecentUpdate = () => {
           fontWeight="600"
           lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
           letterSpacing="1.5px"
-          color="var(--text-color)"
+          color="var(--primary-color)"
           m="0"
           textTransform="uppercase"
         >
@@ -100,10 +99,10 @@ const RecentUpdate = () => {
         >
           <TabList mb="20px" gap="0 10px">
             <Tab
-              color="var(--secondary-accent-color)"
+              color="var(--secondary-color)"
               transition="all ease 0.25s"
               _hover={{
-                color: "var(--text-color)",
+                color: "var(--accent-color)",
               }}
               borderRadius="6px"
               fontSize={{ base: "16.03px", md: "14.25px" }}
@@ -112,16 +111,16 @@ const RecentUpdate = () => {
               textTransform="uppercase"
               _selected={{
                 color: "var(--text-color)",
-                bgColor: "var(--secondary-accent-color)",
+                bgColor: "var(--secondary-color)",
               }}
             >
               Sub
             </Tab>
             <Tab
-              color="var(--secondary-accent-color)"
+              color="var(--secondary-color)"
               transition="all ease 0.25s"
               _hover={{
-                color: "var(--text-color)",
+                color: "var(--accent-color)",
               }}
               borderRadius="6px"
               fontSize={{ base: "16.03px", md: "14.25px" }}
@@ -130,16 +129,17 @@ const RecentUpdate = () => {
               textTransform="uppercase"
               _selected={{
                 color: "var(--text-color)",
-                bgColor: "var(--secondary-accent-color)",
+                bgColor: "var(--secondary-color)",
               }}
             >
               DUB
             </Tab>
             <Tab
-              color="var(--secondary-accent-color)"
+              c
+              color="var(--secondary-color)"
               transition="all ease 0.25s"
               _hover={{
-                color: "var(--text-color)",
+                color: "var(--accent-color)",
               }}
               borderRadius="6px"
               fontSize={{ base: "16.03px", md: "14.25px" }}
@@ -148,7 +148,7 @@ const RecentUpdate = () => {
               textTransform="uppercase"
               _selected={{
                 color: "var(--text-color)",
-                bgColor: "var(--secondary-accent-color)",
+                bgColor: "var(--secondary-color)",
               }}
             >
               CN
@@ -170,28 +170,6 @@ const RecentUpdate = () => {
                 gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
                 pos="relative"
               >
-                {/* {isLoading && (
-                  <Error
-                    // error={error}
-                    loadingState={isLoading}
-                    pos="absolute"
-                    // msg={""}
-                    height="fit-content"
-                    width="100%"
-                    left="0"
-                  />
-                )}
-                {error && (
-                  <Error
-                    error={error}
-                    // loadingState={isLoading}
-                    pos="absolute"
-                    msg={"Still Working..."}
-                    height="fit-content"
-                    width="100%"
-                    left="0"
-                  />
-                )} */}
                 {<RecentSub />}
               </Grid>
             </TabPanel>
@@ -209,28 +187,6 @@ const RecentUpdate = () => {
                 gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
                 pos="relative"
               >
-                {/* {isLoading && (
-                  <Error
-                    // error={error}
-                    loadingState={isLoading}
-                    pos="absolute"
-                    // msg={""}
-                    height="fit-content"
-                    width="100%"
-                    left="0"
-                  />
-                )}
-                {error && (
-                  <Error
-                    error={error}
-                    // loadingState={isLoading}
-                    pos="absolute"
-                    msg={"Still Working..."}
-                    height="fit-content"
-                    width="100%"
-                    left="0"
-                  />
-                )} */}
                 {<RecentDub />}
               </Grid>
             </TabPanel>
@@ -248,28 +204,6 @@ const RecentUpdate = () => {
                 gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
                 pos="relative"
               >
-                {/* {isLoading && (
-                  <Error
-                    // error={error}
-                    loadingState={isLoading}
-                    pos="absolute"
-                    // msg={""}
-                    height="fit-content"
-                    width="100%"
-                    left="0"
-                  />
-                )}
-                {error && (
-                  <Error
-                    error={error}
-                    // loadingState={isLoading}
-                    pos="absolute"
-                    msg={"Still Working..."}
-                    height="fit-content"
-                    width="100%"
-                    left="0"
-                  />
-                )} */}
                 {<RecentCn />}
               </Grid>
             </TabPanel>

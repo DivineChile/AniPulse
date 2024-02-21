@@ -59,7 +59,7 @@ const Stream = () => {
         const dataVideo = await responseVideo.json();
         setVideoData(dataVideo);
         // setVideoUrl(videoData.stream.multi.main);
-        document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode}`;
+        document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
       } catch (error) {
         setError(true);
         setIsLoading(false);

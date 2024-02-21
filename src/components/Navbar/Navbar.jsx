@@ -65,14 +65,10 @@ const Navbar = () => {
       <Box>
         <Heading m="0">
           <Link to="/" className="logo">
-            <Text as="span" color="var(--text-color)">
+            <Text as="span" color="var(--secondary-color)">
               Ani
             </Text>
-            <Text
-              className="logo_tag"
-              as="span"
-              color="var(--primary-accent-color)"
-            >
+            <Text className="logo_tag" as="span" color="var(--primary-color)">
               Pulse
             </Text>
           </Link>

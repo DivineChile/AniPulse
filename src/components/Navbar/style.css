@@ -3,7 +3,7 @@
 }
 
 .navbar ul li a {
-  color: var(--text-color);
+  color: var(--secondary-color);
   font-size: 16.75px;
   font-weight: 400;
   line-height: 30px;
@@ -13,11 +13,11 @@
 }
 
 .navbar ul li a:hover {
-  color: var(--link-hover-color);
+  color: var(--accent-color);
 }
 
 .navbar ul li.active a {
-  color: var(--primary-accent-color);
+  color: var(--accent-color);
 }
 
 .navbar ul li::after {
@@ -31,6 +31,6 @@
 .navbar ul li.active::after,
 .navbar ul li:hover::after {
   width: 100%;
-  background: var(--link-hover-color);
+  background: var(--accent-color);
   border-radius: 2.5px;
 }

@@ -191,7 +191,7 @@ const RecentDub = () => {
         onClick={handleShowAllClick}
         key="showMore"
         color="var(--text-color)"
-        fontSize={{ base: "15px", md: "20px", lg: "22.96px" }}
+        fontSize={{ base: "15px", md: "17px", lg: "19px", "2xl": "22.96px" }}
         border="3px solid var(--secondary-accent-color)"
         borderRadius="5px"
         padding="5px 15px"

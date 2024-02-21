@@ -6,12 +6,13 @@
 
   scroll-behavior: smooth;
 
-  --primary-accent-color: #ff3f3f;
-  --secondary-accent-color: #3f3fff;
-  --primary-background-color: #191b28;
-  --text-color: #f0f0f0;
-  --link-color: #ff00e6;
-  --link-hover-color: #ff66b2;
+  --primary-color: #ff4d4d;
+  --secondary-color: #33cc99;
+  --primary-background-color: #222222;
+  --accent-color: #ffd700;
+  --text-color: #d3d3d3;
+  --link-color: #33cc99;
+  --link-hover-color: #66ffcc;
 
   ::-webkit-scrollbar {
     width: 6px;

@@ -225,16 +225,17 @@ const Hero = () => {
               {Object.entries(currentGenre).map(([key, value]) => (
                 <Text
                   as="span"
-                  color="var(--secondary-accent-color)"
+                  color="var(--secondary-color)"
                   cursor="pointer"
                   p="3px 10px"
                   transition="all ease 0.25s"
                   _hover={{
-                    color: "var(--text-color)",
-                    bgColor: "var(--secondary-accent-color)",
+                    color: "var(--background-color)",
+                    bgColor: "var(--accent-color)",
+                    border: "none",
                   }}
                   borderRadius="8px"
-                  border="2px solid var(--secondary-accent-color)"
+                  border="2px solid var(--secondary-color)"
                   fontSize={{ base: "14.63px", md: "16.63px" }}
                   lineHeight="24px"
                   letterSpacing="0.5px"

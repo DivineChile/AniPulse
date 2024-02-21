@@ -115,7 +115,7 @@ const Recents = () => {
                     to={`/watch/${subAnimeEpId[i]}`}
                     color="var(--link-color)"
                     _hover={{
-                      color: "var(--link-color)",
+                      color: "var(--accent-color)",
                       transition: "all ease 0.25s",
                     }}
                     fontSize="22.88px"
@@ -166,7 +166,7 @@ const Recents = () => {
                   textAlign={{ base: "start" }}
                   color="var(--link-color)"
                   transition="all ease 0.25s"
-                  _hover={{ color: "var(--link-hover-color)" }}
+                  _hover={{ color: "var(--accent-color)" }}
                 >
                   {epLength}
                 </Text>
@@ -191,16 +191,17 @@ const Recents = () => {
         onClick={handleShowAllClick}
         key="showMore"
         color="var(--text-color)"
-        fontSize={{ base: "15px", md: "20px", lg: "22.96px" }}
-        border="3px solid var(--secondary-accent-color)"
+        fontSize={{ base: "15px", md: "17px", lg: "19px", "2xl": "22.96px" }}
+        border="3px solid var(--secondary-color)"
         borderRadius="5px"
         padding="5px 15px"
         transition="all ease 0.25s"
         width={{ base: "100%", md: "initial" }}
         _hover={{
           textDecor: "none",
-          color: "var(--text-color)",
-          background: "var(--secondary-accent-color)",
+          color: "var(--background-color)",
+          background: "var(--accent-color)",
+          border: "none",
         }}
         pos={{ base: "initial", md: "absolute" }}
         right="0"

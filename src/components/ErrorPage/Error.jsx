@@ -1,4 +1,5 @@
 import { Box, Heading, Spinner } from "@chakra-ui/react";
+import "../../index.css";
 
 const Error = ({
   msg,
@@ -16,7 +17,7 @@ const Error = ({
     <Box
       h={height}
       w={width}
-      background="#3f3fff"
+      background="var(--primary-background-color)"
       pos={pos}
       top={top}
       left={left}
@@ -30,7 +31,7 @@ const Error = ({
         <Box>
           {" "}
           <Spinner
-            color="var(--primary-accent-color)"
+            color="var(--accent-color)"
             h={{ base: "50px", md: "80px", lg: "100px" }}
             w={{ base: "50px", md: "80px", lg: "100px" }}
             thickness={{ base: "5px", md: "10px" }}
@@ -51,7 +52,7 @@ const Error = ({
           fontWeight="500"
         >
           <Spinner
-            color="var(--primary-accent-color)"
+            color="var(--accent-color)"
             h={{ base: "30px", md: "40px", lg: "50px" }}
             w={{ base: "30px", md: "40px", lg: "50px" }}
             thickness={{ base: "5px", md: "5px" }}

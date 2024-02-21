@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { Form, Link } from "react-router-dom";
 import "../../index.css";
+import "./style.css";
 import { useState, useEffect } from "react";
 
 const SearchBar = ({ above, below, displayProp }) => {
@@ -98,23 +99,29 @@ const SearchBar = ({ above, below, displayProp }) => {
             background="none"
             color="var(--text-color)"
             borderRight="none!important"
-            borderColor="var(--secondary-accent-color)"
+            borderColor="var(--secondary-color)"
             _focus={{
-              borderColor: "var(--link-color)",
+              borderColor: "var(--link-hover-color)",
               outline: "none",
             }}
-            _hover={{ borderColor: "var(--link-hover-color)" }}
+            className="icon-con"
+            _hover={{ borderColor: "var(--hover-color)" }}
           >
-            <SearchIcon color="var(--secondary-accent-color)" />
+            <SearchIcon
+              color="var(--secondary-color)"
+              className="search-icon"
+            />
           </InputLeftAddon>
           <Input
             borderLeft="none"
-            placeholder="Search"
+            placeholder="Search..."
             color="var(--text-color)"
-            borderColor="var(--secondary-accent-color)"
+            borderColor="var(--secondary-color)"
+            className="inputSearch"
             _focus={{
               border: "none!important",
               outline: "none!important",
+              boxShadow: "0px 0px 4px 0px var(--secondary-color)",
             }}
             _hover={{ borderColor: "var(--link-hover-color)" }}
             value={query}
@@ -130,7 +137,7 @@ const SearchBar = ({ above, below, displayProp }) => {
         <Box
           bg="var(--primary-background-color)"
           p="20px"
-          boxShadow="0.5px 2px 5px 3px rgba(63, 63, 255, 0.15)"
+          boxShadow="0px 1px 10px 0px var(--secondary-color)"
           pos="absolute!important"
           borderRadius="10px"
           width={{ base: "100%", sm: "400px", md: "500px" }}
