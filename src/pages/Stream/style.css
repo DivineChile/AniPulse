@@ -1,3 +1,21 @@
-.active {
-  color: var(--primary-accent-color) !important;
+a.episode.active {
+  color: var(--accent-color) !important;
+  background: #333333;
+}
+
+a.episode {
+  color: var(--text-color);
+  transition: all ease 0.25s;
+  height: 60px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding: 0 20px;
+}
+
+a.episode:hover {
+  background: #262626;
+  color: var(--accent-color);
 }

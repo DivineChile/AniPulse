@@ -67,6 +67,7 @@ const RecentDub = () => {
             <Box
               as={ReactRouterLink}
               pos="relative"
+              to={`/watch/${dubAnimeEpId[i]}`}
               overflow="hidden!important"
               className={`episode-container ${isHovered ? "hovered" : ""}`}
               onMouseEnter={() => setIsHovered(true)}
@@ -101,7 +102,7 @@ const RecentDub = () => {
                   top="100%"
                   left="0"
                   textAlign="center"
-                  background="rgba(25, 27, 40, 0.7)!important"
+                  background="rgba(0, 0, 0, 0.7)!important"
                   transition="transform 0.7s, opacity 0.7s"
                   h="100%"
                   w="100%"

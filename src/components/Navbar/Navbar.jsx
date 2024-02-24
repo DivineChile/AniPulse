@@ -61,6 +61,8 @@ const Navbar = () => {
       width={{ base: "100%" }}
       p={{ base: "15px 20px", lg: "20px 80px", xl: "20, 100px" }}
       pos="relative"
+      boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+      // border="1px solid red"
     >
       <Box>
         <Heading m="0">
@@ -104,7 +106,7 @@ const Navbar = () => {
               ? { base: "250px", lg: "initial" }
               : { base: "0", lg: "initial" }
           }
-          zIndex="1"
+          zIndex="999"
         >
           <SearchBar above="lg" displayProp={isOpen ? "block" : "none"} />
           {NavList.map((item, key) => {
@@ -129,23 +131,47 @@ const Navbar = () => {
 
         <SearchBar below="lg" />
         {isOpen ? (
-          <CloseIcon
-            h="15px"
-            w="19.5px"
-            color="var(--text-color)"
+          <Box
+            height="40px"
+            w="40px"
+            _hover={{
+              background: "#333333",
+            }}
+            transition="all ease 0.25s"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius="40px"
             cursor="pointer"
-            hideFrom="lg"
             onClick={openNavbar}
-          />
+            hideFrom="lg"
+          >
+            <CloseIcon h="15px" w="19.5px" color="var(--text-color)" />
+          </Box>
         ) : (
-          <HamburgerIcon
-            h="30px"
-            w="19.5px"
-            color="var(--text-color)"
+          <Box
+            height="40px"
+            w="40px"
+            _hover={{
+              background: "#333333",
+            }}
+            transition="all ease 0.25s"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius="40px"
             cursor="pointer"
-            hideFrom="lg"
             onClick={openNavbar}
-          />
+            hideFrom="lg"
+          >
+            <HamburgerIcon
+              h="30px"
+              w="20.5px"
+              color="var(--text-color)"
+              cursor="pointer"
+              transition="all ease 0.25s"
+            />
+          </Box>
         )}
       </Box>
     </Box>

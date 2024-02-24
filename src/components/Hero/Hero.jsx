@@ -201,7 +201,7 @@ const Hero = () => {
               fontFamily="var(--font-family)"
               transition="all ease 0.25s"
             >
-              {currentTitle.length > 30
+              {currentTitle?.length > 30
                 ? `${currentTitle.slice(0, 25)}...`
                 : currentTitle}
             </Heading>

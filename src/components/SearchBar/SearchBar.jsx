@@ -208,10 +208,10 @@ const SearchBar = ({ above, below, displayProp }) => {
                             as="h4"
                             fontWeight="500"
                             fontSize={{ base: "18px", md: "22px" }}
-                            color="var(--text-color)"
+                            color="var(--secondary-color)"
                             transition="all ease 0.25s"
                             _hover={{
-                              color: "var(--secondary-accent-color)",
+                              color: "var(--accent-color)",
                             }}
                           >
                             {itemTitle === undefined ? "Loading..." : itemTitle}
@@ -257,7 +257,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                     style={{
                       color: "var(--text-color)",
                       fontSize: "15px",
-                      border: "2px solid var(--secondary-accent-color)",
+                      border: "2px solid var(--secondary-color)",
                       borderRadius: "5px",
                       padding: "5px 15px",
                       width: "fit-content",

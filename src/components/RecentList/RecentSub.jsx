@@ -67,6 +67,7 @@ const Recents = () => {
           <GridItem w={{ base: "100%" }} key={subAnimeEpId[i]}>
             <Box
               as={ReactRouterLink}
+              to={`/watch/${subAnimeEpId[i]}`}
               pos="relative"
               overflow="hidden!important"
               className={`episode-container ${isHovered ? "hovered" : ""}`}
@@ -102,7 +103,7 @@ const Recents = () => {
                   top="100%"
                   left="0"
                   textAlign="center"
-                  background="rgba(25, 27, 40, 0.7)!important"
+                  background="rgba(0, 0, 0, 0.7)!important"
                   transition="transform 0.7s, opacity 0.7s"
                   h="100%"
                   w="100%"

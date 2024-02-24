@@ -5,4 +5,5 @@
   /* transform: translateY(100%); */
   top: 0;
   opacity: 1;
+  visibility: visible;
 }

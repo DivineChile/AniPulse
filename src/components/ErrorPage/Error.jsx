@@ -17,7 +17,7 @@ const Error = ({
     <Box
       h={height}
       w={width}
-      background="var(--primary-background-color)"
+      background="#191919"
       pos={pos}
       top={top}
       left={left}

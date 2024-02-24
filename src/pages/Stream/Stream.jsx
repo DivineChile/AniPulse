@@ -28,6 +28,8 @@ const Stream = () => {
   const [episodeData, setEpisodeData] = useState([]);
 
   const [videoData, setVideoData] = useState([]);
+  const [animeTitle, setAnimeTitle] = useState("");
+  const [videoThumbnail, setVideoThumbnail] = useState([]);
   const location = useLocation();
 
   const newAnimeId = watchId.split("-").slice(0, -2);
@@ -60,7 +62,11 @@ const Stream = () => {
         );
         const dataVideo = await responseVideo.json();
         setVideoData(dataVideo);
-        // setVideoUrl(videoData.stream.multi.main);
+        setVideoThumbnail(dataVideo.stream.tracks.file);
+        console.log(dataVideo.stream.tracks.file);
+        setAnimeTitle(
+          `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
+        );
         document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
       } catch (error) {
         setError(true);
@@ -88,12 +94,11 @@ const Stream = () => {
           left="0"
           width="100%"
         />
-      )}
+      )} */}
 
-      {error && (
+      {/* {error && (
         <Error
-          msg={"Still Working..."}
-          loadingState={isLoading}
+          msg="Still Working..."
           height="100%"
           error={error}
           pos="fixed"
@@ -127,7 +132,7 @@ const Stream = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>Stream</BreadcrumbLink>
+              <BreadcrumbLink>{`Stream / ${animeTitle}`}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -135,7 +140,7 @@ const Stream = () => {
           <Box>
             <Grid
               gridTemplateColumns="repeat(6, 1fr)"
-              gap={{ base: "60px 0", md: "0 10px" }}
+              gap={{ base: "40px 0", md: "0 10px" }}
             >
               {/* Anime Video */}
               <GridItem
@@ -162,9 +167,7 @@ const Stream = () => {
                       <Box
                         height="70px"
                         width="70px"
-                        border="2px solid var(--secondary-color)"
                         pos="absolute"
-                        borderRadius="50%"
                         top="50%"
                         left="50%"
                         transform="translate(-50%, -50%)"
@@ -172,6 +175,7 @@ const Stream = () => {
                         <Image src={playIcon} height="100%" width="100%" />
                       </Box>
                     }
+                    thumbnail={videoThumbnail}
                   />
                 </Box>
                 {/* Overlay
@@ -216,33 +220,34 @@ const Stream = () => {
                   lg: "450px",
                   "2xl": "600px",
                 }}
+                overflowY="scroll"
+                boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                borderRadius="10px"
               >
                 <Box
                   w="100%"
-                  h="100%"
                   bg="transparent"
-                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
-                  borderRadius="10px"
                   display="flex"
-                  overflowY="scroll"
                   alignItems="center"
-                  justifyContent={{ base: "flex-start", md: "center" }}
+                  justifyContent="start"
                 >
                   {/* Season box */}
-                  <Box p="40px 20px">
+                  <Box width="100%">
                     <Box
                       display="flex"
                       alignItems="center"
-                      justifyContent="center"
+                      justifyContent="start"
                       gap="0 10px"
                       cursor="pointer"
                       pos="relative"
+                      height="40px"
+                      ps="20px"
                     >
                       {epLoading && (
                         <Error
                           loadingState={epLoading}
-                          width="fit-content"
-                          height="fit-content"
+                          width="100%"
+                          height="100%"
                           pos="initial"
                         />
                       )}
@@ -250,8 +255,8 @@ const Stream = () => {
                         <Error
                           error={epError}
                           msg=""
-                          width="fit-content"
-                          height="fit-content"
+                          width="100%"
+                          height="100%"
                         />
                       )}
 
@@ -259,12 +264,6 @@ const Stream = () => {
                         color="var(--text-color)"
                         fontSize="17.58px"
                         lineHeight="24px"
-                        display={
-                          epLoading ? "none" : epError ? "none" : "block"
-                        }
-                        // height="47px"
-                        // display="flex"
-                        // justifyContent="center"
                       >
                         Season 1
                       </Text>
@@ -272,23 +271,19 @@ const Stream = () => {
                         h="18px"
                         w="18px"
                         color="var(--text-color)"
-                        display={
-                          epLoading ? "none" : epError ? "none" : "block"
-                        }
                       />
                     </Box>
                     <Box
-                      p="20px 10px"
-                      display={{ base: "grid" }}
+                      display={{ base: "flex" }}
                       // gridTemplateColumns={{
                       //   base: "100%",
                       //   sm: "repeat(3, 1fr)",
                       //   md: "repeat(6, 1fr)",
                       // }}
                       flexDir={{ base: "row", md: "column" }}
-                      justifyContent="start"
-                      flexWrap="wrap"
-                      gap={{ base: "15px", sm: "15px 25px", md: "15px 0" }}
+                      // justifyContent="start"
+                      // flexWrap="wrap"
+                      // gap={{ base: "15px", sm: "15px 25px", md: "15px 0" }}
                     >
                       {(() => {
                         const elements = [];
@@ -303,19 +298,16 @@ const Stream = () => {
 
                           // Use item properties in JSX
                           elements.push(
-                            <Link key={item[i]} to={`/watch/${item.id}`}>
-                              <Text
-                                as="span"
-                                color="var(--text-color)"
-                                _hover={{ color: "var(--link-hover-color)" }}
-                                className={
-                                  location.pathname == `watch/${item.id}`
-                                    ? "active"
-                                    : ""
-                                }
-                              >
-                                {newItemID}
-                              </Text>
+                            <Link
+                              key={item[i]}
+                              to={`/watch/${item.id}`}
+                              className={
+                                location.pathname == `/watch/${item.id}`
+                                  ? "episode active"
+                                  : "episode"
+                              }
+                            >
+                              {newItemID}
                             </Link>
                           );
                         }

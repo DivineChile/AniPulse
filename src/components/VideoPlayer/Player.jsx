@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ReactPlayer from "react-player/lazy";
 import Error from "../ErrorPage/Error";
+import { Box } from "@chakra-ui/react";
 
-const Player = ({ playIcon }) => {
+const Player = ({ playIcon, thumbnail }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(false);
@@ -37,7 +38,8 @@ const Player = ({ playIcon }) => {
   }, [location.pathname]);
 
   return (
-    <div className="player-wrapper">
+    // <div className="player-wrapper">
+    <Box height="100%" width="100%" className="player-wrapper">
       {loading && (
         <Error
           // msg="Still Loading"
@@ -64,15 +66,25 @@ const Player = ({ playIcon }) => {
 
       <ReactPlayer
         light={true}
-        controls
+        controls={true}
+        // playsinline
+        loop={true}
         playIcon={playIcon}
         url={currentUrl}
+        config={{
+          file: {
+            attributes: {
+              poster: thumbnail,
+            },
+          },
+        }}
         width="100%"
         height="100%"
         style={{ width: "100%", height: "100%", borderRadius: "10px" }}
-        playing
+        playing={true}
       />
-    </div>
+    </Box>
+    // </div>
   );
 };
 
