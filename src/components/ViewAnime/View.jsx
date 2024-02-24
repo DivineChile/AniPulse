@@ -141,6 +141,9 @@ const View = () => {
           left="0"
           // top="0"
           width="100%"
+          bg="#191919"
+          spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+          spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
         />
       )}
 
@@ -153,6 +156,9 @@ const View = () => {
           top={{ base: "70.89px", md: "74px", lg: "84px" }}
           left="0"
           width="100%"
+          bg="#191919"
+          spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+          spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
         />
       )}
 

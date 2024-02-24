@@ -15,6 +15,7 @@ import Error from "../../components/ErrorPage/Error";
 import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
+import ReactPlayer from "react-player/lazy";
 import Player from "../../components/VideoPlayer/Player";
 import "./style.css";
 
@@ -78,36 +79,42 @@ const Stream = () => {
     fetchVideos();
   }, []);
 
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  // Update video URL based on the current location (pathname)
+  const fetchNewVideoUrl = async (episodeName) => {
+    setLoading(true);
+    try {
+      const responseVideo = await fetch(
+        `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${episodeName}`
+      );
+      const dataVideo = await responseVideo.json();
+      const data = dataVideo;
+      setCurrentUrl(data.stream.multi.main.url);
+      setLoading(false);
+    } catch {
+      setErr(true);
+      setLoading(false);
+    }
+  };
+
+  const updateVideoUrl = () => {
+    const episodeName = location.pathname.split("/").pop(); // Extract episode name from the URL
+    fetchNewVideoUrl(episodeName);
+  };
+
+  // Call updateVideoUrl when the component mounts and when the location changes
+  useEffect(() => {
+    updateVideoUrl();
+  }, [location.pathname]);
+
   // console.log(videoData.stream.multi.main.url);
 
   return (
     <Box>
       <Navbar />
-      {/* {isLoading && (
-        <Error
-          // msg={"Still Working..."}
-          loadingState={isLoading}
-          height="100%"
-          // error={error}
-          pos="fixed"
-          top={{ base: "70.89px", md: "74px", lg: "84px" }}
-          left="0"
-          width="100%"
-        />
-      )} */}
-
-      {/* {error && (
-        <Error
-          msg="Still Working..."
-          height="100%"
-          error={error}
-          pos="fixed"
-          top={{ base: "70.89px", md: "74px", lg: "84px" }}
-          left="0"
-          width="100%"
-        />
-      )} */}
-
       <Box background="var(--primary-background-color)">
         <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
           {/* BreadCrumb Links */}
@@ -138,187 +145,200 @@ const Stream = () => {
 
           {/* Anime Stream */}
           <Box>
-            <Grid
-              gridTemplateColumns="repeat(6, 1fr)"
-              gap={{ base: "40px 0", md: "0 10px" }}
-            >
-              {/* Anime Video */}
-              <GridItem
-                colSpan={{ base: 6, md: 4 }}
-                h={{
-                  base: "250px",
-                  sm: "300px",
-                  md: "350px",
-                  lg: "450px!important",
-                  "2xl": "600px!important",
-                }}
-                pos="relative"
+            <Box className="player-wrapper" width="100%" height="100%">
+              <Grid
+                gridTemplateColumns="repeat(6, 1fr)"
+                gap={{ base: "30px 0", xl: "0 20px" }}
               >
-                <Box
-                  w="100%"
-                  h="100%"
-                  bg="transparent"
+                {/* Anime Video */}
+                <GridItem
+                  colSpan={{ base: 6, xl: 4 }}
+                  h={{
+                    base: "100%",
+                    // sm: "350px",
+                    // md: "400px",
+                    xl: "450px!important",
+                    "2xl": "600px!important",
+                  }}
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <Player
-                    playIcon={
-                      <Box
-                        height="70px"
-                        width="70px"
-                        pos="absolute"
-                        top="50%"
-                        left="50%"
-                        transform="translate(-50%, -50%)"
-                      >
-                        <Image src={playIcon} height="100%" width="100%" />
-                      </Box>
-                    }
-                    thumbnail={videoThumbnail}
+                  {loading && (
+                    <Error
+                      // msg="Still Loading"
+                      loadingState={loading}
+                      height="100%"
+                      width="100%"
+                      // error={err}
+                      pos="absolute"
+                      top="0"
+                      left="0"
+                      bg="#191919"
+                      spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+                      spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+                    />
+                  )}
+                  {err && (
+                    <Error
+                      msg="Still Working"
+                      height="100%"
+                      width="100%"
+                      error={err}
+                      pos="absolute"
+                      top="0"
+                      left="0"
+                      bg="#191919"
+                      spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+                      spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+                    />
+                  )}
+
+                  <ReactPlayer
+                    light={true}
+                    controls={true}
+                    // playsinline
+                    loop={true}
+                    playIcon={<Image src={playIcon} />}
+                    url={currentUrl}
+                    width="100%"
+                    height="100%"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "10px",
+                    }}
+                    playing={true}
                   />
-                </Box>
-                {/* Overlay
-                <Box
-                  bg="rgba(25, 27, 40, 0.7)"
-                  pos="absolute"
-                  top="0"
-                  left="0"
-                  w="100%"
-                  h="100%"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
+                </GridItem>
+                <GridItem
+                  colSpan={{ base: 6, xl: 2 }}
+                  h={{
+                    base: "250px",
+                    sm: "300px",
+                    md: "350px",
+                    lg: "450px",
+                    "2xl": "600px",
+                  }}
+                  overflowY="scroll"
+                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  borderRadius="10px"
                 >
                   <Box
-                    border="1px solid var(--text-color)"
-                    borderRadius="50%"
-                    w={{ base: "80px", lg: "100px" }}
-                    h={{ base: "80px", lg: "100px" }}
+                    w="100%"
+                    bg="transparent"
                     display="flex"
                     alignItems="center"
-                    justifyContent="center"
-                    cursor="pointer"
-                    transition="transform ease 0.25s"
-                    _hover={{ transform: "scale(1.1)" }}
+                    justifyContent="start"
                   >
-                    <Image
-                      src={playIcon}
-                      h={{ base: "40px", lg: "50px" }}
-                      w={{ base: "35px", lg: "44px" }}
-                    />
-                  </Box>
-                </Box> */}
-              </GridItem>
-              {/* Anime Episodes */}
-              <GridItem
-                colSpan={{ base: 6, md: 2 }}
-                h={{
-                  base: "250px",
-                  sm: "300px",
-                  md: "350px",
-                  lg: "450px",
-                  "2xl": "600px",
-                }}
-                overflowY="scroll"
-                boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
-                borderRadius="10px"
-              >
-                <Box
-                  w="100%"
-                  bg="transparent"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="start"
-                >
-                  {/* Season box */}
-                  <Box width="100%">
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="start"
-                      gap="0 10px"
-                      cursor="pointer"
-                      pos="relative"
-                      height="40px"
-                      ps="20px"
-                    >
-                      {epLoading && (
-                        <Error
-                          loadingState={epLoading}
-                          width="100%"
-                          height="100%"
-                          pos="initial"
-                        />
-                      )}
-                      {epError && (
-                        <Error
-                          error={epError}
-                          msg=""
-                          width="100%"
-                          height="100%"
-                        />
-                      )}
-
-                      <Text
-                        color="var(--text-color)"
-                        fontSize="17.58px"
-                        lineHeight="24px"
+                    {/* Season box */}
+                    <Box width="100%">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="start"
+                        gap="0 10px"
+                        cursor="pointer"
+                        pos="relative"
+                        height="40px"
+                        ps="20px"
                       >
-                        Season 1
-                      </Text>
-                      <ChevronDownIcon
-                        h="18px"
-                        w="18px"
-                        color="var(--text-color)"
-                      />
-                    </Box>
-                    <Box
-                      display={{ base: "flex" }}
-                      // gridTemplateColumns={{
-                      //   base: "100%",
-                      //   sm: "repeat(3, 1fr)",
-                      //   md: "repeat(6, 1fr)",
-                      // }}
-                      flexDir={{ base: "row", md: "column" }}
-                      // justifyContent="start"
-                      // flexWrap="wrap"
-                      // gap={{ base: "15px", sm: "15px 25px", md: "15px 0" }}
-                    >
-                      {(() => {
-                        const elements = [];
+                        {/* {epLoading && (
+                          <Error
+                            loadingState={epLoading}
+                            width="100%"
+                            height="100%"
+                            pos="initial"
+                          />
+                        )}
+                        {epError && (
+                          <Error
+                            error={epError}
+                            msg=""
+                            width="100%"
+                            height="100%"
+                          />
+                        )} */}
 
-                        for (let i = 0; i < episodeData.length; i++) {
-                          const item = episodeData[i];
-                          const epArray = item.id.split("-");
+                        <Text
+                          color="var(--text-color)"
+                          fontSize="17.58px"
+                          lineHeight="24px"
+                        >
+                          Season 1
+                        </Text>
+                        <ChevronDownIcon
+                          h="18px"
+                          w="18px"
+                          color="var(--text-color)"
+                        />
+                      </Box>
+                      <Box
+                        display={{ base: "flex" }}
+                        flexDir={{ base: "column" }}
+                        pos="relative"
+                      >
+                        {epLoading && (
+                          <Error
+                            loadingState={epLoading}
+                            width="100%"
+                            height="100%"
+                            pos="relative"
+                            top="0"
+                            left="0"
+                            bg="transparent"
+                            spinnerH={{ base: "50px" }}
+                            spinnerW={{ base: "50px" }}
+                          />
+                        )}
+                        {epError && (
+                          <Error
+                            error={epError}
+                            msg=""
+                            width="100%"
+                            height="100%"
+                            pos="absolute"
+                            top="0"
+                            left="0"
+                            bg="transparent"
+                          />
+                        )}
 
-                          const newItemID = `Episode ${epArray.pop()}`;
+                        {(() => {
+                          const elements = [];
 
-                          // setEpisodeId(item.id);
+                          for (let i = 0; i < episodeData.length; i++) {
+                            const item = episodeData[i];
+                            const epArray = item.id.split("-");
 
-                          // Use item properties in JSX
-                          elements.push(
-                            <Link
-                              key={item[i]}
-                              to={`/watch/${item.id}`}
-                              className={
-                                location.pathname == `/watch/${item.id}`
-                                  ? "episode active"
-                                  : "episode"
-                              }
-                            >
-                              {newItemID}
-                            </Link>
-                          );
-                        }
+                            const newItemID = `Episode ${epArray.pop()}`;
 
-                        return elements;
-                      })()}
+                            // setEpisodeId(item.id);
+
+                            // Use item properties in JSX
+                            elements.push(
+                              <Link
+                                key={item[i]}
+                                to={`/watch/${item.id}`}
+                                className={
+                                  location.pathname == `/watch/${item.id}`
+                                    ? "episode active"
+                                    : "episode"
+                                }
+                              >
+                                {newItemID}
+                              </Link>
+                            );
+                          }
+
+                          return elements;
+                        })()}
+                      </Box>
                     </Box>
                   </Box>
-                </Box>
-              </GridItem>
-            </Grid>
+                </GridItem>
+              </Grid>
+            </Box>
           </Box>
         </Box>
       </Box>

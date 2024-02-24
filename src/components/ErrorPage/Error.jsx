@@ -11,13 +11,15 @@ const Error = ({
   left,
   width,
   radius,
-  index,
+  bg,
+  spinnerH,
+  spinnerW,
 }) => {
   return (
     <Box
       h={height}
       w={width}
-      background="#191919"
+      background={bg}
       pos={pos}
       top={top}
       left={left}
@@ -32,8 +34,8 @@ const Error = ({
           {" "}
           <Spinner
             color="var(--accent-color)"
-            h={{ base: "50px", md: "80px", lg: "100px" }}
-            w={{ base: "50px", md: "80px", lg: "100px" }}
+            h={spinnerH}
+            w={spinnerW}
             thickness={{ base: "5px", md: "10px" }}
             transition="all ease 0.25s"
           />
