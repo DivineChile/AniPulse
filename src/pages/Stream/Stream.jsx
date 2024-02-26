@@ -415,7 +415,7 @@ const Stream = () => {
                     flexDir="column"
                     gap="15px 0"
                     colSpan={{ base: "12", lg: "6", xl: "5" }}
-                    width={{ base: "initial", xl: "60%" }}
+                    width={{ base: "initial", xl: "50%" }}
                   >
                     {/* Sub */}
                     <Box
@@ -479,7 +479,7 @@ const Stream = () => {
                     justifyContent={{ base: "center", md: "start" }}
                     colSpan={{ base: "12", lg: "12", xl: "3" }}
                     mt={{ base: "20px", md: "0" }}
-                    width="100%"
+                    width={{ base: "initial" }}
                   >
                     <Link className="downloadBtn">Download Now</Link>
                     <Text
