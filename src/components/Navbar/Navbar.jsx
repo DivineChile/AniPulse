@@ -82,7 +82,7 @@ const Navbar = () => {
           display={isOpen ? { base: "flex" } : { base: "flex", lg: "block" }}
           overflow={
             isOpen
-              ? { base: "initial", md: "hidden", lg: "initial" }
+              ? { base: "initial", md: "initial", lg: "initial" }
               : "initial"
           }
           flexDir={{ base: "column", lg: "row" }}

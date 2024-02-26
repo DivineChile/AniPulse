@@ -16,7 +16,6 @@ import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import ReactPlayer from "react-player/lazy";
-import Player from "../../components/VideoPlayer/Player";
 import "./style.css";
 
 const Stream = () => {
@@ -32,9 +31,16 @@ const Stream = () => {
   const [animeTitle, setAnimeTitle] = useState("");
   const [videoThumbnail, setVideoThumbnail] = useState([]);
   const location = useLocation();
-
-  const newAnimeId = watchId.split("-").slice(0, -2);
-  const newAnimeIdVal = newAnimeId.join("-");
+  let newAnimeId = null;
+  let newAnimeIdVal = "";
+  const num = watchId.split("-").splice(-2);
+  if (isNaN(parseInt(num[0]))) {
+    newAnimeId = watchId.split("-").slice(0, -2);
+    newAnimeIdVal = newAnimeId.join("-");
+  } else {
+    newAnimeId = watchId.split("-").slice(0, -3);
+    newAnimeIdVal = newAnimeId.join("-");
+  }
 
   useEffect(() => {
     const fetchEpisodes = async () => {
@@ -64,7 +70,6 @@ const Stream = () => {
         const dataVideo = await responseVideo.json();
         setVideoData(dataVideo);
         setVideoThumbnail(dataVideo.stream.tracks.file);
-        console.log(dataVideo.stream.tracks.file);
         setAnimeTitle(
           `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
         );
@@ -93,6 +98,10 @@ const Stream = () => {
       const dataVideo = await responseVideo.json();
       const data = dataVideo;
       setCurrentUrl(data.stream.multi.main.url);
+      setAnimeTitle(
+        `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
+      );
+      document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
       setLoading(false);
     } catch {
       setErr(true);
@@ -181,7 +190,7 @@ const Stream = () => {
                   )}
                   {err && (
                     <Error
-                      msg="Still Working"
+                      msg="Still Working..."
                       height="100%"
                       width="100%"
                       error={err}
@@ -199,6 +208,11 @@ const Stream = () => {
                     controls={true}
                     // playsinline
                     loop={true}
+                    config={{
+                      file: {
+                        tracks: [{ kind: "subtitles", src: videoThumbnail }],
+                      },
+                    }}
                     playIcon={<Image src={playIcon} />}
                     url={currentUrl}
                     width="100%"
@@ -278,7 +292,7 @@ const Stream = () => {
                         flexDir={{ base: "column" }}
                         pos="relative"
                       >
-                        {epLoading && (
+                        {/* {epLoading && (
                           <Error
                             loadingState={epLoading}
                             width="100%"
@@ -294,26 +308,32 @@ const Stream = () => {
                         {epError && (
                           <Error
                             error={epError}
-                            msg=""
+                            msg="Still Working..."
                             width="100%"
                             height="100%"
                             pos="absolute"
-                            top="0"
+                            top="50px"
                             left="0"
                             bg="transparent"
                           />
-                        )}
+                        )} */}
 
                         {(() => {
                           const elements = [];
 
                           for (let i = 0; i < episodeData.length; i++) {
                             const item = episodeData[i];
+
                             const epArray = item.id.split("-");
+                            const lastItems = epArray.splice(-2);
 
-                            const newItemID = `Episode ${epArray.pop()}`;
+                            let newItemID = "";
 
-                            // setEpisodeId(item.id);
+                            if (lastItems[0]?.length > 1) {
+                              newItemID = `Episode ${lastItems.pop()}`;
+                            } else {
+                              newItemID = `Episode ${lastItems[0]}-5`;
+                            }
 
                             // Use item properties in JSX
                             elements.push(

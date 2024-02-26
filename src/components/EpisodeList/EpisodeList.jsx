@@ -18,8 +18,14 @@ const EpisodeList = ({ items, itemId }) => {
 
   for (let i = 0; i < endIndex; i++) {
     const epArray = itemId[i].split("-");
+    const lastItems = epArray.splice(-2);
 
-    const newItemID = `Episode ${epArray.pop()}`;
+    let newItemID = "";
+    if (lastItems[0]?.length > 1) {
+      newItemID = `Episode ${lastItems.pop()}`;
+    } else {
+      newItemID = `Episode ${lastItems[0]}-5`;
+    }
 
     episodes.push(
       <ChakraLink
