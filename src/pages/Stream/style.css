@@ -21,14 +21,107 @@ a.episode:hover {
   color: var(--accent-color);
 }
 
+a.server {
+  color: var(--secondary-color);
+  cursor: pointer;
+  padding: 3px 10px;
+  transition: all ease 0.25s;
+  border-radius: 8px;
+  border: 1px solid var(--secondary-color);
+  font-size: 16.63px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+
+a.server.active {
+  color: var(--background-color);
+  background-color: var(--accent-color);
+  border: none;
+}
+
+a.server:hover {
+  color: var(--background-color);
+  background-color: var(--accent-color);
+  border: none;
+}
+
+a.downloadBtn {
+  border: 2px solid var(--secondary-color);
+  height: 51.5px;
+  width: 256.61px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23.83px;
+  line-height: 37.5px;
+  letter-spacing: 0.5px;
+  color: var(--text-color);
+  border-radius: 10px;
+  text-transform: uppercase;
+  transition: all ease 0.25s;
+}
+
+a.downloadBtn:hover {
+  color: var(--background-color);
+  background-color: var(--accent-color);
+  border: none;
+}
+
 @media screen and (max-width: 500px) {
   a.episode {
     height: 45px;
+  }
+
+  a.server {
+    font-size: 13.63px;
+  }
+
+  a.downloadBtn {
+    font-size: 15.38px;
+    line-height: 24px;
+    height: 38px;
+    width: 100% !important;
   }
 }
 
 @media screen and (max-width: 768px) {
   a.episode {
     height: 50px;
+  }
+
+  a.downloadBtn {
+    font-size: 18.38px;
+    line-height: 24px;
+    height: 42px;
+    width: 178.23px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  a.downloadBtn {
+    font-size: 18.38px;
+    line-height: 24px;
+    height: 42px;
+    width: 208.23px;
+  }
+}
+
+@media screen and (max-width: 1250px) {
+  a.downloadBtn {
+    font-size: 18.38px;
+    line-height: 24px;
+    height: 46px;
+    width: 208.23px;
+  }
+}
+
+@media screen and (min-width: 1250px) {
+  a.downloadBtn {
+    font-size: 18.38px;
+    line-height: 24px;
+    height: 46px;
+    width: 208.23px;
   }
 }

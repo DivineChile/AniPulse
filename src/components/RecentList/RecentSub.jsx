@@ -55,6 +55,39 @@ const Recents = () => {
 
   const endIndex = showAll ? subAnimeData.length : 10;
 
+  isLoading &&
+    recentAnime.push(
+      <Error
+        // msg="Still Loading"
+        loadingState={isLoading}
+        height="100%"
+        width="100%"
+        // error={err}
+        pos="absolute"
+        top="0"
+        left="0"
+        bg="#191919"
+        spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+        spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+      />
+    );
+
+  error &&
+    recentAnime.push(
+      <Error
+        msg=""
+        height="100%"
+        width="100%"
+        error={error}
+        pos="absolute"
+        top="0"
+        left="0"
+        bg="var(--primary-background-color)"
+        spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+        spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+      />
+    );
+
   for (let i = 0; i < endIndex; i++) {
     const epLength =
       subAnimeTitle[i]?.length > 30

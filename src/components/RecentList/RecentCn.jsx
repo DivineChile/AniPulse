@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Error from "../ErrorPage/Error";
 import "./style.css";
 
 const RecentCn = () => {
@@ -52,6 +53,39 @@ const RecentCn = () => {
   }, [cnAnimeData]);
 
   const endIndex = showAll ? cnAnimeData.length : 10;
+
+  isLoading &&
+    recentAnime.push(
+      <Error
+        // msg="Still Loading"
+        loadingState={isLoading}
+        height="100%"
+        width="100%"
+        // error={err}
+        pos="absolute"
+        top="0"
+        left="0"
+        bg="#191919"
+        spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+        spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+      />
+    );
+
+  error &&
+    recentAnime.push(
+      <Error
+        msg=""
+        height="100%"
+        width="100%"
+        error={error}
+        pos="absolute"
+        top="0"
+        left="0"
+        bg="var(--primary-background-color)"
+        spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+        spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+      />
+    );
 
   for (let i = 0; i < endIndex; i++) {
     const epLength =

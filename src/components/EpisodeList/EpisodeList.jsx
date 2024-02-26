@@ -25,7 +25,7 @@ const EpisodeList = ({ items, itemId, coverImg }) => {
     if (lastItems[0]?.length > 1) {
       newItemID = `Episode ${lastItems.pop()}`;
     } else {
-      newItemID = `Episode ${lastItems[0]}-5`;
+      newItemID = `Episode ${lastItems[0]}.5`;
     }
 
     episodes.push(
