@@ -74,11 +74,13 @@ const Stream = () => {
         );
         const dataVideo = await responseVideo.json();
         setVideoData(dataVideo);
-        setVideoPlyr(dataVideo.nspl.main);
+        // setVideoPlyr(dataVideo.nspl.main);
         setAnimeTitle(
           `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
         );
         document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
+        setLoading(false);
+        setError(false);
       } catch (error) {
         setError(true);
         setIsLoading(false);
@@ -103,7 +105,7 @@ const Stream = () => {
       const dataVideo = await responseVideo.json();
       const data = dataVideo;
       setCurrentUrl(data.stream.multi.main.url);
-      setVideoPlyr(data.nspl.main);
+      // setVideoPlyr(data.nspl.main);
       setAnimeTitle(
         `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
       );
@@ -126,6 +128,31 @@ const Stream = () => {
   }, [location.pathname]);
 
   // console.log(videoData.stream.multi.main.url);
+  const [downloadLoading, setDownloadLoading] = useState(true);
+  const [downloadError, setDownloadError] = useState(null);
+  const [downloadUrl, setDownloadUrl] = useState("");
+  useEffect(() => {
+    const downloadEpisode = async () => {
+      try {
+        const downloadRes = await fetch(
+          `https://api-amvstrm.nyt92.eu.org/api/v1/download/${watchId}`
+        );
+        const downloadData = await downloadRes.json();
+        setDownloadUrl(downloadData.download);
+        setDownloadLoading(false);
+        setDownloadError(false);
+      } catch {
+        setDownloadError(true);
+        setDownloadLoading(false);
+      }
+    };
+
+    downloadEpisode();
+  });
+
+  const handleDownload = () => {
+    window.location.pathname = downloadUrl;
+  };
 
   return (
     <Box>
@@ -195,12 +222,12 @@ const Stream = () => {
                       spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
                     />
                   )}
-                  {err && (
+                  {error && (
                     <Error
                       msg="Still Working..."
                       height="100%"
                       width="100%"
-                      error={err}
+                      error={error}
                       pos="absolute"
                       top="0"
                       left="0"
@@ -481,7 +508,19 @@ const Stream = () => {
                     mt={{ base: "20px", md: "0" }}
                     width={{ base: "initial" }}
                   >
-                    <Link className="downloadBtn">Download Now</Link>
+                    <a
+                      className="downloadBtn"
+                      href={`${downloadUrl}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      disabled={downloadLoading}
+                    >
+                      {downloadLoading
+                        ? "Loading..."
+                        : downloadError
+                        ? "Error Loading..."
+                        : "Download Now"}
+                    </a>
                     <Text
                       fontSize={{ base: "15.58px", "2xl": "24.41px" }}
                       lineHeight={{ base: "28.8px", "2xl": "37.5px" }}
