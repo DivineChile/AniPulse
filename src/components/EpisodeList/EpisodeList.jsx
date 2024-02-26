@@ -1,9 +1,9 @@
 import { Link as ChakraLink } from "@chakra-ui/react";
 import { useState } from "react";
 
-import { useParams, Link as ReactRouterLink } from "react-router-dom";
+import { Link as ReactRouterLink } from "react-router-dom";
 
-const EpisodeList = ({ items, itemId }) => {
+const EpisodeList = ({ items, itemId, coverImg }) => {
   const [showAll, setShowAll] = useState(false);
 
   const episodes = [];
@@ -19,6 +19,7 @@ const EpisodeList = ({ items, itemId }) => {
   for (let i = 0; i < endIndex; i++) {
     const epArray = itemId[i].split("-");
     const lastItems = epArray.splice(-2);
+    const coverItem = coverImg[i];
 
     let newItemID = "";
     if (lastItems[0]?.length > 1) {
@@ -30,7 +31,7 @@ const EpisodeList = ({ items, itemId }) => {
     episodes.push(
       <ChakraLink
         as={ReactRouterLink}
-        to={`/watch/${itemId[i]}`}
+        to={`/watch/${encodeURIComponent(coverItem)}/${itemId[i]}`}
         _hover={{
           textDecor: "none",
           color: "var(--link-hover-color)",

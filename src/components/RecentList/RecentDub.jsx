@@ -67,7 +67,9 @@ const RecentDub = () => {
             <Box
               as={ReactRouterLink}
               pos="relative"
-              to={`/watch/${dubAnimeEpId[i]}`}
+              to={`/watch/${encodeURIComponent(dubAnimeImg[i])}/${
+                dubAnimeEpId[i]
+              }`}
               overflow="hidden!important"
               className={`episode-container ${isHovered ? "hovered" : ""}`}
               onMouseEnter={() => setIsHovered(true)}
@@ -113,7 +115,9 @@ const RecentDub = () => {
                 >
                   <ChakraLink
                     as={ReactRouterLink}
-                    to={`/watch/${dubAnimeEpId[i]}`}
+                    to={`/watch/${encodeURIComponent(dubAnimeImg[i])}/${
+                      dubAnimeEpId[i]
+                    }`}
                     color="var(--link-color)"
                     _hover={{
                       color: "var(--link-color)",
@@ -149,7 +153,9 @@ const RecentDub = () => {
               <ChakraLink
                 as={ReactRouterLink}
                 _hover={{ textDecor: "none" }}
-                to={`/watch/${dubAnimeEpId[i]}`}
+                to={`/watch/${encodeURIComponent(dubAnimeImg[i])}/${
+                  dubAnimeEpId[i]
+                }`}
               >
                 {/* Anime Name */}
                 <Text

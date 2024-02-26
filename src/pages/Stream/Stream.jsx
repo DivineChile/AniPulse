@@ -19,14 +19,14 @@ import ReactPlayer from "react-player/lazy";
 import "./style.css";
 
 const Stream = () => {
-  const { watchId } = useParams();
+  const { coverImg, watchId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [epLoading, setEpLoading] = useState(true);
   const [error, setError] = useState(null);
   const [epError, setEpError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
   const [episodeData, setEpisodeData] = useState([]);
-
+  const [onPlay, setOnPlay] = useState(false);
   const [videoData, setVideoData] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
   const [videoThumbnail, setVideoThumbnail] = useState([]);
@@ -160,12 +160,13 @@ const Stream = () => {
                 gap={{ base: "30px 0", xl: "0 20px" }}
               >
                 {/* Anime Video */}
+
                 <GridItem
                   colSpan={{ base: 6, xl: 4 }}
                   h={{
-                    base: "100%",
-                    // sm: "350px",
-                    // md: "400px",
+                    base: onPlay ? "100%" : "150px",
+                    sm: onPlay ? "100%" : "350px",
+                    md: onPlay ? "100%" : "400px",
                     xl: "450px!important",
                     "2xl": "600px!important",
                   }}
@@ -204,16 +205,22 @@ const Stream = () => {
                   )}
 
                   <ReactPlayer
-                    light={true}
+                    light={coverImg}
                     controls={true}
                     // playsinline
                     loop={true}
-                    config={{
-                      file: {
-                        tracks: [{ kind: "subtitles", src: videoThumbnail }],
-                      },
-                    }}
-                    playIcon={<Image src={playIcon} />}
+                    playIcon={
+                      <Box
+                        background="rgba(0,0,0,0.5)"
+                        height="100%"
+                        width="100%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Image src={playIcon} />
+                      </Box>
+                    }
                     url={currentUrl}
                     width="100%"
                     height="100%"
@@ -222,7 +229,10 @@ const Stream = () => {
                       height: "100%",
                       borderRadius: "10px",
                     }}
-                    playing={true}
+                    playing
+                    onReady={() => {
+                      setOnPlay(true);
+                    }}
                   />
                 </GridItem>
                 <GridItem
@@ -237,9 +247,11 @@ const Stream = () => {
                   overflowY="scroll"
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
                   borderRadius="10px"
+                  width={{ base: "220px", md: "50%", lg: "100%" }}
+                  transition="all ease 0.25s"
                 >
                   <Box
-                    w="100%"
+                    width="100%"
                     bg="transparent"
                     display="flex"
                     alignItems="center"
@@ -250,30 +262,13 @@ const Stream = () => {
                       <Box
                         display="flex"
                         alignItems="center"
-                        justifyContent="start"
+                        justifyContent="center"
                         gap="0 10px"
                         cursor="pointer"
                         pos="relative"
                         height="40px"
                         ps="20px"
                       >
-                        {/* {epLoading && (
-                          <Error
-                            loadingState={epLoading}
-                            width="100%"
-                            height="100%"
-                            pos="initial"
-                          />
-                        )}
-                        {epError && (
-                          <Error
-                            error={epError}
-                            msg=""
-                            width="100%"
-                            height="100%"
-                          />
-                        )} */}
-
                         <Text
                           color="var(--text-color)"
                           fontSize="17.58px"
@@ -292,7 +287,7 @@ const Stream = () => {
                         flexDir={{ base: "column" }}
                         pos="relative"
                       >
-                        {/* {epLoading && (
+                        {epLoading && (
                           <Error
                             loadingState={epLoading}
                             width="100%"
@@ -305,18 +300,22 @@ const Stream = () => {
                             spinnerW={{ base: "50px" }}
                           />
                         )}
-                        {epError && (
+                        {epError ? (
                           <Error
                             error={epError}
                             msg="Still Working..."
                             width="100%"
                             height="100%"
                             pos="absolute"
-                            top="50px"
+                            top="0"
                             left="0"
-                            bg="transparent"
+                            bg="#191919"
+                            spinnerH={{ base: "50px" }}
+                            spinnerW={{ base: "50px" }}
                           />
-                        )} */}
+                        ) : (
+                          <></>
+                        )}
 
                         {(() => {
                           const elements = [];
@@ -332,16 +331,21 @@ const Stream = () => {
                             if (lastItems[0]?.length > 1) {
                               newItemID = `Episode ${lastItems.pop()}`;
                             } else {
-                              newItemID = `Episode ${lastItems[0]}-5`;
+                              newItemID = `Episode ${lastItems[0]}.5`;
                             }
 
                             // Use item properties in JSX
                             elements.push(
                               <Link
                                 key={item[i]}
-                                to={`/watch/${item.id}`}
+                                to={`/watch/${encodeURIComponent(coverImg)}/${
+                                  item.id
+                                }`}
                                 className={
-                                  location.pathname == `/watch/${item.id}`
+                                  location.pathname ==
+                                  `/watch/${encodeURIComponent(coverImg)}/${
+                                    item.id
+                                  }`
                                     ? "episode active"
                                     : "episode"
                                 }

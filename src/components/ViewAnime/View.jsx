@@ -524,7 +524,11 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    <EpisodeList items={reversedId} itemId={reversedId} />
+                    <EpisodeList
+                      items={reversedId}
+                      itemId={reversedId}
+                      coverImg={coverImage}
+                    />
                   </Box>
                 </Box>
               </GridItem>

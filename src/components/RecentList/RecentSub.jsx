@@ -67,7 +67,9 @@ const Recents = () => {
           <GridItem w={{ base: "100%" }} key={subAnimeEpId[i]}>
             <Box
               as={ReactRouterLink}
-              to={`/watch/${subAnimeEpId[i]}`}
+              to={`/watch/${encodeURIComponent(subAnimeImg[i])}/${
+                subAnimeEpId[i]
+              }`}
               pos="relative"
               overflow="hidden!important"
               className={`episode-container ${isHovered ? "hovered" : ""}`}
@@ -114,7 +116,9 @@ const Recents = () => {
                 >
                   <ChakraLink
                     as={ReactRouterLink}
-                    to={`/watch/${subAnimeEpId[i]}`}
+                    to={`/watch/${encodeURIComponent(subAnimeImg[i])}/${
+                      subAnimeEpId[i]
+                    }`}
                     color="var(--link-color)"
                     _hover={{
                       color: "var(--accent-color)",
@@ -150,7 +154,9 @@ const Recents = () => {
               <ChakraLink
                 as={ReactRouterLink}
                 _hover={{ textDecor: "none" }}
-                to={`/watch/${subAnimeEpId[i]}`}
+                to={`/watch/${encodeURIComponent(subAnimeImg[i])}/${
+                  subAnimeEpId[i]
+                }`}
               >
                 {/* Anime Name */}
                 <Text

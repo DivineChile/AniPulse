@@ -137,7 +137,7 @@ const SearchBar = ({ above, below, displayProp }) => {
         <Box
           bg="var(--primary-background-color)"
           p="20px"
-          boxShadow="0px 0px 4px 0px var(--secondary-color)"
+          boxShadow="0 0 10px 0 rgba(0,0,0,0.6)"
           pos="absolute!important"
           borderRadius="10px"
           width={{ base: "100%", sm: "400px", md: "500px" }}
@@ -149,6 +149,17 @@ const SearchBar = ({ above, below, displayProp }) => {
           gap="20px 0"
           zIndex="999"
         >
+          <Box borderBottom="1px solid #444444" width="100%">
+            <Heading
+              as="h4"
+              color="var(--text-color)"
+              fontWeight="400"
+              fontSize="20px"
+              mb="5px"
+            >
+              Search Results
+            </Heading>
+          </Box>
           {loading ? (
             <Text as="span" color="var(--text-color)">
               Loading...
@@ -163,6 +174,7 @@ const SearchBar = ({ above, below, displayProp }) => {
           ) : (
             <></>
           )}
+
           {(() => {
             if (searchResults && searchResults.length > 0) {
               // Declare a variable to store the elements

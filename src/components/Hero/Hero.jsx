@@ -141,7 +141,7 @@ const Hero = () => {
         transition="background ease 0.25s"
         backgroundSize="cover"
         backgroundBlendMode="overlay"
-        backgroundColor="rgba(0,0,0,0.65)"
+        backgroundColor="rgba(0,0,0,0.55)"
         backgroundRepeat="no-repeat"
         w="100%"
         h={{

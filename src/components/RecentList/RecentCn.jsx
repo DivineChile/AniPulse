@@ -66,7 +66,9 @@ const RecentCn = () => {
             <Box
               as={ReactRouterLink}
               pos="relative"
-              to={`/watch/${cnAnimeEpId[i]}`}
+              to={`/watch/${encodeURIComponent(cnAnimeImg[i])}/${
+                cnAnimeEpId[i]
+              }`}
               overflow="hidden!important"
               className={`episode-container ${isHovered ? "hovered" : ""}`}
               onMouseEnter={() => setIsHovered(true)}
@@ -112,7 +114,9 @@ const RecentCn = () => {
                 >
                   <ChakraLink
                     as={ReactRouterLink}
-                    to={`/watch/${cnAnimeEpId[i]}`}
+                    to={`/watch/${encodeURIComponent(cnAnimeImg[i])}/${
+                      cnAnimeEpId[i]
+                    }`}
                     color="var(--link-color)"
                     _hover={{
                       color: "var(--link-color)",
@@ -148,7 +152,9 @@ const RecentCn = () => {
               <ChakraLink
                 as={ReactRouterLink}
                 _hover={{ textDecor: "none" }}
-                to={`/watch/${cnAnimeEpId[i]}`}
+                to={`/watch/${encodeURIComponent(cnAnimeImg[i])}/${
+                  cnAnimeEpId[i]
+                }`}
               >
                 {/* Anime Name */}
                 <Text

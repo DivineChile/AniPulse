@@ -89,7 +89,7 @@ const Navbar = () => {
           alignItems={{ base: "flex-start", lg: "center" }}
           justifyContent={{ base: "flex-start", lg: "center" }}
           boxShadow={{
-            base: "0px 2px 4px 0px var(--secondary-color)",
+            base: "0 0 10px 0 rgba(0,0,0,0.3)",
             lg: "none",
           }}
           backgroundColor="var(--primary-background-color)"
