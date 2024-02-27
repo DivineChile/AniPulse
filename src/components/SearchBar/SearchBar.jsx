@@ -81,9 +81,9 @@ const SearchBar = ({ above, below, displayProp }) => {
     }, 200);
   };
 
-  const handleLinkClick = (itemId) => {
-    window.location.replace(`/anime/${itemId}`);
-  };
+  // const handleLinkClick = (itemId) => {
+  //   window.location.replace(`/anime/${itemId}`);
+  // };
 
   return (
     <Box
@@ -203,7 +203,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                         alignItems: "center",
                       }}
                       to={`/anime/${itemId}`}
-                      onClick={() => handleLinkClick(itemId)}
+                      // onClick={() => handleLinkClick(itemId)}
                     >
                       <Box>
                         <Image

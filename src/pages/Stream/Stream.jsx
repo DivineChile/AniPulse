@@ -513,7 +513,13 @@ const Stream = () => {
                       href={`${downloadUrl}`}
                       target="_blank"
                       rel="noreferrer"
-                      disabled={downloadLoading}
+                      style={{
+                        pointerEvents: downloadLoading
+                          ? "none"
+                          : downloadError
+                          ? "none"
+                          : "visible",
+                      }}
                     >
                       {downloadLoading
                         ? "Loading..."

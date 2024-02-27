@@ -93,7 +93,7 @@ const Navbar = () => {
             lg: "none",
           }}
           backgroundColor="var(--primary-background-color)"
-          transition="all ease 0.5s"
+          transition="all ease 0.3s"
           width={{ base: "100%", lg: "fit-content" }}
           flexWrap="wrap"
           pos={{ base: "absolute", lg: "initial" }}

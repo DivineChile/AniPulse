@@ -67,8 +67,8 @@ const Recents = () => {
         top="0"
         left="0"
         bg="#191919"
-        spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
-        spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+        spinnerH={{ base: "50px", md: "60px", lg: "70px" }}
+        spinnerW={{ base: "50px", md: "80px", lg: "70px" }}
       />
     );
 

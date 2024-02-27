@@ -525,8 +525,8 @@ const View = () => {
                   </Heading>
                   <Box mt="20px">
                     <EpisodeList
-                      items={reversedId}
-                      itemId={reversedId}
+                      items={animeEpId}
+                      itemId={animeEpId}
                       coverImg={coverImage}
                     />
                   </Box>
