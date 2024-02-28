@@ -8,7 +8,7 @@ import {
   InputLeftAddon,
   Text,
 } from "@chakra-ui/react";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import { useState, useEffect } from "react";
@@ -26,6 +26,8 @@ const SearchBar = ({ above, below, displayProp }) => {
   const [error, setError] = useState(null);
 
   const [showAll, setShowAll] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     setQuery(event.target.value);
@@ -82,7 +84,7 @@ const SearchBar = ({ above, below, displayProp }) => {
   };
 
   const handleLinkClick = (itemId) => {
-    window.location.href(`/anime/${itemId}`);
+    navigate(`/anime/${itemId}`);
   };
 
   return (
