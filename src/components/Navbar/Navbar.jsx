@@ -89,7 +89,7 @@ const Navbar = () => {
           alignItems={{ base: "flex-start", lg: "center" }}
           justifyContent={{ base: "flex-start", lg: "center" }}
           boxShadow={{
-            base: "0 0 10px 0 rgba(0,0,0,0.3)",
+            base: "0 4px 10px 0 rgba(0,0,0,0.25)",
             lg: "none",
           }}
           backgroundColor="var(--primary-background-color)"
@@ -137,6 +137,7 @@ const Navbar = () => {
             _hover={{
               background: "#333333",
             }}
+            background="#2a2a2a"
             transition="all ease 0.25s"
             display="flex"
             alignItems="center"
@@ -155,6 +156,7 @@ const Navbar = () => {
             _hover={{
               background: "#333333",
             }}
+            background="#2a2a2a"
             transition="all ease 0.25s"
             display="flex"
             alignItems="center"

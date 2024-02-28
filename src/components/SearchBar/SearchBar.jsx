@@ -275,7 +275,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                       border: "2px solid var(--secondary-color)",
                       borderRadius: "5px",
                       padding: "5px 15px",
-                      width: "fit-content",
+                      width: window.innerWidth < 500 ? "100%" : "fit-content",
                     }}
                   >
                     {showAll ? "View Less" : "View All"}
