@@ -203,20 +203,21 @@ const SearchBar = ({ above, below, displayProp }) => {
                         display: "flex",
                         gap: "0 20px",
                         alignItems: "center",
+                        width: "100%",
                       }}
                       // to={`/anime/${itemId}`}
                       onClick={() => handleLinkClick(itemId)}
                     >
-                      <Box>
+                      <Box width="30%">
                         <Image
-                          h={{ base: "50px", md: "70px" }}
-                          w={{ base: "50px", md: "70px" }}
+                          h="100%"
+                          w="100%"
                           bg="#191919"
                           borderRadius="6px"
                           src={itemImg}
                         />
                       </Box>
-                      <Box>
+                      <Box width="90%">
                         <Box display="flex" flexDir="column">
                           <Heading
                             as="h4"

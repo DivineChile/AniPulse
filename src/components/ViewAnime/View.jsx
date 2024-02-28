@@ -90,7 +90,7 @@ const View = () => {
         setAnimeEp(data.episodes.map((item) => item));
         setAnimeEpNum(data.episodes.map((item) => item.number));
         setAnimeEpId(data.episodes.map((item) => item.id));
-        console.log(animeEpId);
+        // console.log(animeEpId);
         setEpLength(animeEpNum.length);
         setCoverImage(data.episodes.map((item) => item.image));
 
@@ -103,7 +103,7 @@ const View = () => {
     };
     fetchAnimeEpisodes();
   }, []);
-  console.log(animeEpId);
+  // console.log(animeEpId);
 
   const calculateTimeRemaining = () => {
     const now = moment();
