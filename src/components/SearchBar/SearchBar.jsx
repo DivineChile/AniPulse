@@ -202,7 +202,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                         gap: "0 20px",
                         alignItems: "center",
                       }}
-                      to={`/anime/${itemId}`}
+                      // to={`/anime/${itemId}`}
                       onClick={() => handleLinkClick(itemId)}
                     >
                       <Box>
