@@ -48,7 +48,7 @@ a.server:hover {
 }
 
 a.downloadBtn {
-  border: 2px solid var(--secondary-color);
+  /* border: 2px solid var(--secondary-color); */
   height: 51.5px;
   width: 256.61px;
   display: flex;

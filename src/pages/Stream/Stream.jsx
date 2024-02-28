@@ -519,6 +519,11 @@ const Stream = () => {
                           : downloadError
                           ? "none"
                           : "visible",
+                        border: downloadLoading
+                          ? "2px solid var(--text-color)"
+                          : downloadError
+                          ? "2px solid var(--text-color)"
+                          : "2px solid var(--secondary-color)",
                       }}
                     >
                       {downloadLoading

@@ -75,6 +75,10 @@ const View = () => {
       }
     };
 
+    fetchAnimeData();
+  }, []);
+
+  useEffect(() => {
     const fetchAnimeEpisodes = async () => {
       setEpLoading(true);
       try {
@@ -86,8 +90,10 @@ const View = () => {
         setAnimeEp(data.episodes.map((item) => item));
         setAnimeEpNum(data.episodes.map((item) => item.number));
         setAnimeEpId(data.episodes.map((item) => item.id));
+        console.log(animeEpId);
         setEpLength(animeEpNum.length);
         setCoverImage(data.episodes.map((item) => item.image));
+
         setEpLoading(false);
         setEpError(false);
       } catch {
@@ -95,10 +101,9 @@ const View = () => {
         setEpLoading(false);
       }
     };
-
-    fetchAnimeData();
     fetchAnimeEpisodes();
   }, []);
+  console.log(animeEpId);
 
   const calculateTimeRemaining = () => {
     const now = moment();
@@ -124,6 +129,7 @@ const View = () => {
   }, []);
 
   document.title = `${animeTitle} - AniPulse`;
+  document.body.style.overflow = isLoading ? "hidden!important" : "initial";
 
   const reversedId = animeEpId.reverse();
 
