@@ -80,11 +80,12 @@ const Navbar = () => {
       <Box display="flex" alignItems="center" gap="0 20px">
         <List
           display={isOpen ? { base: "flex" } : { base: "flex", lg: "block" }}
-          overflow={
+          overflowY={
             isOpen
               ? { base: "initial", md: "initial", lg: "initial" }
               : "initial"
           }
+          overflowX={isOpen ? { base: "hidden", md: "initial" } : "initial"}
           flexDir={{ base: "column", lg: "row" }}
           alignItems={{ base: "flex-start", lg: "center" }}
           justifyContent={{ base: "flex-start", lg: "center" }}

@@ -100,12 +100,12 @@ const RecentUpdate = () => {
                 color: "var(--accent-color)",
               }}
               borderRadius="6px"
-              fontSize={{ base: "16.03px", md: "14.25px" }}
+              fontSize={{ base: "13.03px", md: "14.25px" }}
               lineHeight="24px"
               letterSpacing="0.5px"
               textTransform="uppercase"
               _selected={{
-                color: "var(--text-color)",
+                color: "var(--primary-background-color)",
                 bgColor: "var(--secondary-color)",
               }}
             >
@@ -118,12 +118,12 @@ const RecentUpdate = () => {
                 color: "var(--accent-color)",
               }}
               borderRadius="6px"
-              fontSize={{ base: "16.03px", md: "14.25px" }}
+              fontSize={{ base: "13.03px", md: "14.25px" }}
               lineHeight="24px"
               letterSpacing="0.5px"
               textTransform="uppercase"
               _selected={{
-                color: "var(--text-color)",
+                color: "var(--primary-background-color)",
                 bgColor: "var(--secondary-color)",
               }}
             >
@@ -137,12 +137,12 @@ const RecentUpdate = () => {
                 color: "var(--accent-color)",
               }}
               borderRadius="6px"
-              fontSize={{ base: "16.03px", md: "14.25px" }}
+              fontSize={{ base: "13.03px", md: "14.25px" }}
               lineHeight="24px"
               letterSpacing="0.5px"
               textTransform="uppercase"
               _selected={{
-                color: "var(--text-color)",
+                color: "var(--primary-background-color)",
                 bgColor: "var(--secondary-color)",
               }}
             >

@@ -20,6 +20,7 @@ const SearchBar = ({ above, below, displayProp }) => {
   const [animeTitle, setAnimeTitle] = useState(undefined);
   const [animeImg, setAnimeImg] = useState(undefined);
   const [animeEp, setAnimeEp] = useState(undefined);
+  const [animeNextEP, setAnimeNextEp] = useState(undefined);
   const [animeStatus, setAnimeStatus] = useState(undefined);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,9 @@ const SearchBar = ({ above, below, displayProp }) => {
         setAnimeId(searchResults.map((item) => item.id));
         setAnimeStatus(searchResults.map((item) => item.status));
         setAnimeEp(searchResults.map((item) => item.episodes));
+        setAnimeNextEp(
+          searchResults.map((item) => item.nextAiringEpisode.episode)
+        );
         setAnimeTitle(searchResults.map((item) => item.title.userPreferred));
         setAnimeImg(searchResults.map((item) => item.coverImage.extraLarge));
         setLoading(false);
@@ -194,6 +198,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                 const itemTitle = animeTitle[i];
                 const itemEp = animeEp[i];
                 const itemImg = animeImg[i];
+                const itemNextEp = animeNextEP[i];
 
                 // Use item properties in JSX
                 elements.push(
@@ -238,7 +243,11 @@ const SearchBar = ({ above, below, displayProp }) => {
                             fontWeight={{ base: "300", md: "normal" }}
                           >
                             Episodes:{" "}
-                            {itemEp === undefined ? "Loading..." : itemEp}
+                            {itemEp === undefined
+                              ? "Loading..."
+                              : itemNextEp === undefined
+                              ? "Loading..."
+                              : `${itemNextEp} / ${itemEp}`}
                           </Text>
                           <Text
                             as="span"
@@ -275,6 +284,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                       border: "2px solid var(--secondary-color)",
                       borderRadius: "5px",
                       padding: "5px 15px",
+                      textAlign: window.innerWidth < 500 ? "center" : "start",
                       width: window.innerWidth < 500 ? "100%" : "fit-content",
                     }}
                   >

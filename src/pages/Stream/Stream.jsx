@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import playIcon from "../../assets/playIcon.svg";
@@ -21,6 +21,7 @@ import ReactPlayer from "react-player/lazy";
 import "./style.css";
 
 const Stream = () => {
+  const navigate = useNavigate();
   const { coverImg, watchId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [epLoading, setEpLoading] = useState(true);
@@ -28,6 +29,8 @@ const Stream = () => {
   const [epError, setEpError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
   const [episodeData, setEpisodeData] = useState([]);
+  const [newAnimeNum, setNewAnimeNum] = useState("");
+  const [currentEpNum, setCurrentEpNum] = useState("");
   const [onPlay, setOnPlay] = useState(false);
   const [videoData, setVideoData] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
@@ -47,49 +50,62 @@ const Stream = () => {
     newAnimeIdVal = newAnimeId.join("-");
   }
 
+  const fetchEpisodes = async (animeId) => {
+    setEpLoading(true);
+    try {
+      const responseEp = await fetch(
+        `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeId}`
+      );
+      const dataEp = await responseEp.json();
+      setEpisodeData(dataEp.episodes.map((item) => item));
+      setEpisodeId(dataEp.episodes.map((item) => item.id));
+
+      setEpLoading(false);
+    } catch {
+      setEpError(true);
+      setEpLoading(false);
+    }
+  };
+
+  const fetchVideos = async () => {
+    setIsLoading(true);
+
+    try {
+      const responseVideo = await fetch(
+        `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
+      );
+      const dataVideo = await responseVideo.json();
+      setVideoData(dataVideo);
+      // setVideoPlyr(dataVideo.nspl.main);
+      setCurrentEpNum(dataVideo.info.episode);
+      setAnimeTitle(
+        `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
+      );
+      document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
+      setLoading(false);
+      setError(false);
+    } catch (error) {
+      setError(true);
+      setIsLoading(false);
+    }
+  };
+
+  const handleSub = () => {
+    const newAnimeIdSub = `${newAnimeIdVal}`;
+    setNewAnimeNum(newAnimeIdSub);
+    fetchEpisodes(newAnimeIdSub);
+  };
+
+  const handleDub = () => {
+    const newAnimeIdDub = `${newAnimeIdVal}-dub`;
+    setNewAnimeNum(newAnimeIdDub);
+    fetchEpisodes(newAnimeIdDub);
+  };
+
   useEffect(() => {
-    const fetchEpisodes = async () => {
-      setEpLoading(true);
-      try {
-        const responseEp = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${newAnimeIdVal}`
-        );
-        const dataEp = await responseEp.json();
-        setEpisodeData(dataEp.episodes.map((item) => item));
-        setEpisodeId(dataEp.episodes.map((item) => item.id));
-
-        setEpLoading(false);
-      } catch {
-        setEpError(true);
-        setEpLoading(false);
-      }
-    };
-
-    const fetchVideos = async () => {
-      setIsLoading(true);
-
-      try {
-        const responseVideo = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
-        );
-        const dataVideo = await responseVideo.json();
-        setVideoData(dataVideo);
-        // setVideoPlyr(dataVideo.nspl.main);
-        setAnimeTitle(
-          `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
-        );
-        document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
-        setLoading(false);
-        setError(false);
-      } catch (error) {
-        setError(true);
-        setIsLoading(false);
-      }
-    };
-
-    fetchEpisodes();
+    fetchEpisodes(newAnimeIdVal);
     fetchVideos();
-  }, []);
+  }, [newAnimeIdVal]);
 
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(false);
@@ -149,11 +165,6 @@ const Stream = () => {
 
     downloadEpisode();
   });
-
-  const handleDownload = () => {
-    window.location.pathname = downloadUrl;
-  };
-
   return (
     <Box>
       <Navbar />
@@ -197,7 +208,7 @@ const Stream = () => {
                 <GridItem
                   colSpan={{ base: 6, xl: 4 }}
                   h={{
-                    base: onPlay ? "100%" : "150px",
+                    base: onPlay ? "100%" : "250px",
                     sm: onPlay ? "100%" : "350px",
                     md: onPlay ? "100%" : "400px",
                     xl: "450px!important",
@@ -340,7 +351,7 @@ const Stream = () => {
                             width="100%"
                             height="100%"
                             pos="absolute"
-                            top="0"
+                            top={{ base: "20px", sm: "0" }}
                             left="0"
                             bg="#191919"
                             spinnerH={{ base: "50px" }}
@@ -464,7 +475,17 @@ const Stream = () => {
                         flexWrap="wrap"
                         justifyContent={{ base: "center", md: "start" }}
                       >
-                        <Link className="server active">Server 1</Link>
+                        <Link
+                          className={
+                            location.pathname ==
+                            `/watch/${encodeURIComponent(coverImg)}/${watchId}`
+                              ? "server active"
+                              : "server"
+                          }
+                          onClick={handleSub}
+                        >
+                          Server 1
+                        </Link>
                         <Link className="server">Server 1</Link>
                         <Link className="server">Server 1</Link>
                         <Link className="server">Server 1</Link>
@@ -489,7 +510,17 @@ const Stream = () => {
                         flexWrap="wrap"
                         justifyContent={{ base: "center", md: "start" }}
                       >
-                        <Link className="server">Server 1</Link>
+                        <Link
+                          className={
+                            location.pathname ==
+                            `/watch/${encodeURIComponent(coverImg)}/${watchId}`
+                              ? "server active"
+                              : "server"
+                          }
+                          onClick={handleDub}
+                        >
+                          Server 1
+                        </Link>
                         <Link className="server">Server 1</Link>
                         <Link className="server">Server 1</Link>
                         <Link className="server">Server 1</Link>
@@ -524,6 +555,11 @@ const Stream = () => {
                           : downloadError
                           ? "2px solid var(--text-color)"
                           : "2px solid var(--secondary-color)",
+                        display: downloadLoading
+                          ? "none"
+                          : downloadError
+                          ? "none"
+                          : "flex",
                       }}
                     >
                       {downloadLoading

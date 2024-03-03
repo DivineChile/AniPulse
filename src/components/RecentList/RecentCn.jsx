@@ -232,15 +232,16 @@ const RecentCn = () => {
         key="showMore"
         color="var(--text-color)"
         fontSize={{ base: "15px", md: "17px", lg: "19px", "2xl": "22.96px" }}
-        border="1px solid var(--secondary-accent-color)"
+        border="1px solid var(--secondary-color)"
         borderRadius="5px"
         padding="5px 15px"
         transition="all ease 0.25s"
         width={{ base: "100%", md: "initial" }}
         _hover={{
           textDecor: "none",
-          color: "var(--text-color)",
-          background: "var(--secondary-accent-color)",
+          color: "var(--background-color)",
+          background: "var(--accent-color)",
+          border: "none",
         }}
         pos={{ base: "initial", md: "absolute" }}
         right="0"
