@@ -252,7 +252,6 @@ const View = () => {
                   >
                     Episodes :{" "}
                     {`${animeInfo.nextair?.episode - 1} /${animeInfo.episodes}`}
-                    {console.log(animeInfo)}
                   </Text>
                   {/* Anime Summary */}
                   <Box mt="20px">
