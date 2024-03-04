@@ -93,7 +93,6 @@ const Stream = () => {
   const handleSub = () => {
     newAnimeIdVal.split("-").pop();
     const newAnimeIdSub = newAnimeId.join("-");
-    console.log(newAnimeIdSub);
     setNewAnimeNum(newAnimeIdSub);
     fetchEpisodes(newAnimeIdSub);
   };
