@@ -20,7 +20,7 @@ const SearchBar = ({ above, below, displayProp }) => {
   const [animeTitle, setAnimeTitle] = useState(undefined);
   const [animeImg, setAnimeImg] = useState(undefined);
   const [animeEp, setAnimeEp] = useState(undefined);
-  const [animeNextEP, setAnimeNextEp] = useState(undefined);
+  // const [animeNextEP, setAnimeNextEp] = useState(undefined);
   const [animeStatus, setAnimeStatus] = useState(undefined);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,11 +56,10 @@ const SearchBar = ({ above, below, displayProp }) => {
         setAnimeId(searchResults.map((item) => item.id));
         setAnimeStatus(searchResults.map((item) => item.status));
         setAnimeEp(searchResults.map((item) => item.episodes));
-        setAnimeNextEp(
-          searchResults.map((item) => item.nextAiringEpisode.episode)
-        );
+
         setAnimeTitle(searchResults.map((item) => item.title.userPreferred));
         setAnimeImg(searchResults.map((item) => item.coverImage.extraLarge));
+
         setLoading(false);
       } catch (error) {
         setError(true);
@@ -198,7 +197,6 @@ const SearchBar = ({ above, below, displayProp }) => {
                 const itemTitle = animeTitle[i];
                 const itemEp = animeEp[i];
                 const itemImg = animeImg[i];
-                const itemNextEp = animeNextEP[i];
 
                 // Use item properties in JSX
                 elements.push(
@@ -245,9 +243,9 @@ const SearchBar = ({ above, below, displayProp }) => {
                             Episodes:{" "}
                             {itemEp === undefined
                               ? "Loading..."
-                              : itemNextEp === undefined
-                              ? "Loading..."
-                              : `${itemNextEp} / ${itemEp}`}
+                              : itemEp == null
+                              ? "NIL"
+                              : `${itemEp}`}
                           </Text>
                           <Text
                             as="span"

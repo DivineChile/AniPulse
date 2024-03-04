@@ -39,6 +39,7 @@ const Recents = () => {
         const subData = await responseSub.json();
         setSubAimeData(subData.results.map((item) => item));
         setSubAnimeEpId(subAnimeData.map((item) => item.episode_id));
+
         setSubAnimeImg(subAnimeData.map((item) => item.image_url));
         setSubAnimeTitle(subAnimeData.map((item) => item.title));
         setSubAnimeEp(subAnimeData.map((item) => item.episode));
@@ -98,6 +99,7 @@ const Recents = () => {
       ? recentAnime.push(<></>)
       : recentAnime.push(
           <GridItem w={{ base: "100%" }} key={subAnimeEpId[i]}>
+            {/* {console.log(subAnimeEpId)} */}
             <Box
               as={ReactRouterLink}
               to={`/watch/${encodeURIComponent(subAnimeImg[i])}/${

@@ -32,7 +32,7 @@ const View = () => {
   const [animeEpId, setAnimeEpId] = useState([]);
   const [animeEpNum, setAnimeEpNum] = useState([]);
   const [animeDataEP, setAnimeDataEP] = useState([]);
-  const [coverImage, setCoverImage] = useState([]);
+  const [animeIdGogo, setAnimeIdGogo] = useState("");
   const [epLength, setEpLength] = useState(0);
   const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
@@ -52,6 +52,7 @@ const View = () => {
         setAnimeId(animeData.id);
 
         setAnimeTitle(Object.entries(animeData.title).map((item) => item[1]));
+        setAnimeIdGogo(animeData.id_provider.idGogo);
         setAnimeImg(
           Object.entries(animeData.coverImage).map((item) => item[1])
         );
@@ -83,16 +84,17 @@ const View = () => {
       setEpLoading(true);
       try {
         const response = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/episode/${id}`
+          `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeIdGogo}`
         );
         const data = await response.json();
         setAnimeDataEP(data);
+
         setAnimeEp(data.episodes.map((item) => item));
-        setAnimeEpNum(data.episodes.map((item) => item.number));
+        // setAnimeEpNum(data.episodes.map((item) => item.number));
         setAnimeEpId(data.episodes.map((item) => item.id));
         // console.log(animeEpId);
         setEpLength(animeEpNum.length);
-        setCoverImage(data.episodes.map((item) => item.image));
+        // setCoverImage(data.episodes.map((item) => item.image));
 
         setEpLoading(false);
         setEpError(false);
@@ -102,7 +104,7 @@ const View = () => {
       }
     };
     fetchAnimeEpisodes();
-  }, []);
+  }, [animeIdGogo]);
   // console.log(animeEpId);
 
   const calculateTimeRemaining = () => {
@@ -131,7 +133,7 @@ const View = () => {
   document.title = `${animeTitle} - AniPulse`;
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
 
-  const reversedId = animeEpId.reverse();
+  // const reversedId = animeEpId.reverse();
 
   return (
     <Box>
@@ -248,7 +250,9 @@ const View = () => {
                     color="var(--secondary-color)"
                     transition="background ease 0.25s"
                   >
-                    Episodes : {animeInfo.episodes}
+                    Episodes :{" "}
+                    {`${animeInfo.nextair?.episode - 1} /${animeInfo.episodes}`}
+                    {console.log(animeInfo)}
                   </Text>
                   {/* Anime Summary */}
                   <Box mt="20px">
@@ -533,7 +537,7 @@ const View = () => {
                     <EpisodeList
                       items={animeEpId}
                       itemId={animeEpId}
-                      coverImg={coverImage}
+                      coverImg={animeImg}
                     />
                   </Box>
                 </Box>
