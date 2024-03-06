@@ -46,7 +46,8 @@ const RecentUpdate = () => {
     <Box
       px={{ base: "20px", lg: "80px", xl: "100px" }}
       bg="var(--primary-background-color)"
-      py="40px"
+      pt="40px"
+      pb="80px"
     >
       {/* Recent Release Head */}
       <Box
