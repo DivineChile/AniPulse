@@ -4,6 +4,7 @@ import { register } from "swiper/element/bundle";
 import moment from "moment";
 import "swiper/css";
 import "./style.css";
+import Error from "../ErrorPage/Error";
 
 register();
 
@@ -11,15 +12,8 @@ const Upcoming = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [results, setResults] = useState([]);
-  const [airYear, setAirYear] = useState([]);
-  const [airMonth, setAirMonth] = useState([]);
-  const [airDay, setAirDay] = useState([]);
-  const [countdown, setCountdown] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+
+  const [countdowns, setCountdowns] = useState([]);
 
   useEffect(() => {
     const fetchUpcomingAnimes = async () => {
@@ -27,9 +21,6 @@ const Upcoming = () => {
         const res = await fetch("https://api.jikan.moe/v4/seasons/upcoming");
         const data = await res.json();
         setResults(data.data);
-        setAirDay(results.map((item) => item.aired.prop.from.day));
-        setAirMonth(results.map((item) => item.aired.prop.from.month));
-        setAirYear(results.map((item) => item.aired.prop.from.year));
         setIsLoading(false);
         setError(false);
       } catch {
@@ -41,33 +32,40 @@ const Upcoming = () => {
     fetchUpcomingAnimes();
   }, []);
   console.log(results);
-  console.log(airMonth);
-
-  const targetDate = moment({
-    airYear,
-    month: airMonth - 1,
-    airDay,
-  });
 
   useEffect(() => {
     // Calculate countdown and update every second
     const interval = setInterval(() => {
-      if (targetDate) {
+      const updatedCountdowns = results.map((item) => {
+        const airDay = item.aired.prop.from.day;
+        const airMonth = item.aired.prop.from.month;
+        const airYear = item.aired.prop.from.year;
+
+        const targetDate = moment({
+          year: airYear,
+          month: airMonth - 1,
+          day: airDay,
+        });
         const now = moment();
         const duration = moment.duration(targetDate.diff(now));
 
-        setCountdown({
-          days: duration.days(),
-          hours: duration.hours(),
-          minutes: duration.minutes(),
-          seconds: duration.seconds(),
-        });
-      }
+        return {
+          malId: item.mal_id,
+          countdown: {
+            days: duration.days(),
+            hours: duration.hours(),
+            minutes: duration.minutes(),
+            seconds: duration.seconds(),
+          },
+        };
+      });
+
+      setCountdowns(updatedCountdowns);
     }, 1000);
 
     // Cleanup the interval on component unmount
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, [results]);
 
   // setTargetDate(targetDates);
   // const swiperElRef = useRef(null);
@@ -94,17 +92,19 @@ const Upcoming = () => {
       effect="fade"
     >
       {results.map((item) => {
-        const title = item.title_english;
+        const countdownItem = countdowns.find(
+          (countdown) => countdown.malId === item.mal_id
+        );
+        const title = item.title;
         const season = item.season === null ? "NIL" : item.season;
         const genres = item.genres;
         const type = item.type;
-        const day = item.aired.prop.from.day;
-        const month = item.aired.prop.from.month;
-        const airYear = item.aired.prop.from.year;
         const year = item.year;
         const rating = item.rating;
         const newRating = rating?.split();
         const newnewRating = rating?.slice(0, 6);
+
+        const isCountdownNull = countdownItem?.countdown === null;
 
         // Create a Moment.js object representing the target date
 
@@ -113,10 +113,18 @@ const Upcoming = () => {
             <Box
               px={{ base: "20px", lg: "80px", xl: "100px" }}
               py="40px"
-              bg={`url(${item.images.jpg.image_url})`}
+              bg={
+                isLoading
+                  ? "#191919"
+                  : `url(${item.images.jpg.large_image_url})`
+              }
               transition="all ease 0.25s"
               bgBlendMode="overlay"
-              bgColor={{ base: "rgba(0,0,0,0.8)", md: "rgba(0,0,0,0.9)" }}
+              bgColor={
+                isLoading
+                  ? "#191919"
+                  : { base: "rgba(0,0,0,0.8)", md: "rgba(0,0,0,0.9)" }
+              }
               bgSize="cover"
               bgPos="center"
               bgRepeat="no-repeat"
@@ -128,7 +136,7 @@ const Upcoming = () => {
               <Box
                 height="100%"
                 w="193px"
-                bg={`url(${item.images.jpg.image_url})`}
+                bg={`url(${item.images.jpg.large_image_url})`}
                 bgBlendMode="overlay"
                 bgColor={{ base: "rgba(0,0,0,0.5)" }}
                 bgSize="cover"
@@ -142,7 +150,7 @@ const Upcoming = () => {
               <Box
                 height="100%"
                 w="253px"
-                bg={`url(${item.images.jpg.image_url})`}
+                bg={`url(${item.images.jpg.large_image_url})`}
                 bgBlendMode="overlay"
                 bgColor={{ base: "rgba(0,0,0,0.5)" }}
                 bgSize="cover"
@@ -346,7 +354,8 @@ const Upcoming = () => {
                       letterSpacing="0.5px"
                       fontWeight="bold"
                     >
-                      297
+                      {isCountdownNull ? "HI" : countdownItem?.countdown.days}
+                      {console.log(isCountdownNull)}
                       <Text
                         as="sub"
                         ms="5px"
@@ -384,7 +393,7 @@ const Upcoming = () => {
                       letterSpacing="0.5px"
                       fontWeight="bold"
                     >
-                      52
+                      {countdownItem?.countdown.hours}
                       <Text
                         as="sub"
                         ms="5px"
@@ -422,7 +431,7 @@ const Upcoming = () => {
                       letterSpacing="0.5px"
                       fontWeight="bold"
                     >
-                      52
+                      {countdownItem?.countdown.minutes}
                       <Text
                         as="sub"
                         ms="5px"
@@ -460,7 +469,7 @@ const Upcoming = () => {
                       letterSpacing="0.5px"
                       fontWeight="bold"
                     >
-                      52
+                      {countdownItem?.countdown.seconds}
                       <Text
                         as="sub"
                         ms="5px"
@@ -479,65 +488,6 @@ const Upcoming = () => {
           </swiper-slide>
         );
       })}
-      {/* <swiper-slide>
-        <Box
-          px={{ base: "20px", lg: "80px", xl: "100px" }}
-          py="40px"
-          bg={`url(${banner1})`}
-          transition="all ease 0.25s"
-          bgBlendMode="overlay"
-          bgColor={{ base: "rgba(0,0,0,0.8)", md: "rgba(0,0,0,0.9)" }}
-          bgSize="cover"
-          bgPos="center"
-          bgRepeat="no-repeat"
-          height={{ base: "500px", md: "100vh", "2xl": "631px" }}
-          pos="relative"
-          display="flex"
-          alignItems="center"
-        >
-          
-          
-        </Box>
-      </swiper-slide>
-      <swiper-slide>
-        <Box
-          bg={`url(${banner1})`}
-          bgSize="cover"
-          bgRepeat="no-repeat"
-          bgPos="center"
-          height={{ base: "500px", md: "100vh", "2xl": "631px" }}
-        >
-          <Heading>Hello Chile</Heading>
-        </Box>
-      </swiper-slide>
-      <swiper-slide>
-        <Box
-          bg={`url(${banner1})`}
-          bgSize="cover"
-          bgRepeat="no-repeat"
-          bgPos="center"
-          height={{ base: "500px", md: "100vh", "2xl": "631px" }}
-        >
-          <Heading>Hello Divine</Heading>
-        </Box>
-      </swiper-slide> */}
-
-      {/* <Box
-          px={{ base: "20px", lg: "80px", xl: "100px" }}
-          py="40px"
-          bg={`url(${banner1})`}
-          bgBlendMode="overlay"
-          bgColor={{ base: "rgba(0,0,0,0.9)" }}
-          bgSize="cover"
-          bgPos="center"
-          bgRepeat="no-repeat"
-          height={{ base: "100%", md: "100vh", "2xl": "631px" }}
-          pos="relative"
-          display="flex"
-          alignItems="center"
-        >
-          
-        </Box> */}
     </swiper-container>
   );
 };
