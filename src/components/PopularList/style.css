@@ -1,0 +1,9 @@
+.episode-container:hover img {
+  transform: scale(1.2);
+}
+.episode-container:hover .overlay {
+  /* transform: translateY(100%); */
+  top: 0;
+  opacity: 1;
+  visibility: visible;
+}

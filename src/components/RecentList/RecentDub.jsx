@@ -32,18 +32,19 @@ const RecentDub = () => {
           "https://api-amvstrm.nyt92.eu.org/api/v1/recentepisode/dub"
         );
 
-        if (!responseDub.ok) {
-          setError("Please Check Connection");
+        if (responseDub.ok) {
+          const dubData = await responseDub.json();
+          setDubAimeData(dubData.results.map((item) => item));
+          setDubAnimeEpId(dubAnimeData.map((item) => item.episode_id));
+          setDubAnimeImg(dubAnimeData.map((item) => item.image_url));
+          setDubAnimeTitle(dubAnimeData.map((item) => item.title));
+          setDubAnimeEp(dubAnimeData.map((item) => item.episode));
           setIsLoading(false);
+          setError(false);
+        } else {
+          setIsLoading(false);
+          setError(true);
         }
-        const dubData = await responseDub.json();
-        setDubAimeData(dubData.results.map((item) => item));
-        setDubAnimeEpId(dubAnimeData.map((item) => item.episode_id));
-        setDubAnimeImg(dubAnimeData.map((item) => item.image_url));
-        setDubAnimeTitle(dubAnimeData.map((item) => item.title));
-        setDubAnimeEp(dubAnimeData.map((item) => item.episode));
-        setIsLoading(false);
-        setError(false);
       } catch (error) {
         setError(true);
         setIsLoading(false);

@@ -32,19 +32,19 @@ const Recents = () => {
           "https://api-amvstrm.nyt92.eu.org/api/v1/recentepisode/sub"
         );
 
-        if (!responseSub.ok) {
-          setError("Please Check Connection");
+        if (responseSub.ok) {
+          const subData = await responseSub.json();
+          setSubAimeData(subData.results.map((item) => item));
+          setSubAnimeEpId(subAnimeData.map((item) => item.episode_id));
+          setSubAnimeImg(subAnimeData.map((item) => item.image_url));
+          setSubAnimeTitle(subAnimeData.map((item) => item.title));
+          setSubAnimeEp(subAnimeData.map((item) => item.episode));
           setIsLoading(false);
+          setError(false);
+        } else {
+          setIsLoading(false);
+          setError(true);
         }
-        const subData = await responseSub.json();
-        setSubAimeData(subData.results.map((item) => item));
-        setSubAnimeEpId(subAnimeData.map((item) => item.episode_id));
-
-        setSubAnimeImg(subAnimeData.map((item) => item.image_url));
-        setSubAnimeTitle(subAnimeData.map((item) => item.title));
-        setSubAnimeEp(subAnimeData.map((item) => item.episode));
-        setIsLoading(false);
-        setError(false);
       } catch (error) {
         setError(true);
         setIsLoading(false);

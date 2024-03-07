@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { register } from "swiper/element/bundle";
 import moment from "moment";
 import "swiper/css";
@@ -19,19 +19,24 @@ const Upcoming = () => {
     const fetchUpcomingAnimes = async () => {
       try {
         const res = await fetch("https://api.jikan.moe/v4/seasons/upcoming");
-        const data = await res.json();
-        setResults(data.data);
-        setIsLoading(false);
-        setError(false);
+
+        if (res.ok) {
+          const data = await res.json();
+          setResults(data.data);
+          setIsLoading(false);
+          setError(false);
+        } else {
+          setIsLoading(false);
+          setError(true);
+        }
       } catch {
         setIsLoading(false);
-        setError(false);
+        setError(true);
       }
     };
 
     fetchUpcomingAnimes();
   }, []);
-  console.log(results);
 
   useEffect(() => {
     // Calculate countdown and update every second
@@ -73,20 +78,6 @@ const Upcoming = () => {
     return () => clearInterval(interval);
   }, [results]);
 
-  // setTargetDate(targetDates);
-  // const swiperElRef = useRef(null);
-
-  // useEffect(() => {
-  //   // listen for Swiper events using addEventListener
-  //   swiperElRef.current.addEventListener("swiperprogress", (e) => {
-  //     const [swiper, progress] = e.detail;
-  //     console.log(swiper);
-  //   });
-
-  //   swiperElRef.current.addEventListener("swiperslidechange", (e) => {
-  //     console.log("slide changed");
-  //   });
-  // }, []);
   return (
     <swiper-container
       // ref={swiperElRef}
@@ -94,9 +85,39 @@ const Upcoming = () => {
       navigation="false"
       pagination="false"
       loop="true"
-      autoplay="true"
+      autoplay={{ delay: 8000 }}
       effect="fade"
     >
+      {isLoading && (
+        <Error
+          // msg="Still Loading"
+          loadingState={isLoading}
+          height="100%"
+          width="100%"
+          // error={err}
+          pos="absolute"
+          top="0"
+          left="0"
+          bg="#191919"
+          spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+          spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+        />
+      )}
+
+      {error && (
+        <Error
+          msg="Still Loading"
+          height="100%"
+          width="100%"
+          error={error}
+          pos="absolute"
+          top="0"
+          left="0"
+          bg="#191919"
+          spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
+          spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
+        />
+      )}
       {results
         .filter((item) => item.aired.prop.from.day !== null)
         .map((item) => {
