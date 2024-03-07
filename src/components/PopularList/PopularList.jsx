@@ -9,7 +9,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import banner1 from "../../assets/banner-img-1.png";
+import Error from "../ErrorPage/Error";
 import "./style.css";
 import { useEffect, useState } from "react";
 
@@ -80,6 +80,35 @@ const PopularList = () => {
           gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
           pos="relative"
         >
+          {isLoading && (
+            <Error
+              // msg="Still Loading"
+              loadingState={isLoading}
+              height="100%"
+              width="100%"
+              // error={err}
+              pos="absolute"
+              top="0"
+              left="0"
+              bg="#191919"
+              spinnerH={{ base: "50px", md: "60px", lg: "70px" }}
+              spinnerW={{ base: "50px", md: "80px", lg: "70px" }}
+            />
+          )}
+          {error && (
+            <Error
+              msg="Still Working"
+              height="100%"
+              width="100%"
+              error={error}
+              pos="absolute"
+              top="0"
+              left="0"
+              bg="#191919"
+              spinnerH={{ base: "50px", md: "60px", lg: "70px" }}
+              spinnerW={{ base: "50px", md: "80px", lg: "70px" }}
+            />
+          )}
           {results.map((item) => {
             const id = item.id;
             const title = item.title.english;
@@ -250,32 +279,40 @@ const PopularList = () => {
             );
           })}
         </Grid>
-        <Box display="flex" justifyContent="flex-end" mt="20px">
-          <ChakraLink
-            as={ReactRouterLink}
-            to="/popular"
-            color="var(--text-color)"
-            fontSize={{
-              base: "15px",
-              md: "17px",
-              lg: "19px",
-              "2xl": "22.96px",
-            }}
-            border="1px solid var(--secondary-color)"
-            borderRadius="5px"
-            padding="5px 15px"
-            transition="all ease 0.25s"
-            width={{ base: "100%", md: "initial" }}
-            _hover={{
-              textDecor: "none",
-              color: "var(--background-color)",
-              background: "var(--accent-color)",
-              border: "none",
-            }}
-          >
-            View More
-          </ChakraLink>
-        </Box>
+
+        {isLoading ? (
+          <></>
+        ) : error ? (
+          <></>
+        ) : (
+          <Box display="flex" justifyContent="flex-end" mt="20px">
+            <ChakraLink
+              as={ReactRouterLink}
+              to="/popular"
+              color="var(--text-color)"
+              fontSize={{
+                base: "15px",
+                md: "17px",
+                lg: "19px",
+                "2xl": "22.96px",
+              }}
+              border="1px solid var(--secondary-color)"
+              borderRadius="5px"
+              padding="5px 15px"
+              transition="all ease 0.25s"
+              width={{ base: "100%", md: "initial" }}
+              textAlign={{ base: "center", md: "start" }}
+              _hover={{
+                textDecor: "none",
+                color: "var(--background-color)",
+                background: "var(--accent-color)",
+                border: "none",
+              }}
+            >
+              View More
+            </ChakraLink>
+          </Box>
+        )}
       </Box>
     </Box>
   );
