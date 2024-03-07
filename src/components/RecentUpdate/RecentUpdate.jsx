@@ -161,7 +161,6 @@ const RecentUpdate = () => {
                   sm: "repeat(2, 1fr)",
                   md: "repeat(3, 1fr)",
                   lg: "repeat(4, 1fr)",
-                  "2xl": "repeat(5, 1fr)",
                 }}
                 gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
                 pos="relative"
@@ -178,7 +177,6 @@ const RecentUpdate = () => {
                   sm: "repeat(2, 1fr)",
                   md: "repeat(3, 1fr)",
                   lg: "repeat(4, 1fr)",
-                  "2xl": "repeat(5, 1fr)",
                 }}
                 gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
                 pos="relative"
@@ -195,7 +193,6 @@ const RecentUpdate = () => {
                   sm: "repeat(2, 1fr)",
                   md: "repeat(3, 1fr)",
                   lg: "repeat(4, 1fr)",
-                  "2xl": "repeat(5, 1fr)",
                 }}
                 gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
                 pos="relative"

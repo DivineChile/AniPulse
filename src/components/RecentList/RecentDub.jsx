@@ -54,7 +54,7 @@ const RecentDub = () => {
     fetchRecentReleaseAnime();
   }, [dubAnimeData]);
 
-  const endIndex = showAll ? dubAnimeData.length : 10;
+  const endIndex = showAll ? dubAnimeData.length : 8;
   isLoading &&
     recentAnime.push(
       <Error

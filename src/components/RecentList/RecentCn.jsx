@@ -53,7 +53,7 @@ const RecentCn = () => {
     fetchRecentReleaseAnime();
   }, [cnAnimeData]);
 
-  const endIndex = showAll ? cnAnimeData.length : 10;
+  const endIndex = showAll ? cnAnimeData.length : 8;
 
   isLoading &&
     recentAnime.push(

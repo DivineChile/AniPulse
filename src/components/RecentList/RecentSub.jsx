@@ -54,7 +54,7 @@ const Recents = () => {
     fetchRecentReleaseAnime();
   }, [subAnimeData]);
 
-  const endIndex = showAll ? subAnimeData.length : 10;
+  const endIndex = showAll ? subAnimeData.length : 8;
 
   isLoading &&
     recentAnime.push(
@@ -239,7 +239,7 @@ const Recents = () => {
         borderRadius="5px"
         padding="5px 15px"
         transition="all ease 0.25s"
-        width={{ base: "100%", md: "initial" }}
+        width={{ base: "100%", sm: "100%", md: "initial" }}
         _hover={{
           textDecor: "none",
           color: "var(--background-color)",
