@@ -190,7 +190,7 @@ const PopularList = () => {
                   alignItems={{ base: "flex-start" }}
                   mt="10px"
                 >
-                  <Flex gap="10px" mb="10px">
+                  <Flex gap="10px" mt="5px" mb="10px">
                     <Text
                       as="span"
                       color="var(--text-color)"
