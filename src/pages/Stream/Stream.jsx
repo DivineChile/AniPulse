@@ -340,16 +340,15 @@ const Stream = () => {
                           fontSize="17.58px"
                           lineHeight="24px"
                         >
-                          Season
                           {extractedNumbersStNdRdTh[0] == undefined ? (
                             <></>
                           ) : (
-                            ` ${extractedNumbersStNdRdTh[0]}`
+                            `Season ${extractedNumbersStNdRdTh[0]}`
                           )}
                           {extractedNumbersNoTh[0] == undefined ? (
                             <></>
                           ) : (
-                            ` ${extractedNumbersNoTh[0]}`
+                            `Season ${extractedNumbersNoTh[0]}`
                           )}
                         </Text>
                         <ChevronDownIcon
