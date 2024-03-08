@@ -325,38 +325,61 @@ const Stream = () => {
                   >
                     {/* Season box */}
                     <Box width="100%">
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        gap="0 10px"
-                        cursor="pointer"
-                        pos="relative"
-                        height="60px"
-                        ps="20px"
-                      >
-                        <Text
-                          color="var(--text-color)"
-                          fontSize="17.58px"
-                          lineHeight="24px"
+                      {extractedNumbersStNdRdTh[0] == undefined ? (
+                        <></>
+                      ) : (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          gap="0 10px"
+                          cursor="pointer"
+                          pos="relative"
+                          height="60px"
+                          ps="20px"
                         >
-                          {extractedNumbersStNdRdTh[0] == undefined ? (
-                            <></>
-                          ) : (
-                            `Season ${extractedNumbersStNdRdTh[0]}`
-                          )}
-                          {extractedNumbersNoTh[0] == undefined ? (
-                            <></>
-                          ) : (
-                            `Season ${extractedNumbersNoTh[0]}`
-                          )}
-                        </Text>
-                        <ChevronDownIcon
-                          h="18px"
-                          w="18px"
-                          color="var(--text-color)"
-                        />
-                      </Box>
+                          <Text
+                            color="var(--text-color)"
+                            fontSize="17.58px"
+                            lineHeight="24px"
+                          >
+                            Season {`${extractedNumbersStNdRdTh[0]}`}
+                          </Text>
+                          <ChevronDownIcon
+                            h="18px"
+                            w="18px"
+                            color="var(--text-color)"
+                          />
+                        </Box>
+                      )}
+                      {extractedNumbersNoTh[0] == undefined ? (
+                        <></>
+                      ) : (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          gap="0 10px"
+                          cursor="pointer"
+                          pos="relative"
+                          height="60px"
+                          ps="20px"
+                        >
+                          <Text
+                            color="var(--text-color)"
+                            fontSize="17.58px"
+                            lineHeight="24px"
+                          >
+                            Season {`${extractedNumbersNoTh[0]}`}
+                          </Text>
+                          <ChevronDownIcon
+                            h="18px"
+                            w="18px"
+                            color="var(--text-color)"
+                          />
+                        </Box>
+                      )}
+
                       <Box
                         display={{ base: "flex" }}
                         flexDir={{ base: "column" }}
