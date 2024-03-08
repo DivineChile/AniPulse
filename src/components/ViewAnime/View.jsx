@@ -251,7 +251,11 @@ const View = () => {
                     transition="background ease 0.25s"
                   >
                     Episodes :{" "}
-                    {`${animeInfo.nextair?.episode - 1} /${animeInfo.episodes}`}
+                    {isNaN(animeInfo.nextair?.episode)
+                      ? `${animeInfo.episodes}`
+                      : `${animeInfo.nextair?.episode - 1} /${
+                          animeInfo.episodes
+                        }`}
                   </Text>
                   {/* Anime Summary */}
                   <Box mt="20px">
