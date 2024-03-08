@@ -50,6 +50,27 @@ const Stream = () => {
     newAnimeIdVal = newAnimeId.join("-");
   }
 
+  // Logic to extract season Number
+  const containsStNdRdTh = newAnimeId.some((item) =>
+    /^\d{1,2}(st|nd|rd|th)$/.test(item)
+  );
+  const containsNoTh = newAnimeId.some((item) => /^\d{1,2}$/.test(item));
+
+  let extractedNumbersStNdRdTh = [];
+  let extractedNumbersNoTh = [];
+
+  if (containsStNdRdTh) {
+    extractedNumbersStNdRdTh = newAnimeId
+      .filter((item) => /^\d{1,2}(st|nd|rd|th)$/.test(item))
+      .map((item) => parseInt(item, 10));
+  }
+
+  if (containsNoTh) {
+    extractedNumbersNoTh = newAnimeId
+      .filter((item) => /^\d{1,2}$/.test(item))
+      .map((item) => parseInt(item, 10));
+  }
+
   const fetchEpisodes = async (animeId) => {
     setEpLoading(true);
     try {
@@ -319,7 +340,17 @@ const Stream = () => {
                           fontSize="17.58px"
                           lineHeight="24px"
                         >
-                          Season 1
+                          Season
+                          {extractedNumbersStNdRdTh[0] == undefined ? (
+                            <></>
+                          ) : (
+                            ` ${extractedNumbersStNdRdTh[0]}`
+                          )}
+                          {extractedNumbersNoTh[0] == undefined ? (
+                            <></>
+                          ) : (
+                            ` ${extractedNumbersNoTh[0]}`
+                          )}
                         </Text>
                         <ChevronDownIcon
                           h="18px"
