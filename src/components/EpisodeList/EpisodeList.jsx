@@ -34,8 +34,8 @@ const EpisodeList = ({ items, itemId, coverImg }) => {
         to={`/watch/${encodeURIComponent(coverItem)}/${itemId[i]}`}
         _hover={{
           textDecor: "none",
-          color: "var(--link-hover-color)",
-          borderBottomColor: "var(--link-hover-color)",
+          color: "var(--accent-color)",
+          borderBottomColor: "var(--accent-color)",
         }}
         color="var(--text-color)"
         borderBottom="1px solid var(--text-color)"

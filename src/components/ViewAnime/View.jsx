@@ -294,7 +294,7 @@ const View = () => {
                       _hover={{
                         color: "var(--background-color)",
                         textDecoration: "none",
-                        background: "var(--link-hover-color)",
+                        background: "var(--accent-color)",
                         border: "none",
                       }}
                       display="flex"
