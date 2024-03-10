@@ -405,7 +405,7 @@ const Stream = () => {
                             width="100%"
                             height="100%"
                             pos="absolute"
-                            top={{ base: "20px", sm: "0" }}
+                            top={{ base: "10px", sm: "80px" }}
                             left="0"
                             bg="#191919"
                             spinnerH={{ base: "50px" }}

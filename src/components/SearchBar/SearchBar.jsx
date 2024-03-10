@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 
 const SearchBar = ({ above, below, displayProp }) => {
   const [query, setQuery] = useState("");
+  const [animeData, setAnimeData] = useState(null);
   const [searchResults, setSearchResults] = useState(undefined);
   const [animeId, setAnimeId] = useState(undefined);
   const [animeTitle, setAnimeTitle] = useState(undefined);
@@ -69,6 +70,7 @@ const SearchBar = ({ above, below, displayProp }) => {
 
     // Only fetch data if the query is not empty
     if (query.trim() !== "") {
+      setAnimeData(fetchData);
       fetchData();
     } else {
       setSearchResults([]); // Clear results if the query is empty
@@ -88,6 +90,12 @@ const SearchBar = ({ above, below, displayProp }) => {
 
   const handleLinkClick = (itemId) => {
     navigate(`/anime/${itemId}`);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      navigate(`/search/keyword/${query}`);
+    }
   };
 
   return (
@@ -111,6 +119,10 @@ const SearchBar = ({ above, below, displayProp }) => {
             }}
             className="icon-con"
             _hover={{ borderColor: "var(--hover-color)" }}
+            cursor="pointer"
+            onClick={() => {
+              navigate(`/search/keyword/${query}`);
+            }}
           >
             <SearchIcon
               color="var(--secondary-color)"
@@ -134,6 +146,7 @@ const SearchBar = ({ above, below, displayProp }) => {
             type="text"
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            onKeyDown={handleKeyPress}
           />
         </InputGroup>
       </Form>

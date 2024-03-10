@@ -97,7 +97,7 @@ const PopularList = () => {
           )}
           {error && (
             <Error
-              msg="Still Working"
+              msg="Still Working..."
               height="100%"
               width="100%"
               error={error}
