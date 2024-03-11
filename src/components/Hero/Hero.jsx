@@ -152,7 +152,7 @@ const Hero = () => {
       >
         {/* Anime Recommendation */}
         <Flex
-          px={{ base: "20px", lg: "80px", xl: "100px" }}
+          px={{ base: "20px", lg: "20px", xl: "100px" }}
           h="100%"
           alignItems="center"
           justifyContent="space-between"

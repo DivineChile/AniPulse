@@ -59,7 +59,7 @@ const Navbar = () => {
       justifyContent="space-between"
       background="var(--primary-background-color)"
       width={{ base: "100%" }}
-      p={{ base: "15px 20px", lg: "20px 80px", xl: "20, 100px" }}
+      p={{ base: "15px 20px", lg: "20px 20px", xl: "20px 100px" }}
       pos="relative"
       boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
       // border="1px solid red"
@@ -104,12 +104,13 @@ const Navbar = () => {
           gap={{ base: "10px 0", lg: "0" }}
           h={
             isOpen
-              ? { base: "250px", lg: "initial" }
+              ? { base: "fit-content", lg: "initial" }
               : { base: "0", lg: "initial" }
           }
           zIndex="999"
         >
           <SearchBar above="lg" displayProp={isOpen ? "block" : "none"} />
+
           {NavList.map((item, key) => {
             return (
               <ListItem
@@ -128,6 +129,19 @@ const Navbar = () => {
               </ListItem>
             );
           })}
+          <Box
+            className="authCon"
+            gap="0 20px"
+            display={isOpen ? "flex" : "none"}
+            hideFrom="lg"
+          >
+            <Link to="/signup" className="authLinks">
+              Sign Up
+            </Link>
+            <Link to="/login" className="authLinks">
+              Sign In
+            </Link>
+          </Box>
         </List>
 
         <SearchBar below="lg" />
@@ -176,6 +190,16 @@ const Navbar = () => {
             />
           </Box>
         )}
+
+        {/* Auth Links */}
+        <Box className="authCon" gap="0 20px" display="flex" hideBelow="lg">
+          <Link to="/signup" className="authLinks">
+            Sign Up
+          </Link>
+          <Link to="/login" className="authLinks">
+            Sign In
+          </Link>
+        </Box>
       </Box>
     </Box>
   );

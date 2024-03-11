@@ -13,11 +13,15 @@ import Popular from "./pages/Popular/Popular";
 import Stream from "./pages/Stream/Stream";
 import View from "./components/ViewAnime/View";
 import Filter from "./pages/Search/Filter";
+import Login from "./auth/Login/Login";
+import Signup from "./auth/Signup/Signup";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" index element={<Home />} />
+      <Route path="/login" index element={<Login />} />
+      <Route path="/signup" index element={<Signup />} />
       <Route path="/trending" index element={<Trending />} />
       <Route path="/movies" index element={<Movies />} />
       <Route path="/popular" element={<Popular />} />

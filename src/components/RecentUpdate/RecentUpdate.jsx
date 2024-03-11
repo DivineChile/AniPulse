@@ -44,7 +44,7 @@ const RecentUpdate = () => {
   return (
     // Recent Release
     <Box
-      px={{ base: "20px", lg: "80px", xl: "100px" }}
+      px={{ base: "20px", lg: "20px", xl: "100px" }}
       bg="var(--primary-background-color)"
       pt="40px"
       pb="80px"
@@ -65,7 +65,7 @@ const RecentUpdate = () => {
           fontWeight="600"
           lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
           letterSpacing="1.5px"
-          color="var(--primary-color)"
+          color="var(--text-color)"
           m="0"
           textTransform="uppercase"
         >

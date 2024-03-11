@@ -34,3 +34,60 @@
   background: var(--accent-color);
   border-radius: 2.5px;
 }
+
+.navbar .authCon .authLinks {
+  color: var(--text-color);
+  cursor: pointer;
+  height: 38px;
+  width: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  text-transform: uppercase;
+  font-size: 16.88;
+  line-height: 18px;
+  letter-spacing: 0.5px;
+  transition: color 150ms cubic-bezier(0.1, 0.7, 0.6, 0.9);
+  position: relative;
+  background-color: transparent;
+}
+
+.navbar .authCon .authLinks::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  width: 0%;
+  height: 100%;
+  background-color: #fff;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 150ms cubic-bezier(0.1, 0.7, 0.6, 0.9);
+}
+
+.navbar .authCon .authLinks:nth-child(1) {
+  border: 2px solid var(--accent-color);
+}
+
+.navbar .authCon .authLinks:nth-child(1):hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.navbar .authCon .authLinks::before:hover {
+  border: 1px solid blue;
+  transform: scaleX(1);
+  width: 100%;
+}
+
+.navbar .authCon .authLinks:nth-child(2) {
+  border: 2px solid var(--secondary-color);
+}
+
+.navbar .authCon .authLinks:nth-child(2):hover {
+  background: var(--secondary-color);
+  color: #fff;
+}

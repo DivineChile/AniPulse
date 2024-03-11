@@ -14,6 +14,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@cloudinary/react": "^1.13.0",
     "@cloudinary/url-gen": "^1.17.0",
+    "firebase": "^10.8.1",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

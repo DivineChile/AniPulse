@@ -47,7 +47,7 @@ const PopularList = () => {
 
   return (
     <Box
-      px={{ base: "20px", lg: "80px", xl: "100px" }}
+      px={{ base: "20px", lg: "20px", xl: "100px" }}
       bg="var(--primary-background-color)"
       pt="60px"
       pb="80px"

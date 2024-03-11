@@ -102,12 +102,15 @@ const SearchBar = ({ above, below, displayProp }) => {
     <Box
       hideBelow={below}
       hideFrom={above}
-      width={{ base: "100%", lg: "250px", "2xl": "400px" }}
+      width={{ base: "100%", lg: "150px", xl: "250px", "2xl": "400px" }}
       display={displayProp}
       pos="relative"
     >
       <Form>
-        <InputGroup h="40px" w={{ base: "100%", lg: "250px", "2xl": "400px" }}>
+        <InputGroup
+          h="40px"
+          w={{ base: "100%", lg: "150px", xl: "250px", "2xl": "400px" }}
+        >
           <InputLeftAddon
             background="none"
             color="var(--text-color)"
