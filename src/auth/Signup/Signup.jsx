@@ -1,11 +1,14 @@
 import {
   Box,
+  Button,
+  Checkbox,
   FormControl,
   Heading,
   Image,
   Input,
   InputGroup,
   InputRightAddon,
+  Text,
 } from "@chakra-ui/react";
 import Navbar from "../../components/Navbar/Navbar";
 
@@ -13,7 +16,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import userIcon from "../../assets/user.svg";
 import eyeIcon from "../../assets/eye.svg";
 import banner1 from "../../assets/banner-img-1.png";
-import { Form } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 
 const Signup = () => {
   return (
@@ -27,7 +30,6 @@ const Signup = () => {
         backgroundSize="cover"
         backgroundPosition="center"
         backgroundRepeat="no-repeat"
-        height="100vh"
         display="flex"
         alignItems="center"
         justifyContent="center"
@@ -146,6 +148,77 @@ const Signup = () => {
                 </InputRightAddon>
               </InputGroup>
             </FormControl>
+
+            <Box display="flex" gap="0 20px" justifyContent="center" mb="20px">
+              <FormControl w="fit-content">
+                <Checkbox />
+              </FormControl>
+              <Text
+                as="span"
+                fontSize="15.38px"
+                lineHeight="24px"
+                letterSpacing="0.5px"
+                color="var(--text-color)"
+              >
+                I wish to recieve news and promotions from ANIPLUSE Company by
+                email.
+              </Text>
+            </Box>
+
+            <Box textAlign="center" mb="20px">
+              <Text
+                as="span"
+                fontSize="15.38px"
+                lineHeight="24px"
+                letterSpacing="0.5px"
+                color="var(--text-color)"
+                textAlign="center"
+              >
+                By continuing, you agree to ANIPULSE{" "}
+                <Text as="p">
+                  <Link style={{ color: "#ffd700" }}>Terms of Use</Link> and{" "}
+                  <Link style={{ color: "#ffd700" }}>Privacy Policy.</Link>
+                </Text>
+              </Text>
+            </Box>
+
+            <Button
+              type="submit"
+              textTransform="uppercase"
+              height="52px"
+              width="100%"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              border="2px solid #ffd700"
+              color="#fff"
+              borderRadius="10px"
+              background="none"
+              fontSize="23.44px"
+              lineHeight="37.5px"
+              letterSpacing="0.5px"
+              fontWeight="500"
+              mb="20px"
+              _hover={{ background: "#ffd700" }}
+            >
+              Sign up
+            </Button>
+            <Text
+              as="span"
+              fontSize="19.53px"
+              lineHeight="24px"
+              letterSpacing="0.5px"
+              color="#fff"
+              fontWeight="400"
+            >
+              Already Have an account?{" "}
+              <Link
+                style={{ color: "#ffd700", textDecoration: "underline" }}
+                to="/login"
+              >
+                Log in
+              </Link>
+            </Text>
           </Form>
         </Box>
       </Box>
