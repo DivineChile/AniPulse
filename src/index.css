@@ -16,6 +16,12 @@
 
   ::-webkit-scrollbar {
     width: 4px;
+    position: -webkit-sticky;
+    position: sticky;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    height: 500px;
+    scrollbar-width: thin;
   }
 
   ::-webkit-scrollbar-thumb {

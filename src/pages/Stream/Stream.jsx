@@ -191,7 +191,15 @@ const Stream = () => {
     <Box>
       <Navbar />
       <Box background="var(--primary-background-color)">
-        <Box px={{ base: "20px", lg: "80px", xl: "100px" }} py="20px">
+        <Box
+          maxW={{
+            base: "95%",
+            xl: "85%",
+            "2xl": "container.xl",
+          }}
+          margin="auto"
+          py="20px"
+        >
           {/* BreadCrumb Links */}
           <Breadcrumb mb="20px">
             <BreadcrumbItem

@@ -22,7 +22,11 @@ const Footer = () => {
       py="40px"
     >
       <Box
-        maxW={{ base: "95%", md: "container.md", lg: "container.lg" }}
+        maxW={{
+          base: "95%",
+          xl: "85%",
+          "2xl": "container.xl",
+        }}
         margin="auto"
         display="flex"
         flexDir={{ base: "column", md: "row" }}

@@ -152,7 +152,13 @@ const Hero = () => {
       >
         {/* Anime Recommendation */}
         <Flex
-          px={{ base: "20px", lg: "20px", xl: "100px" }}
+          // px={{ base: "20px", lg: "20px", xl: "100px" }}
+          maxW={{
+            base: "95%",
+            xl: "85%",
+            "2xl": "container.xl",
+          }}
+          margin="auto"
           h="100%"
           alignItems="center"
           justifyContent="space-between"
@@ -291,7 +297,7 @@ const Hero = () => {
               background={
                 currentImage ? `url(${currentImage})` : "rgba(25, 27, 40, 0.7)"
               }
-              w={{ lg: "550px", "2xl": "770px" }}
+              w={{ lg: "550px", "2xl": "670px" }}
               h={{ lg: "450px", "2xl": "600px" }}
               backgroundSize="cover"
               borderRadius="20px"
