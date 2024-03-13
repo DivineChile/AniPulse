@@ -13,6 +13,14 @@ import {
 } from "@chakra-ui/react";
 import { Link, Form } from "react-router-dom";
 import { useState } from "react";
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../firebase";
+import { useToast } from "@chakra-ui/react";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
@@ -28,6 +36,7 @@ const Login = () => {
   const [SignInWithProviders, setSignInWithProviders] = useState(true);
   const [signInWithEmail, setSignInWithEmail] = useState(false);
   const [type, setType] = useState(false);
+  const toast = useToast();
 
   const handleInputType = () => {
     setType(!type);
@@ -79,6 +88,33 @@ const Login = () => {
     // If the form is valid, Submit Form
     if (isValid) {
       console.log(formData);
+      signInWithEmailAndPassword(auth, formData.email, formData.password)
+        .then((userDetails) => {
+          //Signed Up Succesfully
+          toast({
+            title: "Login Successful",
+            description: "You have successfully logged in.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            style: {
+              background: "var(--accent-color)",
+              color: "#fff",
+            },
+          });
+
+          const user = userDetails.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          toast({
+            title: "Login Error",
+            description: "An error occurred during login.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
 
       setFormData({
         email: "",
@@ -91,6 +127,72 @@ const Login = () => {
   const handleEmailSignIn = () => {
     setSignInWithProviders(false);
     setSignInWithEmail(true);
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider).then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        toast({
+          title: "Login Successful",
+          description: "You have successfully logged in.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          style: {
+            background: "var(--accent-color)",
+            color: "#fff",
+          },
+        });
+
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+      });
+    } catch (error) {
+      toast({
+        title: "Login Error",
+        description: "An error occurred during login.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleFacebookSignIn = async () => {
+    const provider = new FacebookAuthProvider();
+    try {
+      await signInWithPopup(auth, provider).then((result) => {
+        const credential = FacebookAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+
+        toast({
+          title: "Login Successful",
+          description: "You have successfully logged in.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          style: {
+            background: "var(--accent-color)",
+            color: "#fff",
+          },
+        });
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+      });
+    } catch (error) {
+      toast({
+        title: "Login Error",
+        description: "An error occurred during login.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -149,7 +251,7 @@ const Login = () => {
                     height="56px"
                     width="100%"
                     transition="all ease 0.5s"
-                    // onClick={handleGoogleSignIn}
+                    onClick={handleGoogleSignIn}
                     borderRadius="10px"
                     border="1px solid #b4b4b4"
                     color="#fff"
@@ -188,7 +290,7 @@ const Login = () => {
                     value="Enter"
                     height="56px"
                     width="100%"
-                    // onClick={handleFacebookSignIn}
+                    onClick={handleFacebookSignIn}
                     transition="all ease 0.5s"
                     borderRadius="10px"
                     border="1px solid #b4b4b4"

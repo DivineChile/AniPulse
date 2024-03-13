@@ -10,6 +10,7 @@ import {
   InputRightAddon,
   Text,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -40,6 +41,7 @@ const Signup = () => {
 
   const [type, setType] = useState(false);
   const [confirmType, setConfirmType] = useState(false);
+  const toast = useToast();
 
   const handleInputType = () => {
     setType(!type);
@@ -100,11 +102,29 @@ const Signup = () => {
       createUserWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userDetails) => {
           //Signed Up Succesfully
+          toast({
+            title: "Sign Up Successful",
+            description: "You have successfully Signed Up.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            style: {
+              background: "var(--accent-color)",
+              color: "#fff",
+            },
+          });
           console.log("User signed Up Successfully");
           const user = userDetails.user;
           console.log(user);
         })
         .catch((error) => {
+          toast({
+            title: "Sign Up Error",
+            description: "An error occurred during sign up.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
           console.log(`User sign up was unsuccessful: ${error.message}`);
         });
 

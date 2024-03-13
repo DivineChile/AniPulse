@@ -27,11 +27,12 @@
   ::-webkit-scrollbar-thumb {
     background: var(--secondary-color);
     border-radius: 2px;
-    margin: 10px 5px;
+    /* margin: 10px 5px; */
   }
 
   ::-webkit-scrollbar-track {
     background: #191919;
+    scrollbar-width: thin;
   }
 
   ::-webkit-scrollbar-thumb:hover {
