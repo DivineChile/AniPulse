@@ -38,6 +38,17 @@ const Signup = () => {
     confirmPassword: "",
   });
 
+  const [type, setType] = useState(false);
+  const [confirmType, setConfirmType] = useState(false);
+
+  const handleInputType = () => {
+    setType(!type);
+  };
+
+  const handleConfirmInputType = () => {
+    setConfirmType(!confirmType);
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -70,7 +81,10 @@ const Signup = () => {
       setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
     }
 
-    if (!formData.password || formData.password !== formData.confirmPassword) {
+    if (
+      !formData.confirmPassword ||
+      formData.password !== formData.confirmPassword
+    ) {
       setErrors((prevErrors) => ({
         ...prevErrors,
         confirmPassword: "Passwords do not match",
@@ -180,7 +194,7 @@ const Signup = () => {
             <FormControl mb="20px" isInvalid={Boolean(errors.password)}>
               <InputGroup>
                 <Input
-                  type="password"
+                  type={type ? "text" : "password"}
                   placeholder="enter password"
                   name="password"
                   value={formData.password}
@@ -211,7 +225,13 @@ const Signup = () => {
                   borderBottomRightRadius="10px"
                   boxShadow={errors.password ? "0 0 0 1px #e53e3e" : "none"}
                 >
-                  <Image src={eyeIcon} h="16px" w="19.7px" cursor="pointer" />
+                  <Image
+                    src={eyeIcon}
+                    h="16px"
+                    w="19.7px"
+                    cursor="pointer"
+                    onClick={handleInputType}
+                  />
                 </InputRightAddon>
               </InputGroup>
               {errors.password ? (
@@ -223,7 +243,7 @@ const Signup = () => {
             <FormControl mb="20px" isInvalid={Boolean(errors.confirmPassword)}>
               <InputGroup>
                 <Input
-                  type="password"
+                  type={confirmType ? "text" : "password"}
                   placeholder="confirm password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -254,7 +274,13 @@ const Signup = () => {
                   borderBottomRightRadius="10px"
                   boxShadow={errors.password ? "0 0 0 1px #e53e3e" : "none"}
                 >
-                  <Image src={eyeIcon} h="16px" w="19.7px" cursor="pointer" />
+                  <Image
+                    src={eyeIcon}
+                    h="16px"
+                    w="19.7px"
+                    cursor="pointer"
+                    onClick={handleConfirmInputType}
+                  />
                 </InputRightAddon>
               </InputGroup>
               {errors.confirmPassword ? (
