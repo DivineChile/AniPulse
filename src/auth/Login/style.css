@@ -1,0 +1,11 @@
+.reset {
+  color: var(--accent-color);
+  transition: all ease 0.25s;
+  font-size: 17px;
+  line-height: 25px;
+  letter-spacing: 0.5px;
+}
+
+.reset:hover {
+  color: var(--secondary-color);
+}

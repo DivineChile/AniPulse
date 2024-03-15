@@ -12,12 +12,13 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { Link, Form } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
+  signInWithRedirect,
 } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useToast } from "@chakra-ui/react";
@@ -31,6 +32,7 @@ import facebookIcon from "../../assets/facebookIcon.svg";
 import emailIcon from "../../assets/emailIcon.svg";
 import userIcon from "../../assets/user.svg";
 import loginBanner from "../../assets/loginBanner.png";
+import "./style.css";
 
 const Login = () => {
   const [SignInWithProviders, setSignInWithProviders] = useState(true);
@@ -131,34 +133,69 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider).then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
+
+    const currentWidth = window.innerWidth;
+
+    if (currentWidth <= 500) {
+      try {
+        await signInWithRedirect(auth, provider).then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          toast({
+            title: "Login Successful",
+            description: "You have successfully logged in.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            style: {
+              background: "var(--accent-color)",
+              color: "#fff",
+            },
+          });
+
+          // The signed-in user info.
+          const user = result.user;
+          console.log(user);
+        });
+      } catch (error) {
         toast({
-          title: "Login Successful",
-          description: "You have successfully logged in.",
-          status: "success",
+          title: "Login Error",
+          description: "An error occurred during login.",
+          status: "error",
           duration: 3000,
           isClosable: true,
-          style: {
-            background: "var(--accent-color)",
-            color: "#fff",
-          },
         });
+      }
+    } else {
+      try {
+        await signInWithPopup(auth, provider).then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          toast({
+            title: "Login Successful",
+            description: "You have successfully logged in.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            style: {
+              background: "var(--accent-color)",
+              color: "#fff",
+            },
+          });
 
-        // The signed-in user info.
-        const user = result.user;
-        console.log(user);
-      });
-    } catch (error) {
-      toast({
-        title: "Login Error",
-        description: "An error occurred during login.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+          // The signed-in user info.
+          const user = result.user;
+          console.log(user);
+        });
+      } catch (error) {
+        toast({
+          title: "Login Error",
+          description: "An error occurred during login.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -199,7 +236,7 @@ const Login = () => {
     <Box>
       <Navbar />
       <Box
-        px={{ base: "20px", lg: "20px", xl: "100px" }}
+        px={{ base: "20px 0", lg: "20px", xl: "100px" }}
         bg={`url(${loginBanner})`}
         backgroundBlendMode="overlay"
         backgroundColor="rgba(0,0,0,0.5)"
@@ -211,8 +248,8 @@ const Login = () => {
         justifyContent="center"
       >
         <Box
-          width="450px"
-          p="70px 40px"
+          width={{ base: "100%", md: "450px" }}
+          p={{ base: "70px 20px", md: "70px 40px" }}
           bg="rgba(0,0,0,0.7)"
           display="flex"
           flexDir="column"
@@ -452,6 +489,38 @@ const Login = () => {
               </>
             )}
 
+            {signInWithEmail && (
+              <>
+                <Button
+                  type="submit"
+                  textTransform="uppercase"
+                  height="52px"
+                  width="100%"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  border="2px solid #ffd700"
+                  color="#fff"
+                  borderRadius="10px"
+                  background="none"
+                  fontSize="23.44px"
+                  lineHeight="37.5px"
+                  letterSpacing="0.5px"
+                  fontWeight="500"
+                  mb="20px"
+                  _hover={{ background: "#ffd700" }}
+                >
+                  Log in
+                </Button>
+              </>
+            )}
+
+            <Box textAlign="center" my="10px">
+              <Link to="/auth/reset-password" className="reset">
+                Forgot Password
+              </Link>
+            </Box>
+
             <Box display="flex" gap="0 20px" justifyContent="center" mb="20px">
               <FormControl w="fit-content">
                 <Checkbox name="recieveEmails" />
@@ -485,36 +554,10 @@ const Login = () => {
               </Text>
             </Box>
 
-            {signInWithEmail && (
-              <>
-                <Button
-                  type="submit"
-                  textTransform="uppercase"
-                  height="52px"
-                  width="100%"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  border="2px solid #ffd700"
-                  color="#fff"
-                  borderRadius="10px"
-                  background="none"
-                  fontSize="23.44px"
-                  lineHeight="37.5px"
-                  letterSpacing="0.5px"
-                  fontWeight="500"
-                  mb="20px"
-                  _hover={{ background: "#ffd700" }}
-                >
-                  Log in
-                </Button>
-              </>
-            )}
-
             <Box textAlign="center">
               <Text
                 as="span"
-                fontSize="19.53px"
+                fontSize="19.33px"
                 lineHeight="24px"
                 letterSpacing="0.5px"
                 color="#fff"
