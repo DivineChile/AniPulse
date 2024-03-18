@@ -105,9 +105,7 @@ const RecentDub = () => {
                 dubAnimeEpId[i]
               }`}
               overflow="hidden!important"
-              className={`episode-container ${isHovered ? "hovered" : ""}`}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              className={`episode-container`}
               h={{
                 base: "400.23px",
                 sm: "380.23px",
@@ -131,41 +129,40 @@ const RecentDub = () => {
               />
 
               {/* Overlay */}
-              {isHovered && (
-                <Box
-                  className="overlay"
-                  pos="absolute"
-                  top="100%"
-                  left="0"
-                  textAlign="center"
-                  background="rgba(0, 0, 0, 0.7)!important"
-                  transition="transform 0.7s, opacity 0.7s"
-                  h="100%"
-                  w="100%"
-                  borderRadius="10px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
+              <Box
+                className="overlay"
+                pos="absolute"
+                top="0"
+                left="0"
+                textAlign="center"
+                background="rgba(0, 0, 0, 0.7)!important"
+                transition="height 0.7s ease, opacity 0.7s ease"
+                h="0"
+                w="100%"
+                borderRadius="10px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                opacity="0"
+              >
+                <ChakraLink
+                  as={ReactRouterLink}
+                  to={`/watch/${encodeURIComponent(dubAnimeImg[i])}/${
+                    dubAnimeEpId[i]
+                  }`}
+                  color="var(--link-color)"
+                  _hover={{
+                    color: "var(--accent-color)",
+                    transition: "all ease 0.25s",
+                  }}
+                  fontSize="22.88px"
+                  lineHeight="36px"
+                  letterSpacing="0.5px"
+                  fontWeight="500"
                 >
-                  <ChakraLink
-                    as={ReactRouterLink}
-                    to={`/watch/${encodeURIComponent(dubAnimeImg[i])}/${
-                      dubAnimeEpId[i]
-                    }`}
-                    color="var(--link-color)"
-                    _hover={{
-                      color: "var(--link-color)",
-                      transition: "all ease 0.25s",
-                    }}
-                    fontSize="22.88px"
-                    lineHeight="36px"
-                    letterSpacing="0.5px"
-                    fontWeight="500"
-                  >
-                    Play Now
-                  </ChakraLink>
-                </Box>
-              )}
+                  Play Now
+                </ChakraLink>
+              </Box>
             </Box>
             <Box
               display="flex"

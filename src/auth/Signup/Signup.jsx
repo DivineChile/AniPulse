@@ -13,7 +13,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { auth } from "../../firebase";
 
 import Navbar from "../../components/Navbar/Navbar";
@@ -101,20 +104,22 @@ const Signup = () => {
       console.log(formData);
       createUserWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userDetails) => {
-          //Signed Up Succesfully
+          const user = userDetails.user;
+          //Signed Up Succesfully ans sent email Verification successfully
+          sendEmailVerification(user);
           toast({
             title: "Sign Up Successful",
-            description: "You have successfully Signed Up.",
+            description:
+              "Sign up successful. Please check your email for verification.",
             status: "success",
             duration: 3000,
             isClosable: true,
             style: {
-              background: "var(--accent-color)",
+              background: "var(--accent-color)!important",
               color: "#fff",
             },
           });
           console.log("User signed Up Successfully");
-          const user = userDetails.user;
           console.log(user);
         })
         .catch((error) => {

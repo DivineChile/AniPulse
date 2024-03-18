@@ -2,8 +2,6 @@
   transform: scale(1.2);
 }
 .episode-container:hover .overlay {
-  /* transform: translateY(100%); */
-  top: 0;
+  height: 100%;
   opacity: 1;
-  visibility: visible;
 }
