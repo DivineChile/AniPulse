@@ -48,7 +48,7 @@
   font-size: 16.88;
   line-height: 18px;
   letter-spacing: 0.5px;
-  transition: color 150ms cubic-bezier(0.1, 0.7, 0.6, 0.9);
+  transition: all ease 0.25s;
   position: relative;
   background-color: transparent;
 }
@@ -74,7 +74,7 @@
 
 .navbar .authCon .authLinks:nth-child(1):hover {
   background: var(--accent-color);
-  color: #fff;
+  color: var(--primary-background-color);
 }
 
 .navbar .authCon .authLinks::before:hover {
@@ -90,4 +90,13 @@
 .navbar .authCon .authLinks:nth-child(2):hover {
   background: var(--secondary-color);
   color: #fff;
+}
+
+.navbar .authCon .profileLink {
+  color: var(--secondary-color);
+  transition: all ease 0.25s;
+}
+
+.navbar .authCon .profileLink:hover {
+  color: var(--accent-color);
 }

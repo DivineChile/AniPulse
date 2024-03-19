@@ -302,8 +302,9 @@ const Hero = () => {
               backgroundSize="cover"
               borderRadius="20px"
               backgroundPosition="center"
-              transition="background ease 0.25s"
+              transition="background ease 0.25s, transform, 0.25s"
               backgroundRepeat="no-repeat"
+              _hover={{ transform: "scale(1.02)", cursor: "pointer" }}
             ></Box>
           </Box>
         </Flex>

@@ -1,15 +1,77 @@
-import { Box, Heading, List, ListItem, Text } from "@chakra-ui/react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  Avatar,
+  Box,
+  Button,
+  Heading,
+  List,
+  ListItem,
+  Text,
+  Tooltip,
+  useToast,
+} from "@chakra-ui/react";
 import { NavList } from "../utils/NavUtil";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import SearchBar from "../SearchBar/SearchBar";
 import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth } from "../../firebase";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [authUser, setAuthUser] = useState(null);
+  const [profileDialogState, setProfileDialogState] = useState(false);
   const location = useLocation().pathname;
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  useEffect(() => {
+    const listen = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthUser(user);
+      } else {
+        setAuthUser(null);
+      }
+    });
+
+    return () => {
+      listen();
+    };
+  }, []);
+
+  const userSignedOut = () => {
+    signOut(auth)
+      .then(() => {
+        toast({
+          title: "Sign Out Successful",
+          description: "You have successfully signed out.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          style: {
+            background: "var(--accent-color)",
+            color: "#fff",
+          },
+        });
+        setProfileDialogState(false);
+        navigate("/");
+      })
+      .catch((error) => {
+        toast({
+          title: "Sign Out Error",
+          description: "An error occured during sign out",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          style: {
+            background: "var(--accent-color)",
+            color: "#fff",
+          },
+        });
+      });
+  };
 
   const openNavbar = () => {
     setIsOpen(!isOpen);
@@ -57,7 +119,6 @@ const Navbar = () => {
       background="var(--primary-background-color)"
       width={{ base: "100%" }}
       py={{ base: "15px", lg: "20px" }}
-      // p={{ base: "15px 20px", lg: "20px 20px", xl: "20px 100px" }}
       pos="relative"
       boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
       // border="1px solid red"
@@ -138,18 +199,73 @@ const Navbar = () => {
                 </ListItem>
               );
             })}
-            <Box
-              className="authCon"
-              gap="0 20px"
-              display={isOpen ? "flex" : "none"}
+            <ListItem
+              className="nav-item"
+              textAlign="center"
+              mx={{ base: "5px", md: "10px" }}
+              px={{ base: "5px", md: "10px" }}
+              display={
+                authUser != null ? (
+                  isOpen ? (
+                    { base: "block", lg: "none" }
+                  ) : (
+                    { base: "none", lg: "inline-block" }
+                  )
+                ) : (
+                  <></>
+                )
+              }
               hideFrom="lg"
             >
-              <Link to="/auth/signup" className="authLinks">
-                Sign Up
-              </Link>
-              <Link to="/auth/login" className="authLinks">
-                Sign In
-              </Link>
+              <Link to="/profile">Profile</Link>
+            </ListItem>
+            <Box
+              className="authCon"
+              hideFrom="lg"
+              borderTop={isOpen ? "1px solid #333333" : "none"}
+              w="100%"
+              paddingTop="10px"
+            >
+              {authUser != null ? (
+                <Box display={isOpen ? "flex" : "none"}>
+                  <Box display="flex" alignItems="center" gap="20px" pt="10px">
+                    <Text color="var(--text-color)">
+                      {authUser != null ? (
+                        authUser.displayName ? (
+                          authUser.displayName
+                        ) : (
+                          authUser.email
+                        )
+                      ) : (
+                        <></>
+                      )}
+                    </Text>
+                    <Button
+                      background="none"
+                      border="1px solid var(--secondary-color)"
+                      color="var(--secondary-color)"
+                      fontWeight="normal"
+                      transition="all ease 0.25s"
+                      _hover={{
+                        color: "var(--primary-background-color)",
+                        background: "var(--accent-color)",
+                        border: "1px solid var(--accent-color)",
+                      }}
+                    >
+                      Log Out
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Box gap="0 20px" display={isOpen ? "flex" : "none"}>
+                  <Link to="/auth/signup" className="authLinks">
+                    Sign Up
+                  </Link>
+                  <Link to="/auth/login" className="authLinks">
+                    Sign In
+                  </Link>
+                </Box>
+              )}
             </Box>
           </List>
 
@@ -201,13 +317,79 @@ const Navbar = () => {
           )}
 
           {/* Auth Links */}
-          <Box className="authCon" gap="0 20px" display="flex" hideBelow="lg">
-            <Link to="/auth/signup" className="authLinks">
-              Sign Up
-            </Link>
-            <Link to="/auth/login" className="authLinks">
-              Sign In
-            </Link>
+          <Box className="authCon" pos="relative" hideBelow="lg">
+            {authUser != null ? (
+              <Tooltip label="Profile" cursor="pointer">
+                <Avatar
+                  src={authUser.photoUrl}
+                  name={authUser.email}
+                  bg="var(--secondary-color)"
+                  color="var(--text-color)"
+                  transition="all ease 0.25s"
+                  _hover={{
+                    background: "var(--accent-color)",
+                    color: "var(--primary-background-color)",
+                  }}
+                  onMouseEnter={() => {
+                    setProfileDialogState(true);
+                  }}
+                  cursor="pointer"
+                />
+              </Tooltip>
+            ) : (
+              <Box gap="0 20px" display="flex">
+                <Link to="/auth/signup" className="authLinks">
+                  Sign Up
+                </Link>
+                <Link to="/auth/login" className="authLinks">
+                  Sign In
+                </Link>
+              </Box>
+            )}
+            <Box
+              top="55px"
+              right="0"
+              w="200px"
+              bg="var(--primary-background-color)"
+              p="20px"
+              boxShadow="0 0 10px 0 rgba(0,0,0,0.6)"
+              pos="absolute!important"
+              borderRadius="10px"
+              onMouseEnter={() => {
+                setProfileDialogState(true);
+              }}
+              onMouseLeave={() => {
+                setProfileDialogState(false);
+              }}
+              display="flex"
+              transition="all ease 0.25s"
+              zIndex={profileDialogState ? "1" : "-1"}
+              flexDir="column"
+              gap="20px"
+              opacity={profileDialogState ? "1" : "0"}
+            >
+              <Box>
+                <Link to="/profile" className="profileLink">
+                  Go to Profile
+                </Link>
+              </Box>
+              <Box>
+                <Button
+                  width="100%"
+                  border="1px solid var(--secondary-color)"
+                  bg="none"
+                  color="var(--secondary-color)"
+                  onClick={userSignedOut}
+                  _hover={{
+                    background: "var(--accent-color)",
+                    color: "var(--primary-background-color)",
+                    border: "1px solid var(--accent-color)",
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>

@@ -15,6 +15,7 @@ import View from "./components/ViewAnime/View";
 import Filter from "./pages/Search/Filter";
 import Login from "./auth/Login/Login";
 import Signup from "./auth/Signup/Signup";
+import Profile from "./pages/Profile/Profile";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
       <Route path="/trending" index element={<Trending />} />
       <Route path="/movies" index element={<Movies />} />
       <Route path="/popular" element={<Popular />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/anime/:id" element={<View />} />
       <Route path="/search/keyword/:id" element={<Filter />} />
       <Route path="/watch/:coverImg/:watchId" element={<Stream />} />

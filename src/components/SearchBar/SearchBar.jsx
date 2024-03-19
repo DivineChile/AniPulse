@@ -156,11 +156,6 @@ const SearchBar = ({ above, below, displayProp }) => {
       {/* Search Results */}
       {showDropdown && (
         <Box
-          bg="var(--primary-background-color)"
-          p="20px"
-          boxShadow="0 0 10px 0 rgba(0,0,0,0.6)"
-          pos="absolute!important"
-          borderRadius="10px"
           width={{ base: "100%", sm: "400px", md: "500px" }}
           top="50px"
           right="0"

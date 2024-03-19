@@ -37,9 +37,10 @@ a.play-now-btn::before {
 }
 
 a.play-now-btn:hover::before {
+  content: "VIEW MORE";
   color: #000;
   z-index: 0;
-  height: 150%;
+  height: 180%;
 }
 
 @media screen and (max-width: 500px) {

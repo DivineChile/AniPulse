@@ -83,9 +83,9 @@ const Upcoming = () => {
       // ref={swiperElRef}
       slides-per-view="1"
       navigation="false"
-      pagination="false"
-      loop="true"
-      autoplay={{ delay: 8000 }}
+      // pagination="false"
+      // scrollbar="false"
+      autoplay={{ delay: 5000 }}
       effect="fade"
     >
       {isLoading && (
@@ -119,8 +119,9 @@ const Upcoming = () => {
         />
       )}
       {results
+        .concat(results)
         .filter((item) => item.aired.prop.from.day !== null)
-        .map((item) => {
+        .map((item, index) => {
           const countdownItem = countdowns.find(
             (countdown) => countdown.malId === item.mal_id
           );
@@ -136,9 +137,8 @@ const Upcoming = () => {
           // Create a Moment.js object representing the target date
 
           return (
-            <swiper-slide key={item.mal_id}>
+            <swiper-slide key={index}>
               <Box
-                // px={{ base: "20px", lg: "80px", xl: "100px" }}
                 py="40px"
                 bg={
                   isLoading

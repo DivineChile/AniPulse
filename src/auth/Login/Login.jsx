@@ -10,8 +10,9 @@ import {
   InputRightAddon,
   Text,
   FormErrorMessage,
+  ButtonSpinner,
 } from "@chakra-ui/react";
-import { Link, Form } from "react-router-dom";
+import { Link, Form, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   GoogleAuthProvider,
@@ -38,7 +39,9 @@ const Login = () => {
   const [SignInWithProviders, setSignInWithProviders] = useState(true);
   const [signInWithEmail, setSignInWithEmail] = useState(false);
   const [type, setType] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const handleInputType = () => {
     setType(!type);
@@ -89,10 +92,11 @@ const Login = () => {
 
     // If the form is valid, Submit Form
     if (isValid) {
-      console.log(formData);
+      setLoginLoading(true);
       signInWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userDetails) => {
           //Signed Up Succesfully
+          setLoginLoading(false);
           toast({
             title: "Login Successful",
             description: "You have successfully logged in.",
@@ -107,15 +111,33 @@ const Login = () => {
 
           const user = userDetails.user;
           console.log(user);
+          if (user) {
+            navigate("/");
+          }
         })
         .catch((error) => {
-          toast({
-            title: "Login Error",
-            description: "An error occurred during login.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
+          if (error.code === "auth/wrong-password") {
+            setLoginLoading(false);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              password: "Password is incorrect",
+            }));
+          } else if (error.code === "auth/user-not-found") {
+            setLoginLoading(false);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              email: "There is no user with the provided email.",
+            }));
+          } else {
+            setLoginLoading(false);
+            toast({
+              title: "Login Error",
+              description: "An error occurred during login.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
         });
 
       setFormData({
@@ -155,7 +177,9 @@ const Login = () => {
 
           // The signed-in user info.
           const user = result.user;
-          console.log(user);
+          if (user) {
+            navigate("/");
+          }
         });
       } catch (error) {
         toast({
@@ -186,6 +210,9 @@ const Login = () => {
           // The signed-in user info.
           const user = result.user;
           console.log(user);
+          if (user) {
+            navigate("/");
+          }
         });
       } catch (error) {
         toast({
@@ -248,7 +275,7 @@ const Login = () => {
         justifyContent="center"
       >
         <Box
-          width={{ base: "100%", md: "450px" }}
+          width={{ base: "100%", sm: "450px" }}
           p={{ base: "70px 20px", md: "70px 40px" }}
           bg="rgba(0,0,0,0.7)"
           display="flex"
@@ -502,7 +529,7 @@ const Login = () => {
                   border="2px solid #ffd700"
                   color="#fff"
                   borderRadius="10px"
-                  background="none"
+                  background={loginLoading ? "var(--accent-color)" : "none"}
                   fontSize="23.44px"
                   lineHeight="37.5px"
                   letterSpacing="0.5px"
@@ -510,7 +537,7 @@ const Login = () => {
                   mb="20px"
                   _hover={{ background: "#ffd700" }}
                 >
-                  Log in
+                  {loginLoading ? <ButtonSpinner color="#fff" /> : "Log in"}
                 </Button>
               </>
             )}

@@ -11,6 +11,7 @@ import {
   Text,
   FormErrorMessage,
   useToast,
+  ButtonSpinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import {
@@ -44,6 +45,7 @@ const Signup = () => {
 
   const [type, setType] = useState(false);
   const [confirmType, setConfirmType] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
   const toast = useToast();
 
   const handleInputType = () => {
@@ -102,10 +104,12 @@ const Signup = () => {
     // If the form is valid, Submit Form
     if (isValid) {
       console.log(formData);
+      signupLoading(true);
       createUserWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userDetails) => {
           const user = userDetails.user;
           //Signed Up Succesfully ans sent email Verification successfully
+          signupLoading(false);
           sendEmailVerification(user);
           toast({
             title: "Sign Up Successful",
@@ -123,6 +127,7 @@ const Signup = () => {
           console.log(user);
         })
         .catch((error) => {
+          setSignupLoading(false);
           toast({
             title: "Sign Up Error",
             description: "An error occurred during sign up.",
@@ -158,8 +163,8 @@ const Signup = () => {
         justifyContent="center"
       >
         <Box
-          width="450px"
-          p="70px 40px"
+          width={{ base: "100%", sm: "450px" }}
+          p={{ base: "70px 20px", md: "70px 40px" }}
           bg="rgba(0,0,0,0.7)"
           display="flex"
           flexDir="column"
@@ -363,7 +368,7 @@ const Signup = () => {
               border="2px solid #ffd700"
               color="#fff"
               borderRadius="10px"
-              background="none"
+              background={signupLoading ? "var(--accent-color)" : "none"}
               fontSize="23.44px"
               lineHeight="37.5px"
               letterSpacing="0.5px"
@@ -371,7 +376,7 @@ const Signup = () => {
               mb="20px"
               _hover={{ background: "#ffd700" }}
             >
-              Sign up
+              {signupLoading ? <ButtonSpinner color="#fff" /> : "Log in"}
             </Button>
             <Text
               as="span"
