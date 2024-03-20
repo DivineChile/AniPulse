@@ -199,7 +199,7 @@ const Navbar = () => {
                 </ListItem>
               );
             })}
-            <ListItem
+            {/* <ListItem
               className="nav-item"
               textAlign="center"
               mx={{ base: "5px", md: "10px" }}
@@ -218,7 +218,7 @@ const Navbar = () => {
               hideFrom="lg"
             >
               <Link to="/profile">Profile</Link>
-            </ListItem>
+            </ListItem> */}
             <Box
               className="authCon"
               hideFrom="lg"
@@ -252,7 +252,7 @@ const Navbar = () => {
                         border: "1px solid var(--accent-color)",
                       }}
                     >
-                      Log Out
+                      Sign Out
                     </Button>
                   </Box>
                 </Box>
@@ -319,23 +319,21 @@ const Navbar = () => {
           {/* Auth Links */}
           <Box className="authCon" pos="relative" hideBelow="lg">
             {authUser != null ? (
-              <Tooltip label="Profile" cursor="pointer">
-                <Avatar
-                  src={authUser.photoUrl}
-                  name={authUser.email}
-                  bg="var(--secondary-color)"
-                  color="var(--text-color)"
-                  transition="all ease 0.25s"
-                  _hover={{
-                    background: "var(--accent-color)",
-                    color: "var(--primary-background-color)",
-                  }}
-                  onMouseEnter={() => {
-                    setProfileDialogState(true);
-                  }}
-                  cursor="pointer"
-                />
-              </Tooltip>
+              <Avatar
+                src={authUser.photoUrl}
+                name={authUser.email}
+                bg="var(--secondary-color)"
+                color="var(--text-color)"
+                transition="all ease 0.25s"
+                _hover={{
+                  background: "var(--accent-color)",
+                  color: "var(--primary-background-color)",
+                }}
+                onMouseEnter={() => {
+                  setProfileDialogState(true);
+                }}
+                cursor="pointer"
+              />
             ) : (
               <Box gap="0 20px" display="flex">
                 <Link to="/auth/signup" className="authLinks">
@@ -365,29 +363,50 @@ const Navbar = () => {
               transition="all ease 0.25s"
               zIndex={profileDialogState ? "1" : "-1"}
               flexDir="column"
-              gap="20px"
+              gap="10px"
               opacity={profileDialogState ? "1" : "0"}
             >
               <Box>
-                <Link to="/profile" className="profileLink">
-                  Go to Profile
-                </Link>
+                <Text color="var(--text-color)" fontSize="13px">
+                  {authUser != null
+                    ? authUser.displayName
+                      ? authUser.displayName
+                      : authUser.email
+                    : ""}
+                </Text>
               </Box>
-              <Box>
-                <Button
-                  width="100%"
-                  border="1px solid var(--secondary-color)"
-                  bg="none"
-                  color="var(--secondary-color)"
-                  onClick={userSignedOut}
-                  _hover={{
-                    background: "var(--accent-color)",
-                    color: "var(--primary-background-color)",
-                    border: "1px solid var(--accent-color)",
-                  }}
-                >
-                  Sign Out
-                </Button>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                w="100%"
+                borderTop="1px solid #333333"
+                pt="10px"
+              >
+                <Box w="50%">
+                  <Link to="/profile" className="profileLink">
+                    Go to Profile
+                  </Link>
+                </Box>
+                <Box w="50%" display="flex" justifyContent="end">
+                  <Button
+                    width="90%"
+                    border="1px solid var(--secondary-color)"
+                    bg="none"
+                    color="var(--secondary-color)"
+                    onClick={userSignedOut}
+                    _hover={{
+                      background: "var(--accent-color)",
+                      color: "var(--primary-background-color)",
+                      border: "1px solid var(--accent-color)",
+                    }}
+                    fontSize="13px"
+                    fontWeight="normal"
+                    h="35px"
+                  >
+                    Sign Out
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </Box>

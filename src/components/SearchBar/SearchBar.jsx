@@ -162,8 +162,13 @@ const SearchBar = ({ above, below, displayProp }) => {
           transition="all ease 0.25s"
           display="flex"
           flexDir="column"
+          borderRadius="10px"
+          bg="var(--primary-background-color)"
+          p="20px"
+          boxShadow="0 0 10px 0 rgba(0,0,0,0.6)"
           gap="20px 0"
           zIndex="999"
+          position="absolute"
         >
           <Box borderBottom="1px solid #444444" width="100%">
             <Heading
