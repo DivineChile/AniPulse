@@ -199,26 +199,30 @@ const Navbar = () => {
                 </ListItem>
               );
             })}
-            {/* <ListItem
-              className="nav-item"
-              textAlign="center"
-              mx={{ base: "5px", md: "10px" }}
-              px={{ base: "5px", md: "10px" }}
-              display={
-                authUser != null ? (
-                  isOpen ? (
-                    { base: "block", lg: "none" }
+            {authUser != null ? (
+              <ListItem
+                className="nav-item"
+                textAlign="center"
+                mx={{ base: "5px", md: "10px" }}
+                px={{ base: "5px", md: "10px" }}
+                display={
+                  authUser != null ? (
+                    isOpen ? (
+                      { base: "block", lg: "none" }
+                    ) : (
+                      { base: "none", lg: "inline-block" }
+                    )
                   ) : (
-                    { base: "none", lg: "inline-block" }
+                    <></>
                   )
-                ) : (
-                  <></>
-                )
-              }
-              hideFrom="lg"
-            >
-              <Link to="/profile">Profile</Link>
-            </ListItem> */}
+                }
+                hideFrom="lg"
+              >
+                <Link to="/profile">Profile</Link>
+              </ListItem>
+            ) : (
+              <></>
+            )}
             <Box
               className="authCon"
               hideFrom="lg"
