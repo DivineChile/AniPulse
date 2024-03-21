@@ -43,6 +43,8 @@ const Login = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
+  document.title = `Log In - AniPulse`;
+
   const handleInputType = () => {
     setType(!type);
   };

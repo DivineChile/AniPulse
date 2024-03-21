@@ -13,6 +13,7 @@ import {
   useToast,
   ButtonSpinner,
 } from "@chakra-ui/react";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import {
   createUserWithEmailAndPassword,
@@ -30,6 +31,7 @@ import { Form, Link } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 
 const Signup = () => {
+  document.title = `Sign Up - AniPulse`;
   const [formData, setFormData] = useState({
     email: "",
     password: "",
