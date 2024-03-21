@@ -376,7 +376,7 @@ const Signup = () => {
               mb="20px"
               _hover={{ background: "#ffd700" }}
             >
-              {signupLoading ? <ButtonSpinner color="#fff" /> : "Log in"}
+              {signupLoading ? <ButtonSpinner color="#fff" /> : "Sign up"}
             </Button>
             <Text
               as="span"
