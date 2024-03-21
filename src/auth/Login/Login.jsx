@@ -36,14 +36,13 @@ import loginBanner from "../../assets/loginBanner.png";
 import "./style.css";
 
 const Login = () => {
+  document.title = `Log In - AniPulse`;
   const [SignInWithProviders, setSignInWithProviders] = useState(true);
   const [signInWithEmail, setSignInWithEmail] = useState(false);
   const [type, setType] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
-
-  document.title = `Log In - AniPulse`;
 
   const handleInputType = () => {
     setType(!type);
