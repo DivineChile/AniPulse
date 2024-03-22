@@ -7,7 +7,6 @@ import {
   List,
   ListItem,
   Text,
-  Tooltip,
   useToast,
 } from "@chakra-ui/react";
 import { NavList } from "../utils/NavUtil";
@@ -26,6 +25,14 @@ const Navbar = () => {
   const location = useLocation().pathname;
   const navigate = useNavigate();
   const toast = useToast();
+  let userName = "";
+
+  const toastStyles = {
+    background: "orange",
+    color: "var(--text-color)",
+    borderRadius: "10px",
+    width: "300px",
+  };
 
   useEffect(() => {
     const listen = onAuthStateChanged(auth, (user) => {
@@ -50,10 +57,7 @@ const Navbar = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
-          style: {
-            background: "var(--accent-color)",
-            color: "#fff",
-          },
+          containerStyle: toastStyles,
         });
         setProfileDialogState(false);
         navigate("/");
@@ -110,6 +114,10 @@ const Navbar = () => {
     default:
       toggleNav(null);
       break;
+  }
+
+  if (authUser != null && authUser.displayName == null) {
+    userName = authUser.email?.split("@")[0];
   }
 
   return (
@@ -375,7 +383,7 @@ const Navbar = () => {
                   {authUser != null
                     ? authUser.displayName
                       ? authUser.displayName
-                      : authUser.email
+                      : userName
                     : ""}
                 </Text>
               </Box>

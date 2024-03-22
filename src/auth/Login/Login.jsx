@@ -44,6 +44,13 @@ const Login = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
+  const toastStyles = {
+    background: "var(--accent-color)",
+    color: "var(--text-color)",
+    borderRadius: "10px",
+    width: "300px",
+  };
+
   const handleInputType = () => {
     setType(!type);
   };
@@ -104,10 +111,13 @@ const Login = () => {
             status: "success",
             duration: 3000,
             isClosable: true,
-            style: {
-              background: "var(--accent-color)",
-              color: "#fff",
-            },
+            containerStyle: toastStyles,
+          });
+
+          setFormData({
+            email: "",
+            password: "",
+            recieveEmails: false,
           });
 
           const user = userDetails.user;
@@ -117,7 +127,16 @@ const Login = () => {
           }
         })
         .catch((error) => {
-          if (error.code == "auth/wrong-password") {
+          if (error.code == "auth/network-request-failed") {
+            setLoginLoading(false);
+            toast({
+              title: "Sign Up Error",
+              description: "Check your network and try again.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else if (error.code == "auth/wrong-password") {
             setLoginLoading(false);
             setErrors((prevErrors) => ({
               ...prevErrors,
@@ -140,12 +159,6 @@ const Login = () => {
             });
           }
         });
-
-      setFormData({
-        email: "",
-        password: "",
-        recieveEmails: false,
-      });
     }
   };
 
@@ -170,10 +183,7 @@ const Login = () => {
             status: "success",
             duration: 3000,
             isClosable: true,
-            style: {
-              background: "var(--accent-color)",
-              color: "#fff",
-            },
+            containerStyle: toastStyles,
           });
 
           // The signed-in user info.
@@ -202,10 +212,7 @@ const Login = () => {
             status: "success",
             duration: 3000,
             isClosable: true,
-            style: {
-              background: "var(--accent-color)",
-              color: "#fff",
-            },
+            containerStyle: toastStyles,
           });
 
           // The signed-in user info.
@@ -240,10 +247,7 @@ const Login = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
-          style: {
-            background: "var(--accent-color)",
-            color: "#fff",
-          },
+          containerStyle: toastStyles,
         });
         // The signed-in user info.
         const user = result.user;
@@ -537,6 +541,7 @@ const Login = () => {
                   fontWeight="500"
                   mb="20px"
                   _hover={{ background: "#ffd700" }}
+                  pointerEvents={loginLoading ? "none" : "visible"}
                 >
                   {loginLoading ? <ButtonSpinner color="#fff" /> : "Log in"}
                 </Button>

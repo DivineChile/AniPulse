@@ -50,6 +50,13 @@ const Signup = () => {
   const [signupLoading, setSignupLoading] = useState(false);
   const toast = useToast();
 
+  const toastStyles = {
+    background: "var(--accent-color)",
+    color: "var(--text-color)",
+    borderRadius: "10px",
+    width: "300px",
+  };
+
   const handleInputType = () => {
     setType(!type);
   };
@@ -110,7 +117,7 @@ const Signup = () => {
         .then((userDetails) => {
           const user = userDetails.user;
           //Signed Up Succesfully ans sent email Verification successfully
-          signupLoading(false);
+          setSignupLoading(false);
           sendEmailVerification(user);
           toast({
             title: "Sign Up Successful",
@@ -119,10 +126,14 @@ const Signup = () => {
             status: "success",
             duration: 3000,
             isClosable: true,
-            style: {
-              background: "var(--accent-color)!important",
-              color: "#fff",
-            },
+            containerStyle: toastStyles,
+          });
+
+          setFormData({
+            email: "",
+            password: "",
+            confirmPassword: "",
+            recieveEmails: false,
           });
           console.log("User signed Up Successfully");
           console.log(user);
@@ -137,6 +148,12 @@ const Signup = () => {
               duration: 3000,
               isClosable: true,
             });
+          } else if (error.code == "auth/email-already-in-use") {
+            setSignupLoading(false);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              email: "The provided email is already in use.",
+            }));
           } else {
             setSignupLoading(false);
             toast({
@@ -149,13 +166,6 @@ const Signup = () => {
           }
           console.log(`User sign up was unsuccessful: ${error.message}`);
         });
-
-      setFormData({
-        email: "",
-        password: "",
-        confirmPassword: "",
-        recieveEmails: false,
-      });
     }
   };
 
@@ -387,6 +397,7 @@ const Signup = () => {
               fontWeight="500"
               mb="20px"
               _hover={{ background: "#ffd700" }}
+              pointerEvents={signupLoading ? "none" : "visible"}
             >
               {signupLoading ? <ButtonSpinner color="#fff" /> : "Sign up"}
             </Button>
