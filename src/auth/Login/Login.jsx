@@ -117,13 +117,13 @@ const Login = () => {
           }
         })
         .catch((error) => {
-          if (error.code === "auth/wrong-password") {
+          if (error.code == "auth/wrong-password") {
             setLoginLoading(false);
             setErrors((prevErrors) => ({
               ...prevErrors,
               password: "Password is incorrect",
             }));
-          } else if (error.code === "auth/user-not-found") {
+          } else if (error.code == "auth/user-not-found") {
             setLoginLoading(false);
             setErrors((prevErrors) => ({
               ...prevErrors,

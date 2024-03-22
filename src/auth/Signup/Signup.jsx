@@ -105,8 +105,7 @@ const Signup = () => {
 
     // If the form is valid, Submit Form
     if (isValid) {
-      console.log(formData);
-      signupLoading(true);
+      setSignupLoading(true);
       createUserWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userDetails) => {
           const user = userDetails.user;
@@ -129,14 +128,25 @@ const Signup = () => {
           console.log(user);
         })
         .catch((error) => {
-          setSignupLoading(false);
-          toast({
-            title: "Sign Up Error",
-            description: "An error occurred during sign up.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
+          if (error.code == "auth/network-request-failed") {
+            setSignupLoading(false);
+            toast({
+              title: "Sign Up Error",
+              description: "Check your network and try again.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            setSignupLoading(false);
+            toast({
+              title: "Sign Up Error",
+              description: "An error occurred during sign up.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
           console.log(`User sign up was unsuccessful: ${error.message}`);
         });
 
