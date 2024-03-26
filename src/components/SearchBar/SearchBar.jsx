@@ -12,6 +12,7 @@ import { Form, Link, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import { useState, useEffect } from "react";
+import { debounce } from "lodash";
 
 const SearchBar = ({ above, below, displayProp }) => {
   const [query, setQuery] = useState("");
@@ -21,7 +22,6 @@ const SearchBar = ({ above, below, displayProp }) => {
   const [animeTitle, setAnimeTitle] = useState(undefined);
   const [animeImg, setAnimeImg] = useState(undefined);
   const [animeEp, setAnimeEp] = useState(undefined);
-  // const [animeNextEP, setAnimeNextEp] = useState(undefined);
   const [animeStatus, setAnimeStatus] = useState(undefined);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -68,10 +68,12 @@ const SearchBar = ({ above, below, displayProp }) => {
       }
     };
 
+    const debouncedFetchData = debounce(fetchData, 500);
+
     // Only fetch data if the query is not empty
     if (query.trim() !== "") {
-      setAnimeData(fetchData);
-      fetchData();
+      setAnimeData(debouncedFetchData);
+      debouncedFetchData();
     } else {
       setSearchResults([]); // Clear results if the query is empty
     }
@@ -216,68 +218,70 @@ const SearchBar = ({ above, below, displayProp }) => {
 
                 // Use item properties in JSX
                 elements.push(
-                  <Box key={itemId}>
-                    <Link
-                      style={{
-                        display: "flex",
-                        gap: "0 20px",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                      // to={`/anime/${itemId}`}
-                      onClick={() => handleLinkClick(itemId)}
-                    >
-                      <Box width="30%">
-                        <Image
-                          h="100%"
-                          w="100%"
-                          bg="#191919"
-                          borderRadius="6px"
-                          src={itemImg}
-                        />
-                      </Box>
-                      <Box width="90%">
-                        <Box display="flex" flexDir="column">
-                          <Heading
-                            as="h4"
-                            fontWeight="500"
-                            fontSize={{ base: "18px", md: "22px" }}
-                            color="var(--secondary-color)"
-                            transition="all ease 0.25s"
-                            _hover={{
-                              color: "var(--accent-color)",
-                            }}
-                          >
-                            {itemTitle === undefined ? "Loading..." : itemTitle}
-                          </Heading>
-                          <Text
-                            as="span"
-                            color="var(--text-color)"
-                            fontSize={{ base: "12px", md: "13px" }}
-                            fontWeight={{ base: "300", md: "normal" }}
-                          >
-                            Episodes:{" "}
-                            {itemEp === undefined
-                              ? "Loading..."
-                              : itemEp == null
-                              ? "NIL"
-                              : `${itemEp}`}
-                          </Text>
-                          <Text
-                            as="span"
-                            color="var(--text-color)"
-                            fontSize={{ base: "12px", md: "13px" }}
-                            fontWeight={{ base: "300", md: "normal" }}
-                          >
-                            Status:{" "}
-                            {itemStatus === undefined
-                              ? "Loading..."
-                              : itemStatus}
-                          </Text>
+                  itemStatus === undefined ? (
+                    <></>
+                  ) : (
+                    <Box key={itemId}>
+                      <Link
+                        style={{
+                          display: "flex",
+                          gap: "0 20px",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                        // to={`/anime/${itemId}`}
+                        onClick={() => handleLinkClick(itemId)}
+                      >
+                        <Box width="30%">
+                          <Image
+                            h="100%"
+                            w="100%"
+                            bg="#191919"
+                            borderRadius="6px"
+                            src={itemImg}
+                          />
                         </Box>
-                      </Box>
-                    </Link>
-                  </Box>
+                        <Box width="90%">
+                          <Box display="flex" flexDir="column">
+                            <Heading
+                              as="h4"
+                              fontWeight="500"
+                              fontSize={{ base: "18px", md: "22px" }}
+                              color="var(--secondary-color)"
+                              transition="all ease 0.25s"
+                              _hover={{
+                                color: "var(--accent-color)",
+                              }}
+                            >
+                              {itemTitle === undefined ? "" : itemTitle}
+                            </Heading>
+                            <Text
+                              as="span"
+                              color="var(--text-color)"
+                              fontSize={{ base: "12px", md: "13px" }}
+                              fontWeight={{ base: "300", md: "normal" }}
+                            >
+                              {itemEp === undefined
+                                ? ""
+                                : itemEp == null
+                                ? "NIL"
+                                : `Episodes: ${itemEp}`}
+                            </Text>
+                            <Text
+                              as="span"
+                              color="var(--text-color)"
+                              fontSize={{ base: "12px", md: "13px" }}
+                              fontWeight={{ base: "300", md: "normal" }}
+                            >
+                              {itemStatus === undefined
+                                ? ""
+                                : `Status: ${itemStatus}`}
+                            </Text>
+                          </Box>
+                        </Box>
+                      </Link>
+                    </Box>
+                  )
                 );
               }
 
