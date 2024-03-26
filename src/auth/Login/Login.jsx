@@ -188,6 +188,7 @@ const Login = () => {
 
           // The signed-in user info.
           const user = result.user;
+          console.log(user);
           if (user) {
             navigate("/");
           }
