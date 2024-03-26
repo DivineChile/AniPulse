@@ -30,7 +30,7 @@
 
 .navbar ul li.active::after,
 .navbar ul li:hover::after {
-  width: 100%;
+  width: 50%;
   background: var(--accent-color);
   border-radius: 2.5px;
 }

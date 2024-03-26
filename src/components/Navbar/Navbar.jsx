@@ -8,13 +8,15 @@ import {
   ListItem,
   Text,
   useToast,
+  Image,
 } from "@chakra-ui/react";
 import { NavList } from "../utils/NavUtil";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import SearchBar from "../SearchBar/SearchBar";
-import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { CloseIcon } from "@chakra-ui/icons";
+import navIcon from "../../assets/navIcon.png";
 import { useState, useEffect } from "react";
 import { auth } from "../../firebase";
 
@@ -318,12 +320,13 @@ const Navbar = () => {
               onClick={openNavbar}
               hideFrom="lg"
             >
-              <HamburgerIcon
+              <Image
                 h="30px"
                 w="20.5px"
-                color="var(--text-color)"
                 cursor="pointer"
+                transform="rotate(-90deg)"
                 transition="all ease 0.25s"
+                src={navIcon}
               />
             </Box>
           )}

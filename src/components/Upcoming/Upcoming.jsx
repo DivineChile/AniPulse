@@ -85,7 +85,7 @@ const Upcoming = () => {
       navigation="false"
       // pagination="false"
       // scrollbar="false"
-      autoplay={{ delay: 5000 }}
+      autoplay="true"
       effect="fade"
     >
       {isLoading && (
