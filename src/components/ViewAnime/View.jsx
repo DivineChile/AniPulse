@@ -189,7 +189,7 @@ const View = () => {
               color="var(--text-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink as={ReactRouterLink} to="/">
+              <BreadcrumbLink as={ReactRouterLink} to="/" textDecor="none">
                 Home
               </BreadcrumbLink>
             </BreadcrumbItem>
