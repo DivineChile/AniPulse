@@ -11,11 +11,15 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useParams } from "react-router-dom";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import Navbar from "../../components/Navbar/Navbar";
 import filterIcon from "../../assets/filterIcon.svg";
+import { filterTypes } from "./utils/FilterTypes";
 import { filterLetters } from "./utils/FilterLetters";
 import { useState } from "react";
+
+import "./style.css";
 
 const Filter = () => {
   const { searchQuery } = useParams();
@@ -24,8 +28,11 @@ const Filter = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [newQueryValue, setNewQueryValue] = useState("");
   const [newQueryParam, setNewQueryParam] = useState("");
+  const [buttonRotate, setButtonRotate] = useState(false);
 
   const handleSearchQuery = async () => {
+    setButtonRotate(!buttonRotate);
+    console.log(buttonRotate);
     const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -159,6 +166,37 @@ const Filter = () => {
                       onClick={handleSearchQuery}
                     >
                       {item.desc}
+                    </Button>
+                  );
+                })}
+                {filterTypes.map((item, index) => {
+                  return (
+                    <Button
+                      type="button"
+                      h="38px"
+                      borderRadius="5px"
+                      background="#111111"
+                      fontSize="16px"
+                      fontWeight="400"
+                      lineHeight="24px"
+                      letterSpacing="0.5px"
+                      color="#b4b4b4"
+                      _hover={{
+                        color: "var(--secondary-color)",
+                        background: "#111111",
+                      }}
+                      key={index}
+                      onClick={handleSearchQuery}
+                    >
+                      <Text as="span">{item.desc}</Text>
+                      <ChevronDownIcon
+                        h="26px"
+                        w="24px"
+                        className={
+                          buttonRotate === true ? `icon_rotated` : "icon"
+                        }
+                        transition="all ease 0.25s"
+                      />
                     </Button>
                   );
                 })}

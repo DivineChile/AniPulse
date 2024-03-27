@@ -9,7 +9,7 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
@@ -19,6 +19,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import ReactPlayer from "react-player/lazy";
 
 import "./style.css";
+import Artplayer from "artplayer";
 
 const Stream = () => {
   const navigate = useNavigate();
@@ -187,6 +188,48 @@ const Stream = () => {
 
     downloadEpisode();
   });
+
+  // Player
+  const playerRef = useRef(null);
+  console.log(currentUrl);
+  useEffect(() => {
+    const player = new Artplayer({
+      container: playerRef.current,
+      url: currentUrl,
+      poster: coverImg,
+      volume: 0.5,
+      isLive: false,
+      muted: false,
+      autoplay: false,
+      pip: true,
+      autoSize: true,
+      autoMini: true,
+      screenshot: true,
+      setting: true,
+      loop: true,
+      flip: true,
+      playbackRate: true,
+      aspectRatio: true,
+      fullscreen: true,
+      fullscreenWeb: true,
+      subtitleOffset: true,
+      miniProgressBar: true,
+      mutex: true,
+      backdrop: true,
+      playsInline: true,
+      autoPlayback: true,
+      airplay: true,
+      theme: "#23ade5",
+      lang: navigator.language.toLowerCase(),
+      moreVideoAttr: {
+        crossOrigin: "anonymous",
+      },
+    });
+
+    return () => {
+      player.destroy(); // Cleanup on unmount
+    };
+  }, []);
   return (
     <Box>
       <Navbar />
@@ -248,37 +291,7 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  {loading && (
-                    <Error
-                      // msg="Still Loading"
-                      loadingState={loading}
-                      height="100%"
-                      width="100%"
-                      // error={err}
-                      pos="absolute"
-                      top="0"
-                      left="0"
-                      bg="#191919"
-                      spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
-                      spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
-                    />
-                  )}
-                  {error && (
-                    <Error
-                      msg="Still Working..."
-                      height="100%"
-                      width="100%"
-                      error={error}
-                      pos="absolute"
-                      top="0"
-                      left="0"
-                      bg="#191919"
-                      spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
-                      spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
-                    />
-                  )}
-
-                  <ReactPlayer
+                  {/* <ReactPlayer
                     light={coverImg}
                     controls={true}
                     // playsinline
@@ -307,7 +320,8 @@ const Stream = () => {
                     onReady={() => {
                       setOnPlay(true);
                     }}
-                  />
+                  /> */}
+                  <Box ref={playerRef} h="100%" w="100%"></Box>
                 </GridItem>
                 <GridItem
                   colSpan={{ base: 6, xl: 2 }}
@@ -406,7 +420,7 @@ const Stream = () => {
                             spinnerW={{ base: "50px" }}
                           />
                         )}
-                        {epError ? (
+                        {epError && (
                           <Error
                             error={epError}
                             msg="Still Working..."
@@ -419,8 +433,6 @@ const Stream = () => {
                             spinnerH={{ base: "50px" }}
                             spinnerW={{ base: "50px" }}
                           />
-                        ) : (
-                          <></>
                         )}
 
                         {(() => {
