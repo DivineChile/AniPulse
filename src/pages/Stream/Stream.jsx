@@ -6,20 +6,16 @@ import {
   Flex,
   Grid,
   GridItem,
-  Image,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
-import playIcon from "../../assets/playIcon.svg";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-import ReactPlayer from "react-player/lazy";
-
 import "./style.css";
-import Artplayer from "artplayer";
+import Artplayer from "../../components/Player/Player";
 
 const Stream = () => {
   const navigate = useNavigate();
@@ -189,47 +185,43 @@ const Stream = () => {
     downloadEpisode();
   });
 
-  // Player
-  const playerRef = useRef(null);
-  console.log(currentUrl);
-  useEffect(() => {
-    const player = new Artplayer({
-      container: playerRef.current,
-      url: currentUrl,
-      poster: coverImg,
-      volume: 0.5,
-      isLive: false,
-      muted: false,
-      autoplay: false,
-      pip: true,
-      autoSize: true,
-      autoMini: true,
-      screenshot: true,
-      setting: true,
-      loop: true,
-      flip: true,
-      playbackRate: true,
-      aspectRatio: true,
-      fullscreen: true,
-      fullscreenWeb: true,
-      subtitleOffset: true,
-      miniProgressBar: true,
-      mutex: true,
-      backdrop: true,
-      playsInline: true,
-      autoPlayback: true,
-      airplay: true,
-      theme: "#23ade5",
-      lang: navigator.language.toLowerCase(),
-      moreVideoAttr: {
-        crossOrigin: "anonymous",
-      },
-    });
+  // Functions to extract Video Qualities and their Streaming urls
+  async function fetchM3U8(url) {
+    try {
+      const response = await fetch(url);
+      const m3u8Content = await response.text();
+      return m3u8Content;
+    } catch (error) {
+      console.error("Error fetching m3u8 file", error);
+      return null;
+    }
+  }
 
-    return () => {
-      player.destroy(); // Cleanup on unmount
-    };
-  }, []);
+  function extractStreams(m3u8Content) {
+    const streams = [];
+    const lines = m3u8Content.split("\n");
+    let currentQuality = null;
+    lines.forEach((line) => {
+      if (line.startsWith("#EXT-X-STREAM-INF")) {
+        currentQuality = line.match(/RESOLUTION=(\d+x\d+)/i)[1];
+      } else if (line.startsWith("http")) {
+        streams.push({ quality: currentQuality, url: line });
+      }
+    });
+    return streams;
+  }
+
+  if (currentUrl) {
+    fetchM3U8(currentUrl)
+      .then((m3u8Content) => {
+        const streams = extractStreams(m3u8Content);
+        console.log("Available streams:", streams);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }
+
   return (
     <Box>
       <Navbar />
@@ -291,37 +283,18 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  {/* <ReactPlayer
-                    light={coverImg}
-                    controls={true}
-                    // playsinline
-                    loop={true}
-                    playIcon={
-                      <Box
-                        background="rgba(0,0,0,0.5)"
-                        height="100%"
-                        width="100%"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Image src={playIcon} />
-                      </Box>
-                    }
-                    url={currentUrl}
-                    width="100%"
-                    height="100%"
+                  <Artplayer
+                    option={{
+                      url: currentUrl,
+                      poster: coverImg,
+                    }}
                     style={{
                       width: "100%",
                       height: "100%",
-                      borderRadius: "10px",
                     }}
-                    playing
-                    onReady={() => {
-                      setOnPlay(true);
-                    }}
-                  /> */}
-                  <Box ref={playerRef} h="100%" w="100%"></Box>
+                    getInstance={(art) => console.info(art)}
+                  />
+                  {console.log(currentUrl)}
                 </GridItem>
                 <GridItem
                   colSpan={{ base: 6, xl: 2 }}
@@ -459,6 +432,7 @@ const Stream = () => {
                                 to={`/watch/${encodeURIComponent(coverImg)}/${
                                   item.id
                                 }`}
+                                // onClick={() => handleEpisodeClick(item.id)}
                                 className={
                                   location.pathname ==
                                   `/watch/${encodeURIComponent(coverImg)}/${

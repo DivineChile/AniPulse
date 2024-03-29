@@ -13,13 +13,15 @@ import {
 import { Link as ReactRouterLink, useParams } from "react-router-dom";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-import Navbar from "../../components/Navbar/Navbar";
-import filterIcon from "../../assets/filterIcon.svg";
 import { filterTypes } from "./utils/FilterTypes";
 import { filterLetters } from "./utils/FilterLetters";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ANIME, META } from "@consumet/extensions";
 
+import Navbar from "../../components/Navbar/Navbar";
+import filterIcon from "../../assets/filterIcon.svg";
 import "./style.css";
+import GridView from "../../components/Filter/GridView";
 
 const Filter = () => {
   const { searchQuery } = useParams();
@@ -30,38 +32,57 @@ const Filter = () => {
   const [newQueryParam, setNewQueryParam] = useState("");
   const [buttonRotate, setButtonRotate] = useState(false);
 
-  const handleSearchQuery = async () => {
-    setButtonRotate(!buttonRotate);
-    console.log(buttonRotate);
-    const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    const body = JSON.stringify({
-      search: searchQuery,
-    });
-    const options = {
-      method: "POST",
-      headers: headers,
-      body: body,
-    };
-    try {
-      setIsLoading(true);
-      const response = await fetch(url, options);
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data.results);
-        setIsLoading(false);
-        setError(false);
-      } else {
-        setError(true);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      setError(true);
-      setIsLoading(false);
-    }
+  const requestAnime = async () => {
+    const animes = new ANIME.Gogoanime();
+    const meta = new META.Anilist();
+
+    // const results = await animes.search(searchQuery);
+
+    const info = await meta.advancedSearch(searchQuery);
+    setSearchResults(info);
+    console.log(info.results);
   };
 
+  useEffect(() => {
+    requestAnime();
+  }, []);
+
+  // const handleSearchQuery = async () => {
+  //   setButtonRotate(!buttonRotate);
+  //   const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
+  //   const headers = new Headers();
+  //   headers.append("Content-Type", "application/json");
+  //   const body = JSON.stringify({
+  //     search: searchQuery,
+  //   });
+  //   const options = {
+  //     method: "POST",
+  //     headers: headers,
+  //     body: body,
+  //   };
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch(url, options);
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setSearchResults(data.results);
+  //       setIsLoading(false);
+  //       setError(false);
+  //     } else {
+  //       setError(true);
+  //       setIsLoading(false);
+  //     }
+  //   } catch (error) {
+  //     setError(true);
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handleSearchQuery();
+  // }, []);
+
+  // console.log(searchResults);
   return (
     <Box>
       <Box>
@@ -105,14 +126,24 @@ const Filter = () => {
           </Breadcrumb>
 
           {/* Filter Area */}
-          <Box mt="70px" display="flex" flexDir="column" gap="40px">
-            <Box display="flex" alignItems="center" gap="40px">
+          <Box
+            mt="70px"
+            display="flex"
+            flexDir="column"
+            gap={{ base: "20px", md: "40px" }}
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              flexDir={{ base: "column", md: "row" }}
+              gap={{ base: "5px", md: "40px" }}
+            >
               <Heading
                 as="h1"
                 color="#fff"
                 textTransform="uppercase"
-                fontSize="38.28px"
-                lineHeight="44px"
+                fontSize={{ base: "28.83px", lg: "38.28px" }}
+                lineHeight={{ base: "33px", lg: "44px" }}
                 letterSpacing="1.5px"
               >
                 Filter
@@ -163,7 +194,7 @@ const Filter = () => {
                         background: "#111111",
                       }}
                       key={index}
-                      onClick={handleSearchQuery}
+                      onClick={requestAnime}
                     >
                       {item.desc}
                     </Button>
@@ -186,7 +217,7 @@ const Filter = () => {
                         background: "#111111",
                       }}
                       key={index}
-                      onClick={handleSearchQuery}
+                      onClick={requestAnime}
                     >
                       <Text as="span">{item.desc}</Text>
                       <ChevronDownIcon
@@ -201,6 +232,33 @@ const Filter = () => {
                   );
                 })}
               </Box>
+              <Box mt={"10px"}>
+                <Button
+                  borderRadius="5px"
+                  border={{
+                    base: "1px solid var(--secondary-color)",
+                    md: "2px solid var(--secondary-color)",
+                  }}
+                  background="#111111"
+                  h={{ base: "36px", md: "42px" }}
+                  w={{ base: "88.4px", md: "106.59px" }}
+                  color="#b4b4b4"
+                  fontSize={{ base: "11.44px", lg: "15.38px" }}
+                  lineHeight={{ base: "18px", md: "24px" }}
+                  letterSpacing={{ base: "0.5px" }}
+                  fontWeight="400"
+                  _hover={{
+                    color: "#fff",
+                    background: "var(--secondary-color)",
+                  }}
+                >
+                  Filter Now
+                </Button>
+              </Box>
+            </Box>
+
+            <Box>
+              <GridView results={searchResults} />
             </Box>
           </Box>
         </Box>

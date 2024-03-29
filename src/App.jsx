@@ -28,7 +28,7 @@ const router = createBrowserRouter(
       <Route path="/popular" element={<Popular />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/anime/:id" element={<View />} />
-      <Route path="/search/keyword/:id" element={<Filter />} />
+      <Route path="/search/keyword/:searchQuery" element={<Filter />} />
       <Route path="/watch/:coverImg/:watchId" element={<Stream />} />
     </>
   )

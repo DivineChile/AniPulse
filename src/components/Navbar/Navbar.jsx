@@ -322,8 +322,8 @@ const Navbar = () => {
               hideFrom="lg"
             >
               <Image
-                h="30px"
-                w="20.5px"
+                h="20px"
+                w="15.5px"
                 cursor="pointer"
                 transform="rotate(-90deg)"
                 transition="all ease 0.25s"
