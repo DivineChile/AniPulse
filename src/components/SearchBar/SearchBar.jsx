@@ -6,6 +6,7 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 import { Form, Link, useNavigate } from "react-router-dom";
@@ -18,66 +19,38 @@ const SearchBar = ({ above, below, displayProp }) => {
   const [query, setQuery] = useState("");
   const [animeData, setAnimeData] = useState(null);
   const [searchResults, setSearchResults] = useState(undefined);
-  const [animeId, setAnimeId] = useState(undefined);
-  const [animeTitle, setAnimeTitle] = useState(undefined);
-  const [animeImg, setAnimeImg] = useState(undefined);
-  const [animeEp, setAnimeEp] = useState(undefined);
-  const [animeStatus, setAnimeStatus] = useState(undefined);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [showAll, setShowAll] = useState(false);
-
   const navigate = useNavigate();
 
-  const handleInputChange = (event) => {
-    setQuery(event.target.value);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
-      const headers = new Headers();
-      headers.append("Content-Type", "application/json");
-      const body = JSON.stringify({
-        search: query,
-      });
-      const options = {
-        method: "POST",
-        headers: headers,
-        body: body,
-      };
-
-      try {
-        setLoading(true);
-        const response = await fetch(url, options);
-        const data = await response.json();
-        setSearchResults(data.results);
-        setAnimeId(searchResults.map((item) => item.id));
-        setAnimeStatus(searchResults.map((item) => item.status));
-        setAnimeEp(searchResults.map((item) => item.episodes));
-
-        setAnimeTitle(searchResults.map((item) => item.title.userPreferred));
-        setAnimeImg(searchResults.map((item) => item.coverImage.extraLarge));
-
-        setLoading(false);
-      } catch (error) {
-        setError(true);
-        setLoading(false);
-      }
+  const fetchData = async () => {
+    const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const body = JSON.stringify({
+      search: query,
+    });
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: body,
     };
 
-    const debouncedFetchData = debounce(fetchData, 500);
-
-    // Only fetch data if the query is not empty
-    if (query.trim() !== "") {
-      setAnimeData(debouncedFetchData);
-      debouncedFetchData();
-    } else {
-      setSearchResults([]); // Clear results if the query is empty
+    try {
+      setLoading(true);
+      const response = await fetch(url, options);
+      const data = await response.json();
+      setSearchResults(data.results);
+      setLoading(false);
+    } catch (error) {
+      setError(true);
+      setLoading(false);
     }
-  }, [query]);
+  };
+
+  const debouncedFetchData = debounce(fetchData, 1000, []);
 
   const handleInputFocus = () => {
     setShowDropdown(true);
@@ -87,7 +60,19 @@ const SearchBar = ({ above, below, displayProp }) => {
     // Use setTimeout to allow click on result before hiding the dropdown
     setTimeout(() => {
       setShowDropdown(false);
-    }, 200);
+      setSearchResults([]);
+    }, 1000);
+  };
+
+  const handleInputChange = (event) => {
+    // Only fetch data if the query is not empty
+    setQuery(event.target.value);
+    if (query.trim() && query !== "") {
+      debouncedFetchData();
+      setAnimeData(debouncedFetchData);
+    } else {
+      setSearchResults([]);
+    }
   };
 
   const handleLinkClick = (itemId) => {
@@ -99,6 +84,12 @@ const SearchBar = ({ above, below, displayProp }) => {
       navigate(`/search/keyword/${query}`);
     }
   };
+
+  let top7Items = [];
+
+  if (searchResults && searchResults.length > 0) {
+    top7Items = searchResults.slice(0, 7);
+  }
 
   return (
     <Box
@@ -184,9 +175,9 @@ const SearchBar = ({ above, below, displayProp }) => {
             </Heading>
           </Box>
           {loading ? (
-            <Text as="span" color="var(--text-color)">
-              Loading...
-            </Text>
+            <Box w="100%" display="flex" justifyContent="center">
+              <Spinner color="var(--accent-color)" />
+            </Box>
           ) : (
             <></>
           )}
@@ -198,14 +189,101 @@ const SearchBar = ({ above, below, displayProp }) => {
             <></>
           )}
 
-          {(() => {
-            if (searchResults && searchResults.length > 0) {
+          {searchResults && searchResults?.length > 0 ? (
+            top7Items.map((item) => {
+              const itemId = item.id;
+              const itemStatus = item.status;
+              const itemTitle = item.title.userPreferred;
+              const itemEp = item.episodes;
+              const itemImg = item.coverImage.extraLarge;
+
+              return (
+                <Box key={itemId}>
+                  <Link
+                    style={{
+                      display: "flex",
+                      gap: "0 20px",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                    // to={`/anime/${itemId}`}
+                    onClick={() => handleLinkClick(itemId)}
+                  >
+                    <Box width="10%">
+                      <Image
+                        h="100%"
+                        w="100%"
+                        bg="#191919"
+                        borderRadius="6px"
+                        src={itemImg}
+                      />
+                    </Box>
+                    <Box width="90%">
+                      <Box display="flex" flexDir="column">
+                        <Heading
+                          as="h4"
+                          fontWeight="500"
+                          fontSize={{ base: "18px", md: "20px" }}
+                          color="var(--secondary-color)"
+                          transition="all ease 0.25s"
+                          _hover={{
+                            color: "var(--accent-color)",
+                          }}
+                        >
+                          {itemTitle}
+                        </Heading>
+                        <Text
+                          as="span"
+                          color="var(--text-color)"
+                          fontSize={{ base: "12px", md: "13px" }}
+                          fontWeight={{ base: "300", md: "normal" }}
+                        >
+                          {itemEp == null ? "NIL" : `Episodes: ${itemEp}`}
+                        </Text>
+                        <Text
+                          as="span"
+                          color="var(--text-color)"
+                          fontSize={{ base: "12px", md: "13px" }}
+                          fontWeight={{ base: "300", md: "normal" }}
+                        >
+                          {`Status: ${itemStatus}`}
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Link>
+                </Box>
+              );
+            })
+          ) : (
+            <></>
+          )}
+
+          {searchResults?.length >= 7 && (
+            <Link
+              to={`/search/keyword/${query}`}
+              key="showMore"
+              style={{
+                color: "var(--text-color)",
+                fontSize: "15px",
+                border: "2px solid var(--secondary-color)",
+                borderRadius: "5px",
+                padding: "5px 15px",
+                textAlign: window.innerWidth < 500 ? "center" : "start",
+                width: window.innerWidth < 500 ? "100%" : "fit-content",
+              }}
+            >
+              View All
+            </Link>
+          )}
+
+          {/* {(() => {
+            if (searchResults && searchResults?.length > 0) {
               // Declare a variable to store the elements
               const elements = [];
 
               // Determine the endIndex based on the showAll state
               const endIndex = showAll
-                ? searchResults.length
+                ? searchResults?.length
                 : Math.min(searchResults.length, 7);
 
               // Iterate through the search results
@@ -217,7 +295,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                 const itemImg = animeImg[i];
 
                 // Use item properties in JSX
-                elements.push(
+                elements?.push(
                   itemStatus === undefined ? (
                     <></>
                   ) : (
@@ -232,7 +310,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                         // to={`/anime/${itemId}`}
                         onClick={() => handleLinkClick(itemId)}
                       >
-                        <Box width="30%">
+                        <Box width="10%">
                           <Image
                             h="100%"
                             w="100%"
@@ -246,7 +324,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                             <Heading
                               as="h4"
                               fontWeight="500"
-                              fontSize={{ base: "18px", md: "22px" }}
+                              fontSize={{ base: "18px", md: "20px" }}
                               color="var(--secondary-color)"
                               transition="all ease 0.25s"
                               _hover={{
@@ -290,7 +368,7 @@ const SearchBar = ({ above, below, displayProp }) => {
               };
 
               // Render the "View All" link if there are more than 7 results
-              if (searchResults.length > 7) {
+              if (searchResults?.length > 7) {
                 elements.push(
                   <Link
                     to={`/search/${query}`}
@@ -313,7 +391,7 @@ const SearchBar = ({ above, below, displayProp }) => {
 
               return elements;
             }
-          })()}
+          })()} */}
         </Box>
       )}
     </Box>
