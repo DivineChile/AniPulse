@@ -5,3 +5,7 @@
   height: 100%;
   opacity: 1;
 }
+
+.playNowBtn:hover .playIcon {
+  color: var(--accent-color);
+}

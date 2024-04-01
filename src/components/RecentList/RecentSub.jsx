@@ -4,11 +4,13 @@ import {
   Box,
   Image,
   Text,
+  Icon,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./style.css";
 import Error from "../ErrorPage/Error";
+import { BsPlayCircle } from "react-icons/bs";
 
 const Recents = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -161,7 +163,19 @@ const Recents = () => {
                   lineHeight="36px"
                   letterSpacing="0.5px"
                   fontWeight="500"
+                  className="playNowBtn"
+                  display="flex"
+                  alignItems="center"
+                  gap="8px"
                 >
+                  <Icon
+                    as={BsPlayCircle}
+                    color="var(--secondary-color)"
+                    transition="all ease 0.25s"
+                    className="playIcon"
+                    h="40px"
+                    w="40px"
+                  />
                   Play Now
                 </ChakraLink>
               </Box>

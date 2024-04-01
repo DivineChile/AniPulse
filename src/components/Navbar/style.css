@@ -92,6 +92,10 @@
   color: #fff;
 }
 
+.navbar .authCon .authLinks:nth-child(2):active {
+  background: #3ffcbd;
+}
+
 .navbar .authCon .profileLink {
   color: var(--secondary-color);
   transition: all ease 0.25s;

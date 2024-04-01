@@ -578,6 +578,7 @@ const View = () => {
                         </TabPanel>
                         <TabPanel>
                           {epLoading && <Spinner color="var(--accent-color)" />}
+
                           {epDubError && (
                             <Box display="flex" flexDir="column" gap="15px">
                               <Text color="var(--text-color)">
@@ -598,6 +599,9 @@ const View = () => {
                                 Retry
                               </Button>
                             </Box>
+                          )}
+                          {animeDubEpId?.length < 0 && (
+                            <Text>No episodes released</Text>
                           )}
                           <EpisodeList
                             items={animeDubEpId}

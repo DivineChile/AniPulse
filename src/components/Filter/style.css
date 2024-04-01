@@ -1,0 +1,3 @@
+.listItem:hover .listItemHead {
+  color: var(--accent-color);
+}

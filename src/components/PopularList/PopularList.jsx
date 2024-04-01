@@ -7,11 +7,14 @@ import {
   Text,
   Link as ChakraLink,
   Flex,
+  Icon,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../ErrorPage/Error";
 import "./style.css";
 import { useEffect, useState } from "react";
+
+import { BsInfoCircle } from "react-icons/bs";
 
 const PopularList = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +48,7 @@ const PopularList = () => {
   }, []);
 
   return (
-    <Box
-      // px={{ base: "20px", lg: "20px", xl: "100px" }}
-      bg="var(--primary-background-color)"
-      pt="60px"
-      pb="80px"
-    >
+    <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
       <Box
         maxW={{
           base: "95%",
@@ -188,8 +186,20 @@ const PopularList = () => {
                         lineHeight="36px"
                         letterSpacing="0.5px"
                         fontWeight="500"
+                        className="playNowBtn"
+                        display="flex"
+                        alignItems="center"
+                        gap="8px"
                       >
-                        Play Now
+                        <Icon
+                          as={BsInfoCircle}
+                          color="var(--secondary-color)"
+                          transition="all ease 0.25s"
+                          className="playIcon"
+                          h="40px"
+                          w="40px"
+                        />
+                        View Anime
                       </ChakraLink>
                     </Box>
                   </Box>

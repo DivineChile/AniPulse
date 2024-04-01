@@ -306,7 +306,7 @@ const Upcoming = () => {
                           _hover={{
                             color: "var(--background-color)",
                             bgColor: "var(--accent-color)",
-                            border: "none",
+                            border: "2px solid var(--accent-color)",
                           }}
                           borderRadius="8px"
                           border="2px solid var(--text-color)"

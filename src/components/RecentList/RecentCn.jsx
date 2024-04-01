@@ -4,10 +4,12 @@ import {
   Box,
   Image,
   Text,
+  Icon,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Error from "../ErrorPage/Error";
+import { BsPlayCircle } from "react-icons/bs";
 import "./style.css";
 
 const RecentCn = () => {
@@ -19,7 +21,7 @@ const RecentCn = () => {
   const [cnAnimeEp, setCnAnimeEp] = useState(undefined);
   const [cnAnimeEpId, setCnAnimeEpId] = useState([]);
   const [showAll, setShowAll] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+
   const recentAnime = [];
 
   useEffect(() => {
@@ -159,7 +161,19 @@ const RecentCn = () => {
                   lineHeight="36px"
                   letterSpacing="0.5px"
                   fontWeight="500"
+                  className="playNowBtn"
+                  display="flex"
+                  alignItems="center"
+                  gap="8px"
                 >
+                  <Icon
+                    as={BsPlayCircle}
+                    color="var(--secondary-color)"
+                    transition="all ease 0.25s"
+                    className="playIcon"
+                    h="40px"
+                    w="40px"
+                  />
                   Play Now
                 </ChakraLink>
               </Box>

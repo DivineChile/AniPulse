@@ -7,7 +7,7 @@ import {
   Link as ChakraLink,
   Flex,
   Heading,
-  Image,
+  Icon,
   Text,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useParams } from "react-router-dom";
@@ -19,9 +19,11 @@ import { useEffect, useState } from "react";
 import { ANIME, META } from "@consumet/extensions";
 
 import Navbar from "../../components/Navbar/Navbar";
-import filterIcon from "../../assets/filterIcon.svg";
+
 import "./style.css";
 import GridView from "../../components/Filter/GridView";
+import { BsGrid, BsListUl } from "react-icons/bs";
+import ListView from "../../components/Filter/ListView";
 
 const Filter = () => {
   const { searchQuery } = useParams();
@@ -31,6 +33,8 @@ const Filter = () => {
   const [newQueryValue, setNewQueryValue] = useState("");
   const [newQueryParam, setNewQueryParam] = useState("");
   const [buttonRotate, setButtonRotate] = useState(false);
+  const [listView, setListView] = useState(false);
+  const [gridView, setGridView] = useState(true);
 
   const requestAnime = async () => {
     const animes = new ANIME.Gogoanime();
@@ -39,7 +43,7 @@ const Filter = () => {
     // const results = await animes.search(searchQuery);
 
     const info = await meta.advancedSearch(searchQuery);
-    setSearchResults(info);
+    setSearchResults(info.results);
     console.log(info.results);
   };
 
@@ -83,6 +87,30 @@ const Filter = () => {
   // }, []);
 
   // console.log(searchResults);
+
+  const handleListView = () => {
+    if (gridView) {
+      setListView(true);
+      setGridView(false);
+      console.log(listView);
+    } else {
+      setListView(true);
+      setGridView(false);
+      console.log(listView);
+    }
+  };
+
+  const handleGridView = () => {
+    if (listView) {
+      setGridView(true);
+      setListView(false);
+      console.log(gridView);
+    } else {
+      setGridView(true);
+      setListView(false);
+      console.log(gridView);
+    }
+  };
   return (
     <Box>
       <Box>
@@ -149,14 +177,39 @@ const Filter = () => {
                 Filter
               </Heading>
               <Flex alignItems="center" gap="20px">
-                <Image src={filterIcon} h="20px" w="20px" />
+                <Icon
+                  as={BsListUl}
+                  h="20px"
+                  w="20px"
+                  color={
+                    listView ? "var(--accent-color)" : "var(--secondary-color)"
+                  }
+                  _hover={{
+                    color: "var(--accent-color)",
+                  }}
+                  cursor="pointer"
+                  onClick={handleListView}
+                />
+                <Icon
+                  as={BsGrid}
+                  h="20px"
+                  w="20px"
+                  color={
+                    gridView ? "var(--accent-color)" : "var(--secondary-color)"
+                  }
+                  _hover={{
+                    color: "var(--accent-color)",
+                  }}
+                  cursor="pointer"
+                  onClick={handleGridView}
+                />
                 <Box>
                   <Text
                     color="#fff"
                     fontWeight="400"
                     textTransform="uppercase"
-                    fontSize="20px"
-                    lineHeight="44px"
+                    fontSize={{ base: "16px", md: "20px" }}
+                    lineHeight={{ base: "17.6px", md: "44px" }}
                     letterSpacing="1.5px"
                   >
                     Showing 1 - 9 of 50 Anime
@@ -257,8 +310,13 @@ const Filter = () => {
               </Box>
             </Box>
 
-            <Box>
-              <GridView results={searchResults} />
+            {/* Results */}
+            <Box mt="20px">
+              {gridView ? (
+                <GridView results={searchResults} />
+              ) : (
+                <ListView results={searchResults} />
+              )}
             </Box>
           </Box>
         </Box>
