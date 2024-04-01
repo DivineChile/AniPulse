@@ -206,8 +206,8 @@ const SearchBar = ({ above, below, displayProp }) => {
                       alignItems: "center",
                       width: "100%",
                     }}
-                    // to={`/anime/${itemId}`}
-                    onClick={() => handleLinkClick(itemId)}
+                    to={`/anime/${itemId}`}
+                    // onClick={() => handleLinkClick(itemId)}
                   >
                     <Box width="10%">
                       <Image
@@ -230,7 +230,9 @@ const SearchBar = ({ above, below, displayProp }) => {
                             color: "var(--accent-color)",
                           }}
                         >
-                          {itemTitle}
+                          {itemTitle?.length > 40
+                            ? `${itemTitle.slice(0, 36)}...`
+                            : itemTitle}
                         </Heading>
                         <Text
                           as="span"

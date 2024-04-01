@@ -8,12 +8,21 @@ import {
   GridItem,
   Heading,
   Link as ChakraLink,
+  Button,
+  Flex,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel,
+  TabIndicator,
+  Spinner,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import Error from "../ErrorPage/Error";
-import moment from "moment";
+
 import EpisodeList from "../EpisodeList/EpisodeList";
 
 const View = () => {
@@ -30,15 +39,18 @@ const View = () => {
   const [animeDesc, setAnimeDesc] = useState("");
   const [animeEp, setAnimeEp] = useState([]);
   const [animeEpId, setAnimeEpId] = useState([]);
+  const [animeDubEpId, setAnimeDubEpId] = useState([]);
   const [animeEpNum, setAnimeEpNum] = useState([]);
   const [animeDataEP, setAnimeDataEP] = useState([]);
   const [animeIdGogo, setAnimeIdGogo] = useState("");
+  const [animeIdGogoDub, setAnimeIdGogoDub] = useState("");
   const [epLength, setEpLength] = useState(0);
   const [epLoading, setEpLoading] = useState(true);
-  const [epError, setEpError] = useState(null);
+  const [epSubError, setEpSubError] = useState(null);
+  const [epDubError, setEpDubError] = useState(null);
 
-  const [airDate, setAirDate] = useState(0);
-  const [nextAirDate, setNextAirDate] = useState(0);
+  const [dubVisible, setDubVisible] = useState(false);
+  const [subVisible, setSubVisible] = useState(false);
 
   useEffect(() => {
     const fetchAnimeData = async () => {
@@ -53,6 +65,7 @@ const View = () => {
 
         setAnimeTitle(Object.entries(animeData.title).map((item) => item[1]));
         setAnimeIdGogo(animeData.id_provider.idGogo);
+        setAnimeIdGogoDub(animeData.id_provider.idGogoDub);
         setAnimeImg(
           Object.entries(animeData.coverImage).map((item) => item[1])
         );
@@ -66,8 +79,6 @@ const View = () => {
               : animeData.description
             : animeData.description
         );
-        setAirDate(animeData.nextair.airingAt);
-        setNextAirDate(animeData.nextair.timeUntilAiring);
         setIsLoading(false);
         setError(false);
       } catch {
@@ -79,61 +90,60 @@ const View = () => {
     fetchAnimeData();
   }, []);
 
-  useEffect(() => {
-    const fetchAnimeEpisodes = async () => {
-      setEpLoading(true);
-      try {
-        const response = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeIdGogo}`
-        );
-        const data = await response.json();
-        setAnimeDataEP(data);
+  const generateSubEp = async () => {
+    setEpLoading(true);
+    setDubVisible(false);
+    setSubVisible(true);
+    try {
+      const response = await fetch(
+        `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeIdGogo}`
+      );
+      const data = await response.json();
+      setAnimeDataEP(data);
 
-        setAnimeEp(data.episodes.map((item) => item));
-        // setAnimeEpNum(data.episodes.map((item) => item.number));
-        setAnimeEpId(data.episodes.map((item) => item.id));
-        // console.log(animeEpId);
-        setEpLength(animeEpNum.length);
-        // setCoverImage(data.episodes.map((item) => item.image));
+      setAnimeEp(data.episodes.map((item) => item));
+      // setAnimeEpNum(data.episodes.map((item) => item.number));
+      setAnimeEpId(data.episodes.map((item) => item.id));
+      // console.log(animeEpId);
+      setEpLength(animeEpNum.length);
+      // setCoverImage(data.episodes.map((item) => item.image));
 
-        setEpLoading(false);
-        setEpError(false);
-      } catch {
-        setEpError(true);
-        setEpLoading(false);
-      }
-    };
-    fetchAnimeEpisodes();
-  }, [animeIdGogo]);
-  // console.log(animeEpId);
-
-  const calculateTimeRemaining = () => {
-    const now = moment();
-    const setCurrentDate = moment(airDate);
-    const setNextDate = moment(nextAirDate);
-    const duration = moment.duration(now.diff(setCurrentDate));
-
-    const days = Math.floor(duration.asDays());
-    const hours = duration.hours();
-    const minutes = duration.minutes();
-    const seconds = duration.seconds();
-
-    return { days, hours, minutes, seconds };
+      setEpLoading(false);
+      setEpSubError(false);
+    } catch {
+      setEpSubError(true);
+      setEpLoading(false);
+    }
   };
-  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
+
+  const generateDubEp = async () => {
+    setEpLoading(true);
+    setSubVisible(false);
+    setDubVisible(true);
+    try {
+      const response = await fetch(
+        `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeIdGogoDub}`
+      );
+      const data = await response.json();
+      setAnimeDataEP(data);
+
+      // setAnimeEpNum(data.episodes.map((item) => item.number));
+      setAnimeDubEpId(data.episodes.map((item) => item.id));
+
+      setEpLoading(false);
+      setEpDubError(false);
+    } catch {
+      setEpDubError(true);
+      setEpLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeRemaining(calculateTimeRemaining());
-    }, 1000);
-
-    return () => clearInterval(interval);
+    generateSubEp();
+    generateDubEp();
   }, []);
-
   document.title = `${animeTitle} - AniPulse`;
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
-
-  // const reversedId = animeEpId.reverse();
 
   return (
     <Box>
@@ -155,11 +165,11 @@ const View = () => {
         />
       )}
 
-      {epError && (
+      {error && (
         <Error
           msg={"Still Working..."}
           height="100%"
-          error={setEpError}
+          error={error}
           pos="fixed"
           top={{ base: "70.89px", md: "74px", lg: "84px" }}
           left="0"
@@ -202,7 +212,7 @@ const View = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>Anime</BreadcrumbLink>
+              <BreadcrumbLink>Anime / {animeTitle}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -353,29 +363,21 @@ const View = () => {
                       lineHeight="24px"
                       transition="background ease 0.25s"
                     >
-                      {(() => {
-                        const elements = [];
-
-                        for (let i = 0; i < animeStudio.length; i++) {
-                          const item = animeInfo.studios[i].name;
-
-                          elements.push(
-                            <Text
-                              color="var(--accent-color)"
-                              as="span"
-                              fontSize="15px"
-                              fontWeight="300"
-                              lineHeight="24px"
-                              transition="background ease 0.25s"
-                              key={item[i]}
-                            >
-                              {`${item}, `}
-                            </Text>
-                          );
-                        }
-
-                        return elements;
-                      })()}
+                      {animeStudio?.map((studio, index) => {
+                        return (
+                          <Text
+                            color="var(--accent-color)"
+                            as="span"
+                            fontSize="15px"
+                            fontWeight="300"
+                            lineHeight="24px"
+                            transition="background ease 0.25s"
+                            key={index}
+                          >
+                            {`${studio}, `}
+                          </Text>
+                        );
+                      })}
                     </Text>
                   </Box>
                   {/* Anime Season */}
@@ -457,29 +459,21 @@ const View = () => {
                     </Text>
                     {/* Genre */}
                     <Box display="flex" gap="2px" flexWrap="wrap">
-                      {(() => {
-                        const elements = [];
-
-                        for (let i = 0; i < animeGenre; i++) {
-                          const item = animeInfo.genres[i];
-
-                          elements.push(
-                            <Text
-                              color="var(--text-color)"
-                              as="span"
-                              fontSize="15px"
-                              fontWeight="300"
-                              lineHeight="24px"
-                              transition="background ease 0.25s"
-                              key={item[i]}
-                            >
-                              {`${item}, `}
-                            </Text>
-                          );
-                        }
-
-                        return elements;
-                      })()}
+                      {animeInfo.genres?.map((genre, index) => {
+                        return (
+                          <Text
+                            color="var(--text-color)"
+                            as="span"
+                            fontSize="15px"
+                            fontWeight="300"
+                            lineHeight="24px"
+                            transition="background ease 0.25s"
+                            key={index}
+                          >
+                            {`${genre}, `}
+                          </Text>
+                        );
+                      })}
                     </Box>
                   </Box>
                   {/* Views */}
@@ -504,28 +498,6 @@ const View = () => {
                       {animeScore[1] ? animeScore[1] : "Loading..."}
                     </Text>
                   </Box>
-                  {/* Next Release Date */}
-                  <Box display="flex" gap="0 10px">
-                    <Text
-                      as="p"
-                      color="var(--text-color)"
-                      fontSize="15px"
-                      fontWeight="300"
-                      transition="background ease 0.25s"
-                      lineHeight="24px"
-                    >
-                      Est. Episode At:{"  "}
-                    </Text>
-                    <Text
-                      color="var(--text-color)"
-                      as="span"
-                      fontSize="15px"
-                      fontWeight="300"
-                      lineHeight="24px"
-                    >
-                      {timeRemaining.days}
-                    </Text>
-                  </Box>
                 </Box>
               </GridItem>
               {/* Episodes List */}
@@ -545,11 +517,97 @@ const View = () => {
                     Episode List
                   </Heading>
                   <Box mt="20px">
-                    <EpisodeList
-                      items={animeEpId}
-                      itemId={animeEpId}
-                      coverImg={animeImg}
-                    />
+                    <Tabs isFitted variant="unstyled" defaultIndex={0} isLazy>
+                      <TabList>
+                        <Tab
+                          _selected={{
+                            color: "var(--accent-color)",
+                          }}
+                          color="var(--text-color)"
+                          _hover={{
+                            color: "var(--accent-color)",
+                          }}
+                        >
+                          SUB
+                        </Tab>
+                        <Tab
+                          _selected={{
+                            color: "var(--accent-color)",
+                          }}
+                          color="var(--text-color)"
+                          _hover={{
+                            color: "var(--accent-color)",
+                          }}
+                        >
+                          DUB
+                        </Tab>
+                      </TabList>
+                      <TabIndicator
+                        bg="var(--accent-color)"
+                        h="2px"
+                        borderRadius="1.5px"
+                      />
+                      <TabPanels>
+                        <TabPanel>
+                          {epLoading && <Spinner color="var(--accent-color)" />}
+                          {epSubError && (
+                            <Box display="flex" flexDir="column" gap="15px">
+                              <Text color="var(--text-color)">
+                                Error Loading Episodes
+                              </Text>
+                              <Button
+                                onClick={generateSubEp}
+                                height="30px"
+                                w="fit-content"
+                                bg="transparent"
+                                border="1px solid var(--accent-color)"
+                                color="var(--accent-color)"
+                                _hover={{
+                                  color: "#000",
+                                  bg: "var(--accent-color)",
+                                }}
+                              >
+                                Retry
+                              </Button>
+                            </Box>
+                          )}
+                          <EpisodeList
+                            items={animeEpId}
+                            itemId={animeEpId}
+                            coverImg={animeImg}
+                          />
+                        </TabPanel>
+                        <TabPanel>
+                          {epLoading && <Spinner color="var(--accent-color)" />}
+                          {epDubError && (
+                            <Box display="flex" flexDir="column" gap="15px">
+                              <Text color="var(--text-color)">
+                                Error Loading Episodes
+                              </Text>
+                              <Button
+                                onClick={generateDubEp}
+                                w="fit-content"
+                                height="30px"
+                                bg="transparent"
+                                border="1px solid var(--accent-color)"
+                                color="var(--accent-color)"
+                                _hover={{
+                                  color: "#000",
+                                  bg: "var(--accent-color)",
+                                }}
+                              >
+                                Retry
+                              </Button>
+                            </Box>
+                          )}
+                          <EpisodeList
+                            items={animeDubEpId}
+                            itemId={animeDubEpId}
+                            coverImg={animeImg}
+                          />
+                        </TabPanel>
+                      </TabPanels>
+                    </Tabs>
                   </Box>
                 </Box>
               </GridItem>
