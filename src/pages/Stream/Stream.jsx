@@ -8,14 +8,15 @@ import {
   GridItem,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import "./style.css";
-import Artplayer from "../../components/Player/Player";
+import Hls from "hls.js";
+import Artplayer from "artplayer";
 
 const Stream = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const Stream = () => {
   const [animeTitle, setAnimeTitle] = useState("");
   // const [videoPlyr, setVideoPlyr] = useState([]);
   const location = useLocation();
+  const artRef = useRef();
   let newAnimeId = null;
   let newAnimeIdVal = "";
   let currentEp = null;
@@ -185,42 +187,68 @@ const Stream = () => {
     downloadEpisode();
   });
 
-  // Functions to extract Video Qualities and their Streaming urls
-  async function fetchM3U8(url) {
-    try {
-      const response = await fetch(url);
-      const m3u8Content = await response.text();
-      return m3u8Content;
-    } catch (error) {
-      console.error("Error fetching m3u8 file", error);
-      return null;
-    }
-  }
-
-  function extractStreams(m3u8Content) {
-    const streams = [];
-    const lines = m3u8Content.split("\n");
-    let currentQuality = null;
-    lines.forEach((line) => {
-      if (line.startsWith("#EXT-X-STREAM-INF")) {
-        currentQuality = line.match(/RESOLUTION=(\d+x\d+)/i)[1];
-      } else if (line.startsWith("http")) {
-        streams.push({ quality: currentQuality, url: line });
+  //Player loader
+  useEffect(() => {
+    function playM3u8(video, url, art) {
+      if (Hls.isSupported()) {
+        if (art.hls) art.hls.destroy();
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        art.hls = hls;
+        art.on("destroy", () => hls.destroy());
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = url;
+      } else {
+        art.notice.show = "Unsupported playback format: m3u8";
       }
-    });
-    return streams;
-  }
+    }
 
-  if (currentUrl) {
-    fetchM3U8(currentUrl)
-      .then((m3u8Content) => {
-        const streams = extractStreams(m3u8Content);
-        console.log("Available streams:", streams);
-      })
-      .catch((error) => {
-        console.log("Error", error);
-      });
-  }
+    const art = new Artplayer({
+      container: artRef.current,
+      url: currentUrl,
+      type: "m3u8",
+      customType: {
+        m3u8: playM3u8,
+      },
+      moreVideoAttr: {
+        crossOrigin: "anonymous",
+      },
+      playsInline: true,
+      theme: "var(--accent-color)",
+      volume: 0.5,
+      isLive: false,
+      muted: false,
+      autoplay: false,
+      pip: true,
+      autoMini: true,
+      screenshot: true,
+      setting: true,
+      loop: true,
+      flip: true,
+      playbackRate: true,
+      aspectRatio: true,
+      fullscreen: true,
+      fullscreenWeb: true,
+      subtitleOffset: true,
+      miniProgressBar: true,
+      mutex: true,
+      backdrop: true,
+      autoPlayback: true,
+      airplay: true,
+      poster: coverImg,
+    });
+
+    art.on("ready", () => {
+      console.info(art.hls);
+    });
+
+    return () => {
+      if (art && art.destroy) {
+        art.destroy(false);
+      }
+    };
+  }, [currentUrl, coverImg]);
 
   return (
     <Box>
@@ -283,18 +311,10 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <Artplayer
-                    option={{
-                      url: currentUrl,
-                      poster: coverImg,
-                    }}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    getInstance={(art) => console.info(art)}
-                  />
-                  {console.log(currentUrl)}
+                  <div
+                    ref={artRef}
+                    style={{ width: "100%", height: "100%" }}
+                  ></div>
                 </GridItem>
                 <GridItem
                   colSpan={{ base: 6, xl: 2 }}

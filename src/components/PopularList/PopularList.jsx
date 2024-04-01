@@ -121,7 +121,7 @@ const PopularList = () => {
                 spinnerW={{ base: "50px", md: "80px", lg: "70px" }}
               />
             )}
-            {results.map((item) => {
+            {results?.map((item) => {
               const id = item.id;
               const title = item.title.english;
               const bg = item.coverImage.extraLarge;
@@ -179,7 +179,7 @@ const PopularList = () => {
                       <ChakraLink
                         as={ReactRouterLink}
                         to={`/anime/${id}`}
-                        color="var(--link-color)"
+                        color="var(--secondary-color)"
                         _hover={{
                           color: "var(--accent-color)",
                           transition: "all ease 0.25s",
@@ -276,7 +276,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         fontWeight="500"
                         textAlign={{ base: "start" }}
-                        color="var(--link-color)"
+                        color="var(--secondary-color)"
                         transition="all ease 0.25s"
                         _hover={{ color: "var(--accent-color)" }}
                       >
