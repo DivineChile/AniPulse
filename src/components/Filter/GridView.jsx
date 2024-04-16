@@ -98,12 +98,14 @@ const GridView = ({ results }) => {
                         fontWeight="500"
                         display="flex"
                         alignItems="center"
+                        className="viewAnimeBtn"
                         gap="5px"
                       >
                         <Icon
                           as={BsInfoCircle}
                           color="var(--secondary-color)"
                           transition="all ease 0.25s"
+                          className="viewIcon"
                           _hover={{
                             color: "var(--accent-color)",
                           }}

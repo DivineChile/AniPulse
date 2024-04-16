@@ -240,9 +240,9 @@ const Stream = () => {
       poster: coverImg,
     });
 
-    art.on("ready", () => {
-      console.info(art.hls);
-    });
+    // art.on("ready", () => {
+    //   console.info(art.hls);
+    // });
 
     return () => {
       if (art && art.destroy) {

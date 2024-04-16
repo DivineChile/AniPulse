@@ -127,7 +127,7 @@ const SearchBar = ({ above, below, displayProp }) => {
           </InputLeftAddon>
           <Input
             borderLeft="none"
-            placeholder="Search..."
+            placeholder="Search Anime..."
             color="var(--text-color)"
             borderColor="var(--secondary-color)"
             className="inputSearch"

@@ -6,11 +6,19 @@ import {
   Button,
   Link as ChakraLink,
   Flex,
+  FormControl,
+  Input,
+  InputGroup,
+  InputRightAddon,
   Heading,
   Icon,
   Text,
 } from "@chakra-ui/react";
-import { Link as ReactRouterLink, useParams } from "react-router-dom";
+import {
+  Link as ReactRouterLink,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { filterTypes } from "./utils/FilterTypes";
@@ -22,7 +30,7 @@ import Navbar from "../../components/Navbar/Navbar";
 
 import "./style.css";
 import GridView from "../../components/Filter/GridView";
-import { BsGrid, BsListUl } from "react-icons/bs";
+import { BsGrid, BsListUl, BsX } from "react-icons/bs";
 import ListView from "../../components/Filter/ListView";
 
 const Filter = () => {
@@ -35,6 +43,9 @@ const Filter = () => {
   const [buttonRotate, setButtonRotate] = useState(false);
   const [listView, setListView] = useState(false);
   const [gridView, setGridView] = useState(true);
+  const [showClear, setShowClear] = useState(true);
+
+  const navigate = useNavigate();
 
   const requestAnime = async () => {
     const animes = new ANIME.Gogoanime();
@@ -44,12 +55,47 @@ const Filter = () => {
 
     const info = await meta.advancedSearch(searchQuery);
     setSearchResults(info.results);
-    console.log(info.results);
+    // console.log(searchResults);
   };
 
   useEffect(() => {
     requestAnime();
+    setNewQueryValue(searchQuery);
   }, []);
+
+  const handleNewQuery = (event) => {
+    setNewQueryValue(event.target.value);
+  };
+
+  const handleNewRequestAnime = async () => {
+    const newMeta = new META.Anilist();
+
+    const newInfo = await newMeta.advancedSearch(newQueryValue);
+    setSearchResults(newInfo.results);
+  };
+
+  const handleSearch = () => {
+    handleNewRequestAnime();
+    navigate(`/search/keyword/${encodeURIComponent(newQueryValue)}`);
+  };
+
+  const handleSearchInputFocus = () => {
+    setShowClear(true);
+  };
+
+  const handleSearchInputBlur = () => {
+    setShowClear(false);
+  };
+
+  const clearQuery = () => {
+    setNewQueryValue("");
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   // const handleSearchQuery = async () => {
   //   setButtonRotate(!buttonRotate);
@@ -176,44 +222,108 @@ const Filter = () => {
               >
                 Filter
               </Heading>
-              <Flex alignItems="center" gap="20px">
-                <Icon
-                  as={BsListUl}
-                  h="20px"
-                  w="20px"
-                  color={
-                    listView ? "var(--accent-color)" : "var(--secondary-color)"
-                  }
-                  _hover={{
-                    color: "var(--accent-color)",
-                  }}
-                  cursor="pointer"
-                  onClick={handleListView}
-                />
-                <Icon
-                  as={BsGrid}
-                  h="20px"
-                  w="20px"
-                  color={
-                    gridView ? "var(--accent-color)" : "var(--secondary-color)"
-                  }
-                  _hover={{
-                    color: "var(--accent-color)",
-                  }}
-                  cursor="pointer"
-                  onClick={handleGridView}
-                />
-                <Box>
-                  <Text
-                    color="#fff"
-                    fontWeight="400"
-                    textTransform="uppercase"
-                    fontSize={{ base: "16px", md: "20px" }}
-                    lineHeight={{ base: "17.6px", md: "44px" }}
-                    letterSpacing="1.5px"
-                  >
-                    Showing 1 - 9 of 50 Anime
-                  </Text>
+              <Flex
+                alignItems="center"
+                direction={{ base: "column", md: "row" }}
+                justifyContent="space-between"
+                w="100%"
+                gap="20px"
+              >
+                <Box display="flex" gap="20px" alignItems="center">
+                  <Icon
+                    as={BsListUl}
+                    h="20px"
+                    w="20px"
+                    color={
+                      listView
+                        ? "var(--accent-color)"
+                        : "var(--secondary-color)"
+                    }
+                    _hover={{
+                      color: "var(--accent-color)",
+                    }}
+                    cursor="pointer"
+                    onClick={handleListView}
+                  />
+                  <Icon
+                    as={BsGrid}
+                    h="20px"
+                    w="20px"
+                    color={
+                      gridView
+                        ? "var(--accent-color)"
+                        : "var(--secondary-color)"
+                    }
+                    _hover={{
+                      color: "var(--accent-color)",
+                    }}
+                    cursor="pointer"
+                    onClick={handleGridView}
+                  />
+                  <Box>
+                    <Text
+                      color="#fff"
+                      fontWeight="400"
+                      textTransform="uppercase"
+                      fontSize={{ base: "16px", md: "20px" }}
+                      lineHeight={{ base: "17.6px", md: "44px" }}
+                      letterSpacing="1.5px"
+                    >
+                      Showing 1 - 9 of 50 Anime
+                    </Text>
+                  </Box>
+                </Box>
+
+                <Box
+                  w={{ base: "100%", md: "fit-content" }}
+                  onBlur={handleSearchInputBlur}
+                >
+                  <FormControl>
+                    <InputGroup>
+                      <Input
+                        borderRadius="5px"
+                        background="#111111"
+                        fontSize="16px"
+                        fontWeight="400"
+                        lineHeight="24px"
+                        letterSpacing="0.5px"
+                        color="#b4b4b4"
+                        border="none"
+                        value={newQueryValue}
+                        transition="all ease 0.5s"
+                        onChange={handleNewQuery}
+                        onFocus={handleSearchInputFocus}
+                        _focus={{
+                          border: "none!important",
+                          outline: "none!important",
+                          boxShadow: "0px 0px 4px 0px var(--secondary-color)",
+                        }}
+                        onKeyDown={handleKeyPress}
+                        w="100%"
+                      />
+
+                      <InputRightAddon
+                        cursor="pointer"
+                        borderRadius="none"
+                        background="#111111"
+                        border="none"
+                        borderTopRightRadius="5px"
+                        borderBottomRightRadius="5px"
+                        onClick={clearQuery}
+                      >
+                        {showClear ? (
+                          <Icon
+                            as={BsX}
+                            color="#b4b4b4"
+                            height="20px"
+                            w="20px"
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </InputRightAddon>
+                    </InputGroup>
+                  </FormControl>
                 </Box>
               </Flex>
             </Box>
@@ -293,10 +403,10 @@ const Filter = () => {
                     md: "2px solid var(--secondary-color)",
                   }}
                   background="#111111"
-                  h={{ base: "36px", md: "42px" }}
-                  w={{ base: "88.4px", md: "106.59px" }}
+                  h={{ base: "36px", sm: "42px" }}
+                  w={{ base: "88.4px", sm: "106.59px" }}
                   color="#b4b4b4"
-                  fontSize={{ base: "11.44px", lg: "15.38px" }}
+                  fontSize={{ base: "11.44px", sm: "15.38px" }}
                   lineHeight={{ base: "18px", md: "24px" }}
                   letterSpacing={{ base: "0.5px" }}
                   fontWeight="400"
@@ -304,6 +414,8 @@ const Filter = () => {
                     color: "#fff",
                     background: "var(--secondary-color)",
                   }}
+                  type="submit"
+                  onClick={handleSearch}
                 >
                   Filter Now
                 </Button>
