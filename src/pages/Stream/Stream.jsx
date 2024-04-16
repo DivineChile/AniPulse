@@ -32,7 +32,7 @@ const Stream = () => {
   const [onPlay, setOnPlay] = useState(false);
   const [videoData, setVideoData] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
-  // const [videoPlyr, setVideoPlyr] = useState([]);
+
   const location = useLocation();
   const artRef = useRef();
   let newAnimeId = null;
@@ -70,6 +70,7 @@ const Stream = () => {
       .map((item) => parseInt(item, 10));
   }
 
+  // Fetch Anime Episodes
   const fetchEpisodes = async (animeId) => {
     setEpLoading(true);
     try {
