@@ -14,32 +14,8 @@
   --link-color: #33cc99;
   --link-hover-color: #66ffcc;
 
-  ::-webkit-scrollbar {
-    width: 4px;
-    position: -webkit-sticky;
-    position: sticky;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    height: 500px;
-    scrollbar-width: thin;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: 2px;
-    /* margin: 10px 5px; */
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #191919;
-    scrollbar-width: thin;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(
-      --link-hover-color
-    ) !important; /* Color of the thumb on hover */
-  }
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary-color) #111;
 }
 
 * {
