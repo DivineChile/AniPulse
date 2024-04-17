@@ -15,7 +15,7 @@
   --link-hover-color: #66ffcc;
 
   scrollbar-width: thin;
-  scrollbar-color: var(--secondary-color) #111;
+  scrollbar-color: var(--primary-background-color) #111;
 }
 
 * {
