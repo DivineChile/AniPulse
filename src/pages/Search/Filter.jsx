@@ -289,7 +289,9 @@ const Filter = () => {
                       lineHeight={{ base: "17.6px", md: "44px" }}
                       letterSpacing="1.5px"
                     >
-                      {`Showing 1 - ${animePerPage} of ${totalPages} Anime`}
+                      {`Showing 1 - ${
+                        isNaN(animePerPage) ? "0" : animePerPage
+                      } of ${totalPages} Anime`}
                     </Text>
                   </Box>
                 </Box>
