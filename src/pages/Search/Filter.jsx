@@ -11,6 +11,7 @@ import {
   InputGroup,
   InputRightAddon,
   Heading,
+  ButtonSpinner,
   Icon,
   Text,
 } from "@chakra-ui/react";
@@ -38,6 +39,9 @@ const Filter = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [animePerPage, setAnimePerPage] = useState(0);
   const [newQueryValue, setNewQueryValue] = useState("");
   const [newQueryParam, setNewQueryParam] = useState("");
   const [buttonRotate, setButtonRotate] = useState(false);
@@ -52,16 +56,24 @@ const Filter = () => {
     const meta = new META.Anilist();
 
     // const results = await animes.search(searchQuery);
-
+    setIsLoading(true);
+    setError(false);
     const info = await meta.advancedSearch(searchQuery);
     setSearchResults(info.results);
+    setCurrentPage(info.currentPage);
+    setAnimePerPage(info.results.length);
+    setTotalPages(info.totalPages);
+    setIsLoading(false);
+    setError(false);
+
     // console.log(searchResults);
   };
 
   useEffect(() => {
     requestAnime();
     setNewQueryValue(searchQuery);
-  }, []);
+    document.title = `${searchQuery} - AniPulse`;
+  }, [searchQuery]);
 
   const handleNewQuery = (event) => {
     setNewQueryValue(event.target.value);
@@ -70,13 +82,21 @@ const Filter = () => {
   const handleNewRequestAnime = async () => {
     const newMeta = new META.Anilist();
 
+    setIsLoading(true);
+    setError(false);
     const newInfo = await newMeta.advancedSearch(newQueryValue);
     setSearchResults(newInfo.results);
+    setCurrentPage(newInfo.currentPage);
+    setAnimePerPage(newInfo.results);
+    setTotalPages(newInfo.totalPages);
+    setIsLoading(false);
+    setError(false);
   };
 
   const handleSearch = () => {
     handleNewRequestAnime();
     navigate(`/search/keyword/${encodeURIComponent(newQueryValue)}`);
+    document.title = `${newQueryValue} - AniPulse`;
   };
 
   const handleSearchInputFocus = () => {
@@ -269,7 +289,7 @@ const Filter = () => {
                       lineHeight={{ base: "17.6px", md: "44px" }}
                       letterSpacing="1.5px"
                     >
-                      Showing 1 - 9 of 50 Anime
+                      {`Showing 1 - ${animePerPage} of ${totalPages} Anime`}
                     </Text>
                   </Box>
                 </Box>
@@ -416,8 +436,14 @@ const Filter = () => {
                   }}
                   type="submit"
                   onClick={handleSearch}
+                  pointerEvents={isLoading === true ? "none" : "visible"}
+                  opacity={isLoading === true ? "0.5" : 1}
                 >
-                  Filter Now
+                  {isLoading === true ? (
+                    <ButtonSpinner color="var(--accent-color)" />
+                  ) : (
+                    "Filter Now"
+                  )}
                 </Button>
               </Box>
             </Box>
