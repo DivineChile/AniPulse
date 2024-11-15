@@ -15,35 +15,33 @@ import "./style.css";
 import { useEffect, useState } from "react";
 
 import { BsInfoCircle } from "react-icons/bs";
+import axios from "axios";
+import Loading from "../ErrorPage/Loading";
 
 const PopularList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [results, setResults] = useState([]);
 
+  const api = "https://consumet-api-puce.vercel.app/";
+
+  const fetchPopularAnimes = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `${api}meta/anilist/popular?perPage=${4}`
+      );
+      setResults(response.data.results);
+      console.log(results);
+    } catch (err) {
+      setError("Failed to load data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPopularAnimes = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v2/popular?limit=4`
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          setResults(data.results);
-          setIsLoading(false);
-          setError(false);
-        } else {
-          setError(true);
-          setIsLoading(false);
-        }
-      } catch {
-        setError(true);
-        setIsLoading(false);
-      }
-    };
-
     fetchPopularAnimes();
   }, []);
 
@@ -90,42 +88,14 @@ const PopularList = () => {
             gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
             pos="relative"
           >
-            {isLoading && (
-              <Error
-                // msg="Still Loading"
-                loadingState={isLoading}
-                height="100%"
-                width="100%"
-                // error={err}
-                pos="absolute"
-                top="0"
-                left="0"
-                bg="#191919"
-                spinnerH={{ base: "50px", md: "60px", lg: "70px" }}
-                spinnerW={{ base: "50px", md: "80px", lg: "70px" }}
-              />
-            )}
-            {error && (
-              <Error
-                msg="Still Working..."
-                height="100%"
-                width="100%"
-                error={error}
-                pos="absolute"
-                top="0"
-                left="0"
-                bg="#191919"
-                spinnerH={{ base: "50px", md: "60px", lg: "70px" }}
-                spinnerW={{ base: "50px", md: "80px", lg: "70px" }}
-              />
-            )}
+            {isLoading && <Loading />}
+            {error && <Error msg="Still Working..." />}
             {results?.map((item) => {
               const id = item.id;
               const title = item.title.english;
-              const bg = item.coverImage.extraLarge;
-              const format = item.format;
-              const seasonYear = item.seasonYear;
-              const season = item.season;
+              const bg = item.image;
+              const seasonYear = item.releaseDate;
+              const type = item.type;
 
               return (
                 <GridItem w={{ base: "100%" }} key={id}>
@@ -228,7 +198,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {season}
+                        {type}
                       </Text>
                       <Text
                         as="span"
@@ -264,7 +234,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {format}
+                        {}
                       </Text>
                     </Flex>
                     <ChakraLink
@@ -319,8 +289,8 @@ const PopularList = () => {
                 borderRadius="5px"
                 padding="5px 15px"
                 transition="all ease 0.25s"
-                width={{ base: "100%", md: "initial" }}
-                textAlign={{ base: "center", md: "start" }}
+                width={{ base: "100%" }}
+                textAlign={{ base: "center" }}
                 _hover={{
                   textDecor: "none",
                   color: "var(--background-color)",

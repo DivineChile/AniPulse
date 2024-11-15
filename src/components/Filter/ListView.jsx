@@ -31,10 +31,10 @@ const ListView = ({ results }) => {
       {results && results?.length > 0
         ? results?.map((result, index) => {
             const resultId = result.id;
-            const resultTitle = result.title.userPreferred;
+            const resultTitle = result.title;
+            const resultSubOrDub = result.subOrDub;
             const resultImg = result.image;
             const resultRelease = result.releaseDate;
-            const resultStatus = result.status;
             const resultType = result.type;
 
             return (
@@ -106,7 +106,7 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {resultStatus}
+                          {resultSubOrDub}
                         </Text>
                         <Text
                           as="span"

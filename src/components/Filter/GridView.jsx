@@ -19,9 +19,9 @@ const GridView = ({ results }) => {
   return (
     <Grid
       gridTemplateColumns={{
-        base: "100%",
-        sm: "repeat(2, 1fr)",
-        md: "repeat(2, 1fr)",
+        base: "repeat(1, 1fr)",
+        sm: "repeat(3, 1fr)",
+        md: "repeat(3, 1fr)",
         lg: "repeat(3, 1fr)",
         xl: "repeat(4, 1fr)",
       }}
@@ -30,10 +30,10 @@ const GridView = ({ results }) => {
       {results && results?.length > 0
         ? results.map((item, index) => {
             const resultId = item.id;
-            const resultTitle = item.title.userPreferred;
+            const resultTitle = item.title;
+            const resultSubOrDub = item.subOrDub;
             const resultImg = item.image;
             const resultRelease = item.releaseDate;
-            const resultStatus = item.status;
             const resultType = item.type;
 
             return (
@@ -140,7 +140,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {resultStatus}
+                      {resultSubOrDub}
                     </Text>
                     <Text
                       as="span"

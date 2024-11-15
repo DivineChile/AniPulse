@@ -33,6 +33,7 @@ import "./style.css";
 import GridView from "../../components/Filter/GridView";
 import { BsGrid, BsListUl, BsX } from "react-icons/bs";
 import ListView from "../../components/Filter/ListView";
+import axios from "axios";
 
 const Filter = () => {
   const { searchQuery } = useParams();
@@ -48,23 +49,25 @@ const Filter = () => {
   const [listView, setListView] = useState(false);
   const [gridView, setGridView] = useState(true);
   const [showClear, setShowClear] = useState(true);
+  const api = "https://consumet-api-puce.vercel.app/";
 
   const navigate = useNavigate();
 
   const requestAnime = async () => {
-    const animes = new ANIME.Gogoanime();
-    const meta = new META.Anilist();
-
-    // const results = await animes.search(searchQuery);
     setIsLoading(true);
     setError(false);
-    const info = await meta.advancedSearch(searchQuery);
-    setSearchResults(info.results);
-    setCurrentPage(info.currentPage);
-    setAnimePerPage(info.results.length);
-    setTotalPages(info.totalPages);
-    setIsLoading(false);
-    setError(false);
+    try {
+      const response = await axios.get(`${api}anime/gogoanime/${searchQuery}`);
+      console.log(response.data);
+      setSearchResults(response.data.results);
+      setCurrentPage(response.data.currentPage);
+      setIsLoading(false);
+      setError(false);
+    } catch (error) {
+      console.error("Error fetching anime:", error.message);
+      setIsLoading(false);
+      setError(true);
+    }
 
     // console.log(searchResults);
   };
@@ -80,17 +83,22 @@ const Filter = () => {
   };
 
   const handleNewRequestAnime = async () => {
-    const newMeta = new META.Anilist();
-
     setIsLoading(true);
     setError(false);
-    const newInfo = await newMeta.advancedSearch(newQueryValue);
-    setSearchResults(newInfo.results);
-    setCurrentPage(newInfo.currentPage);
-    setAnimePerPage(newInfo.results);
-    setTotalPages(newInfo.totalPages);
-    setIsLoading(false);
-    setError(false);
+    try {
+      const response = await axios.get(
+        `${api}anime/gogoanime/${newQueryValue}`
+      );
+      console.log(response.data);
+      setSearchResults(response.data.results);
+      setCurrentPage(response.data.currentPage);
+      setIsLoading(false);
+      setError(false);
+    } catch (error) {
+      console.error("Error fetching anime:", error.message);
+      setIsLoading(false);
+      setError(true);
+    }
   };
 
   const handleSearch = () => {
@@ -116,43 +124,6 @@ const Filter = () => {
       handleSearch();
     }
   };
-
-  // const handleSearchQuery = async () => {
-  //   setButtonRotate(!buttonRotate);
-  //   const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
-  //   const headers = new Headers();
-  //   headers.append("Content-Type", "application/json");
-  //   const body = JSON.stringify({
-  //     search: searchQuery,
-  //   });
-  //   const options = {
-  //     method: "POST",
-  //     headers: headers,
-  //     body: body,
-  //   };
-  //   try {
-  //     setIsLoading(true);
-  //     const response = await fetch(url, options);
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       setSearchResults(data.results);
-  //       setIsLoading(false);
-  //       setError(false);
-  //     } else {
-  //       setError(true);
-  //       setIsLoading(false);
-  //     }
-  //   } catch (error) {
-  //     setError(true);
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   handleSearchQuery();
-  // }, []);
-
-  // console.log(searchResults);
 
   const handleListView = () => {
     if (gridView) {
