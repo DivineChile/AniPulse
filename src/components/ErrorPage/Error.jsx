@@ -1,17 +1,24 @@
 import { Box, Text } from "@chakra-ui/react";
 import "../../index.css";
 
-const Error = ({ msg, height }) => {
+const Error = ({ msg, height, bg, pos }) => {
   return (
     <Box
       height={height}
       display="flex"
       justifyContent="center"
       alignItems="center"
-      bg="#191919"
+      bg={bg}
       color="var(--accent-color)"
+      pos={{ base: "initial", md: pos }}
+      left="0"
+      w={{ base: "100%", md: "initial" }}
     >
-      <Text fontSize={{ base: "20px", md: "25px" }} color="var(--accent-color)">
+      <Text
+        fontSize={{ base: "16px", md: "16px", lg: "20px" }}
+        color="var(--accent-color)"
+        textAlign={{ base: "center", md: "start" }}
+      >
         {msg || "An error occurred!"}
       </Text>
     </Box>

@@ -49,12 +49,12 @@ const RecentDub = () => {
 
   // Render loading state
   if (isLoading) {
-    return <Loading height="100%" />;
+    return <Loading height="100%" pos="absolute" />;
   }
 
   // Render error state
   if (error) {
-    return <Error msg={error} />;
+    return <Error msg={error} pos="absolute" />;
   }
 
   return (

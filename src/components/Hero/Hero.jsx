@@ -99,7 +99,7 @@ const Hero = () => {
       {isLoading ? (
         <Loading height="100%" bg="#191919" />
       ) : error ? (
-        <Error msg={error} height="100%" />
+        <Error msg={error} height="100%" bg="#191919" />
       ) : (
         <Box
           background={currentBg ? `url(${currentBg})` : "#333333"}

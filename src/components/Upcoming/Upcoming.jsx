@@ -5,6 +5,7 @@ import moment from "moment";
 import "swiper/css";
 import "./style.css";
 import Error from "../ErrorPage/Error";
+import Loading from "../ErrorPage/Loading";
 
 register();
 
@@ -89,33 +90,14 @@ const Upcoming = () => {
       effect="fade"
     >
       {isLoading && (
-        <Error
-          // msg="Still Loading"
-          loadingState={isLoading}
-          height="100%"
-          width="100%"
-          // error={err}
-          pos="absolute"
-          top="0"
-          left="0"
-          bg="#191919"
-          spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
-          spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
-        />
+        <Loading pos={"absolute"} bg="var(--primary-background-color)" />
       )}
 
       {error && (
         <Error
-          msg="Still Loading"
-          height="100%"
-          width="100%"
-          error={error}
+          msg="failed to load, please try again."
+          bg="var(--primary-background-color)"
           pos="absolute"
-          top="0"
-          left="0"
-          bg="#191919"
-          spinnerH={{ base: "50px", md: "80px", lg: "100px" }}
-          spinnerW={{ base: "50px", md: "80px", lg: "100px" }}
         />
       )}
       {results

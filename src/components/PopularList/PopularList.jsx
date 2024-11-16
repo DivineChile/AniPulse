@@ -88,8 +88,8 @@ const PopularList = () => {
             gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
             pos="relative"
           >
-            {isLoading && <Loading />}
-            {error && <Error msg="Still Working..." />}
+            {isLoading && <Loading pos="absolute" />}
+            {error && <Error msg={error} pos="absolute" />}
             {results?.map((item) => {
               const id = item.id;
               const title = item.title.english;

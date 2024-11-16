@@ -14,38 +14,32 @@ import "../../index.css";
 import "./style.css";
 import { useState, useEffect } from "react";
 import { debounce } from "lodash";
+import axios from "axios";
 
 const SearchBar = ({ above, below, displayProp }) => {
   const [query, setQuery] = useState("");
   const [animeData, setAnimeData] = useState(null);
-  const [searchResults, setSearchResults] = useState(undefined);
+  const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
-  const fetchData = async () => {
-    const url = "https://api-amvstrm.nyt92.eu.org/api/v2/search";
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    const body = JSON.stringify({
-      search: query,
-    });
-    const options = {
-      method: "POST",
-      headers: headers,
-      body: body,
-    };
+  const api = "https://consumet-api-puce.vercel.app/";
 
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const response = await fetch(url, options);
-      const data = await response.json();
-      setSearchResults(data.results);
-      setLoading(false);
-    } catch (error) {
-      setError(true);
+      const response = await axios.get(`${api}meta/anilist/info/${query}`);
+
+      setAnimeData(response.data);
+
+      console.log(response.data);
+    } catch (err) {
+      setError("Failed to load data. Please try again.");
+    } finally {
       setLoading(false);
     }
   };

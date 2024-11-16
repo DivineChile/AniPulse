@@ -17,6 +17,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import "./style.css";
 import Hls from "hls.js";
 import Artplayer from "artplayer";
+import axios from "axios";
 
 const Stream = () => {
   const navigate = useNavigate();
@@ -33,42 +34,46 @@ const Stream = () => {
   const [videoData, setVideoData] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
 
+  const api = "https://consumet-api-puce.vercel.app/";
+
+  console.log(watchId);
+
   const location = useLocation();
   const artRef = useRef();
   let newAnimeId = null;
   let newAnimeIdVal = "";
   let currentEp = null;
-  const num = watchId.split("-").splice(-2);
-  if (isNaN(parseInt(num[0]))) {
-    currentEp = num[1];
-    newAnimeId = watchId.split("-").slice(0, -2);
-    newAnimeIdVal = newAnimeId.join("-");
-  } else {
-    currentEp = `${num[0]}.${num[1]}`;
-    newAnimeId = watchId.split("-").slice(0, -3);
-    newAnimeIdVal = newAnimeId.join("-");
-  }
+  // const num = watchId.split("-").splice(-2);
+  // if (isNaN(parseInt(num[0]))) {
+  //   currentEp = num[1];
+  //   newAnimeId = watchId.split("-").slice(0, -2);
+  //   newAnimeIdVal = newAnimeId.join("-");
+  // } else {
+  //   currentEp = `${num[0]}.${num[1]}`;
+  //   newAnimeId = watchId.split("-").slice(0, -3);
+  //   newAnimeIdVal = newAnimeId.join("-");
+  // }
 
   // Logic to extract season Number
-  const containsStNdRdTh = newAnimeId.some((item) =>
-    /^\d{1,2}(st|nd|rd|th)$/.test(item)
-  );
-  const containsNoTh = newAnimeId.some((item) => /^\d{1,2}$/.test(item));
+  // const containsStNdRdTh = newAnimeId.some((item) =>
+  //   /^\d{1,2}(st|nd|rd|th)$/.test(item)
+  // );
+  // const containsNoTh = newAnimeId.some((item) => /^\d{1,2}$/.test(item));
 
-  let extractedNumbersStNdRdTh = [];
-  let extractedNumbersNoTh = [];
+  // let extractedNumbersStNdRdTh = [];
+  // let extractedNumbersNoTh = [];
 
-  if (containsStNdRdTh) {
-    extractedNumbersStNdRdTh = newAnimeId
-      .filter((item) => /^\d{1,2}(st|nd|rd|th)$/.test(item))
-      .map((item) => parseInt(item, 10));
-  }
+  // if (containsStNdRdTh) {
+  //   extractedNumbersStNdRdTh = newAnimeId
+  //     .filter((item) => /^\d{1,2}(st|nd|rd|th)$/.test(item))
+  //     .map((item) => parseInt(item, 10));
+  // }
 
-  if (containsNoTh) {
-    extractedNumbersNoTh = newAnimeId
-      .filter((item) => /^\d{1,2}$/.test(item))
-      .map((item) => parseInt(item, 10));
-  }
+  // if (containsNoTh) {
+  //   extractedNumbersNoTh = newAnimeId
+  //     .filter((item) => /^\d{1,2}$/.test(item))
+  //     .map((item) => parseInt(item, 10));
+  // }
 
   // Fetch Anime Episodes
   const fetchEpisodes = async (animeId) => {
@@ -88,41 +93,57 @@ const Stream = () => {
     }
   };
 
+  // fetch video content
   const fetchVideos = async () => {
     setIsLoading(true);
-
+    setError(null);
     try {
-      const responseVideo = await fetch(
-        `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
-      );
-      const dataVideo = await responseVideo.json();
-      setVideoData(dataVideo);
-      // setVideoPlyr(dataVideo.nspl.main);
-      setCurrentEpNum(dataVideo.info.episode);
-      setAnimeTitle(
-        `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
-      );
-      document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
-      setLoading(false);
-      setError(false);
-    } catch (error) {
-      setError(true);
+      const response = await axios.get(`${api}meta/anilist/watch/${watchId}`);
+      setVideoData(response.data);
+      console.log(videoData);
+
+      document.title = `${animeTitle} - AniPulse`;
+      console.log(response.data);
+    } catch (err) {
+      setError("Failed to load data. Please try again.");
+    } finally {
       setIsLoading(false);
     }
+
+    // setIsLoading(true);
+
+    // try {
+    //   const responseVideo = await fetch(
+    //     `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
+    //   );
+    //   const dataVideo = await responseVideo.json();
+    //   setVideoData(dataVideo);
+    //   // setVideoPlyr(dataVideo.nspl.main);
+    //   setCurrentEpNum(dataVideo.info.episode);
+    //   setAnimeTitle(
+    //     `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
+    //   );
+    //   document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
+    //   setLoading(false);
+    //   setError(false);
+    // } catch (error) {
+    //   setError(true);
+    //   setIsLoading(false);
+    // }
   };
 
-  const handleSub = () => {
-    newAnimeIdVal.split("-").pop();
-    const newAnimeIdSub = newAnimeId.join("-");
-    setNewAnimeNum(newAnimeIdSub);
-    fetchEpisodes(newAnimeIdSub);
-  };
+  // const handleSub = () => {
+  //   newAnimeIdVal.split("-").pop();
+  //   const newAnimeIdSub = newAnimeId.join("-");
+  //   setNewAnimeNum(newAnimeIdSub);
+  //   fetchEpisodes(newAnimeIdSub);
+  // };
 
-  const handleDub = () => {
-    const newAnimeIdDub = `${newAnimeIdVal}-dub`;
-    setNewAnimeNum(newAnimeIdDub);
-    fetchEpisodes(newAnimeIdDub);
-  };
+  // const handleDub = () => {
+  //   const newAnimeIdDub = `${newAnimeIdVal}-dub`;
+  //   setNewAnimeNum(newAnimeIdDub);
+  //   fetchEpisodes(newAnimeIdDub);
+  // };
 
   useEffect(() => {
     fetchEpisodes(newAnimeIdVal);
@@ -134,36 +155,36 @@ const Stream = () => {
   const [currentUrl, setCurrentUrl] = useState("");
 
   // Update video URL based on the current location (pathname)
-  const fetchNewVideoUrl = async (episodeName) => {
-    setLoading(true);
-    try {
-      const responseVideo = await fetch(
-        `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${episodeName}`
-      );
-      const dataVideo = await responseVideo.json();
-      const data = dataVideo;
-      setCurrentUrl(data.stream.multi.main.url);
-      // setVideoPlyr(data.nspl.main);
-      setAnimeTitle(
-        `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
-      );
-      document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
-      setLoading(false);
-    } catch {
-      setErr(true);
-      setLoading(false);
-    }
-  };
+  // const fetchNewVideoUrl = async (episodeName) => {
+  //   setLoading(true);
+  //   try {
+  //     const responseVideo = await fetch(
+  //       `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${episodeName}`
+  //     );
+  //     const dataVideo = await responseVideo.json();
+  //     const data = dataVideo;
+  //     setCurrentUrl(data.stream.multi.main.url);
+  //     // setVideoPlyr(data.nspl.main);
+  //     setAnimeTitle(
+  //       `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
+  //     );
+  //     document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
+  //     setLoading(false);
+  //   } catch {
+  //     setErr(true);
+  //     setLoading(false);
+  //   }
+  // };
 
-  const updateVideoUrl = () => {
-    const episodeName = location.pathname.split("/").pop(); // Extract episode name from the URL
-    fetchNewVideoUrl(episodeName);
-  };
+  // const updateVideoUrl = () => {
+  //   const episodeName = location.pathname.split("/").pop(); // Extract episode name from the URL
+  //   fetchNewVideoUrl(episodeName);
+  // };
 
   // Call updateVideoUrl when the component mounts and when the location changes
-  useEffect(() => {
-    updateVideoUrl();
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   updateVideoUrl();
+  // }, [location.pathname]);
 
   // console.log(videoData.stream.multi.main.url);
   const [downloadLoading, setDownloadLoading] = useState(true);
@@ -240,9 +261,46 @@ const Stream = () => {
       poster: coverImg,
     });
 
-    // art.on("ready", () => {
-    //   console.info(art.hls);
-    // });
+    art.on("ready", () => {
+      fetchQualityOptions(art); // Fetch and populate quality options
+    });
+
+    const fetchQualityOptions = async (art) => {
+      try {
+        // Example: Fetch API response (replace with your actual API call)
+        const response = await axios.get(`${api}meta/anilist/watch/${watchId}`);
+        const data = response.data;
+        console.log(data);
+
+        // Extract quality options from the API response
+        const qualityOptions = data.sources.map((source) => ({
+          name: source.quality,
+          url: source.url,
+        }));
+
+        // Add quality options to Artplayer settings
+        art.setting.add({
+          name: "Quality",
+          index: 1, // Position in the settings menu
+          html: qualityOptions
+            .map(
+              (option, index) =>
+                `<button data-index="${index}" class="art-setting-quality">${option.name}</button>`
+            )
+            .join(""),
+          onClick: (event) => {
+            const index = event.target.dataset.index;
+            if (index !== undefined) {
+              const selectedQuality = qualityOptions[index];
+              art.switchUrl(selectedQuality.url); // Switch stream
+              art.notice.show = `Switched to ${selectedQuality.name}`;
+            }
+          },
+        });
+      } catch (err) {
+        console.error("Error fetching quality options:", err);
+      }
+    };
 
     return () => {
       if (art && art.destroy) {
@@ -340,7 +398,7 @@ const Stream = () => {
                     justifyContent="start"
                   >
                     {/* Season box */}
-                    <Box width="100%">
+                    {/* <Box width="100%">
                       {extractedNumbersStNdRdTh[0] == undefined ? (
                         <></>
                       ) : (
@@ -471,7 +529,7 @@ const Stream = () => {
                           return elements;
                         })()}
                       </Box>
-                    </Box>
+                    </Box> */}
                   </Box>
                 </GridItem>
                 {/* Anime Dets / Servers / Downlaod */}
@@ -551,7 +609,7 @@ const Stream = () => {
                               ? "server active"
                               : "server"
                           }
-                          onClick={handleSub}
+                          // onClick={handleSub}
                         >
                           Server 1
                         </Link>
@@ -586,7 +644,7 @@ const Stream = () => {
                               ? "server active"
                               : "server"
                           }
-                          onClick={handleDub}
+                          // onClick={handleDub}
                         >
                           Server 1
                         </Link>
