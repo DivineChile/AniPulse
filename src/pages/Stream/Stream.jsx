@@ -6,6 +6,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  Image,
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
@@ -18,16 +19,21 @@ import "./style.css";
 import Hls from "hls.js";
 import Artplayer from "artplayer";
 import axios from "axios";
+import VideoPlayer from "../../components/VideoPlayer";
+import Loading from "../../components/ErrorPage/Loading";
 
 const Stream = () => {
   const navigate = useNavigate();
-  const { coverImg, watchId } = useParams();
+  const { watchId, gogoId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [epLoading, setEpLoading] = useState(true);
   const [error, setError] = useState(null);
   const [epError, setEpError] = useState(null);
   const [episodeId, setEpisodeId] = useState([]);
   const [episodeData, setEpisodeData] = useState([]);
+  const [episodes, setEpisodes] = useState([]);
+  const [animeRating, setAnimeRating] = useState("");
+  const [animeImg, setAnimeImg] = useState("");
   const [newAnimeNum, setNewAnimeNum] = useState("");
   const [currentEpNum, setCurrentEpNum] = useState("");
   const [onPlay, setOnPlay] = useState(false);
@@ -36,11 +42,9 @@ const Stream = () => {
 
   const api = "https://consumet-api-puce.vercel.app/";
 
-  console.log(watchId);
-
   const location = useLocation();
-  const artRef = useRef();
-  let newAnimeId = null;
+  let newWatchId = gogoId.split("-episode-")[0];
+  let test = gogoId.split("-").pop();
   let newAnimeIdVal = "";
   let currentEp = null;
   // const num = watchId.split("-").splice(-2);
@@ -75,118 +79,53 @@ const Stream = () => {
   //     .map((item) => parseInt(item, 10));
   // }
 
-  // Fetch Anime Episodes
-  const fetchEpisodes = async (animeId) => {
-    setEpLoading(true);
-    try {
-      const responseEp = await fetch(
-        `https://api-amvstrm.nyt92.eu.org/api/v1/episode/${animeId}`
-      );
-      const dataEp = await responseEp.json();
-      setEpisodeData(dataEp.episodes.map((item) => item));
-      setEpisodeId(dataEp.episodes.map((item) => item.id));
+  useEffect(() => {
+    const fetchEpisodes = async () => {
+      setEpLoading(true);
+      setEpError(null);
+      try {
+        const { data } = await axios.get(
+          `${api}anime/gogoanime/info/${newWatchId}`
+        );
+        setEpisodeData(data);
+        setEpisodes(data.episodes || []);
+        setAnimeRating(data.rating);
+        setAnimeImg(data.image);
+        console.log(episodeData);
+      } catch {
+        setEpError("Failed to load data. Please try again.");
+      } finally {
+        setEpLoading(false);
+      }
+    };
 
-      setEpLoading(false);
-    } catch {
-      setEpError(true);
-      setEpLoading(false);
-    }
-  };
+    const fetchVideos = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await axios.get(
+          `${api}anime/gogoanime/servers/${gogoId}`
+        );
+        setVideoData(data);
+        setAnimeTitle(gogoId.split("-episode-")[0]);
+      } catch {
+        setError("Failed to load data. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // fetch video content
-  const fetchVideos = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get(`${api}meta/anilist/watch/${watchId}`);
-      setVideoData(response.data);
-      console.log(videoData);
-
-      document.title = `${animeTitle} - AniPulse`;
-      console.log(response.data);
-    } catch (err) {
-      setError("Failed to load data. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-
-    // setIsLoading(true);
-
-    // try {
-    //   const responseVideo = await fetch(
-    //     `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${watchId}`
-    //   );
-    //   const dataVideo = await responseVideo.json();
-    //   setVideoData(dataVideo);
-    //   // setVideoPlyr(dataVideo.nspl.main);
-    //   setCurrentEpNum(dataVideo.info.episode);
-    //   setAnimeTitle(
-    //     `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
-    //   );
-    //   document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
-    //   setLoading(false);
-    //   setError(false);
-    // } catch (error) {
-    //   setError(true);
-    //   setIsLoading(false);
-    // }
-  };
-
-  // const handleSub = () => {
-  //   newAnimeIdVal.split("-").pop();
-  //   const newAnimeIdSub = newAnimeId.join("-");
-  //   setNewAnimeNum(newAnimeIdSub);
-  //   fetchEpisodes(newAnimeIdSub);
-  // };
-
-  // const handleDub = () => {
-  //   const newAnimeIdDub = `${newAnimeIdVal}-dub`;
-  //   setNewAnimeNum(newAnimeIdDub);
-  //   fetchEpisodes(newAnimeIdDub);
-  // };
+    fetchEpisodes();
+    fetchVideos();
+  }, [gogoId, newWatchId]);
 
   useEffect(() => {
-    fetchEpisodes(newAnimeIdVal);
-    fetchVideos();
-  }, [newAnimeIdVal]);
+    document.title = `${animeTitle} Episode ${test} - AniPulse`;
+  }, [gogoId]);
 
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
 
-  // Update video URL based on the current location (pathname)
-  // const fetchNewVideoUrl = async (episodeName) => {
-  //   setLoading(true);
-  //   try {
-  //     const responseVideo = await fetch(
-  //       `https://api-amvstrm.nyt92.eu.org/api/v2/stream/${episodeName}`
-  //     );
-  //     const dataVideo = await responseVideo.json();
-  //     const data = dataVideo;
-  //     setCurrentUrl(data.stream.multi.main.url);
-  //     // setVideoPlyr(data.nspl.main);
-  //     setAnimeTitle(
-  //       `${dataVideo.info.title} Episode ${dataVideo.info.episode}`
-  //     );
-  //     document.title = `${dataVideo.info.title} Episode ${dataVideo.info.episode} - AniPulse`;
-  //     setLoading(false);
-  //   } catch {
-  //     setErr(true);
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const updateVideoUrl = () => {
-  //   const episodeName = location.pathname.split("/").pop(); // Extract episode name from the URL
-  //   fetchNewVideoUrl(episodeName);
-  // };
-
-  // Call updateVideoUrl when the component mounts and when the location changes
-  // useEffect(() => {
-  //   updateVideoUrl();
-  // }, [location.pathname]);
-
-  // console.log(videoData.stream.multi.main.url);
   const [downloadLoading, setDownloadLoading] = useState(true);
   const [downloadError, setDownloadError] = useState(null);
   const [downloadUrl, setDownloadUrl] = useState("");
@@ -209,110 +148,10 @@ const Stream = () => {
     downloadEpisode();
   });
 
-  //Player loader
-  useEffect(() => {
-    function playM3u8(video, url, art) {
-      if (Hls.isSupported()) {
-        if (art.hls) art.hls.destroy();
-        const hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        art.hls = hls;
-        art.on("destroy", () => hls.destroy());
-      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = url;
-      } else {
-        art.notice.show = "Unsupported playback format: m3u8";
-      }
-    }
-
-    const art = new Artplayer({
-      container: artRef.current,
-      url: currentUrl,
-      type: "m3u8",
-      customType: {
-        m3u8: playM3u8,
-      },
-      moreVideoAttr: {
-        crossOrigin: "anonymous",
-      },
-      playsInline: true,
-      theme: "var(--accent-color)",
-      volume: 0.5,
-      isLive: false,
-      muted: false,
-      autoplay: false,
-      pip: true,
-      autoMini: true,
-      screenshot: true,
-      setting: true,
-      loop: true,
-      flip: true,
-      playbackRate: true,
-      aspectRatio: true,
-      fullscreen: true,
-      fullscreenWeb: true,
-      subtitleOffset: true,
-      miniProgressBar: true,
-      mutex: true,
-      backdrop: true,
-      autoPlayback: true,
-      airplay: true,
-      poster: coverImg,
-    });
-
-    art.on("ready", () => {
-      fetchQualityOptions(art); // Fetch and populate quality options
-    });
-
-    const fetchQualityOptions = async (art) => {
-      try {
-        // Example: Fetch API response (replace with your actual API call)
-        const response = await axios.get(`${api}meta/anilist/watch/${watchId}`);
-        const data = response.data;
-        console.log(data);
-
-        // Extract quality options from the API response
-        const qualityOptions = data.sources.map((source) => ({
-          name: source.quality,
-          url: source.url,
-        }));
-
-        // Add quality options to Artplayer settings
-        art.setting.add({
-          name: "Quality",
-          index: 1, // Position in the settings menu
-          html: qualityOptions
-            .map(
-              (option, index) =>
-                `<button data-index="${index}" class="art-setting-quality">${option.name}</button>`
-            )
-            .join(""),
-          onClick: (event) => {
-            const index = event.target.dataset.index;
-            if (index !== undefined) {
-              const selectedQuality = qualityOptions[index];
-              art.switchUrl(selectedQuality.url); // Switch stream
-              art.notice.show = `Switched to ${selectedQuality.name}`;
-            }
-          },
-        });
-      } catch (err) {
-        console.error("Error fetching quality options:", err);
-      }
-    };
-
-    return () => {
-      if (art && art.destroy) {
-        art.destroy(false);
-      }
-    };
-  }, [currentUrl, coverImg]);
-
   return (
     <Box>
       <Navbar />
-      <Box background="var(--primary-background-color)">
+      <Box background="#191919">
         <Box
           maxW={{
             base: "95%",
@@ -344,7 +183,7 @@ const Stream = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>{`Stream / ${animeTitle}`}</BreadcrumbLink>
+              <BreadcrumbLink>{`Stream / ${animeTitle} Episode ${test}`}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -367,14 +206,13 @@ const Stream = () => {
                     "2xl": "600px!important",
                   }}
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  bg="var(--primary-background-color)"
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <div
-                    ref={artRef}
-                    style={{ width: "100%", height: "100%" }}
-                  ></div>
+                  <VideoPlayer watchId={gogoId} />
                 </GridItem>
+
                 <GridItem
                   colSpan={{ base: 6, xl: 2 }}
                   h={{
@@ -386,6 +224,7 @@ const Stream = () => {
                   }}
                   overflowY="scroll"
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  bg="var(--primary-background-color)"
                   borderRadius="10px"
                   width={{ base: "220px", md: "50%", lg: "100%" }}
                   transition="all ease 0.25s"
@@ -398,144 +237,76 @@ const Stream = () => {
                     justifyContent="start"
                   >
                     {/* Season box */}
-                    {/* <Box width="100%">
-                      {extractedNumbersStNdRdTh[0] == undefined ? (
-                        <></>
-                      ) : (
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          gap="0 10px"
-                          cursor="pointer"
-                          pos="relative"
-                          height="60px"
-                          ps="20px"
+                    <Box width="100%">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        gap="0 10px"
+                        cursor="pointer"
+                        pos="relative"
+                        height="60px"
+                        ps="20px"
+                      >
+                        <Text
+                          color="var(--text-color)"
+                          fontSize="17.58px"
+                          lineHeight="24px"
                         >
-                          <Text
-                            color="var(--text-color)"
-                            fontSize="17.58px"
-                            lineHeight="24px"
-                          >
-                            Season {`${extractedNumbersStNdRdTh[0]}`}
-                          </Text>
-                          <ChevronDownIcon
-                            h="18px"
-                            w="18px"
-                            color="var(--text-color)"
-                          />
-                        </Box>
-                      )}
-                      {extractedNumbersNoTh[0] == undefined ? (
-                        <></>
-                      ) : (
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          gap="0 10px"
-                          cursor="pointer"
-                          pos="relative"
-                          height="60px"
-                          ps="20px"
-                        >
-                          <Text
-                            color="var(--text-color)"
-                            fontSize="17.58px"
-                            lineHeight="24px"
-                          >
-                            Season {`${extractedNumbersNoTh[0]}`}
-                          </Text>
-                          <ChevronDownIcon
-                            h="18px"
-                            w="18px"
-                            color="var(--text-color)"
-                          />
-                        </Box>
-                      )}
+                          Season
+                        </Text>
+                        <ChevronDownIcon
+                          h="18px"
+                          w="18px"
+                          color="var(--text-color)"
+                        />
+                      </Box>
 
                       <Box
                         display={{ base: "flex" }}
                         flexDir={{ base: "column" }}
                         pos="relative"
                       >
-                        {epLoading && (
-                          <Error
-                            loadingState={epLoading}
-                            width="100%"
-                            height="100%"
-                            pos="relative"
-                            top="0"
-                            left="0"
-                            bg="transparent"
-                            spinnerH={{ base: "50px" }}
-                            spinnerW={{ base: "50px" }}
-                          />
-                        )}
+                        {epLoading && <Loading bg="none" />}
                         {epError && (
                           <Error
-                            error={epError}
-                            msg="Still Working..."
-                            width="100%"
-                            height="100%"
-                            pos="absolute"
-                            top={{ base: "10px", sm: "80px" }}
-                            left="0"
-                            bg="#191919"
-                            spinnerH={{ base: "50px" }}
-                            spinnerW={{ base: "50px" }}
+                            bg=""
+                            msg="Error loading episodes, please try again."
                           />
                         )}
 
-                        {(() => {
-                          const elements = [];
-
-                          for (let i = 0; i < episodeData.length; i++) {
-                            const item = episodeData[i];
-
-                            const epArray = item.id.split("-");
-                            const lastItems = epArray.splice(-2);
-
-                            let newItemID = "";
-
-                            if (lastItems[0]?.length > 1) {
-                              newItemID = `Episode ${lastItems.pop()}`;
-                            } else {
-                              newItemID = `Episode ${lastItems[0]}.5`;
-                            }
-
-                            // Use item properties in JSX
-                            elements.push(
+                        {episodes && episodes.length > 0 ? (
+                          episodes.map((ep) => {
+                            const epId = ep.id;
+                            const epNo = ep.number;
+                            return (
                               <Link
-                                key={item[i]}
-                                to={`/watch/${encodeURIComponent(coverImg)}/${
-                                  item.id
-                                }`}
+                                key={epId}
+                                to={`/watch/${watchId}/${epId}`}
                                 // onClick={() => handleEpisodeClick(item.id)}
                                 className={
                                   location.pathname ==
-                                  `/watch/${encodeURIComponent(coverImg)}/${
-                                    item.id
-                                  }`
+                                  `/watch/${watchId}/${epId}`
                                     ? "episode active"
                                     : "episode"
                                 }
                               >
-                                {newItemID}
+                                {`Episode ${epNo}`}
                               </Link>
                             );
-                          }
-
-                          return elements;
-                        })()}
+                          })
+                        ) : (
+                          <Error bg="none" msg="" />
+                        )}
                       </Box>
-                    </Box> */}
+                    </Box>
                   </Box>
                 </GridItem>
                 {/* Anime Dets / Servers / Downlaod */}
                 <GridItem
                   colSpan="6"
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  bg="var(--primary-background-color)"
                   borderRadius="10px"
                   transition="all ease 0.25s"
                   p="20px"
@@ -559,7 +330,7 @@ const Stream = () => {
                     >
                       You&apos;re watching{" "}
                       <Text as="span" color="var(--accent-color)">
-                        Episode {currentEp}.
+                        Episode {test}.
                       </Text>
                     </Text>
                     <Text
@@ -604,8 +375,7 @@ const Stream = () => {
                       >
                         <Link
                           className={
-                            location.pathname ==
-                            `/watch/${encodeURIComponent(coverImg)}/${watchId}`
+                            location.pathname == `/watch/${watchId}/${gogoId}`
                               ? "server active"
                               : "server"
                           }
@@ -639,8 +409,7 @@ const Stream = () => {
                       >
                         <Link
                           className={
-                            location.pathname ==
-                            `/watch/${encodeURIComponent(coverImg)}/${watchId}`
+                            location.pathname == `/watch/${watchId}/${gogoId}`
                               ? "server active"
                               : "server"
                           }

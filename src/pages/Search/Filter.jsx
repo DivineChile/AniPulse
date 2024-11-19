@@ -25,7 +25,6 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { filterTypes } from "./utils/FilterTypes";
 import { filterLetters } from "./utils/FilterLetters";
 import { useEffect, useState } from "react";
-import { ANIME, META } from "@consumet/extensions";
 
 import Navbar from "../../components/Navbar/Navbar";
 
@@ -57,7 +56,7 @@ const Filter = () => {
     setIsLoading(true);
     setError(false);
     try {
-      const response = await axios.get(`${api}anime/gogoanime/${searchQuery}`);
+      const response = await axios.get(`${api}meta/anilist/${searchQuery}`);
       console.log(response.data);
       setSearchResults(response.data.results);
       setCurrentPage(response.data.currentPage);
@@ -86,9 +85,7 @@ const Filter = () => {
     setIsLoading(true);
     setError(false);
     try {
-      const response = await axios.get(
-        `${api}anime/gogoanime/${newQueryValue}`
-      );
+      const response = await axios.get(`${api}meta/anilist/${newQueryValue}`);
       console.log(response.data);
       setSearchResults(response.data.results);
       setCurrentPage(response.data.currentPage);
@@ -157,7 +154,8 @@ const Filter = () => {
       <Box background="var(--primary-background-color)">
         <Box
           maxW={{
-            base: "95%",
+            base: "85%",
+            sm: "95%",
             xl: "85%",
             "2xl": "container.xl",
           }}

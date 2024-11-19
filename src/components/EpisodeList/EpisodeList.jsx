@@ -1,8 +1,9 @@
 import { Link as ChakraLink } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
+import Error from "../ErrorPage/Error";
 
-const EpisodeList = ({ items, itemId, coverImg, subOrDub }) => {
+const EpisodeList = ({ items, itemId, aniId, subOrDub }) => {
   const [showAll, setShowAll] = useState(false);
 
   // Determine the number of episodes to display
@@ -20,10 +21,13 @@ const EpisodeList = ({ items, itemId, coverImg, subOrDub }) => {
 
   return (
     <>
+      {items.length === 0 && (
+        <Error bg="none" msg="No Episodes found." pos="absolute" />
+      )}
       {displayedEpisodes.map((_, index) => (
         <ChakraLink
           as={ReactRouterLink}
-          to={`/watch/${encodeURIComponent(coverImg[index])}/${itemId[index]}`}
+          to={`/watch/${aniId}/${itemId[index]}`}
           _hover={{
             textDecor: "none",
             color: "var(--accent-color)",

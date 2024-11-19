@@ -29,7 +29,7 @@ const router = createBrowserRouter(
       <Route path="/profile" element={<Profile />} />
       <Route path="/anime/:id" element={<View />} />
       <Route path="/search/keyword/:searchQuery" element={<Filter />} />
-      <Route path="/watch/:coverImg/:watchId" element={<Stream />} />
+      <Route path="/watch/:watchId/:gogoId" element={<Stream />} />
     </>
   )
 );

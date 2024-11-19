@@ -64,7 +64,7 @@ const Navbar = () => {
         setProfileDialogState(false);
         navigate("/");
       })
-      .catch((error) => {
+      .catch(() => {
         toast({
           title: "Sign Out Error",
           description: "An error occured during sign out",
@@ -135,7 +135,8 @@ const Navbar = () => {
     >
       <Box
         maxW={{
-          base: "95%",
+          base: "85%",
+          sm: "95%",
           xl: "85%",
           "2xl": "container.xl",
         }}
@@ -147,10 +148,23 @@ const Navbar = () => {
         <Box>
           <Heading m="0">
             <Link to="/" className="logo">
-              <Text as="span" color="var(--secondary-color)">
+              <Text
+                as="span"
+                color="var(--secondary-color)"
+                _hover={{
+                  color: "var(--accent-color)",
+                }}
+                transition="all ease 0.25s"
+              >
                 Ani
               </Text>
-              <Text className="logo_tag" as="span" color="var(--primary-color)">
+              <Text
+                className="logo_tag"
+                as="span"
+                color="var(--primary-color)"
+                _hover={{ color: "var(--accent-color)" }}
+                transition="all ease 0.25s"
+              >
                 Pulse
               </Text>
             </Link>

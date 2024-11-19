@@ -120,7 +120,8 @@ const Hero = () => {
           <Flex
             // px={{ base: "20px", lg: "20px", xl: "100px" }}
             maxW={{
-              base: "95%",
+              base: "85%",
+              sm: "95%",
               xl: "85%",
               "2xl": "container.xl",
             }}

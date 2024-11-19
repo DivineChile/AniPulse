@@ -20,7 +20,7 @@ const GridView = ({ results }) => {
     <Grid
       gridTemplateColumns={{
         base: "repeat(1, 1fr)",
-        sm: "repeat(3, 1fr)",
+        sm: "repeat(2, 1fr)",
         md: "repeat(3, 1fr)",
         lg: "repeat(3, 1fr)",
         xl: "repeat(4, 1fr)",
@@ -30,8 +30,8 @@ const GridView = ({ results }) => {
       {results && results?.length > 0
         ? results.map((item, index) => {
             const resultId = item.id;
-            const resultTitle = item.title;
-            const resultSubOrDub = item.subOrDub;
+            const resultTitle = item.title.userPreferred;
+            const resultStatus = item.status;
             const resultImg = item.image;
             const resultRelease = item.releaseDate;
             const resultType = item.type;
@@ -140,7 +140,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {resultSubOrDub}
+                      {resultStatus ? resultStatus : "NIL"}
                     </Text>
                     <Text
                       as="span"
@@ -160,7 +160,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {resultRelease}
+                      {resultRelease ? resultRelease : "NIL"}
                     </Text>
                     <Text
                       as="span"
@@ -176,7 +176,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {resultType}
+                      {resultType ? resultType : ""}
                     </Text>
                   </Flex>
                   <ChakraLink

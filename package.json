@@ -16,6 +16,7 @@
     "@cloudinary/url-gen": "^1.17.0",
     "@consumet/extensions": "^1.8.1",
     "@hookform/resolvers": "^3.3.4",
+    "@jwplayer/jwplayer-react": "^1.1.3",
     "@vercel/analytics": "^1.2.2",
     "artplayer": "^5.1.1",
     "artplayer-plugin-hls-quality": "^2.0.0",

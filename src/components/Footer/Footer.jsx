@@ -26,7 +26,8 @@ const Footer = () => {
         {/* Footer Main */}
         <Box
           maxW={{
-            base: "95%",
+            base: "85%",
+            sm: "95%",
             xl: "85%",
             "2xl": "container.xl",
           }}

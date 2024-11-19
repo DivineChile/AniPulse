@@ -9,7 +9,12 @@ import {
   Heading,
   Link as ChakraLink,
   Button,
-  Spinner,
+  Tabs,
+  TabList,
+  Tab,
+  TabIndicator,
+  TabPanels,
+  TabPanel,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
@@ -19,6 +24,7 @@ import Error from "../ErrorPage/Error";
 import EpisodeList from "../EpisodeList/EpisodeList";
 import axios from "axios";
 import Loading from "../ErrorPage/Loading";
+import CountDown from "../CountDown";
 
 const View = () => {
   const { id } = useParams();
@@ -26,32 +32,65 @@ const View = () => {
   const [error, setError] = useState(null);
   const [animeData, setAnimeData] = useState([]);
   const [animeEpisodes, setAnimeEpisodes] = useState([]);
+  const [nextEp, setNextEp] = useState(0);
+  const [airingTime, setAiringTime] = useState(0);
+  const [timeUntilAiring, setTimeUntilAiring] = useState(0);
   const [animeGenres, setAnimeGenres] = useState([]);
   const [animeStudios, setAnimeStudios] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
-  const [animeEpImg, setAnimeEpImg] = useState("");
   const [animeEpId, setAnimeEpId] = useState("");
   const [subOrDub, setSubOrDub] = useState("");
+  const [gogoId, setGogoId] = useState("");
+  const [gogoIdDub, setGogoIdDub] = useState("");
+
+  const [epLoading, setEpLoading] = useState(true);
+  const [epError, setEpError] = useState(null);
+  const [dubEpisodes, setDubEpisodes] = useState([]);
+  const [dubEpisodeId, setDubEpisodeId] = useState("");
 
   const api = "https://consumet-api-puce.vercel.app/";
 
   const fetchAnimeData = async () => {
     setIsLoading(true);
     setError(null);
+
     try {
       const response = await axios.get(`${api}meta/anilist/info/${id}`);
-      setAnimeData(response.data);
-      setAnimeTitle(response.data.title.english);
-      setAnimeEpisodes(response.data.episodes);
-      setAnimeEpId(response.data.episodes.map((item) => item.id));
-      setAnimeEpImg(response.data.episodes.map((item) => item.image));
-      setAnimeGenres(response.data.genres);
-      setSubOrDub(response.data.subOrDub);
-      setAnimeStudios(response.data.studios);
-      document.title = `${animeTitle} - AniPulse`;
-      console.log(response.data);
+      const data = response.data;
+
+      // Set anime information
+      setAnimeData(data);
+      setAnimeTitle(data.title.romaji);
+      setAnimeEpisodes(data.episodes);
+      setAnimeGenres(data.genres);
+      setSubOrDub(data.subOrDub);
+      setAnimeStudios(data.studios);
+
+      // Handle episodes data
+      setAnimeEpId(data.episodes.map((item) => item.id));
+
+      // Handle next airing episode details
+      if (data.nextAiringEpisode) {
+        setNextEp(data.nextAiringEpisode.episode);
+        setAiringTime(data.nextAiringEpisode.airingTime);
+        setTimeUntilAiring(data.nextAiringEpisode.timeUntilAiring);
+      }
+
+      // Find and set GogoAnime ID
+      const gogoItem = data.mappings.find(
+        (item) => item.providerId === "gogoanime"
+      );
+      if (gogoItem) {
+        setGogoId(gogoItem.id);
+      } else {
+        console.error("No mapping found with providerId 'gogoanime'");
+      }
+
+      // Set document title
+      document.title = `${data.title.romaji} - AniPulse`;
     } catch (err) {
-      setError("Failed to load data. Please try again.");
+      setError("Failed to load anime data. Please try again.");
+      console.error("Error fetching anime data:", err);
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +100,34 @@ const View = () => {
     fetchAnimeData();
   }, []);
 
+  // Fetch dubbed episodes when gogoId changes
+  useEffect(() => {
+    if (gogoId) {
+      const GogoIdDub = `${gogoId.split("/").pop()}-dub`;
+      setGogoIdDub(GogoIdDub);
+
+      const fetchDubbedEpisodes = async () => {
+        setEpLoading(true);
+        setEpError(null);
+        try {
+          const response = await axios.get(
+            `${api}anime/gogoanime/info/${GogoIdDub}`
+          );
+          setDubEpisodes(response.data.episodes);
+          setDubEpisodeId(response.data.episodes.map((item) => item.id));
+          console.log("Dubbed Episodes:", response.data);
+        } catch (err) {
+          setEpError("Failed to load dubbed episode data. Please try again.");
+          console.error("Error fetching dubbed episodes:", err);
+        } finally {
+          setEpLoading(false);
+        }
+      };
+
+      fetchDubbedEpisodes();
+    }
+  }, [gogoId]);
+
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
 
   return (
@@ -68,10 +135,10 @@ const View = () => {
       <Navbar />
       {isLoading && <Loading bg="#333333" height="100vh" />}
 
-      {error && <Error height="100vh" msg="Still Loading..." />}
+      {error && <Error height="100vh" bg="#191919" msg="Still Loading..." />}
 
       {!isLoading && !error && (
-        <Box background="var(--primary-background-color)">
+        <Box background="#191919">
           <Box
             maxW={{
               base: "95%",
@@ -146,12 +213,17 @@ const View = () => {
                       as="h2"
                       fontSize="35px"
                       fontWeight="500"
+                      fontFamily="Noir Pro"
                       color="var(--text-color)"
                       letterSpacing="1.5px"
                       lineHeight="38.5px"
                       transition="background ease 0.25s"
                     >
-                      {animeData.title.romaji}
+                      {animeData.title.romaji
+                        ? animeData.title.romaji !== ""
+                          ? animeData.title.romaji
+                          : "NIL"
+                        : "NIL"}
                     </Heading>
                     <Text
                       as="h3"
@@ -162,7 +234,15 @@ const View = () => {
                       transition="background ease 0.25s"
                     >
                       Episodes :{" "}
-                      {`${animeEpisodes.length}/${animeData.totalEpisodes}`}
+                      {`${
+                        animeData.currentEpisode
+                          ? animeData.currentEpisode
+                          : "NIL"
+                      }/${
+                        animeData.totalEpisodes
+                          ? animeData.totalEpisodes
+                          : "NIL"
+                      }`}
                     </Text>
                     {/* Anime Summary */}
                     <Box mt="20px">
@@ -172,6 +252,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="24.02px"
                         fontWeight="600"
+                        fontFamily="Noir Pro"
                         lineHeight="27.5px"
                         letterSpacing="1.5px"
                       >
@@ -186,9 +267,13 @@ const View = () => {
                         letterSpacing="0.5px"
                         transition="background ease 0.25s"
                       >
-                        {animeData.description.length > 200
-                          ? `${animeData.description.slice(0, 250)}...`
-                          : "Loading..."}
+                        {animeData.description
+                          ? animeData.description !== ""
+                            ? animeData.description.length > 200
+                              ? `${animeData.description.slice(0, 250)}...`
+                              : `${animeData.description}`
+                            : "NIL"
+                          : "NIL"}
                       </Text>
                     </Box>
                     <Box w="100%" h="47px">
@@ -274,7 +359,7 @@ const View = () => {
                                 </Text>
                               );
                             })
-                          : "Loading..."}
+                          : "NIL"}
                       </Text>
                     </Box>
                     {/* Anime Season */}
@@ -397,6 +482,36 @@ const View = () => {
                         {animeData.rating ? animeData.rating : "Loading..."}
                       </Text>
                     </Box>
+                    {/* Countdown timer */}
+                    <Box display="flex" gap="0 10px">
+                      <Text
+                        as="p"
+                        color="var(--text-color)"
+                        fontSize="15px"
+                        fontWeight="300"
+                        lineHeight="24px"
+                        transition="background ease 0.25s"
+                      >
+                        Next Episode At:{"  "}
+                      </Text>
+                      <Text
+                        color="var(--text-color)"
+                        as="span"
+                        fontSize="15px"
+                        fontWeight="300"
+                        lineHeight="24px"
+                      >
+                        {animeData.status.toLowerCase() === "completed" ? (
+                          "Finished"
+                        ) : animeData.nextAiringEpisode ? (
+                          <CountDown
+                            initialTime={airingTime - timeUntilAiring}
+                          />
+                        ) : (
+                          "Loading..."
+                        )}
+                      </Text>
+                    </Box>
                   </Box>
                 </GridItem>
                 {/* Episodes List */}
@@ -415,35 +530,64 @@ const View = () => {
                     >
                       Episode List
                     </Heading>
-                    <Box mt="20px">
-                      {isLoading && <Spinner color="var(--accent-color)" />}
-                      {error && (
-                        <Box display="flex" flexDir="column" gap="15px">
-                          <Text color="var(--text-color)">
-                            Error Loading Episodes
-                          </Text>
-                          <Button
-                            // onClick={generateSubEp}
-                            height="30px"
-                            w="fit-content"
-                            bg="transparent"
-                            border="1px solid var(--accent-color)"
-                            color="var(--accent-color)"
-                            _hover={{
-                              color: "#000",
-                              bg: "var(--accent-color)",
-                            }}
+                    <Box mt="20px" pos="relative">
+                      <Tabs isLazy variant="unstyled">
+                        <TabList w="100%">
+                          <Tab
+                            w="50%"
+                            color="var(--text-color)"
+                            _hover={{ color: "var(--accent-color)" }}
+                            _selected={{ color: "var(--accent-color)" }}
                           >
-                            Retry
-                          </Button>
-                        </Box>
-                      )}
-                      <EpisodeList
-                        items={animeEpisodes}
-                        itemId={animeEpId}
-                        coverImg={animeEpImg}
-                        subOrDub={subOrDub}
-                      />
+                            Sub
+                          </Tab>
+                          <Tab
+                            w="50%"
+                            color="var(--text-color)"
+                            _hover={{ color: "var(--accent-color)" }}
+                            _selected={{ color: "var(--accent-color)" }}
+                          >
+                            Dub
+                          </Tab>
+                        </TabList>
+                        <TabIndicator
+                          color="var(--accent-color)"
+                          bg="var(--accent-color)"
+                          height="2px"
+                          borderRadius="2px"
+                          width="100%"
+                        />
+                        <TabPanels>
+                          <TabPanel>
+                            {animeEpisodes.length !== 0 ? (
+                              <EpisodeList
+                                items={animeEpisodes}
+                                itemId={animeEpId}
+                                aniId={id}
+                                subOrDub={subOrDub}
+                              />
+                            ) : (
+                              <Box display="flex" flexDir="column">
+                                <Error bg="none" msg="Error loading Episodes" />
+                              </Box>
+                            )}
+                          </TabPanel>
+                          <TabPanel>
+                            {animeEpisodes.length !== 0 ? (
+                              <EpisodeList
+                                items={dubEpisodes}
+                                itemId={dubEpisodeId}
+                                aniId={id}
+                                subOrDub="dub"
+                              />
+                            ) : (
+                              <Box display="flex" flexDir="column">
+                                <Error bg="none" msg="Error loading Episodes" />
+                              </Box>
+                            )}
+                          </TabPanel>
+                        </TabPanels>
+                      </Tabs>
                     </Box>
                   </Box>
                 </GridItem>

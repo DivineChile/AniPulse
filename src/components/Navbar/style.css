@@ -3,7 +3,7 @@
 }
 
 .navbar ul li a {
-  color: var(--secondary-color);
+  color: var(--text-color);
   font-size: 16.75px;
   font-weight: 400;
   line-height: 30px;
@@ -25,12 +25,14 @@
   display: block;
   height: 2.5px;
   width: 0;
-  transition: width 0.4s ease-in-out;
+  visibility: hidden;
+  transition: width 0.4s ease-in-out, visibility 0.4s ease-in-out;
 }
 
 .navbar ul li.active::after,
 .navbar ul li:hover::after {
   width: 50%;
+  visibility: visible;
   background: var(--accent-color);
   border-radius: 2.5px;
 }

@@ -49,7 +49,8 @@ const PopularList = () => {
     <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
       <Box
         maxW={{
-          base: "95%",
+          base: "85%",
+          sm: "95%",
           xl: "85%",
           "2xl": "container.xl",
         }}

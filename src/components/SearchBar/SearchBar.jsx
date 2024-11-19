@@ -32,11 +32,10 @@ const SearchBar = ({ above, below, displayProp }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${api}meta/anilist/info/${query}`);
+      const response = await axios.get(`${api}meta/anilist/${query}`);
 
-      setAnimeData(response.data);
-
-      console.log(response.data);
+      setAnimeData(response.data.results);
+      setSearchResults(animeData);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -44,7 +43,7 @@ const SearchBar = ({ above, below, displayProp }) => {
     }
   };
 
-  const debouncedFetchData = debounce(fetchData, 1000, []);
+  const debouncedFetchData = debounce(fetchData, 1500, []);
 
   const handleInputFocus = () => {
     setShowDropdown(true);
@@ -188,8 +187,8 @@ const SearchBar = ({ above, below, displayProp }) => {
               const itemId = item.id;
               const itemStatus = item.status;
               const itemTitle = item.title.userPreferred;
-              const itemEp = item.episodes;
-              const itemImg = item.coverImage.extraLarge;
+              const itemEp = item.totalEpisodes;
+              const itemImg = item.image;
 
               return (
                 <Box key={itemId}>
