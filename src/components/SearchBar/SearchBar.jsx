@@ -8,34 +8,38 @@ import {
   InputLeftAddon,
   Spinner,
   Text,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
-import { Form, Link, useNavigate } from "react-router-dom";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { debounce } from "lodash";
 import axios from "axios";
 
 const SearchBar = ({ above, below, displayProp }) => {
   const [query, setQuery] = useState("");
-  const [animeData, setAnimeData] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const navigate = useNavigate();
-
   const api = "https://consumet-api-puce.vercel.app/";
 
-  const fetchData = async () => {
+  // Fetch anime data based on the query
+  const fetchData = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
     setLoading(true);
     setError(null);
+
     try {
       const response = await axios.get(`${api}meta/anilist/${query}`);
-
-      setAnimeData(response.data.results);
-      setSearchResults(animeData);
+      setSearchResults(response.data.results || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -43,46 +47,37 @@ const SearchBar = ({ above, below, displayProp }) => {
     }
   };
 
-  const debouncedFetchData = debounce(fetchData, 1500, []);
+  // Debounced fetch function
+  const debouncedFetchData = useCallback(debounce(fetchData, 1000), []);
 
-  const handleInputFocus = () => {
-    setShowDropdown(true);
-  };
-
-  const handleInputBlur = () => {
-    // Use setTimeout to allow click on result before hiding the dropdown
-    setTimeout(() => {
-      setShowDropdown(false);
-      setSearchResults([]);
-    }, 1000);
-  };
-
+  // Handle input change and initiate debounce
   const handleInputChange = (event) => {
-    // Only fetch data if the query is not empty
-    setQuery(event.target.value);
-    if (query.trim() && query !== "") {
-      debouncedFetchData();
-      setAnimeData(debouncedFetchData);
+    const value = event.target.value;
+    setQuery(value);
+
+    if (value.trim()) {
+      debouncedFetchData(value);
     } else {
       setSearchResults([]);
     }
   };
 
-  const handleLinkClick = (itemId) => {
-    navigate(`/anime/${itemId}`);
+  // Handle focus and blur events
+  const handleInputFocus = () => setShowDropdown(true);
+
+  const handleInputBlur = () => {
+    setTimeout(() => setShowDropdown(false), 200);
   };
 
+  // Handle Enter key press to navigate to search results
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && query.trim()) {
       navigate(`/search/keyword/${query}`);
     }
   };
 
-  let top7Items = [];
-
-  if (searchResults && searchResults.length > 0) {
-    top7Items = searchResults.slice(0, 7);
-  }
+  // Extract top 7 results for the dropdown
+  const top7Items = searchResults.slice(0, 7);
 
   return (
     <Box
@@ -92,301 +87,123 @@ const SearchBar = ({ above, below, displayProp }) => {
       display={displayProp}
       pos="relative"
     >
-      <Form>
-        <InputGroup
-          h="40px"
-          w={{ base: "100%", lg: "150px", xl: "250px", "2xl": "400px" }}
+      <InputGroup
+        h="40px"
+        w={{ base: "100%", lg: "150px", xl: "250px", "2xl": "400px" }}
+      >
+        <InputLeftAddon
+          background="none"
+          color="var(--text-color)"
+          borderRight="none"
+          borderColor="var(--secondary-color)"
+          cursor="pointer"
+          onClick={() => query.trim() && navigate(`/search/keyword/${query}`)}
         >
-          <InputLeftAddon
-            background="none"
-            color="var(--text-color)"
-            borderRight="none!important"
-            borderColor="var(--secondary-color)"
-            _focus={{
-              borderColor: "var(--link-hover-color)",
-              outline: "none",
-            }}
-            className="icon-con"
-            _hover={{ borderColor: "var(--hover-color)" }}
-            cursor="pointer"
-            onClick={() => {
-              navigate(`/search/keyword/${query}`);
-            }}
-          >
-            <SearchIcon
-              color="var(--secondary-color)"
-              className="search-icon"
-            />
-          </InputLeftAddon>
-          <Input
-            borderLeft="none"
-            placeholder="Search Anime..."
-            color="var(--text-color)"
-            borderColor="var(--secondary-color)"
-            className="inputSearch"
-            _focus={{
-              border: "none!important",
-              outline: "none!important",
-              boxShadow: "0px 0px 4px 0px var(--secondary-color)",
-            }}
-            _hover={{ borderColor: "var(--link-hover-color)" }}
-            value={query}
-            onChange={handleInputChange}
-            type="text"
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            onKeyDown={handleKeyPress}
-          />
-        </InputGroup>
-      </Form>
-      {/* Search Results */}
+          <SearchIcon color="var(--secondary-color)" />
+        </InputLeftAddon>
+        <Input
+          borderLeft="none"
+          placeholder="Search Anime..."
+          color="var(--text-color)"
+          borderColor="var(--secondary-color)"
+          value={query}
+          onChange={handleInputChange}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyPress}
+        />
+      </InputGroup>
+
       {showDropdown && (
         <Box
           width={{ base: "100%", sm: "400px", md: "500px" }}
           top="50px"
           right="0"
-          transition="all ease 0.25s"
-          display="flex"
-          flexDir="column"
-          borderRadius="10px"
           bg="var(--primary-background-color)"
+          borderRadius="10px"
           p="20px"
           boxShadow="0 0 10px 0 rgba(0,0,0,0.6)"
-          gap="20px 0"
-          zIndex="999"
           position="absolute"
+          zIndex="999"
         >
-          <Box borderBottom="1px solid #444444" width="100%">
-            <Heading
-              as="h4"
-              color="var(--text-color)"
-              fontWeight="400"
-              fontSize="20px"
-              mb="5px"
-            >
+          <Box borderBottom="1px solid #444444" mb="20px">
+            <Heading as="h4" color="var(--text-color)" fontSize="20px" mb="5px">
               Search Results
             </Heading>
           </Box>
-          {loading ? (
-            <Box w="100%" display="flex" justifyContent="center">
+
+          {loading && (
+            <Box display="flex" justifyContent="center">
               <Spinner color="var(--accent-color)" />
             </Box>
-          ) : (
-            <></>
           )}
-          {error ? (
+
+          {error && (
             <Text as="span" color="var(--text-color)">
-              Error getting requested Anime...
+              {error}
             </Text>
-          ) : (
-            <></>
           )}
 
-          {searchResults && searchResults?.length > 0 ? (
-            top7Items.map((item) => {
-              const itemId = item.id;
-              const itemStatus = item.status;
-              const itemTitle = item.title.userPreferred;
-              const itemEp = item.totalEpisodes;
-              const itemImg = item.image;
-
-              return (
-                <Box key={itemId}>
-                  <Link
-                    style={{
-                      display: "flex",
-                      gap: "0 20px",
-                      alignItems: "center",
-                      width: "100%",
-                    }}
-                    to={`/anime/${itemId}`}
-                    // onClick={() => handleLinkClick(itemId)}
-                  >
-                    <Box width="10%">
-                      <Image
-                        h="100%"
-                        w="100%"
-                        bg="#191919"
-                        borderRadius="6px"
-                        src={itemImg}
-                      />
-                    </Box>
-                    <Box width="90%">
-                      <Box display="flex" flexDir="column">
-                        <Heading
-                          as="h4"
-                          fontWeight="500"
-                          fontSize={{ base: "18px", md: "20px" }}
-                          color="var(--secondary-color)"
-                          transition="all ease 0.25s"
-                          _hover={{
-                            color: "var(--accent-color)",
-                          }}
-                        >
-                          {itemTitle?.length > 40
-                            ? `${itemTitle.slice(0, 36)}...`
-                            : itemTitle}
-                        </Heading>
-                        <Text
-                          as="span"
-                          color="var(--text-color)"
-                          fontSize={{ base: "12px", md: "13px" }}
-                          fontWeight={{ base: "300", md: "normal" }}
-                        >
-                          {itemEp == null ? "NIL" : `Episodes: ${itemEp}`}
-                        </Text>
-                        <Text
-                          as="span"
-                          color="var(--text-color)"
-                          fontSize={{ base: "12px", md: "13px" }}
-                          fontWeight={{ base: "300", md: "normal" }}
-                        >
-                          {`Status: ${itemStatus}`}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </Link>
-                </Box>
-              );
-            })
-          ) : (
-            <></>
-          )}
-
-          {searchResults?.length >= 7 && (
-            <Link
-              to={`/search/keyword/${query}`}
-              key="showMore"
+          {top7Items.map((item) => (
+            <ChakraLink
+              as={ReactRouterLink}
+              key={item.id}
+              to={`/anime/${item.id}`}
               style={{
-                color: "var(--text-color)",
-                fontSize: "15px",
-                border: "2px solid var(--secondary-color)",
-                borderRadius: "5px",
-                padding: "5px 15px",
-                textAlign: window.innerWidth < 500 ? "center" : "start",
-                width: window.innerWidth < 500 ? "100%" : "fit-content",
+                display: "flex",
+                gap: "20px",
+                alignItems: "center",
+                marginBottom: "10px",
               }}
             >
+              <Image
+                h="60px"
+                w="50px"
+                bg="#191919"
+                borderRadius="6px"
+                src={item.image}
+                alt={item.title.userPreferred}
+              />
+              <Box>
+                <Heading
+                  as="h4"
+                  fontSize="16px"
+                  color="var(--secondary-color)"
+                  _hover={{ color: "var(--accent-color)" }}
+                >
+                  {item.title.userPreferred}
+                </Heading>
+                <Text color="var(--text-color)" fontSize="14px">
+                  Episodes: {item.totalEpisodes || "N/A"}
+                </Text>
+                <Text color="var(--text-color)" fontSize="14px">
+                  Status: {item.status || "N/A"}
+                </Text>
+              </Box>
+            </ChakraLink>
+          ))}
+
+          {searchResults.length > 7 && (
+            <ChakraLink
+              as={ReactRouterLink}
+              to={`/search/keyword/${query}`}
+              _hover={{
+                background: "var(--accent-color)",
+                color: "var(--primary-background-color)",
+                border: "none",
+              }}
+              transition="all ease 0.25s"
+              display="block"
+              mt="10px"
+              color="var(--text-color)"
+              textAlign="center"
+              border="1px solid var(--secondary-color)"
+              borderRadius="5px"
+              padding="5px"
+            >
               View All
-            </Link>
+            </ChakraLink>
           )}
-
-          {/* {(() => {
-            if (searchResults && searchResults?.length > 0) {
-              // Declare a variable to store the elements
-              const elements = [];
-
-              // Determine the endIndex based on the showAll state
-              const endIndex = showAll
-                ? searchResults?.length
-                : Math.min(searchResults.length, 7);
-
-              // Iterate through the search results
-              for (let i = 0; i < endIndex; i++) {
-                const itemId = animeId[i];
-                const itemStatus = animeStatus[i];
-                const itemTitle = animeTitle[i];
-                const itemEp = animeEp[i];
-                const itemImg = animeImg[i];
-
-                // Use item properties in JSX
-                elements?.push(
-                  itemStatus === undefined ? (
-                    <></>
-                  ) : (
-                    <Box key={itemId}>
-                      <Link
-                        style={{
-                          display: "flex",
-                          gap: "0 20px",
-                          alignItems: "center",
-                          width: "100%",
-                        }}
-                        // to={`/anime/${itemId}`}
-                        onClick={() => handleLinkClick(itemId)}
-                      >
-                        <Box width="10%">
-                          <Image
-                            h="100%"
-                            w="100%"
-                            bg="#191919"
-                            borderRadius="6px"
-                            src={itemImg}
-                          />
-                        </Box>
-                        <Box width="90%">
-                          <Box display="flex" flexDir="column">
-                            <Heading
-                              as="h4"
-                              fontWeight="500"
-                              fontSize={{ base: "18px", md: "20px" }}
-                              color="var(--secondary-color)"
-                              transition="all ease 0.25s"
-                              _hover={{
-                                color: "var(--accent-color)",
-                              }}
-                            >
-                              {itemTitle === undefined ? "" : itemTitle}
-                            </Heading>
-                            <Text
-                              as="span"
-                              color="var(--text-color)"
-                              fontSize={{ base: "12px", md: "13px" }}
-                              fontWeight={{ base: "300", md: "normal" }}
-                            >
-                              {itemEp === undefined
-                                ? ""
-                                : itemEp == null
-                                ? "NIL"
-                                : `Episodes: ${itemEp}`}
-                            </Text>
-                            <Text
-                              as="span"
-                              color="var(--text-color)"
-                              fontSize={{ base: "12px", md: "13px" }}
-                              fontWeight={{ base: "300", md: "normal" }}
-                            >
-                              {itemStatus === undefined
-                                ? ""
-                                : `Status: ${itemStatus}`}
-                            </Text>
-                          </Box>
-                        </Box>
-                      </Link>
-                    </Box>
-                  )
-                );
-              }
-
-              const handleShowAllClick = () => {
-                setShowAll((prevShowAll) => setShowAll(!prevShowAll));
-              };
-
-              // Render the "View All" link if there are more than 7 results
-              if (searchResults?.length > 7) {
-                elements.push(
-                  <Link
-                    to={`/search/${query}`}
-                    onClick={handleShowAllClick}
-                    key="showMore"
-                    style={{
-                      color: "var(--text-color)",
-                      fontSize: "15px",
-                      border: "2px solid var(--secondary-color)",
-                      borderRadius: "5px",
-                      padding: "5px 15px",
-                      textAlign: window.innerWidth < 500 ? "center" : "start",
-                      width: window.innerWidth < 500 ? "100%" : "fit-content",
-                    }}
-                  >
-                    {showAll ? "View Less" : "View All"}
-                  </Link>
-                );
-              }
-
-              return elements;
-            }
-          })()} */}
         </Box>
       )}
     </Box>
