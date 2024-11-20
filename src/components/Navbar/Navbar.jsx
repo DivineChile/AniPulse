@@ -193,7 +193,7 @@ const Navbar = () => {
             flexWrap="wrap"
             pos={{ base: "absolute", lg: "initial" }}
             left="0"
-            top={{ base: "70.89px", md: "74px", lg: "none" }}
+            top={{ base: "70px", md: "73px", lg: "none" }}
             p={isOpen ? { base: "20px", lg: "0" } : { base: "0 20px", lg: "0" }}
             gap={{ base: "10px 0", lg: "0" }}
             h={
@@ -391,7 +391,7 @@ const Navbar = () => {
               }}
               display="flex"
               transition="all ease 0.25s"
-              zIndex={profileDialogState ? "1" : "-1"}
+              zIndex={profileDialogState ? "3" : "-1"}
               flexDir="column"
               gap="10px"
               opacity={profileDialogState ? "1" : "0"}
