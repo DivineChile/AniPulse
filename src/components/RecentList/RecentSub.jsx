@@ -62,7 +62,7 @@ const Recents = () => {
       {displayedAnime.map((item, index) => {
         const epLength =
           item.title.length > 30 ? `${item.title.slice(0, 30)}...` : item.title;
-        console.log(item);
+
         return (
           <GridItem key={item.episodeId} w={{ base: "100%" }}>
             <Box
@@ -207,6 +207,8 @@ const Recents = () => {
             background: "var(--accent-color)",
             border: "none",
           }}
+          pos="absolute"
+          bottom="-50px"
         >
           {showAll ? "Show Less" : "Show All"}
         </ChakraLink>
