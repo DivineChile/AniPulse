@@ -208,7 +208,7 @@ const RecentCn = () => {
             border: "none",
           }}
           pos="absolute"
-          bottom="-50px"
+          bottom="-70px"
         >
           {showAll ? "Show Less" : "Show All"}
         </ChakraLink>

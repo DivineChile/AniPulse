@@ -15,6 +15,14 @@
   --link-color: #33cc99;
   --link-hover-color: #66ffcc;
 
+  /* --primary-color: #ff6f61; 
+  --secondary-color: #6c63ff; 
+  --primary-background-color: #121212; 
+  --accent-color: #ffd700; 
+  --text-color: #e0e0e0; 
+  --link-color: #42a5f5; 
+  --link-hover-color: #1e88e5;  */
+
   scrollbar-width: thin;
   scrollbar-color: var(--primary-background-color) #111;
 }
