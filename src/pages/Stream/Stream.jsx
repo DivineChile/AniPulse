@@ -120,7 +120,7 @@ const Stream = () => {
 
   useEffect(() => {
     document.title = `${animeTitle} Episode ${test} - AniPulse`;
-  }, [gogoId]);
+  }, [gogoId, test, animeTitle]);
 
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(false);
