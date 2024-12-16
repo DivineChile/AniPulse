@@ -70,8 +70,6 @@ const Hero = () => {
           }}
           pos="relative"
         >
-          {/* Buttons for Moving Content */}
-
           <Swiper
             modules={[Navigation, FreeMode]}
             autoplay={{ delay: 5000, disableOnInteraction: false }}
@@ -79,6 +77,7 @@ const Hero = () => {
             effect="fade"
             style={{ height: "100%", position: "relative" }}
           >
+            {/* Buttons for Moving Content */}
             <Box
               pos="absolute"
               left="20px"

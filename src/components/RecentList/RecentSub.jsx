@@ -5,6 +5,9 @@ import {
   Image,
   Text,
   Icon,
+  Skeleton,
+  SkeletonText,
+  HStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -49,7 +52,26 @@ const Recents = () => {
 
   // Render loading state
   if (isLoading) {
-    return <Loading height="100%" pos="absolute" />;
+    return [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
+      <GridItem key={index}>
+        <Skeleton
+          borderRadius="10px"
+          h={{
+            base: "400.23px",
+            sm: "380.23px",
+            md: "350px",
+            lg: "360px",
+            "2xl": "408.19px",
+          }}
+          w="100%"
+        />
+        <HStack mt="10px">
+          <Skeleton h="20px" w="50px" />
+          <Skeleton h="20px" w="50px" />
+        </HStack>
+        <SkeletonText noOfLines={2} h={2} spacing={2} my="10px" />
+      </GridItem>;
+    });
   }
 
   // Render error state
