@@ -25,11 +25,53 @@ import { Navigation, FreeMode } from "swiper/modules";
 import Prev from "../HeroSliderButtons/Prev";
 import Next from "../HeroSliderButtons/Next";
 
+import { ANIME } from "@consumet/extensions";
+
 const Hero = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [animeData, setAnimeData] = useState([]);
+  const [animeInfo, setAnimeInfo] = useState({});
+  const [animeMappings, setAnimeMappings] = useState([]);
+  const [animeEps, setAnimeEps] = useState([]);
+  const [animeId, setAnimeId] = useState("");
   const api = "https://consumet-api-puce.vercel.app/";
+  const anime = new ANIME.AnimePahe();
+  const animepahe = new ANIME.Anify();
+
+  const fetchAnimeInfo = () => {
+    animepahe.fetchAnimeInfo("171018").then((data) => {
+      setAnimeInfo(data);
+      setAnimeId(data.id);
+      setAnimeMappings(
+        data.mappings.map((mapId) => {
+          const id = mapId.id;
+          const provider = mapId.providerId;
+          return { provider, id };
+        })
+      );
+      setAnimeEps(
+        data.episodes.map((ep, i) => {
+          const epId = ep.id;
+          const epNum = ep.number;
+          return { epId, epNum };
+        })
+      );
+    });
+
+    // animepahe
+    //   .search("blue-lock-vs-u-20-japan")
+    //   .then((data) => console.log(data));
+
+    // animepahe.fetchAnimeInfo("163146").then((data) => console.log(data));
+    // animepahe
+    //   .fetchEpisodeSources("blue-lock-vs-u-20-japan-episode-1", 1, "163146")
+    //   .then((data) => console.log(data));
+
+    // animepahe
+    //   .fetchEpisodeSources(animeEps[0].epId, animeEps[0].epNum, animeId)
+    //   .then((data) => console.log(data));
+  };
 
   //function to fetch recomended anime
   const fetchRecomendedAnime = async () => {
@@ -39,6 +81,7 @@ const Hero = () => {
       const response = await axios.get(`${api}meta/anilist/trending`);
       const data = response.data;
       setAnimeData(data.results);
+      console.log(animeData);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -48,6 +91,7 @@ const Hero = () => {
 
   useEffect(() => {
     fetchRecomendedAnime();
+    fetchAnimeInfo();
   }, []);
 
   return (

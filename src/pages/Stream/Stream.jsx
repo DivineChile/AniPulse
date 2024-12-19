@@ -6,38 +6,28 @@ import {
   Flex,
   Grid,
   GridItem,
-  Image,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import "./style.css";
-import Hls from "hls.js";
-import Artplayer from "artplayer";
 import axios from "axios";
-import VideoPlayer from "../../components/VideoPlayer";
 import Loading from "../../components/ErrorPage/Loading";
+import Player from "../../components/VideoPlayer/Player";
 
 const Stream = () => {
   const navigate = useNavigate();
   const { watchId, gogoId } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
   const [epLoading, setEpLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [epError, setEpError] = useState(null);
-  const [episodeId, setEpisodeId] = useState([]);
   const [episodeData, setEpisodeData] = useState([]);
   const [episodes, setEpisodes] = useState([]);
   const [animeRating, setAnimeRating] = useState("");
   const [animeImg, setAnimeImg] = useState("");
-  const [newAnimeNum, setNewAnimeNum] = useState("");
-  const [currentEpNum, setCurrentEpNum] = useState("");
-  const [onPlay, setOnPlay] = useState(false);
-  const [videoData, setVideoData] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
 
   const api = "https://consumet-api-puce.vercel.app/";
@@ -47,37 +37,6 @@ const Stream = () => {
   let test = gogoId.split("-").pop();
   let newAnimeIdVal = "";
   let currentEp = null;
-  // const num = watchId.split("-").splice(-2);
-  // if (isNaN(parseInt(num[0]))) {
-  //   currentEp = num[1];
-  //   newAnimeId = watchId.split("-").slice(0, -2);
-  //   newAnimeIdVal = newAnimeId.join("-");
-  // } else {
-  //   currentEp = `${num[0]}.${num[1]}`;
-  //   newAnimeId = watchId.split("-").slice(0, -3);
-  //   newAnimeIdVal = newAnimeId.join("-");
-  // }
-
-  // Logic to extract season Number
-  // const containsStNdRdTh = newAnimeId.some((item) =>
-  //   /^\d{1,2}(st|nd|rd|th)$/.test(item)
-  // );
-  // const containsNoTh = newAnimeId.some((item) => /^\d{1,2}$/.test(item));
-
-  // let extractedNumbersStNdRdTh = [];
-  // let extractedNumbersNoTh = [];
-
-  // if (containsStNdRdTh) {
-  //   extractedNumbersStNdRdTh = newAnimeId
-  //     .filter((item) => /^\d{1,2}(st|nd|rd|th)$/.test(item))
-  //     .map((item) => parseInt(item, 10));
-  // }
-
-  // if (containsNoTh) {
-  //   extractedNumbersNoTh = newAnimeId
-  //     .filter((item) => /^\d{1,2}$/.test(item))
-  //     .map((item) => parseInt(item, 10));
-  // }
 
   useEffect(() => {
     const fetchEpisodes = async () => {
@@ -91,7 +50,7 @@ const Stream = () => {
         setEpisodes(data.episodes || []);
         setAnimeRating(data.rating);
         setAnimeImg(data.image);
-        console.log(episodeData);
+        setAnimeTitle(data.title);
       } catch {
         setEpError("Failed to load data. Please try again.");
       } finally {
@@ -99,54 +58,13 @@ const Stream = () => {
       }
     };
 
-    const fetchVideos = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await axios.get(
-          `${api}anime/gogoanime/servers/${gogoId}`
-        );
-        setVideoData(data);
-        setAnimeTitle(gogoId.split("-episode-")[0]);
-      } catch {
-        setError("Failed to load data. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchEpisodes();
-    fetchVideos();
+    // fetchVideos();
   }, [gogoId, newWatchId]);
 
   useEffect(() => {
     document.title = `${animeTitle} Episode ${test} - AniPulse`;
   }, [gogoId, test, animeTitle]);
-
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
-
-  const [downloadLoading, setDownloadLoading] = useState(true);
-  const [downloadError, setDownloadError] = useState(null);
-  const [downloadUrl, setDownloadUrl] = useState("");
-  useEffect(() => {
-    const downloadEpisode = async () => {
-      try {
-        const downloadRes = await fetch(
-          `https://api-amvstrm.nyt92.eu.org/api/v1/download/${watchId}`
-        );
-        const downloadData = await downloadRes.json();
-        setDownloadUrl(downloadData.download);
-        setDownloadLoading(false);
-        setDownloadError(false);
-      } catch {
-        setDownloadError(true);
-        setDownloadLoading(false);
-      }
-    };
-
-    downloadEpisode();
-  });
 
   return (
     <Box>
@@ -200,9 +118,9 @@ const Stream = () => {
                 <GridItem
                   colSpan={{ base: 6, xl: 4 }}
                   h={{
-                    base: onPlay ? "100%" : "250px",
-                    sm: onPlay ? "100%" : "350px",
-                    md: onPlay ? "100%" : "400px",
+                    base: "250px",
+                    sm: "350px",
+                    md: "400px",
                     xl: "450px!important",
                     "2xl": "600px!important",
                   }}
@@ -211,7 +129,8 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <VideoPlayer watchId={gogoId} />
+                  {/* <VideoPlayer watchId={gogoId} /> */}
+                  <Player episode={test} />
                 </GridItem>
 
                 <GridItem
@@ -436,7 +355,7 @@ const Stream = () => {
                     mt={{ base: "20px", md: "0" }}
                     width={{ base: "initial" }}
                   >
-                    <a
+                    {/* <a
                       className="downloadBtn"
                       href={`${downloadUrl}`}
                       target="_blank"
@@ -464,7 +383,7 @@ const Stream = () => {
                         : downloadError
                         ? "Error Loading..."
                         : "Download Now"}
-                    </a>
+                    </a> */}
                     <Text
                       fontSize={{ base: "15.58px", "2xl": "24.41px" }}
                       lineHeight={{ base: "28.8px", "2xl": "37.5px" }}
