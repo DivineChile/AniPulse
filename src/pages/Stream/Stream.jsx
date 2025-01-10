@@ -15,42 +15,39 @@ import Error from "../../components/ErrorPage/Error";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import "./style.css";
-import axios from "axios";
 import Loading from "../../components/ErrorPage/Loading";
 import Player from "../../components/VideoPlayer/Player";
 
 const Stream = () => {
   const navigate = useNavigate();
-  const { watchId, gogoId } = useParams();
+  const { watchId } = useParams();
   const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
-  const [episodeData, setEpisodeData] = useState([]);
+  const [animeData, setAnimeData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [episodes, setEpisodes] = useState([]);
+  const [episodeNumber, setEpisodeNumber] = useState("");
   const [animeRating, setAnimeRating] = useState("");
-  const [animeImg, setAnimeImg] = useState("");
   const [animeTitle, setAnimeTitle] = useState("");
 
   const api = "https://consumet-api-puce.vercel.app/";
-
+  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const location = useLocation();
-  let newWatchId = gogoId.split("-episode-")[0];
-  let test = gogoId.split("-").pop();
-  let newAnimeIdVal = "";
-  let currentEp = null;
+  const fullPath = `${watchId}${location.search}`;
 
   useEffect(() => {
     const fetchEpisodes = async () => {
       setEpLoading(true);
       setEpError(null);
       try {
-        const { data } = await axios.get(
-          `${api}anime/gogoanime/info/${newWatchId}`
+        const response = await fetch(
+          `${proxy}${backup_api}/api/v2/hianime/anime/${watchId}/episodes`
         );
-        setEpisodeData(data);
-        setEpisodes(data.episodes || []);
-        setAnimeRating(data.rating);
-        setAnimeImg(data.image);
-        setAnimeTitle(data.title);
+        const data = await response.json();
+        setEpisodes(data.data.episodes || []);
+        setEpisodeNumber(data.data.episodes.map((item) => item.number));
       } catch {
         setEpError("Failed to load data. Please try again.");
       } finally {
@@ -58,13 +55,34 @@ const Stream = () => {
       }
     };
 
+    const fetchAnimeData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(
+          `${proxy}${backup_api}/api/v2/hianime/anime/${watchId}`
+        );
+        const data = await response.json();
+        setAnimeData(data.data.anime);
+        setAnimeTitle(animeData.info.name);
+        setAnimeRating(animeData.moreInfo.malscore);
+        console.log(animeData);
+      } catch (error) {
+        setError("Failed to load data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchEpisodes();
-    // fetchVideos();
-  }, [gogoId, newWatchId]);
+    fetchAnimeData();
+  }, [watchId]);
 
   useEffect(() => {
-    document.title = `${animeTitle} Episode ${test} - AniPulse`;
-  }, [gogoId, test, animeTitle]);
+    document.title = `${animeTitle} - AniPulse`;
+  }, [fullPath, animeTitle, watchId]);
+  console.log(episodeNumber);
 
   return (
     <Box>
@@ -102,7 +120,7 @@ const Stream = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>{`Stream / ${animeTitle} Episode ${test}`}</BreadcrumbLink>
+              <BreadcrumbLink>{`Stream / ${animeTitle} Episode 1`}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -129,8 +147,7 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  {/* <VideoPlayer watchId={gogoId} /> */}
-                  <Player episode={test} />
+                  <Player />
                 </GridItem>
 
                 <GridItem
@@ -196,22 +213,23 @@ const Stream = () => {
                         )}
 
                         {episodes && episodes.length > 0 ? (
-                          episodes.map((ep) => {
-                            const epId = ep.id;
+                          episodes.map((ep, id) => {
                             const epNo = ep.number;
+                            const epId = ep.episodeId;
+                            const epTitle = ep.title;
+
                             return (
                               <Link
                                 key={epId}
-                                to={`/watch/${watchId}/${epId}`}
-                                // onClick={() => handleEpisodeClick(item.id)}
+                                to={`/watch/${epId}`}
                                 className={
-                                  location.pathname ==
-                                  `/watch/${watchId}/${epId}`
+                                  `${location.pathname}${location.search}` ==
+                                  `/watch/${epId}`
                                     ? "episode active"
                                     : "episode"
                                 }
                               >
-                                {`Episode ${epNo}`}
+                                {`Episode ${epNo} - ${epTitle}`}
                               </Link>
                             );
                           })
@@ -250,7 +268,7 @@ const Stream = () => {
                     >
                       You&apos;re watching{" "}
                       <Text as="span" color="var(--accent-color)">
-                        Episode {test}.
+                        Episode 1.
                       </Text>
                     </Text>
                     <Text
@@ -295,7 +313,7 @@ const Stream = () => {
                       >
                         <Link
                           className={
-                            location.pathname == `/watch/${watchId}/${gogoId}`
+                            location.pathname == `/watch/${watchId}`
                               ? "server active"
                               : "server"
                           }
@@ -329,7 +347,7 @@ const Stream = () => {
                       >
                         <Link
                           className={
-                            location.pathname == `/watch/${watchId}/${gogoId}`
+                            location.pathname == `/watch/${watchId}`
                               ? "server active"
                               : "server"
                           }

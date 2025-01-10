@@ -1,62 +1,70 @@
 import { useRef, useEffect, useState } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
-import { ANIME } from "@consumet/extensions";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Loading from "../ErrorPage/Loading";
 import Error from "../ErrorPage/Error";
 import { Box } from "@chakra-ui/react";
 
 import "./style.css";
 
-const Player = ({ episode }) => {
-  const { watchId, gogoId } = useParams();
+const Player = () => {
+  const location = useLocation();
+  const { watchId } = useParams();
+  const fullPath = `${watchId}${location.search}`;
   const artRef = useRef(null);
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
-  const anime = new ANIME.Anify();
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
-  const [proxiedSources, setProxiedSources] = useState([]);
+  const [videoData, setVideoData] = useState(null);
 
   useEffect(() => {
-    const fetchVideos = async () => {
+    const fetchVideoData = async () => {
       try {
         setLoading(true);
         setStreamError(null);
 
-        // Fetch video sources
-        const response = await anime.fetchEpisodeSources(
-          gogoId,
-          episode,
-          watchId
+        const response = await fetch(
+          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}`
         );
 
-        if (response?.sources?.length) {
-          // Add proxy to source URLs and set state
-          const sources = response.sources.map((source) => ({
-            ...source,
-            url: `${proxy}${source.url}`,
-          }));
-          setProxiedSources(sources);
-        } else {
-          throw new Error("No video sources found.");
+        if (!response.ok) {
+          throw new Error("Failed to fetch video data.");
         }
+
+        const data = await response.json();
+
+        if (!data.success || !data.data?.sources?.length) {
+          throw new Error("No video sources available.");
+        }
+
+        setVideoData(data.data);
+        console.log(videoData);
       } catch (err) {
-        setStreamError(err.message || "Failed to load episode data.");
+        setStreamError(err.message || "An error occurred.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVideos();
-  }, [episode, gogoId, watchId]);
+    fetchVideoData();
+  }, [fullPath]);
 
   useEffect(() => {
-    if (!proxiedSources.length || artRef.current) return;
+    if (!videoData || artRef.current) return;
 
-    const defaultSource =
-      proxiedSources.find((s) => s.quality === "default") || proxiedSources[0];
+    const defaultSource = videoData.sources[0]?.url;
+    const subtitles = videoData.tracks?.map((track) => ({
+      url: track.file,
+      type: "vtt",
+      label: track.label,
+      default: track.label === "English",
+    }));
+
+    const defaultSubtitle = subtitles.find(
+      (subtitle) => subtitle.default === true
+    );
 
     if (!defaultSource) {
       console.error("No valid video source found.");
@@ -67,7 +75,7 @@ const Player = ({ episode }) => {
     artRef.current = new Artplayer({
       container: ".artplayer-container",
       customType: {
-        m3u8: (videoElement, url) => {
+        hls: (videoElement, url) => {
           if (Hls.isSupported()) {
             const hls = new Hls();
             hls.loadSource(url);
@@ -81,21 +89,23 @@ const Player = ({ episode }) => {
           }
         },
       },
-      type: "m3u8",
-      url: defaultSource.url,
-      quality: proxiedSources.map((source) => ({
-        html: source.quality === "default" ? "Quality" : source.quality,
-        url: source.url,
-        default: source.quality === "default",
-      })),
+      type: videoData.sources[0]?.type || "hls",
+      url: defaultSource,
+      subtitle: defaultSubtitle,
+      subtitleOffset: true,
       autoSize: true,
+      autoplay: true,
       autoMini: true,
       theme: "var(--accent-color)",
       screenshot: true,
       setting: true,
       playbackRate: true,
       fullscreen: true,
-      subtitleOffset: true,
+      quality: videoData.sources.map((source) => ({
+        html: "Quality",
+        url: source.url,
+        default: source === defaultSource,
+      })),
     });
 
     // Handle quality switching
@@ -109,7 +119,7 @@ const Player = ({ episode }) => {
         artRef.current = null;
       }
     };
-  }, [proxiedSources]);
+  }, [videoData]);
 
   if (loading) return <Loading bg="#191919" height="100%" />;
   if (streamError)
