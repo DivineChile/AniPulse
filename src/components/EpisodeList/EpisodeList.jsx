@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../ErrorPage/Error";
 
-const EpisodeList = ({ items, itemId, aniId }) => {
+const EpisodeList = ({ items, itemId }) => {
   const [showAll, setShowAll] = useState(false);
 
   // Determine the number of episodes to display
@@ -18,7 +18,7 @@ const EpisodeList = ({ items, itemId, aniId }) => {
       {displayedEpisodes.map((_, index) => (
         <ChakraLink
           as={ReactRouterLink}
-          to={`/watch/${aniId}/${itemId[index]}`}
+          to={`/watch/${itemId[index]}`}
           _hover={{
             textDecor: "none",
             color: "var(--accent-color)",

@@ -92,7 +92,7 @@ const Recents = () => {
           <GridItem key={item.id} w={{ base: "100%" }}>
             <Box
               as={ReactRouterLink}
-              to={`/watch/${encodeURIComponent(item.poster)}/${item.id}`}
+              to={`/anime/${item.id}`}
               pos="relative"
               overflow="hidden"
               display="block"
@@ -137,7 +137,7 @@ const Recents = () => {
               >
                 <ChakraLink
                   as={ReactRouterLink}
-                  to={`/watch/${encodeURIComponent(item.poster)}/${item.id}`}
+                  to={`/anime/${item.id}`}
                   color="var(--link-color)"
                   _hover={{
                     color: "var(--accent-color)",
@@ -183,7 +183,7 @@ const Recents = () => {
               </Text>
               <ChakraLink
                 as={ReactRouterLink}
-                to={`/watch/${encodeURIComponent(item.poster)}/${item.id}`}
+                to={`/anime/${item.id}`}
                 _hover={{ textDecor: "none" }}
               >
                 <Text
