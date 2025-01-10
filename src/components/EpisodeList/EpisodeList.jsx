@@ -3,21 +3,12 @@ import { useState } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../ErrorPage/Error";
 
-const EpisodeList = ({ items, itemId, aniId, subOrDub }) => {
+const EpisodeList = ({ items, itemId, aniId }) => {
   const [showAll, setShowAll] = useState(false);
 
   // Determine the number of episodes to display
   const maxDisplayCount = 5;
   const displayedEpisodes = showAll ? items : items?.slice(0, maxDisplayCount);
-
-  // // Extracted function to format episode IDs
-  // const formatEpisodeId = (id) => {
-  //   const parts = id?.split("-");
-  //   const lastItems = parts?.slice(-2);
-  //   return lastItems[0]?.length > 1
-  //     ? `Episode ${lastItems.pop()}`
-  //     : `Episode ${lastItems[0]}.5`;
-  // };
 
   return (
     <>
@@ -54,7 +45,7 @@ const EpisodeList = ({ items, itemId, aniId, subOrDub }) => {
           mb="10px"
           key={index}
         >
-          {`Episode ${index + 1} (${subOrDub})`}
+          {`Episode ${index + 1}`}
         </ChakraLink>
       ))}
 

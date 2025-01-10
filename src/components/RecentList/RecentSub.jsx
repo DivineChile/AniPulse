@@ -24,16 +24,19 @@ const Recents = () => {
   const [showAll, setShowAll] = useState(false);
 
   const api = "https://consumet-api-puce.vercel.app/";
+  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchRecentReleaseAnime = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `${api}anime/gogoanime/recent-episodes?type=1`
+      const response = await fetch(
+        `${proxy}${backup_api}/api/v2/hianime/category/recently-updated`
       );
-      setSubAnimeData(response.data.results);
-      console.log(subAnimeData);
+      const data = await response.json();
+      setSubAnimeData(data.data.animes);
+      console.log(data);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -83,13 +86,13 @@ const Recents = () => {
     <>
       {displayedAnime.map((item, index) => {
         const epLength =
-          item.title.length > 30 ? `${item.title.slice(0, 30)}...` : item.title;
+          item.name.length > 30 ? `${item.name.slice(0, 30)}...` : item.name;
 
         return (
-          <GridItem key={item.episodeId} w={{ base: "100%" }}>
+          <GridItem key={item.id} w={{ base: "100%" }}>
             <Box
               as={ReactRouterLink}
-              to={`/watch/${encodeURIComponent(item.image)}/${item.episodeId}`}
+              to={`/watch/${encodeURIComponent(item.poster)}/${item.id}`}
               pos="relative"
               overflow="hidden"
               display="block"
@@ -106,7 +109,7 @@ const Recents = () => {
             >
               {/* Anime Image */}
               <Image
-                src={item.image}
+                src={item.poster}
                 w="100%"
                 bg="#191919"
                 borderRadius="10px"
@@ -134,9 +137,7 @@ const Recents = () => {
               >
                 <ChakraLink
                   as={ReactRouterLink}
-                  to={`/watch/${encodeURIComponent(item.image)}/${
-                    item.episodeId
-                  }`}
+                  to={`/watch/${encodeURIComponent(item.poster)}/${item.id}`}
                   color="var(--link-color)"
                   _hover={{
                     color: "var(--accent-color)",
@@ -178,13 +179,11 @@ const Recents = () => {
                 lineHeight="24px"
                 letterSpacing="0.5px"
               >
-                Episode {item.episodeNumber || "Loading..."}
+                Episode {item.episodes.sub || "Loading..."}
               </Text>
               <ChakraLink
                 as={ReactRouterLink}
-                to={`/watch/${encodeURIComponent(item.image)}/${
-                  item.episodeId
-                }`}
+                to={`/watch/${encodeURIComponent(item.poster)}/${item.id}`}
                 _hover={{ textDecor: "none" }}
               >
                 <Text
