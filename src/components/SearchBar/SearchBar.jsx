@@ -16,7 +16,6 @@ import "../../index.css";
 import "./style.css";
 import { useState, useCallback } from "react";
 import { debounce } from "lodash";
-import axios from "axios";
 
 const SearchBar = ({ above, below, displayProp }) => {
   const [query, setQuery] = useState("");

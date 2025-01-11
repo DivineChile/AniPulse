@@ -26,7 +26,7 @@ const Player = () => {
         setStreamError(null);
 
         const response = await fetch(
-          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}`
+          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&category=sub`
         );
 
         if (!response.ok) {
@@ -91,7 +91,7 @@ const Player = () => {
       },
       type: videoData.sources[0]?.type || "hls",
       url: defaultSource,
-      subtitle: defaultSubtitle,
+      subtitle: defaultSubtitle || {},
       subtitleOffset: true,
       autoSize: true,
       autoplay: true,

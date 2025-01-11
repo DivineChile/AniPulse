@@ -203,6 +203,7 @@ const Stream = () => {
                         display={{ base: "flex" }}
                         flexDir={{ base: "column" }}
                         pos="relative"
+                        alignItems="flex-start"
                       >
                         {/* Show Loading State */}
                         {epLoading && <Loading bg="none" />}
