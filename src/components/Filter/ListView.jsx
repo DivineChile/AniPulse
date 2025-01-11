@@ -31,10 +31,8 @@ const ListView = ({ results }) => {
       {results && results?.length > 0
         ? results?.map((result, index) => {
             const resultId = result.id;
-            const resultTitle = result.title.userPreferred;
-            const resultStatus = result.status;
-            const resultImg = result.image;
-            const resultRelease = result.releaseDate;
+            const resultTitle = result.name;
+            const resultImg = result.poster;
             const resultType = result.type;
 
             return (
@@ -106,9 +104,7 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {resultStatus && resultStatus !== ""
-                            ? resultStatus
-                            : "NIL"}
+                          {result.episodes.sub ? "SUB" : "NIL"}
                         </Text>
                         <Text
                           as="span"
@@ -128,9 +124,7 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {resultRelease && resultRelease !== ""
-                            ? resultRelease
-                            : "NIL"}
+                          {result.episodes.dub ? "DUB" : "NIL"}
                         </Text>
                       </Box>
                       <Spacer />

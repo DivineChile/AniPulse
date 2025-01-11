@@ -15,7 +15,6 @@ import "./style.css";
 import { useEffect, useState } from "react";
 
 import { BsInfoCircle } from "react-icons/bs";
-import axios from "axios";
 import Loading from "../ErrorPage/Loading";
 
 const PopularList = () => {
@@ -24,16 +23,18 @@ const PopularList = () => {
   const [results, setResults] = useState([]);
 
   const api = "https://consumet-api-puce.vercel.app/";
+  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchPopularAnimes = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `${api}meta/anilist/popular?perPage=${4}`
+      const response = await fetch(
+        `${proxy}${backup_api}/api/v2/hianime/category/most-popular`
       );
-      setResults(response.data.results);
-      console.log(results);
+      const data = await response.json();
+      setResults(data.data.animes);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -44,6 +45,8 @@ const PopularList = () => {
   useEffect(() => {
     fetchPopularAnimes();
   }, []);
+
+  const truncatedResults = results.length > 4 ? results.slice(0, 4) : results;
 
   return (
     <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
@@ -91,18 +94,16 @@ const PopularList = () => {
           >
             {isLoading && <Loading pos="absolute" />}
             {error && <Error msg={error} pos="absolute" />}
-            {results?.map((item) => {
-              const id = item.id;
-              const title = item.title.english;
-              const bg = item.image;
-              const seasonYear = item.releaseDate;
-              const type = item.type;
-
+            {truncatedResults.map((item, index) => {
+              const nameLength =
+                item.name.length > 30
+                  ? `${item.name.slice(0, 30)}...`
+                  : item.name;
               return (
-                <GridItem w={{ base: "100%" }} key={id}>
+                <GridItem w={{ base: "100%" }} key={item.id}>
                   <Box
                     as={ReactRouterLink}
-                    to={`/anime/${id}`}
+                    to={`/anime/${item.id}`}
                     pos="relative"
                     overflow="hidden!important"
                     className={`episode-container`}
@@ -119,7 +120,7 @@ const PopularList = () => {
                   >
                     {/* Anime Img */}
                     <Image
-                      src={bg}
+                      src={item.poster}
                       w="100%"
                       bg="#191919"
                       borderRadius="10px"
@@ -147,7 +148,7 @@ const PopularList = () => {
                     >
                       <ChakraLink
                         as={ReactRouterLink}
-                        to={`/anime/${id}`}
+                        to={`/anime/${item.id}`}
                         color="var(--secondary-color)"
                         _hover={{
                           color: "var(--accent-color)",
@@ -199,7 +200,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {type}
+                        SUB
                       </Text>
                       <Text
                         as="span"
@@ -219,7 +220,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {seasonYear}
+                        DUB
                       </Text>
                       <Text
                         as="span"
@@ -235,13 +236,13 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {}
+                        {item.type}
                       </Text>
                     </Flex>
                     <ChakraLink
                       as={ReactRouterLink}
                       _hover={{ textDecor: "none" }}
-                      to={`/anime/${id}`}
+                      to={`/anime/${item.id}`}
                     >
                       {/* Anime Name */}
                       <Text
@@ -261,7 +262,7 @@ const PopularList = () => {
                         transition="all ease 0.25s"
                         _hover={{ color: "var(--accent-color)" }}
                       >
-                        {title}
+                        {nameLength}
                       </Text>
                     </ChakraLink>
                   </Box>

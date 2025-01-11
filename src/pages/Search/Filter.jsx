@@ -49,6 +49,8 @@ const Filter = () => {
   const [gridView, setGridView] = useState(true);
   const [showClear, setShowClear] = useState(true);
   const api = "https://consumet-api-puce.vercel.app/";
+  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const navigate = useNavigate();
 
@@ -56,10 +58,12 @@ const Filter = () => {
     setIsLoading(true);
     setError(false);
     try {
-      const response = await axios.get(`${api}meta/anilist/${searchQuery}`);
-      console.log(response.data);
-      setSearchResults(response.data.results);
-      setCurrentPage(response.data.currentPage);
+      const response = await fetch(
+        `${proxy}${backup_api}/api/v2/hianime/search?q=${searchQuery}`
+      );
+      const data = await response.json();
+      setSearchResults(data.data.animes);
+      setCurrentPage(data.data.currentPage);
       setIsLoading(false);
       setError(false);
     } catch (error) {
@@ -85,10 +89,12 @@ const Filter = () => {
     setIsLoading(true);
     setError(false);
     try {
-      const response = await axios.get(`${api}meta/anilist/${newQueryValue}`);
-      console.log(response.data);
-      setSearchResults(response.data.results);
-      setCurrentPage(response.data.currentPage);
+      const response = await fetch(
+        `${proxy}${backup_api}/api/v2/hianime/search?q=${newQueryValue}`
+      );
+      const data = await response.json();
+      setSearchResults(data.data.animes);
+      setCurrentPage(data.data.currentPage);
       setIsLoading(false);
       setError(false);
     } catch (error) {

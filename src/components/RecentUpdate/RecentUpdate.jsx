@@ -82,7 +82,7 @@ const RecentUpdate = () => {
         </Box>
         {/* Recent Animes Released */}
         <Box>
-          <Grid
+          {/* <Grid
             display={{ base: "grid", md: "grid" }}
             justifyItems="flex-start"
             gridTemplateColumns={{
@@ -94,8 +94,8 @@ const RecentUpdate = () => {
             gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
             pos="relative"
           >
-            <RecentSub />
-          </Grid>
+          </Grid> */}
+          <RecentSub />
         </Box>
       </Box>
     </Box>

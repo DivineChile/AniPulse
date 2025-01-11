@@ -9,6 +9,7 @@ import {
   Spinner,
   Text,
   Link as ChakraLink,
+  Flex,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import "../../index.css";
@@ -26,6 +27,8 @@ const SearchBar = ({ above, below, displayProp }) => {
 
   const navigate = useNavigate();
   const api = "https://consumet-api-puce.vercel.app/";
+  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   // Fetch anime data based on the query
   const fetchData = async (query) => {
@@ -38,8 +41,11 @@ const SearchBar = ({ above, below, displayProp }) => {
     setError(null);
 
     try {
-      const response = await axios.get(`${api}meta/anilist/${query}`);
-      setSearchResults(response.data.results || []);
+      const response = await fetch(
+        `${proxy}${backup_api}/api/v2/hianime/search?q=${query}`
+      );
+      const data = await response.json();
+      setSearchResults(data.data.animes || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -161,8 +167,8 @@ const SearchBar = ({ above, below, displayProp }) => {
                 w="50px"
                 bg="#191919"
                 borderRadius="6px"
-                src={item.image}
-                alt={item.title.userPreferred}
+                src={item.poster}
+                alt={item.name}
               />
               <Box>
                 <Heading
@@ -171,13 +177,29 @@ const SearchBar = ({ above, below, displayProp }) => {
                   color="var(--secondary-color)"
                   _hover={{ color: "var(--accent-color)" }}
                 >
-                  {item.title.userPreferred}
+                  {item.name}
                 </Heading>
-                <Text color="var(--text-color)" fontSize="14px">
-                  Episodes: {item.totalEpisodes || "N/A"}
-                </Text>
-                <Text color="var(--text-color)" fontSize="14px">
-                  Status: {item.status || "N/A"}
+
+                <Flex gap="5px">
+                  <Text color="var(--text-color)" fontSize="12px">
+                    Sub: {item.episodes.sub || "N/A"}
+                  </Text>
+                  <Text color="var(--text-color)" fontSize="12px">
+                    ~
+                  </Text>
+                  <Text color="var(--text-color)" fontSize="12px">
+                    Dub: {item.episodes.dub || "N/A"}
+                  </Text>
+                </Flex>
+                <Text
+                  color="var(--text-color)"
+                  fontSize="12px"
+                  border="1px solid var(--text-color)"
+                  w="fit-content"
+                  borderRadius="5px"
+                  px="5px"
+                >
+                  {item.type || "N/A"}
                 </Text>
               </Box>
             </ChakraLink>

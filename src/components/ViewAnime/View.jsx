@@ -8,12 +8,6 @@ import {
   GridItem,
   Heading,
   Link as ChakraLink,
-  Tabs,
-  TabList,
-  Tab,
-  TabIndicator,
-  TabPanels,
-  TabPanel,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
@@ -21,9 +15,7 @@ import Navbar from "../Navbar/Navbar";
 import Error from "../ErrorPage/Error";
 
 import EpisodeList from "../EpisodeList/EpisodeList";
-import axios from "axios";
 import Loading from "../ErrorPage/Loading";
-import CountDown from "../CountDown";
 
 const View = () => {
   const { id } = useParams();
@@ -49,6 +41,7 @@ const View = () => {
   const [animeInfo, setAnimeInfo] = useState([]);
   const [infoLoading, setInfoLoading] = useState(true);
   const [infoError, setInfoError] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
@@ -104,34 +97,6 @@ const View = () => {
     fetchAnimeData();
     fetchAnimeEpisodes();
   }, []);
-
-  // Fetch dubbed episodes when gogoId changes
-  useEffect(() => {
-    if (gogoId) {
-      const GogoIdDub = `${gogoId.split("/").pop()}-dub`;
-      setGogoIdDub(GogoIdDub);
-
-      const fetchDubbedEpisodes = async () => {
-        setEpLoading(true);
-        setEpError(null);
-        try {
-          const response = await axios.get(
-            `${api}anime/gogoanime/info/${GogoIdDub}`
-          );
-          setDubEpisodes(response.data.episodes);
-          setDubEpisodeId(response.data.episodes.map((item) => item.id));
-          console.log("Dubbed Episodes:", response.data);
-        } catch (err) {
-          setEpError("Failed to load dubbed episode data. Please try again.");
-          console.error("Error fetching dubbed episodes:", err);
-        } finally {
-          setEpLoading(false);
-        }
-      };
-
-      fetchDubbedEpisodes();
-    }
-  }, [gogoId]);
 
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
 
@@ -263,13 +228,27 @@ const View = () => {
                         transition="background ease 0.25s"
                       >
                         {animeData.info.description
-                          ? animeData.info.description !== ""
-                            ? animeData.info.description.length > 200
-                              ? `${animeData.info.description.slice(0, 250)}...`
-                              : `${animeData.info.description}`
-                            : "NIL"
+                          ? isExpanded
+                            ? animeData.info.description
+                            : animeData.info.description.length > 250
+                            ? `${animeData.info.description.slice(0, 250)}...`
+                            : animeData.info.description
                           : "NIL"}
+                        {animeData.info.description &&
+                          animeData.info.description.length > 250 && (
+                            <Text
+                              as="span"
+                              color="var(--accent-color)"
+                              cursor="pointer"
+                              fontWeight="500"
+                              ml="5px"
+                              onClick={() => setIsExpanded((prev) => !prev)}
+                            >
+                              {isExpanded ? "Show Less" : "Show More"}
+                            </Text>
+                          )}
                       </Text>
+                      ;
                     </Box>
                     <Box w="100%" h="47px">
                       <ChakraLink

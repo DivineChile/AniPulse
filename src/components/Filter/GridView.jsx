@@ -30,10 +30,8 @@ const GridView = ({ results }) => {
       {results && results?.length > 0
         ? results.map((item, index) => {
             const resultId = item.id;
-            const resultTitle = item.title.userPreferred;
-            const resultStatus = item.status;
-            const resultImg = item.image;
-            const resultRelease = item.releaseDate;
+            const resultTitle = item.name;
+            const resultImg = item.poster;
             const resultType = item.type;
 
             return (
@@ -140,7 +138,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {resultStatus ? resultStatus : "NIL"}
+                      {item.episodes.sub ? "SUB" : "NIL"}
                     </Text>
                     <Text
                       as="span"
@@ -160,7 +158,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {resultRelease ? resultRelease : "NIL"}
+                      {item.episodes.dub ? "DUB" : "NIL"}
                     </Text>
                     <Text
                       as="span"

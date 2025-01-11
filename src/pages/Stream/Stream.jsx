@@ -204,37 +204,45 @@ const Stream = () => {
                         flexDir={{ base: "column" }}
                         pos="relative"
                       >
+                        {/* Show Loading State */}
                         {epLoading && <Loading bg="none" />}
-                        {epError && (
+
+                        {/* Show Error State */}
+                        {!epLoading && epError && (
                           <Error
                             bg=""
                             msg="Error loading episodes, please try again."
                           />
                         )}
 
-                        {episodes && episodes.length > 0 ? (
-                          episodes.map((ep, id) => {
-                            const epNo = ep.number;
-                            const epId = ep.episodeId;
-                            const epTitle = ep.title;
-
-                            return (
-                              <Link
-                                key={epId}
-                                to={`/watch/${epId}`}
-                                className={
-                                  `${location.pathname}${location.search}` ==
-                                  `/watch/${epId}`
-                                    ? "episode active"
-                                    : "episode"
-                                }
-                              >
-                                {`Episode ${epNo} - ${epTitle}`}
-                              </Link>
-                            );
-                          })
-                        ) : (
-                          <Error bg="none" msg="" />
+                        {/* Show Episodes or Fallback Error */}
+                        {!epLoading && !epError && (
+                          <>
+                            {episodes && episodes.length > 0 ? (
+                              episodes.map(
+                                ({
+                                  number: epNo,
+                                  episodeId: epId,
+                                  title: epTitle,
+                                }) => (
+                                  <Link
+                                    key={epId}
+                                    to={`/watch/${epId}`}
+                                    className={
+                                      `${location.pathname}${location.search}` ===
+                                      `/watch/${epId}`
+                                        ? "episode active"
+                                        : "episode"
+                                    }
+                                  >
+                                    {`Episode ${epNo} - ${epTitle}`}
+                                  </Link>
+                                )
+                              )
+                            ) : (
+                              <Error bg="none" msg="No episodes available." />
+                            )}
+                          </>
                         )}
                       </Box>
                     </Box>
