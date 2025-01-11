@@ -276,7 +276,7 @@ const PopularList = () => {
           ) : error ? (
             <></>
           ) : (
-            <Box display="flex" justifyContent="flex-end" mt="20px">
+            <Box display="flex" justifyContent="flex-start" mt="20px">
               <ChakraLink
                 as={ReactRouterLink}
                 to="/popular"
@@ -291,7 +291,7 @@ const PopularList = () => {
                 borderRadius="5px"
                 padding="5px 15px"
                 transition="all ease 0.25s"
-                width={{ base: "100%" }}
+                width={{ base: "100%", md: "fit-content" }}
                 textAlign={{ base: "center" }}
                 _hover={{
                   textDecor: "none",

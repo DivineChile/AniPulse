@@ -228,6 +228,7 @@ const Stream = () => {
                                   <Link
                                     key={epId}
                                     to={`/watch/${epId}`}
+                                    style={{ textDecoration: "none" }}
                                     className={
                                       `${location.pathname}${location.search}` ===
                                       `/watch/${epId}`
