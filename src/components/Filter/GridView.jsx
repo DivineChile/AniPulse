@@ -138,7 +138,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {item.episodes.sub ? "SUB" : "NIL"}
+                      {item.episodes.sub ? `SUB ${item.episodes.sub}` : "NIL"}
                     </Text>
                     <Text
                       as="span"
@@ -158,7 +158,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       textTransform="uppercase"
                     >
-                      {item.episodes.dub ? "DUB" : "NIL"}
+                      {item.episodes.dub ? `DUB ${item.episodes.dub}` : "NIL"}
                     </Text>
                     <Text
                       as="span"

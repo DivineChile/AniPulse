@@ -104,7 +104,9 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {result.episodes.sub ? "SUB" : "NIL"}
+                          {result.episodes.sub
+                            ? `SUB ${result.episodes.sub}`
+                            : "NIL"}
                         </Text>
                         <Text
                           as="span"
@@ -124,7 +126,9 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {result.episodes.dub ? "DUB" : "NIL"}
+                          {result.episodes.dub
+                            ? `SUB ${result.episodes.dub}`
+                            : "NIL"}
                         </Text>
                       </Box>
                       <Spacer />

@@ -64,6 +64,7 @@ const Filter = () => {
       const data = await response.json();
       setSearchResults(data.data.animes);
       setCurrentPage(data.data.currentPage);
+      setTotalPages(data.data.totalPages);
       setIsLoading(false);
       setError(false);
     } catch (error) {
