@@ -196,7 +196,7 @@ const GridView = ({ results }) => {
                       letterSpacing="0.5px"
                       fontWeight="500"
                       textAlign={{ base: "start" }}
-                      color="var(--link-color)"
+                      color="var(--text-color)"
                       transition="all ease 0.25s"
                       _hover={{ color: "var(--accent-color)" }}
                     >

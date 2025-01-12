@@ -66,7 +66,7 @@ const ListView = ({ results }) => {
                       textDecor="none"
                       className="listItemHead"
                       fontSize={{ base: "11.81px", md: "14.77px" }}
-                      color="var(--secondary-color)"
+                      color="var(--text-color)"
                       _hover={{
                         color: "var(--accent-color)",
                       }}
