@@ -143,7 +143,7 @@ const Recents = () => {
                       <ChakraLink
                         as={ReactRouterLink}
                         to={`/anime/${item.id}`}
-                        color="var(--link-color)"
+                        color="var(--text-color)"
                         _hover={{
                           color: "var(--accent-color)",
                           transition: "all ease 0.25s",
@@ -159,7 +159,7 @@ const Recents = () => {
                       >
                         <Icon
                           as={BsInfoCircle}
-                          color="var(--secondary-color)"
+                          color="var(--text-color)"
                           transition="all ease 0.25s"
                           className="playIcon"
                           h="40px"

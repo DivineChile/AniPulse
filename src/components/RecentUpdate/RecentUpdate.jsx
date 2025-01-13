@@ -82,19 +82,6 @@ const RecentUpdate = () => {
         </Box>
         {/* Recent Animes Released */}
         <Box>
-          {/* <Grid
-            display={{ base: "grid", md: "grid" }}
-            justifyItems="flex-start"
-            gridTemplateColumns={{
-              base: "100%",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-              lg: "repeat(4, 1fr)",
-            }}
-            gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
-            pos="relative"
-          >
-          </Grid> */}
           <RecentSub />
         </Box>
       </Box>
