@@ -24,6 +24,7 @@ const Player = ({ dub, sub }) => {
       try {
         setLoading(true);
         setStreamError(null);
+        setVideoData(null);
 
         const response = await fetch(
           `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&category=sub`
@@ -40,7 +41,7 @@ const Player = ({ dub, sub }) => {
         }
 
         setVideoData(data.data);
-        console.log(videoData);
+        console.log("sub video data loaded");
       } catch (err) {
         setStreamError(err.message || "An error occurred.");
       } finally {
@@ -49,9 +50,7 @@ const Player = ({ dub, sub }) => {
     };
 
     fetchVideoData();
-    console.log(sub);
-    console.log(dub);
-    if (sub) {
+    if (sub === true) {
       fetchVideoData();
     }
 
@@ -59,6 +58,7 @@ const Player = ({ dub, sub }) => {
       try {
         setLoading(true);
         setStreamError(null);
+        setVideoData(null);
 
         const response = await fetch(
           `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&category=dub`
@@ -75,7 +75,7 @@ const Player = ({ dub, sub }) => {
         }
 
         setVideoData(data.data);
-        console.log(videoData);
+        console.log("dub video data has loaded");
       } catch (err) {
         setStreamError(err.message || "An error occurred.");
       } finally {
@@ -83,7 +83,7 @@ const Player = ({ dub, sub }) => {
       }
     };
 
-    if (dub) {
+    if (dub === true) {
       fetchDubVideoData();
     }
   }, [fullPath, dub, sub]);
