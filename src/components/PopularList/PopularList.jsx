@@ -200,7 +200,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        SUB
+                        SUB {item.episodes.sub ? item.episodes.sub : "N/A"}
                       </Text>
                       <Text
                         as="span"
@@ -220,7 +220,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        DUB
+                        DUB {item.episodes.dub ? item.episodes.dub : "N/A"}
                       </Text>
                       <Text
                         as="span"

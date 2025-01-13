@@ -449,7 +449,7 @@ const Stream = () => {
                       textTransform="uppercase"
                     >
                       {" "}
-                      Rating: 7.8 /10
+                      Rating: {animeRating ? `${animeRating} /10` : "N/A"}
                     </Text>
                   </GridItem>
                 </GridItem>
