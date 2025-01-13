@@ -127,7 +127,7 @@ const ListView = ({ results }) => {
                           textTransform="uppercase"
                         >
                           {result.episodes.dub
-                            ? `SUB ${result.episodes.dub}`
+                            ? `DUB ${result.episodes.dub}`
                             : "NIL"}
                         </Text>
                       </Box>

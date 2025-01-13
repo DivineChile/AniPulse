@@ -153,7 +153,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                           textTransform="uppercase"
                         >
                           {item.episodes.dub
-                            ? `SUB ${item.episodes.dub}`
+                            ? `DUB ${item.episodes.dub}`
                             : "NIL"}
                         </Text>
                       </Box>
