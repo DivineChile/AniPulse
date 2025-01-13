@@ -10,7 +10,9 @@ import {
 } from "@chakra-ui/react";
 
 import { Link as ReactRouterLink } from "react-router-dom";
-const TopAnime = ({ data, numbers, heading }) => {
+import Loading from "../ErrorPage/Loading";
+import Error from "../ErrorPage/Error";
+const TopAnime = ({ data, numbers, heading, loading, error }) => {
   const truncatedResults = data.length > 6 ? data.slice(0, 6) : data;
   return (
     <VStack
@@ -30,6 +32,8 @@ const TopAnime = ({ data, numbers, heading }) => {
         </Heading>
       </Box>
       <Box display="flex" flexDir="column" gap={{ base: "20px 0", sm: "20px" }}>
+        {loading && <Loading />}
+        {error && <Error msg="Failed to load data" />}
         {data &&
           truncatedResults.map((item, index) => {
             const animeId = item.id;

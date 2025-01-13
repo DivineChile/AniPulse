@@ -99,16 +99,26 @@ const Catalog = () => {
               data={topRatedAnime}
               heading="Top Rated Anime"
               numbers={true}
+              loading={topLoading}
+              error={topError}
             />
           </GridItem>
           <GridItem display="flex" justifyContent="center">
-            <TopAnime data={newAnime} heading="New" numbers={false} />
+            <TopAnime
+              data={newAnime}
+              heading="New"
+              numbers={false}
+              loading={newLoading}
+              error={newError}
+            />
           </GridItem>
           <GridItem display="flex" justifyContent="center">
             <TopAnime
               data={recentlyCompletedAnime}
               heading="Recently Completed"
               numbers={false}
+              loading={recentLoading}
+              error={recentError}
             />
           </GridItem>
         </Grid>
