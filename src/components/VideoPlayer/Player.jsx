@@ -49,11 +49,6 @@ const Player = ({ dub, sub }) => {
       }
     };
 
-    fetchVideoData();
-    if (sub === true) {
-      fetchVideoData();
-    }
-
     const fetchDubVideoData = async () => {
       try {
         setLoading(true);
@@ -83,8 +78,12 @@ const Player = ({ dub, sub }) => {
       }
     };
 
-    if (dub === true) {
+    if (sub === true) {
+      fetchVideoData();
+    } else if (dub === true) {
       fetchDubVideoData();
+    } else {
+      fetchVideoData();
     }
   }, [fullPath, dub, sub]);
 

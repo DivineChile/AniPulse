@@ -35,6 +35,7 @@ const Stream = () => {
 
   const [activeLink, setActiveLink] = useState(null);
   const [activeDubLink, setActiveDubLink] = useState(null);
+  const [currentEpisode, setCurrentEpisode] = useState(null);
 
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
@@ -87,6 +88,7 @@ const Stream = () => {
         setAnimeTitle(animeData.info.name);
         setAnimeRating(animeData.moreInfo.malscore);
         console.log(animeData);
+        console.log(animeRating);
       } catch (error) {
         setError("Failed to load data. Please try again.");
       } finally {
@@ -99,8 +101,21 @@ const Stream = () => {
   }, [watchId]);
 
   useEffect(() => {
-    document.title = `${animeTitle} - AniPulse`;
-  }, [fullPath, animeTitle, watchId]);
+    // Find the active episode based on the current location
+    const activeEpisode = episodes.find(
+      ({ episodeId: epId }) =>
+        `/watch/${epId}` === `${location.pathname}${location.search}`
+    );
+
+    if (activeEpisode) {
+      setCurrentEpisode(
+        `Episode ${activeEpisode.number} - ${activeEpisode.title}`
+      );
+      document.title = `Watching ${animeTitle} Episode ${activeEpisode.number} - ${activeEpisode.title} | AniPulse`;
+    } else {
+      document.title = "AniPulse";
+    }
+  }, [location, episodes]);
   console.log(episodeNumber);
 
   return (
@@ -139,7 +154,7 @@ const Stream = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>{`Stream / ${animeTitle} Episode 1`}</BreadcrumbLink>
+              <BreadcrumbLink>{`Stream / ${animeTitle} ${currentEpisode}`}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
