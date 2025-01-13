@@ -30,3 +30,9 @@
 * {
   font-family: var(--font-family);
 }
+
+.topNumber {
+  color: black;
+  /* -webkit-text-fill-color: white; Will override color (regardless of order) */
+  -webkit-text-stroke: 1px white;
+}

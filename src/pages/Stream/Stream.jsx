@@ -115,8 +115,7 @@ const Stream = () => {
     } else {
       document.title = "AniPulse";
     }
-  }, [location, episodes]);
-  console.log(episodeNumber);
+  }, [location, episodes, animeTitle]);
 
   return (
     <Box>

@@ -92,7 +92,6 @@ const Recents = () => {
                 item.name.length > 30
                   ? `${item.name.slice(0, 30)}...`
                   : item.name;
-
               return (
                 <GridItem key={item.id} w="100%">
                   <Box
