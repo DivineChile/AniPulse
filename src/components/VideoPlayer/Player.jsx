@@ -8,7 +8,7 @@ import { Box } from "@chakra-ui/react";
 
 import "./style.css";
 
-const Player = () => {
+const Player = ({ dub }) => {
   const location = useLocation();
   const { watchId } = useParams();
   const fullPath = `${watchId}${location.search}`;
@@ -49,7 +49,39 @@ const Player = () => {
     };
 
     fetchVideoData();
-  }, [fullPath]);
+
+    const fetchDubVideoData = async () => {
+      try {
+        setLoading(true);
+        setStreamError(null);
+
+        const response = await fetch(
+          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&category=dub`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch video data.");
+        }
+
+        const data = await response.json();
+
+        if (!data.success || !data.data?.sources?.length) {
+          throw new Error("No video sources available.");
+        }
+
+        setVideoData(data.data);
+        console.log(videoData);
+      } catch (err) {
+        setStreamError(err.message || "An error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (dub) {
+      fetchDubVideoData();
+    }
+  }, [fullPath, dub]);
 
   useEffect(() => {
     if (!videoData || artRef.current) return;

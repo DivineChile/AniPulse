@@ -30,12 +30,29 @@ const Stream = () => {
   const [episodeNumber, setEpisodeNumber] = useState("");
   const [animeRating, setAnimeRating] = useState("");
   const [animeTitle, setAnimeTitle] = useState("");
+  const [dubStatus, setDubStatus] = useState(null);
+  const [subStatus, setSubStatus] = useState(null);
+
+  const [activeLink, setActiveLink] = useState(null);
+  const [activeDubLink, setActiveDubLink] = useState(null);
 
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const location = useLocation();
   const fullPath = `${watchId}${location.search}`;
+
+  const handleClick = (index) => {
+    setActiveLink(index); // Update the active link index;
+    setSubStatus(true);
+    setDubStatus(false);
+  };
+
+  const handleDubClick = (index) => {
+    setActiveDubLink(index);
+    setDubStatus(true);
+    setSubStatus(false);
+  };
 
   useEffect(() => {
     const fetchEpisodes = async () => {
@@ -147,7 +164,7 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <Player />
+                  <Player dub={dubStatus} />
                 </GridItem>
 
                 <GridItem
@@ -310,7 +327,11 @@ const Stream = () => {
                       gap={{ base: "10px 0", md: "0 10px" }}
                     >
                       <Text
-                        color="var(--accent-color)"
+                        color={
+                          dubStatus
+                            ? "var(--text-color)"
+                            : "var(--accent-color)"
+                        }
                         letterSpacing="0.5px"
                         lineHeight="24px"
                       >
@@ -321,19 +342,21 @@ const Stream = () => {
                         flexWrap="wrap"
                         justifyContent={{ base: "center", md: "start" }}
                       >
-                        <Link
-                          className={
-                            location.pathname == `/watch/${watchId}`
-                              ? "server active"
-                              : "server"
-                          }
-                          // onClick={handleSub}
-                        >
-                          Server 1
-                        </Link>
-                        <Link className="server">Server 1</Link>
-                        <Link className="server">Server 1</Link>
-                        <Link className="server">Server 1</Link>
+                        {["Server 1", "Server 2", "Server 3", "Server 4"].map(
+                          (server, index) => (
+                            <Link
+                              key={index}
+                              className={
+                                activeLink === index
+                                  ? "server active"
+                                  : "server"
+                              }
+                              onClick={() => handleClick(index)} // Set the active index on click
+                            >
+                              {server}
+                            </Link>
+                          )
+                        )}
                       </Flex>
                     </Box>
                     <Box
@@ -344,7 +367,11 @@ const Stream = () => {
                       gap={{ base: "10px 0", md: "0 10px" }}
                     >
                       <Text
-                        color="var(--text-color)"
+                        color={
+                          dubStatus
+                            ? "var(--accent-color)"
+                            : "var(--text-color)"
+                        }
                         letterSpacing="0.5px"
                         lineHeight="24px"
                       >
@@ -355,19 +382,21 @@ const Stream = () => {
                         flexWrap="wrap"
                         justifyContent={{ base: "center", md: "start" }}
                       >
-                        <Link
-                          className={
-                            location.pathname == `/watch/${watchId}`
-                              ? "server active"
-                              : "server"
-                          }
-                          // onClick={handleDub}
-                        >
-                          Server 1
-                        </Link>
-                        <Link className="server">Server 1</Link>
-                        <Link className="server">Server 1</Link>
-                        <Link className="server">Server 1</Link>
+                        {["Server 1", "Server 2", "Server 3", "Server 4"].map(
+                          (server, index) => (
+                            <Link
+                              key={index}
+                              className={
+                                activeDubLink === index
+                                  ? "server active"
+                                  : "server"
+                              }
+                              onClick={() => handleDubClick(index)} // Set the active index on click
+                            >
+                              {server}
+                            </Link>
+                          )
+                        )}
                       </Flex>
                     </Box>
                   </GridItem>
