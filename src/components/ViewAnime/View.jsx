@@ -199,7 +199,7 @@ const View = () => {
                       fontSize="24.02px"
                       fontWeight="300"
                       lineHeight="37.5px"
-                      color="var(--secondary-color)"
+                      color="var(--text-color)"
                       transition="background ease 0.25s"
                     >
                       Episodes: {episodeCount}

@@ -44,12 +44,14 @@ const Stream = () => {
 
   const handleClick = (index) => {
     setActiveLink(index); // Update the active link index;
+    setActiveDubLink(null);
     setSubStatus(true);
     setDubStatus(false);
   };
 
   const handleDubClick = (index) => {
     setActiveDubLink(index);
+    setActiveLink(null);
     setDubStatus(true);
     setSubStatus(false);
   };
