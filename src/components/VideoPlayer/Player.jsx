@@ -8,7 +8,7 @@ import { Box } from "@chakra-ui/react";
 
 import "./style.css";
 
-const Player = ({ dub }) => {
+const Player = ({ dub, sub }) => {
   const location = useLocation();
   const { watchId } = useParams();
   const fullPath = `${watchId}${location.search}`;
@@ -49,6 +49,11 @@ const Player = ({ dub }) => {
     };
 
     fetchVideoData();
+    console.log(sub);
+    console.log(dub);
+    if (sub) {
+      fetchVideoData();
+    }
 
     const fetchDubVideoData = async () => {
       try {
@@ -81,7 +86,7 @@ const Player = ({ dub }) => {
     if (dub) {
       fetchDubVideoData();
     }
-  }, [fullPath, dub]);
+  }, [fullPath, dub, sub]);
 
   useEffect(() => {
     if (!videoData || artRef.current) return;

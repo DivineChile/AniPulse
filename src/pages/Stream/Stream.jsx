@@ -164,7 +164,7 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <Player dub={dubStatus} />
+                  <Player dub={dubStatus} sub={subStatus} />
                 </GridItem>
 
                 <GridItem
