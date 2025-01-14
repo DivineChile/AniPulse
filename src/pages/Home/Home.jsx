@@ -6,6 +6,7 @@ import Upcoming from "../../components/Upcoming/Upcoming";
 import PopularList from "../../components/PopularList/PopularList";
 import Footer from "../../components/Footer/Footer";
 import Catalog from "../../components/Catalog";
+import WeeklySchedule from "../../components/WeeklySchedule";
 
 const Home = () => {
   document.title = `Home - AniPulse`;
@@ -24,6 +25,8 @@ const Home = () => {
 
         {/* Popular animes */}
         <PopularList />
+
+        {/* <WeeklySchedule /> */}
 
         {/* Top Anime */}
         <Catalog />
