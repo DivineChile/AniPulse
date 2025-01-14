@@ -14,7 +14,6 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-
 import "./style.css";
 
 const ListView = ({ results }) => {
@@ -28,8 +27,8 @@ const ListView = ({ results }) => {
       }}
       gap={{ base: "20px 0", sm: "20px", md: "25px 25px" }}
     >
-      {results && results?.length > 0
-        ? results?.map((result, index) => {
+      {results && results.length > 0
+        ? results.map((result, index) => {
             const resultId = result.id;
             const resultTitle = result.name;
             const resultImg = result.poster;
@@ -63,7 +62,6 @@ const ListView = ({ results }) => {
                   >
                     <Heading
                       as="h3"
-                      textDecor="none"
                       className="listItemHead"
                       fontSize={{ base: "11.81px", md: "14.77px" }}
                       color="var(--text-color)"
@@ -95,7 +93,6 @@ const ListView = ({ results }) => {
                             color: "var(--background-color)",
                             bgColor: "var(--accent-color)",
                             border: "1px solid var(--accent-color)",
-                            textDecor: "none",
                           }}
                           borderRadius="6px"
                           border="1px solid var(--text-color)"
@@ -104,9 +101,9 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {result.episodes.sub
+                          {result.episodes?.sub
                             ? `SUB ${result.episodes.sub}`
-                            : "NIL"}
+                            : "SUB N/A"}
                         </Text>
                         <Text
                           as="span"
@@ -126,9 +123,9 @@ const ListView = ({ results }) => {
                           letterSpacing="0.5px"
                           textTransform="uppercase"
                         >
-                          {result.episodes.dub
+                          {result.episodes?.dub
                             ? `DUB ${result.episodes.dub}`
-                            : "NIL"}
+                            : "DUB N/A"}
                         </Text>
                       </Box>
                       <Spacer />
@@ -156,18 +153,21 @@ const ListView = ({ results }) => {
               </GridItem>
             );
           })
-        : [1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => {
+        : [1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
             <GridItem key={index}>
-              <Skeleton bg="#191919">
+              <Skeleton bg="#191919" borderRadius="10px" height="120px">
                 <Skeleton
                   w={{ base: "54.94px", lg: "69px" }}
                   borderTopLeftRadius="10px"
                   borderBottomLeftRadius="10px"
                 />
-
-                <VStack py="10px">
-                  <SkeletonText noOfLines={1} h={2} />
-                  <Flex justifyContent="space-between" alignItems="center">
+                <VStack py="10px" align="start" spacing="4">
+                  <SkeletonText noOfLines={1} skeletonHeight="10px" />
+                  <Flex
+                    justifyContent="space-between"
+                    alignItems="center"
+                    w="100%"
+                  >
                     <HStack gap="10px">
                       <Skeleton w="80px" h="30px" />
                       <Skeleton w="40px" h="30px" />
@@ -176,8 +176,8 @@ const ListView = ({ results }) => {
                   </Flex>
                 </VStack>
               </Skeleton>
-            </GridItem>;
-          })}
+            </GridItem>
+          ))}
     </Grid>
   );
 };
