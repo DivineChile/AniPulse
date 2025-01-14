@@ -45,7 +45,7 @@ const EpisodeList = ({ items, itemId }) => {
           mb="10px"
           key={index}
         >
-          {`Episode ${index + 1}`}
+          {`Episode ${index + 1} - ${_.title}`}
         </ChakraLink>
       ))}
 

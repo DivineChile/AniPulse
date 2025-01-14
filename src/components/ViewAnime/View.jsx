@@ -404,7 +404,7 @@ const View = () => {
                         lineHeight="24px"
                       >
                         {animeData.moreInfo.premiered
-                          ? animeData.moreInfo.premiered
+                          ? animeData.moreInfo.premiered.split(" ")[1]
                           : "Loading..."}
                       </Text>
                     </Box>
