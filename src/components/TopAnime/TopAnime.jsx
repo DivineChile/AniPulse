@@ -11,7 +11,6 @@ import {
   SkeletonText,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import Loading from "../ErrorPage/Loading";
 import Error from "../ErrorPage/Error";
 
 const TopAnime = ({ data, numbers, heading, loading, error }) => {
@@ -137,6 +136,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                     className="listItemHead"
                     fontSize={{ base: "11.81px", md: "14.77px" }}
                     color="var(--text-color)"
+                    fontWeight="400"
                     _hover={{
                       color: "var(--accent-color)",
                     }}
