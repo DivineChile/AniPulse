@@ -31,6 +31,7 @@ const Stream = () => {
   const [animeRating, setAnimeRating] = useState("");
   const [animeTitle, setAnimeTitle] = useState("");
   const [dubStatus, setDubStatus] = useState(null);
+  const [isDub, setIsDub] = useState({});
   const [subStatus, setSubStatus] = useState(null);
 
   const [activeLink, setActiveLink] = useState(null);
@@ -67,7 +68,6 @@ const Stream = () => {
         );
         const data = await response.json();
         setEpisodes(data.data.episodes || []);
-        setEpisodeNumber(data.data.episodes.map((item) => item.number));
       } catch {
         setEpError("Failed to load data. Please try again.");
       } finally {
@@ -85,10 +85,9 @@ const Stream = () => {
         );
         const data = await response.json();
         setAnimeData(data.data.anime);
-        setAnimeTitle(animeData.info.name);
-        setAnimeRating(animeData.moreInfo.malscore);
-        console.log(animeData);
-        console.log(animeRating);
+        setAnimeTitle(data.data.anime.info.name);
+        setAnimeRating(data.data.anime.moreInfo.malscore);
+        setIsDub(data.data.anime.info.stats.episodes);
       } catch (error) {
         setError("Failed to load data. Please try again.");
       } finally {
@@ -111,6 +110,7 @@ const Stream = () => {
       setCurrentEpisode(
         `Episode ${activeEpisode.number} - ${activeEpisode.title}`
       );
+      setEpisodeNumber(activeEpisode.number);
       document.title = `Watching ${animeTitle} Episode ${activeEpisode.number} - ${activeEpisode.title} | AniPulse`;
     } else {
       document.title = "AniPulse";
@@ -311,7 +311,7 @@ const Stream = () => {
                     >
                       You&apos;re watching{" "}
                       <Text as="span" color="var(--accent-color)">
-                        Episode 1.
+                        Episode {episodeNumber}
                       </Text>
                     </Text>
                     <Text
@@ -351,7 +351,7 @@ const Stream = () => {
                         letterSpacing="0.5px"
                         lineHeight="24px"
                       >
-                        SUB
+                        SUB:
                       </Text>
                       <Flex
                         gap={{ base: "10px", md: "10px" }}
@@ -391,27 +391,31 @@ const Stream = () => {
                         letterSpacing="0.5px"
                         lineHeight="24px"
                       >
-                        DUB
+                        DUB:
                       </Text>
                       <Flex
                         gap={{ base: "10px", md: "10px" }}
                         flexWrap="wrap"
                         justifyContent={{ base: "center", md: "start" }}
                       >
-                        {["Server 1", "Server 2", "Server 3", "Server 4"].map(
-                          (server, index) => (
-                            <Link
-                              key={index}
-                              className={
-                                activeDubLink === index
-                                  ? "server active"
-                                  : "server"
-                              }
-                              onClick={() => handleDubClick(index)} // Set the active index on click
-                            >
-                              {server}
-                            </Link>
+                        {isDub.dub ? (
+                          ["Server 1", "Server 2", "Server 3", "Server 4"].map(
+                            (server, index) => (
+                              <Link
+                                key={index}
+                                className={
+                                  activeDubLink === index
+                                    ? "server active"
+                                    : "server"
+                                }
+                                onClick={() => handleDubClick(index)} // Set the active index on click
+                              >
+                                {server}
+                              </Link>
+                            )
                           )
+                        ) : (
+                          <Text color="var(--text-color)">N/A</Text>
                         )}
                       </Flex>
                     </Box>

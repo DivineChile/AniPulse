@@ -85,7 +85,7 @@ const GridView = ({ results }) => {
                       <ChakraLink
                         as={ReactRouterLink}
                         to={`/anime/${resultId}`}
-                        color="var(--link-color)"
+                        color="var(--text-color)"
                         _hover={{
                           color: "var(--accent-color)",
                           transition: "all ease 0.25s",
@@ -101,7 +101,7 @@ const GridView = ({ results }) => {
                       >
                         <Icon
                           as={BsInfoCircle}
-                          color="var(--secondary-color)"
+                          color="var(--text-color)"
                           transition="all ease 0.25s"
                           className="viewIcon"
                           _hover={{
