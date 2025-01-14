@@ -22,19 +22,11 @@ const View = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [animeData, setAnimeData] = useState([]);
-  const [animeEpisodes, setAnimeEpisodes] = useState([]);
-  const [nextEp, setNextEp] = useState(0);
 
   const [animeGenres, setAnimeGenres] = useState([]);
   const [animeStudios, setAnimeStudios] = useState([]);
   const [animeTitle, setAnimeTitle] = useState("");
-  const [animeEpId, setAnimeEpId] = useState("");
-  const [subOrDub, setSubOrDub] = useState("");
-  const [gogoId, setGogoId] = useState("");
-  const [gogoIdDub, setGogoIdDub] = useState("");
 
-  const [epLoading, setEpLoading] = useState(true);
-  const [epError, setEpError] = useState(null);
   const [episodes, setEpisodes] = useState([]);
   const [episodeCount, setEpisodeCount] = useState(0);
 
@@ -84,7 +76,7 @@ const View = () => {
       const data = await response.json();
       setEpisodes(data.data.episodes);
       setEpisodeCount(data.data.totalEpisodes);
-      console.log(episodes);
+
       // console.log(response2);
     } catch (err) {
       setInfoError(err);
@@ -250,7 +242,7 @@ const View = () => {
                       </Text>
                       ;
                     </Box>
-                    <Box w="100%" h="47px">
+                    {/* <Box w="100%" h="47px">
                       <ChakraLink
                         href="#episodes"
                         w="100%"
@@ -277,7 +269,7 @@ const View = () => {
                       >
                         Watch Now
                       </ChakraLink>
-                    </Box>
+                    </Box> */}
                   </Box>
                 </GridItem>
                 {/* Anime Details */}
@@ -304,7 +296,7 @@ const View = () => {
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
-                        Aired:{"  "}
+                        Premiered:{"  "}
                       </Text>
                       <Text
                         color="var(--text-color)"
