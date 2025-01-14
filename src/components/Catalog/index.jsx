@@ -17,7 +17,7 @@ const Catalog = () => {
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchTopRatedAnime = async () => {
-    setTopLoading(false);
+    setTopLoading(true);
     setTopError(null);
 
     try {
@@ -35,7 +35,7 @@ const Catalog = () => {
   };
 
   const fetchNewAnime = async () => {
-    setNewLoading(false);
+    setNewLoading(true);
     setNewError(null);
 
     try {
@@ -52,7 +52,7 @@ const Catalog = () => {
   };
 
   const fetchRecentlyCompletedAnime = async () => {
-    setRecentLoading(false);
+    setRecentLoading(true);
     setRecentError(null);
 
     try {

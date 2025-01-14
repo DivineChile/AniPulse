@@ -8,6 +8,9 @@ import {
   Link as ChakraLink,
   Flex,
   Icon,
+  Skeleton,
+  SkeletonText,
+  HStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../ErrorPage/Error";
@@ -92,7 +95,27 @@ const PopularList = () => {
             gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
             pos="relative"
           >
-            {isLoading && <Loading pos="absolute" />}
+            {isLoading &&
+              [...Array(4)].map((_, index) => (
+                <GridItem key={index} w="100%">
+                  <Skeleton
+                    h={{
+                      base: "400.23px",
+                      sm: "380.23px",
+                      md: "350px",
+                      lg: "360px",
+                      "2xl": "408.19px",
+                    }}
+                    w="100%"
+                    borderRadius="10px"
+                  />
+                  <HStack mt="10px">
+                    <Skeleton h="20px" w="50px" />
+                    <Skeleton h="20px" w="50px" />
+                  </HStack>
+                  <SkeletonText noOfLines={2} spacing={2} my="10px" />
+                </GridItem>
+              ))}
             {error && <Error msg={error} pos="absolute" />}
             {truncatedResults.map((item, index) => {
               const nameLength =

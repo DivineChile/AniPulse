@@ -31,8 +31,28 @@
   font-family: var(--font-family);
 }
 
-.topNumber {
+.topNumber#top1 {
   color: black;
   /* -webkit-text-fill-color: white; Will override color (regardless of order) */
-  -webkit-text-stroke: 1px white;
+  -webkit-text-stroke: 1px #f5cf49;
+}
+
+.topNumber#top2 {
+  color: black;
+  /* -webkit-text-fill-color: white; Will override color (regardless of order) */
+  -webkit-text-stroke: 1px #a958a5;
+}
+
+.topNumber#top3 {
+  color: black;
+  /* -webkit-text-fill-color: white; Will override color (regardless of order) */
+  -webkit-text-stroke: 1px #b4b4b4;
+}
+
+.topNumber#top4,
+.topNumber#top5,
+.topNumber#top6 {
+  color: black;
+  /* -webkit-text-fill-color: white; Will override color (regardless of order) */
+  -webkit-text-stroke: 1px #616161;
 }
