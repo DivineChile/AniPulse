@@ -194,7 +194,7 @@ const Stream = () => {
                   }}
                   overflowY="scroll"
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
-                  bg="var(--primary-background-color)"
+                  bg="#000"
                   borderRadius="10px"
                   width={{ base: "220px", md: "50%", lg: "100%" }}
                   transition="all ease 0.25s"
@@ -287,7 +287,7 @@ const Stream = () => {
                 <GridItem
                   colSpan="6"
                   boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
-                  bg="var(--primary-background-color)"
+                  bg="#000"
                   borderRadius="10px"
                   transition="all ease 0.25s"
                   p="20px"
