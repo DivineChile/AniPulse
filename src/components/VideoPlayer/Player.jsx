@@ -157,9 +157,9 @@ const Player = ({ dub, sub }) => {
     };
   }, [videoData]);
 
-  if (loading) return <Loading bg="#191919" height="100%" />;
+  if (loading) return <Loading bg="#111111" height="100%" />;
   if (streamError)
-    return <Error message={streamError} bg="#191919" height="100%" />;
+    return <Error message={streamError} bg="#111111" height="100%" />;
 
   return <Box className="artplayer-container" w="100%" h="100%"></Box>;
 };
