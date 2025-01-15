@@ -88,6 +88,7 @@ const Stream = () => {
         setAnimeTitle(data.data.anime.info.name);
         setAnimeRating(data.data.anime.moreInfo.malscore);
         setIsDub(data.data.anime.info.stats.episodes);
+        console.log(animeData);
       } catch (error) {
         setError("Failed to load data. Please try again.");
       } finally {
