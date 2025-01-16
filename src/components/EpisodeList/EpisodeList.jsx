@@ -1,4 +1,4 @@
-import { Link as ChakraLink } from "@chakra-ui/react";
+import { Link as ChakraLink, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../ErrorPage/Error";
@@ -45,7 +45,11 @@ const EpisodeList = ({ items, itemId }) => {
           mb="10px"
           key={index}
         >
-          {`Episode ${index + 1} - ${_.title}`}
+          {`Episode ${index + 1}`}
+          <Text as="span" display={{ base: "none", lg: "initial" }}>
+            {" "}
+            - {_.title}
+          </Text>
         </ChakraLink>
       ))}
 

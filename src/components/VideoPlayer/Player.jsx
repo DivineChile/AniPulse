@@ -131,7 +131,7 @@ const Player = ({ dub, sub }) => {
       subtitleOffset: true,
       autoSize: true,
       autoplay: true,
-      autoMini: true,
+      autoMini: false,
       theme: "var(--accent-color)",
       screenshot: true,
       setting: true,
