@@ -19,7 +19,6 @@ import Loading from "../../components/ErrorPage/Loading";
 import Player from "../../components/VideoPlayer/Player";
 
 const Stream = () => {
-  const navigate = useNavigate();
   const { watchId } = useParams();
   const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
