@@ -86,13 +86,12 @@ const PopularList = () => {
             justifyContent="space-between"
             justifyItems="center"
             gridTemplateColumns={{
-              base: "100%",
-              sm: "repeat(2, 1fr)",
+              base: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
               lg: "repeat(4, 1fr)",
               "2xl": "repeat(5, 1fr)",
             }}
-            gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
+            gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
             pos="relative"
           >
             {isLoading &&
@@ -100,8 +99,8 @@ const PopularList = () => {
                 <GridItem key={index} w="100%">
                   <Skeleton
                     h={{
-                      base: "400.23px",
-                      sm: "380.23px",
+                      base: "216px",
+                      sm: "290.23px",
                       md: "350px",
                       lg: "360px",
                       "2xl": "408.19px",
@@ -131,8 +130,8 @@ const PopularList = () => {
                     overflow="hidden!important"
                     className={`episode-container`}
                     h={{
-                      base: "400.23px",
-                      sm: "380.23px",
+                      base: "216px",
+                      sm: "290.23px",
                       md: "350px",
                       lg: "360px",
                       "2xl": "408.19px",
@@ -177,7 +176,7 @@ const PopularList = () => {
                           color: "var(--accent-color)",
                           transition: "all ease 0.25s",
                         }}
-                        fontSize="22.88px"
+                        fontSize={{base: "15px", sm: "18.88px"}}
                         lineHeight="36px"
                         letterSpacing="0.5px"
                         fontWeight="500"
@@ -191,8 +190,8 @@ const PopularList = () => {
                           color="var(--text-color)"
                           transition="all ease 0.25s"
                           className="playIcon"
-                          h="40px"
-                          w="40px"
+                          h={{base:"20px", "2xl": "40px"}}
+                          w={{base:"20px", "2xl": "40px"}}
                         />
                         View Anime
                       </ChakraLink>
@@ -209,16 +208,16 @@ const PopularList = () => {
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
-                        p="3px 10px"
+                        p={{base: "0px 6px", lg: "3px 10px"}}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
-                          border: "2px solid var(--accent-color)",
+                          borderColor: "var(--accent-color)"
                         }}
                         borderRadius="8px"
-                        border="2px solid var(--text-color)"
-                        fontSize={{ base: "14.63px" }}
+                        border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                        fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"
@@ -229,16 +228,16 @@ const PopularList = () => {
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
-                        p="3px 10px"
+                        p={{base: "0px 6px", lg: "3px 10px"}}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
-                          border: "2px solid var(--accent-color)",
+                          borderColor: "var(--accent-color)"
                         }}
                         borderRadius="8px"
-                        border="2px solid var(--text-color)"
-                        fontSize={{ base: "14.63px" }}
+                        border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                        fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"
@@ -248,13 +247,14 @@ const PopularList = () => {
                       <Text
                         as="span"
                         color="var(--text-color)"
+                        hideBelow="sm"
                         cursor="pointer"
-                        p="3px 10px"
+                        p={{base: "0px 6px", lg: "3px 10px"}}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--accent-color)",
                         }}
-                        fontSize={{ base: "14.63px" }}
+                        fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"

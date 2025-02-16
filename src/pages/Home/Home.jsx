@@ -27,6 +27,7 @@ const Home = () => {
         <PopularList />
 
         {/* <WeeklySchedule /> */}
+        {/* <WeeklySchedule/> */}
 
         {/* Top Anime */}
         <Catalog />

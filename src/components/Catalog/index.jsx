@@ -40,7 +40,7 @@ const Catalog = () => {
 
     try {
       const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/category/recently-added`
+        `${proxy}${backup_api}/api/v2/hianime/category/top-upcoming`
       );
       const data = await response.json();
       setNewAnime(data.data.animes);
@@ -88,7 +88,6 @@ const Catalog = () => {
         <Grid
           gridTemplateColumns={{
             base: "100%",
-            sm: "repeat(2, 1fr)",
             md: "repeat(2, 1fr)",
             lg: "repeat(3, 1fr)",
           }}
@@ -106,7 +105,7 @@ const Catalog = () => {
           <GridItem display="flex" justifyContent="center">
             <TopAnime
               data={newAnime}
-              heading="New"
+              heading="Upcoming"
               numbers={false}
               loading={newLoading}
               error={newError}

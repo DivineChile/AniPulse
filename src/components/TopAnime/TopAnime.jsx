@@ -46,8 +46,8 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                 h={{ base: "80px", lg: "100px" }}
                 borderRadius="10px"
               />
-              <VStack align="start" justify="center" w="80%">
-                <SkeletonText noOfLines={1} w="80%" />
+              <VStack align="start" justify="center" w="100%">
+                <SkeletonText noOfLines={1} w="100%" />
                 <Flex w="100%" gap="20px" mt="5px">
                   <Skeleton w="50px" h="20px" />
                   <Skeleton w="50px" h="20px" />
@@ -65,7 +65,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
   }
 
   return (
-    <VStack alignItems="start" gap="20px">
+    <VStack alignItems={{base: "center", lg: "start"}} gap="20px" w="100%">
       <Heading
         fontFamily="var(--font-family)"
         fontWeight="400"
@@ -73,10 +73,11 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
         lineHeight={{ base: "26.4px", md: "33px" }}
         letterSpacing="1.5px"
         color="var(--text-color)"
+        
       >
         {heading}
       </Heading>
-      <Box display="flex" flexDirection="column" gap="20px">
+      <Box display="flex" flexDirection="column" gap="20px" w="100%">
         {truncatedResults?.map((item, index) => {
           const animeId = item.id;
           const poster = item.poster;
@@ -84,7 +85,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
           const type = item.type;
 
           return (
-            <Box key={animeId || index}>
+            <Box key={animeId || index} w="100%">
               <ChakraLink
                 as={ReactRouterLink}
                 bg="#111111"

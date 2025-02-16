@@ -100,17 +100,21 @@ const SearchBar = ({ above, below, displayProp }) => {
           background="none"
           color="var(--text-color)"
           borderRight="none"
-          borderColor="var(--secondary-color)"
+          borderColor="#d4d4d4"
           cursor="pointer"
           onClick={() => query.trim() && navigate(`/search/keyword/${query}`)}
         >
-          <SearchIcon color="var(--secondary-color)" />
+          <SearchIcon color="#d4d4d4" />
         </InputLeftAddon>
         <Input
           borderLeft="none"
-          placeholder="Search Anime..."
+          placeholder="Search"
+          _placeholder={{
+            color: "#d4d4d4",
+            fontSize: {base: "13px", lg: "13px", "2xl": "15.38px"}
+          }}
           color="var(--text-color)"
-          borderColor="var(--secondary-color)"
+          borderColor="#d4d4d4"
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}

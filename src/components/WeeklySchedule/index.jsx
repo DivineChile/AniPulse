@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Tabs,
   TabList,
@@ -16,161 +16,104 @@ import { Link as ReactRouterLink } from "react-router-dom";
 
 const WeeklySchedule = () => {
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(""); // Tracks the selected date
-  const [activeTabIndex, setActiveTabIndex] = useState(0); // Tracks the active tab index
+  const [scheduledAnimes, setScheduledAnimes] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [scheduledAnimes, setScheduledAnimes] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
-  // Calculate the week dates and set the default tab to today's date
   useEffect(() => {
-    const startOfWeek = new Date();
-    startOfWeek.setHours(0, 0, 0, 0);
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Adjust to the previous Sunday (or Monday if necessary)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const weekDates = [];
-    let todayIndex = 0;
-    const todayDate = new Date().toISOString().split("T")[0]; // Get today's date in yyyy-mm-dd format
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + i);
-
-      const formattedDate = date.toISOString().split("T")[0]; // yyyy-mm-dd
-      weekDates.push({
+    const weekDates = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - today.getDay() + i); // Adjusted (Removed +1)
+      return {
         day: date.toLocaleString("en-US", { weekday: "short" }),
-        date: formattedDate,
+        date: date.toISOString().split("T")[0],
         displayDate: date.toLocaleString("en-US", {
           month: "short",
           day: "numeric",
         }),
-      });
-
-      if (formattedDate === todayDate) {
-        todayIndex = i; // Today's date will be the active tab
-      }
-    }
+      };
+    });
 
     setDates(weekDates);
-    setSelectedDate(weekDates[todayIndex]?.date);
-    setActiveTabIndex(todayIndex); // Set today's tab as the default
+
+    const todayIndex = weekDates.findIndex(
+      (d) => d.date === today.toISOString().split("T")[0]
+    );
+
+    if (todayIndex !== -1) {
+      setSelectedTab(todayIndex);
+      fetchAnimeSchedule(weekDates[todayIndex].date);
+    }
   }, []);
 
   // Fetch scheduled anime data when the selected date changes
-  useEffect(() => {
-    if (!selectedDate) return;
+  const fetchAnimeSchedule = async (date) => {
+    if (!date || scheduledAnimes[date]) return;
 
-    const fetchScheduledAnimes = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(
-          `${proxy}${backup_api}/api/v2/hianime/schedule?date=${selectedDate}`
-        );
-        const data = await response.json();
-
-        // Log the response to debug the data
-        console.log("API Response:", data);
-
-        if (data.success) {
-          setScheduledAnimes(data.data.scheduledAnimes || []);
-        } else {
-          throw new Error("Failed to fetch anime data.");
-        }
-      } catch (err) {
-        setError("Failed to load anime data. Please try again.");
-        console.error("Error fetching anime data:", err);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${proxy}${backup_api}/api/v2/hianime/schedule?date=${date}`
+      );
+      const data = await response.json();
+      if (data.success) {
+        setScheduledAnimes((prev) => ({
+          ...prev,
+          [date]: data.data.scheduledAnimes || [],
+        }));
+      } else {
+        throw new Error("Failed to fetch anime data.");
       }
-    };
-
-    fetchScheduledAnimes();
-  }, [selectedDate]);
-
-  // Group animes by airing date
-  const groupAnimeByDate = (animeList) => {
-    const grouped = {};
-    animeList.forEach((anime) => {
-      const airingDate = new Date(anime.airingTimestamp)
-        .toISOString()
-        .split("T")[0]; // yyyy-mm-dd
-      if (!grouped[airingDate]) grouped[airingDate] = [];
-      grouped[airingDate].push(anime);
-    });
-    return grouped;
+    } catch (err) {
+      setError("Failed to load anime data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const animeByDate = groupAnimeByDate(scheduledAnimes);
 
   return (
     <Box bg="var(--primary-background-color)" pb="80px">
       <Box
-        maxW={{
-          base: "85%",
-          sm: "95%",
-          xl: "85%",
-          "2xl": "container.xl",
-        }}
+        maxW={{ base: "85%", sm: "95%", xl: "85%", "2xl": "container.xl" }}
         margin="auto"
       >
-        <Box mb="20px">
-          <Heading
-            fontSize="37.97px"
-            lineHeight="44px"
-            letterSpacing="1.5px"
-            fontWeight="700"
-            color="var(--text-color)"
-            textTransform="uppercase"
-            fontFamily="var(--font-family)"
-          >
-            Weekly Schedule
-          </Heading>
-        </Box>
-
+        <Heading
+          fontSize="38px"
+          fontWeight="700"
+          color="var(--text-color)"
+          textTransform="uppercase"
+          mb="20px"
+        >
+          Weekly Schedule
+        </Heading>
         <Tabs
           isLazy
-          index={activeTabIndex}
+          index={selectedTab}
           onChange={(index) => {
-            setActiveTabIndex(index);
-            setSelectedDate(dates[index]?.date);
+            setSelectedTab(index);
+            fetchAnimeSchedule(dates[index]?.date);
           }}
         >
-          <TabList
-            display="flex"
-            justifyContent="space-evenly"
-            bg="#000"
-            borderTopLeftRadius="10px"
-            borderTopRightRadius="10px"
-          >
+          <TabList display="flex" justifyContent="space-evenly" bg="#000">
             {dates.map((date, index) => (
               <Tab
                 key={index}
                 py="20px"
                 _selected={{ color: "var(--accent-color)" }}
-                _hover={{ color: "var(--accent-color)" }}
               >
                 <VStack>
-                  <Text
-                    fontSize="16.88px"
-                    fontWeight="400"
-                    lineHeight="20px"
-                    letterSpacing="0.5px"
-                    color="var(--text-color)"
-                  >
+                  <Text fontSize="17px" color="var(--text-color)">
                     {date.displayDate}
                   </Text>
-                  <Text
-                    fontSize="27.77px"
-                    fontWeight="400"
-                    lineHeight="33px"
-                    letterSpacing="1.5px"
-                    textTransform="uppercase"
-                  >
+                  <Text fontSize="28px" fontWeight="bold">
                     {date.day}
                   </Text>
                 </VStack>
@@ -207,41 +150,35 @@ const WeeklySchedule = () => {
               </Heading>
             </Box>
             {dates.map((date, index) => (
-              <TabPanel key={index}>
-                <VStack align="start" spacing={4}>
-                  {loading && <Spinner />}
-                  {error && <Text color="red.500">{error}</Text>}
-                  {!loading && !error && animeByDate[date.date]?.length ? (
-                    animeByDate[date.date].map((anime) => (
-                      <Box
-                        key={anime.id}
-                        p={4}
-                        borderBottom="1px solid #242424"
-                        borderRadius="md"
-                        w="100%"
-                      >
-                        <Text fontSize="sm" color="gray.500">
-                          {anime.time}
-                        </Text>
-                        <ChakraLink
-                          as={ReactRouterLink}
-                          to={`/anime/${anime.id}`}
-                          fontSize="lg"
-                          fontWeight="bold"
-                          color="blue.500"
-                          _hover={{ textDecoration: "underline" }}
-                        >
-                          {anime.name}
-                        </ChakraLink>
-                        <Text fontSize="sm" color="gray.600">
-                          Episode {anime.episode}
-                        </Text>
-                      </Box>
-                    ))
-                  ) : (
-                    <Text>No anime scheduled for this day.</Text>
-                  )}
-                </VStack>
+              <TabPanel key={index} p={4}>
+                {loading && selectedTab === index && <Spinner />}
+                {error && selectedTab === index && (
+                  <Text color="red.500">{error}</Text>
+                )}
+                {(scheduledAnimes[date.date] || []).map((anime) => (
+                  <Box
+                    key={anime.id}
+                    p={4}
+                    borderBottom="1px solid #242424"
+                    w="100%"
+                  >
+                    <Text fontSize="sm" color="gray.500">
+                      {anime.airingTime || "Unknown Time"}
+                    </Text>
+                    <ChakraLink
+                      as={ReactRouterLink}
+                      to={`/anime/${anime.id}`}
+                      fontSize="lg"
+                      fontWeight="bold"
+                      color="blue.500"
+                    >
+                      {anime.name}
+                    </ChakraLink>
+                    <Text fontSize="sm" color="gray.600">
+                      Episode {anime.episode}
+                    </Text>
+                  </Box>
+                ))}
               </TabPanel>
             ))}
           </TabPanels>
