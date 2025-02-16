@@ -135,7 +135,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                     as="h3"
                     textDecor="none"
                     className="listItemHead"
-                    fontSize={{ base: "11.81px", md: "14.77px" }}
+                    fontSize={{ base: "12.81px", sm: "13px", md: "14.77px" }}
                     color="var(--text-color)"
                     fontWeight="400"
                     _hover={{
