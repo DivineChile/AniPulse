@@ -11,102 +11,79 @@ import "./style.css";
 const Player = ({ dub, sub }) => {
   const location = useLocation();
   const { watchId } = useParams();
-  const fullPath = `${watchId}${location.search}`;
+  const queryParams = location?.search || ""; // Safely handle location.search
   const artRef = useRef(null);
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
- 
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/"; // Keep proxy URL as is
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
   const [videoData, setVideoData] = useState(null);
 
-  useEffect(() => {
-    const fetchVideoData = async () => {
-      try {
-        setLoading(true);
-        setStreamError(null);
-        setVideoData(null);
-        console.log(window.location.origin)
-        console.log(location.search)
-        const response = await fetch(
-          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&server=hd-2&category=sub`);
+  // Unified fetch function for video data
+  const fetchVideoData = async (category = "sub") => {
+    try {
+      setLoading(true);
+      setStreamError(null);
+      setVideoData(null);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch video data.");
-        }
+      const response = await fetch(
+        `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${queryParams}&server=hd-2&category=${category}`
+      );
 
-        const data = await response.json();
-
-        if (!data.success || !data.data?.sources?.length) {
-          throw new Error("No video sources available.");
-        }
-
-        setVideoData(data.data);
-        console.log("sub video data loaded");
-      } catch (err) {
-        setStreamError(err.message || "An error occurred.");
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch video data.");
       }
-    };
 
-    const fetchDubVideoData = async () => {
-      try {
-        setLoading(true);
-        setStreamError(null);
-        setVideoData(null);
+      const data = await response.json();
 
-        const response = await fetch(
-          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&category=dub`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch video data.");
-        }
-
-        const data = await response.json();
-
-        if (!data.success || !data.data?.sources?.length) {
-          throw new Error("No video sources available.");
-        }
-
-        setVideoData(data.data);
-        console.log("dub video data has loaded");
-      } catch (err) {
-        setStreamError(err.message || "An error occurred.");
-      } finally {
-        setLoading(false);
+      if (!data.success || !data.data?.sources?.length) {
+        throw new Error("No video sources available.");
       }
-    };
 
-    if (sub === true) {
-      fetchVideoData();
-    } else if (dub === true) {
-      fetchDubVideoData();
-    } else {
-      fetchVideoData();
+      setVideoData(data.data);
+      console.log(`${category} video data loaded`);
+    } catch (err) {
+      if (err.name === "TypeError") {
+        setStreamError("Network error. Please check your connection.");
+      } else {
+        setStreamError(err.message || "An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
     }
-  }, [fullPath, dub, sub]);
+  };
 
+  // Fetch video data based on dub/sub props
+  useEffect(() => {
+    if (sub) {
+      fetchVideoData("sub");
+    } else if (dub) {
+      fetchVideoData("dub");
+    } else {
+      fetchVideoData("sub");
+    }
+  }, [watchId, queryParams, dub, sub]); // Cleaned up dependencies
+
+  // Initialize Artplayer when videoData is available
   useEffect(() => {
     if (!videoData || artRef.current) return;
 
-    const defaultSource = videoData.sources[0]?.url;
-    const subtitles = videoData.tracks?.map((track) => ({
+    const defaultSource = videoData?.sources?.[0]?.url;
+    const subtitles = videoData?.tracks?.map((track) => ({
       url: track.file,
       type: "vtt",
       label: track.label,
       default: track.label === "English",
     }));
 
-    const defaultSubtitle = subtitles.find(
-      (subtitle) => subtitle.default === true
-    );
+    const defaultSubtitle = subtitles?.find((subtitle) => subtitle.default) || subtitles?.[0];
 
     if (!defaultSource) {
       console.error("No valid video source found.");
       return;
     }
+
+    let hlsInstance = null; // Track HLS instance for cleanup
 
     // Initialize ArtPlayer
     artRef.current = new Artplayer({
@@ -114,12 +91,10 @@ const Player = ({ dub, sub }) => {
       customType: {
         hls: (videoElement, url) => {
           if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(`https://hianime-proxy-zeta.vercel.app/m3u8-proxy?url=${url}`);
-            hls.attachMedia(videoElement);
-          } else if (
-            videoElement.canPlayType("application/vnd.apple.mpegurl")
-          ) {
+            hlsInstance = new Hls();
+            hlsInstance.loadSource(`https://hianime-proxy-zeta.vercel.app/m3u8-proxy?url=${url}`);
+            hlsInstance.attachMedia(videoElement);
+          } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
             videoElement.src = url;
           } else {
             console.error("HLS is not supported in this browser.");
@@ -150,7 +125,12 @@ const Player = ({ dub, sub }) => {
       artRef.current.switchUrl(quality.url);
     });
 
+    // Cleanup on unmount
     return () => {
+      if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+      }
       if (artRef.current) {
         artRef.current.destroy();
         artRef.current = null;
@@ -158,10 +138,11 @@ const Player = ({ dub, sub }) => {
     };
   }, [videoData]);
 
+  // Render loading or error components
   if (loading) return <Loading bg="#111111" height="100%" />;
-  if (streamError)
-    return <Error message={streamError} bg="#111111" height="100%" />;
+  if (streamError) return <Error message={streamError} bg="#111111" height="100%" />;
 
+  // Render the player container
   return <Box className="artplayer-container" w="100%" h="100%"></Box>;
 };
 
