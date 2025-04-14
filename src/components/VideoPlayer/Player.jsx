@@ -14,6 +14,7 @@ const Player = ({ dub, sub }) => {
   const fullPath = `${watchId}${location.search}`;
   const artRef = useRef(null);
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+ 
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
@@ -25,10 +26,10 @@ const Player = ({ dub, sub }) => {
         setLoading(true);
         setStreamError(null);
         setVideoData(null);
-
+        console.log(window.location.origin)
+        console.log(location.search)
         const response = await fetch(
-          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&category=sub`
-        );
+          `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${location.search}&server=hd-2&category=sub`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch video data.");
@@ -114,7 +115,7 @@ const Player = ({ dub, sub }) => {
         hls: (videoElement, url) => {
           if (Hls.isSupported()) {
             const hls = new Hls();
-            hls.loadSource(url);
+            hls.loadSource(`https://hianime-proxy-zeta.vercel.app/m3u8-proxy?url=${url}`);
             hls.attachMedia(videoElement);
           } else if (
             videoElement.canPlayType("application/vnd.apple.mpegurl")
