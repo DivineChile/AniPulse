@@ -262,7 +262,7 @@ const Stream = () => {
                                   <Link
                                     key={epId}
                                     to={`/watch/${epId}`}
-                                    style={{ textDecoration: "none", fontFamily: "var(--body-font)" }}
+                                    style={{ textDecoration: "none", fontFamily: "var(--font-family)" }}
                                     className={
                                       `${location.pathname}${location.search}` ===
                                       `/watch/${epId}`
@@ -274,7 +274,7 @@ const Stream = () => {
                                     <Text
                                       as="span"
                                       display={{ base: "none", lg: "initial" }}
-                                      fontFamily="var(--body-font)"
+                                      fontFamily="var(--font-family)"
                                     >
                                       {" "}
                                       - {epTitle}

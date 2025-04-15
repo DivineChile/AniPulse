@@ -136,7 +136,7 @@ const SearchBar = ({ above, below, displayProp }) => {
           zIndex="999"
         >
           <Box borderBottom="1px solid #444444" mb="20px">
-            <Heading as="h4" color="var(--text-color)" fontSize="20px" mb="5px">
+            <Heading as="h4" color="var(--text-color)" fontSize="20px" mb="5px" fontWeight="400" fontFamily="var(--font-family)">
               Search Results
             </Heading>
           </Box>
@@ -148,7 +148,7 @@ const SearchBar = ({ above, below, displayProp }) => {
           )}
 
           {error && (
-            <Text as="span" color="var(--text-color)">
+            <Text as="span" color="var(--text-color)" fontFamily="var(--body-font)">
               {error}
             </Text>
           )}
@@ -177,6 +177,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                 <Heading
                   as="h4"
                   fontSize="16px"
+                  fontFamily="var(--font-family)"
                   color="var(--secondary-color)"
                   _hover={{ color: "var(--accent-color)" }}
                 >
@@ -184,7 +185,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                 </Heading>
 
                 <Flex gap="5px">
-                  <Text color="var(--text-color)" fontSize="12px">
+                  <Text color="var(--text-color)" fontSize="12px" fontFamily="var(--font-family)">
                     Sub: {item.episodes.sub || "N/A"}
                   </Text>
                   <Text color="var(--text-color)" fontSize="12px">

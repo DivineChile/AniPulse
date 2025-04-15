@@ -191,7 +191,7 @@ const Filter = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>Search</BreadcrumbLink>
+              <BreadcrumbLink>Search / {searchQuery}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -215,6 +215,7 @@ const Filter = () => {
                 fontSize={{ base: "28.83px", lg: "38.28px" }}
                 lineHeight={{ base: "33px", lg: "44px" }}
                 letterSpacing="1.5px"
+                fontFamily="var(--font-family)"
               >
                 Filter
               </Heading>

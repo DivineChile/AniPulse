@@ -71,6 +71,8 @@ const ListView = ({ results }) => {
                       transition="all ease 0.25s"
                       lineHeight={{ base: "18px", md: "22.5px" }}
                       letterSpacing="0.5px"
+                      fontWeight="500"
+                      fontFamily="var(--font-family)"
                     >
                       {resultTitle?.length > 30
                         ? `${resultTitle.slice(0, 30)}...`
