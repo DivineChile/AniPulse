@@ -262,7 +262,7 @@ const Stream = () => {
                                   <Link
                                     key={epId}
                                     to={`/watch/${epId}`}
-                                    style={{ textDecoration: "none" }}
+                                    style={{ textDecoration: "none", fontFamily: "var(--body-font)" }}
                                     className={
                                       `${location.pathname}${location.search}` ===
                                       `/watch/${epId}`
@@ -274,6 +274,7 @@ const Stream = () => {
                                     <Text
                                       as="span"
                                       display={{ base: "none", lg: "initial" }}
+                                      fontFamily="var(--body-font)"
                                     >
                                       {" "}
                                       - {epTitle}
@@ -315,6 +316,7 @@ const Stream = () => {
                       fontSize="15.38px"
                       lineHeight="24px"
                       letterSpacing="0.5px"
+                      fontFamily="var(--body-font)"
                     >
                       You&apos;re watching{" "}
                       <Text as="span" color="var(--accent-color)">
@@ -326,6 +328,7 @@ const Stream = () => {
                       lineHeight="24px"
                       letterSpacing="0.5px"
                       color="var(--text-color)"
+                      fontFamily="var(--body-font)"
                     >
                       If current servers dosen&apos;t work, please try other
                       servers.
@@ -357,6 +360,7 @@ const Stream = () => {
                         }
                         letterSpacing="0.5px"
                         lineHeight="24px"
+                        fontFamily="var(--body-font)"
                       >
                         SUB:
                       </Text>
@@ -374,6 +378,7 @@ const Stream = () => {
                                   ? "server active"
                                   : "server"
                               }
+                              style={{fontFamily: "var(--body-font)"}}
                               onClick={() => handleClick(index)} // Set the active index on click
                             >
                               {server}
@@ -397,6 +402,7 @@ const Stream = () => {
                         }
                         letterSpacing="0.5px"
                         lineHeight="24px"
+                        fontFamily="var(--body-font)"
                       >
                         DUB:
                       </Text>
@@ -415,6 +421,7 @@ const Stream = () => {
                                     ? "server active"
                                     : "server"
                                 }
+                                style={{fontFamily: "var(--body-font)"}}
                                 onClick={() => handleDubClick(index)} // Set the active index on click
                               >
                                 {server}
@@ -422,7 +429,7 @@ const Stream = () => {
                             )
                           )
                         ) : (
-                          <Text color="var(--text-color)">N/A</Text>
+                          <Text color="var(--text-color)" fontFamily="var(--body-font)">N/A</Text>
                         )}
                       </Flex>
                     </Box>

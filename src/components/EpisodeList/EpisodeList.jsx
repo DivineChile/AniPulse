@@ -34,6 +34,7 @@ const EpisodeList = ({ items, itemId }) => {
             md: "17px",
             lg: "19.38px",
           }}
+          fontFamily="var(--body-font)"
           fontWeight="300"
           lineHeight={{
             base: "17.6px",
@@ -46,7 +47,7 @@ const EpisodeList = ({ items, itemId }) => {
           key={index}
         >
           {`Episode ${index + 1}`}
-          <Text as="span" display={{ base: "none", lg: "initial" }}>
+          <Text as="span" display={{ base: "none", lg: "initial" }} fontFamily="var(--body-font)">
             {" "}
             - {_.title}
           </Text>

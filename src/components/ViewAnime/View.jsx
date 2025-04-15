@@ -174,7 +174,7 @@ const View = () => {
                       as="h2"
                       fontSize="35px"
                       fontWeight="500"
-                      fontFamily="Noir Pro"
+                      fontFamily="var(--font-family)"
                       color="var(--text-color)"
                       letterSpacing="1.5px"
                       lineHeight="38.5px"
@@ -203,8 +203,8 @@ const View = () => {
                         mb="8px"
                         color="var(--text-color)"
                         fontSize="24.02px"
-                        fontWeight="600"
-                        fontFamily="Noir Pro"
+                        fontWeight="300"
+                        fontFamily="var(--font-family)"
                         lineHeight="27.5px"
                         letterSpacing="1.5px"
                       >
@@ -215,6 +215,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="15.38px"
                         fontWeight="300"
+                        fontFamily="var(--body-font)"
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         transition="background ease 0.25s"
@@ -292,6 +293,7 @@ const View = () => {
                         as="p"
                         color="var(--text-color)"
                         fontSize="15px"
+                       fontFamily="var(--font-family)"
                         fontWeight="300"
                         lineHeight="24px"
                         transition="background ease 0.25s"
@@ -303,6 +305,7 @@ const View = () => {
                         as="span"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--body-font)"
                         lineHeight="24px"
                       >
                         {animeData.moreInfo.aired
@@ -316,6 +319,7 @@ const View = () => {
                         as="p"
                         color="var(--text-color)"
                         fontSize="15px"
+                        fontFamily="var(--font-family)"
                         fontWeight="300"
                         lineHeight="24px"
                       >
@@ -325,6 +329,7 @@ const View = () => {
                         color="var(--accent-color)"
                         as="span"
                         fontSize="15px"
+                        fontFamily="var(--body-font)"
                         fontWeight="300"
                         lineHeight="24px"
                         transition="background ease 0.25s"
@@ -339,6 +344,7 @@ const View = () => {
                                   as="span"
                                   fontSize="15px"
                                   fontWeight="300"
+                                  fontFamily="var(--body-font)"
                                   lineHeight="24px"
                                   transition="background ease 0.25s"
                                   key={index}
@@ -359,6 +365,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--font-family)"
                         lineHeight="24px"
                       >
                         Season:{"  "}
@@ -369,6 +376,7 @@ const View = () => {
                         fontSize="15px"
                         fontWeight="300"
                         lineHeight="24px"
+                        fontFamily="var(--body-font)"
                         transition="background ease 0.25s"
                       >
                         {animeData.moreInfo.premiered
@@ -383,6 +391,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--font-family)"
                         lineHeight="24px"
                       >
                         Year:{"  "}
@@ -407,6 +416,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--font-family)"
                         lineHeight="24px"
                       >
                         Status:{"  "}
@@ -416,6 +426,7 @@ const View = () => {
                         as="span"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--body-font)"
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
@@ -431,6 +442,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--font-family)"
                         lineHeight="24px"
                       >
                         Genres:{"  "}
@@ -445,6 +457,7 @@ const View = () => {
                               fontSize="15px"
                               fontWeight="300"
                               lineHeight="24px"
+                              fontFamily="var(--body-font)"
                               transition="background ease 0.25s"
                               key={index}
                             >
@@ -461,6 +474,7 @@ const View = () => {
                         color="var(--text-color)"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--font-family)"
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
@@ -471,6 +485,7 @@ const View = () => {
                         as="span"
                         fontSize="15px"
                         fontWeight="300"
+                        fontFamily="var(--body-font)"
                         lineHeight="24px"
                       >
                         {animeData.moreInfo.malscore
@@ -490,7 +505,8 @@ const View = () => {
                     <Heading
                       color="var(--text-color)"
                       fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
-                      fontWeight="700"
+                      fontWeight="400"
+                      fontFamily="var(--font-family)"
                       lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
                       letterSpacing="1.5px"
                     >

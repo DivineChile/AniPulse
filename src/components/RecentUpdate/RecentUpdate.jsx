@@ -65,6 +65,7 @@ const RecentUpdate = () => {
             color="var(--text-color)"
             m="0"
             textTransform="uppercase"
+            fontFamily="var(--font-family)"
           >
             Recently Updated
           </Heading>

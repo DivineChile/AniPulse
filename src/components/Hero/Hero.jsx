@@ -154,7 +154,7 @@ const Hero = () => {
                             lg: "67px",
                             "2xl": "76.25px",
                           }}
-                          fontFamily="Noir Pro"
+                          fontFamily="var(--font-family)"
                           lineHeight={{
                             base: "48px",
                             md: "68px",
@@ -175,7 +175,7 @@ const Hero = () => {
                             md: "29px",
                             "2xl": "37.97px",
                           }}
-                          fontFamily="Noir Pro"
+                          fontFamily="var(--font-family)"
                           lineHeight={{
                             base: "33px",
                             md: "35px",
@@ -211,6 +211,7 @@ const Hero = () => {
                                   : "2px solid var(--secondary-color)"
                               }
                               fontSize={{ base: "14.63px", md: "16.63px" }}
+                              fontFamily="var(--font-family)"
                               lineHeight="24px"
                             >
                               {genre}
@@ -226,7 +227,7 @@ const Hero = () => {
                             md: "24px",
                             "2xl": "28.95px",
                           }}
-                          fontFamily="Noir Pro"
+                          fontFamily="var(--font-family)"
                           lineHeight={{
                             base: "30px",
                             md: "35px",
@@ -243,6 +244,7 @@ const Hero = () => {
                             md: "14.38px",
                             "2xl": "15.38px",
                           }}
+                          fontFamily="var(--body-font)"
                           lineHeight={{
                             base: "21px",
                             md: "22px",
