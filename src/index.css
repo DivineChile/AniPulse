@@ -10,21 +10,36 @@
 
   scroll-behavior: smooth;
 
-  --primary-color: #ff4d4d;
+  /* --primary-color: #ff4d4d;
   --secondary-color: #33cc99;
   --primary-background-color: #222222;
   --accent-color: #ffd700;
   --text-color: #d3d3d3;
   --link-color: #33cc99;
-  --link-hover-color: #66ffcc;
+  --link-hover-color: #66ffcc; */
 
-  /* --primary-color: #ff6f61; 
-  --secondary-color: #6c63ff; 
-  --primary-background-color: #121212; 
-  --accent-color: #ffd700; 
-  --text-color: #e0e0e0; 
-  --link-color: #42a5f5; 
-  --link-hover-color: #1e88e5;  */
+  /* --primary-color: 	#FF3CAC; 
+  --secondary-color: 	#784BA0; 
+  --primary-background-color:#0F0E17; 
+  --accent-color: 	#2BDEFD; 
+  --text-color: #FAFAFA; 
+  --text-secondary: #B0B0B0;
+  --link-color: #2BDEFD; 
+  --link-hover-color: 	#FF3CAC;  */
+  --primary-color: 	#7F5AF0; 
+  --secondary-color: 	#2CB67D; 
+  --primary-background-color:#16161A; 
+  --accent-color: 	#F25F4C; 
+  --text-color: #FFFFFF; 
+  --text-secondary: #94A1B2;
+  --link-color: #2CB67D; 
+  --link-hover-color: 	#F25F4C; 
+  /* Primary Color	# or #E63946	
+Secondary Color	# or #5F27CD
+Accent	#00cec9 or #00B894	
+Background	#1B1B2F or #121212	
+Text	#FFFFFF or #EAEAEA	
+Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
 
   scrollbar-width: thin;
   scrollbar-color: var(--primary-background-color) #111;

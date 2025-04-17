@@ -45,6 +45,7 @@ const RecentUpdate = () => {
           "2xl": "container.xl",
         }}
         margin="auto"
+        pos="relative"
       >
         {/* Recent Release Head */}
         <Box
@@ -58,7 +59,7 @@ const RecentUpdate = () => {
         >
           <Heading
             as="h2"
-            fontSize={{ base: "28.59px", lg: "32px", "2xl": "37.97px" }}
+            fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
             fontWeight="600"
             lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
             letterSpacing="1.5px"

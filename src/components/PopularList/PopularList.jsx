@@ -66,14 +66,11 @@ const PopularList = () => {
           <Heading
             textTransform="uppercase"
             color="var(--text-color)"
-            fontSize={{
-              base: "29.77px",
-              md: "32px",
-              lg: "35px",
-              "2xl": "39.53",
-            }}
-            lineHeight={{ base: "33px", md: "36px", lg: "39px", "2xl": "44px" }}
+            fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
+            fontWeight="600"
+            lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
             letterSpacing="1.5px"
+            fontFamily="var(--font-family)"
             textAlign={{ base: "center", md: "start" }}
           >
             Popular Anime
