@@ -26,14 +26,15 @@
   --text-secondary: #B0B0B0;
   --link-color: #2BDEFD; 
   --link-hover-color: 	#FF3CAC;  */
-  --primary-color: 	#7F5AF0; 
-  --secondary-color: 	#2CB67D; 
-  --primary-background-color:#16161A; 
-  --accent-color: 	#F25F4C; 
-  --text-color: #FFFFFF; 
-  --text-secondary: #94A1B2;
-  --link-color: #2CB67D; 
-  --link-hover-color: 	#F25F4C; 
+  --primary-color: 	#8E44AD; 
+  --secondary-color: 	#3498DB; 
+  --primary-background-color:#0B0C10; 
+  --accent-color: 	#F1C40F; 
+  --text-color: #EAEAEA; 
+  --text-secondary: #AAB1B9;
+  --link-color: #3498DB; 
+  --card-background-color: #1F2833;
+  --link-hover-color: 	#F1C40F; 
   /* Primary Color	# or #E63946	
 Secondary Color	# or #5F27CD
 Accent	#00cec9 or #00B894	

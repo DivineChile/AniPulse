@@ -191,7 +191,7 @@ const View = () => {
                       fontSize="24.02px"
                       fontWeight="300"
                       lineHeight="37.5px"
-                      color="var(--text-color)"
+                      color="var(--text-secondary)"
                       transition="background ease 0.25s"
                     >
                       Episodes: {episodeCount}
@@ -243,7 +243,7 @@ const View = () => {
                       </Text>
                       ;
                     </Box>
-                    {/* <Box w="100%" h="47px">
+                    <Box w="100%" h="47px">
                       <ChakraLink
                         href="#episodes"
                         w="100%"
@@ -270,7 +270,7 @@ const View = () => {
                       >
                         Watch Now
                       </ChakraLink>
-                    </Box> */}
+                    </Box>
                   </Box>
                 </GridItem>
                 {/* Anime Details */}

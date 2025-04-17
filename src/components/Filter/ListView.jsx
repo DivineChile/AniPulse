@@ -38,7 +38,7 @@ const ListView = ({ results }) => {
               <GridItem key={index}>
                 <ChakraLink
                   as={ReactRouterLink}
-                  bg="#111111"
+                  bg="var(--card-background-color)"
                   w="100%"
                   borderRadius="10px"
                   display="flex"
