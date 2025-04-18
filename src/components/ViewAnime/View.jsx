@@ -95,12 +95,12 @@ const View = () => {
   return (
     <Box>
       <Navbar />
-      {isLoading && <Loading bg="#333333" height="100vh" />}
+      {isLoading && <Loading bg="var(--primary-background-color)" height="100vh" />}
 
-      {error && <Error height="100vh" bg="#191919" msg="Still Loading..." />}
+      {error && <Error height="100vh" bg="var(--primary-background-color)" msg="Still Loading..." />}
 
       {!isLoading && !error && (
-        <Box background="#191919">
+        <Box background="var(--primary-background-color)">
           <Box
             maxW={{
               base: "85%",
