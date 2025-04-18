@@ -95,12 +95,24 @@ const View = () => {
   return (
     <Box>
       <Navbar />
-      {isLoading && <Loading bg="var(--primary-background-color)" height="100vh" />}
+      {isLoading && <Loading bg="var(--gradient)" height="100vh" />}
 
       {error && <Error height="100vh" bg="var(--primary-background-color)" msg="Still Loading..." />}
 
       {!isLoading && !error && (
-        <Box background="var(--primary-background-color)">
+        <Box  bg={
+          animeData.info.poster
+            ? `url(${animeData.info.poster})`
+            : "var(--primary-background-color)"
+        }
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        bgPos="center"
+        bgAttachment="fixed"
+        bgBlendMode="overlay"
+        bgColor="rgba(0,0,0,1)"
+        className="fade-background"
+        >
           <Box
             maxW={{
               base: "85%",

@@ -66,7 +66,7 @@ const Hero = () => {
       <Navbar />
 
       {isLoading ? (
-        <Loading height="100%" bg="#191919" />
+        <Loading height="100%" bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)" />
       ) : error ? (
         <Error msg={error} height="100%" bg="#191919" />
       ) : (

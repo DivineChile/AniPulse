@@ -139,8 +139,8 @@ const Player = ({ dub, sub }) => {
   }, [videoData]);
 
   // Render loading or error components
-  if (loading) return <Loading bg="#111111" height="100%" />;
-  if (streamError) return <Error message={streamError} bg="#111111" height="100%" />;
+  if (loading) return <Loading bg="var(--primary-background-color)" height="100%" />;
+  if (streamError) return <Error message={streamError} bg="var(--primary-background-color)" height="100%" />;
 
   // Render the player container
   return <Box className="artplayer-container" w="100%" h="100%"></Box>;

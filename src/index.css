@@ -35,6 +35,7 @@
   --link-color: #3498DB; 
   --card-background-color: #1F2833;
   --link-hover-color: 	#F1C40F; 
+  --linear-gradient: linear-gradient(135deg, #8E44AD 0%, #3498DB 100%);
   /* Primary Color	# or #E63946	
 Secondary Color	# or #5F27CD
 Accent	#00cec9 or #00B894	
@@ -74,4 +75,17 @@ Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
   color: black;
   /* -webkit-text-fill-color: white; Will override color (regardless of order) */
   -webkit-text-stroke: 1px #616161;
+}
+
+.fade-background {
+  background-color: rgba(0, 0, 0, 1);
+  animation: fadeIn 3s ease-in-out forwards;
+  /* background: linear-gradient(to bottom, #8E44AD, #3498DB); */
+}
+
+@keyframes fadeIn {
+  to {
+    /* opacity: 1; */
+    background-color: rgba(0, 0, 0, 0.85);
+  }
 }
