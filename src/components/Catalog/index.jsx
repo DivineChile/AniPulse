@@ -78,7 +78,7 @@ const Catalog = () => {
     <Box bg="var(--primary-background-color)" pb="80px">
       <Box
         maxW={{
-          base: "85%",
+          base: "90%",
           sm: "95%",
           xl: "85%",
           "2xl": "container.xl",

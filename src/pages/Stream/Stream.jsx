@@ -123,7 +123,7 @@ const Stream = () => {
       <Box background="var(--primary-background-color)">
         <Box
           maxW={{
-            base: "85%",
+            base: "90%",
             sm: "95%",
             xl: "85%",
             "2xl": "container.xl",

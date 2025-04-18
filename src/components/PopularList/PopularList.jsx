@@ -55,7 +55,7 @@ const PopularList = () => {
     <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
       <Box
         maxW={{
-          base: "85%",
+          base: "90%",
           sm: "95%",
           xl: "85%",
           "2xl": "container.xl",
@@ -116,7 +116,7 @@ const PopularList = () => {
             {truncatedResults.map((item, index) => {
               const nameLength =
                 item.name.length > 30
-                  ? `${item.name.slice(0, 30)}...`
+                  ? `${item.name.slice(0, 26)}...`
                   : item.name;
               return (
                 <GridItem w={{ base: "100%" }} key={item.id}>

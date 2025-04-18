@@ -95,7 +95,7 @@ const View = () => {
   return (
     <Box>
       <Navbar />
-      {isLoading && <Loading bg="var(--gradient)" height="100vh" />}
+      {isLoading && <Loading bg="var(--linear-gradient)" height="100vh" />}
 
       {error && <Error height="100vh" bg="var(--primary-background-color)" msg="Still Loading..." />}
 
@@ -115,7 +115,7 @@ const View = () => {
         >
           <Box
             maxW={{
-              base: "85%",
+              base: "90%",
               sm: "95%",
               xl: "85%",
               "2xl": "container.xl",
@@ -160,10 +160,11 @@ const View = () => {
                   gap={{ base: "20px 0", md: "0 20px" }}
                   alignItems={{ base: "start", md: "center", "2xl": "start" }}
                   mb="20px"
+                  justifyContent={{ base: "initial", md: "space-between" }}
                 >
                   {/* Anime Image */}
                   <Box
-                    w={{ base: "100%", md: "55%" }}
+                    w={{ base: "100%", md: "30%", lg: "40%" }}
                     bg={
                       animeData.info.poster
                         ? `url(${animeData.info.poster})`
@@ -178,7 +179,7 @@ const View = () => {
                   ></Box>
                   {/* Anime Desc */}
                   <Box
-                    w={{ base: "100%", md: "45%" }}
+                    w={{ base: "100%", md: "70%", lg: "60%" }}
                     mb={{ base: "20px", md: "0" }}
                   >
                     {/* Anime Name */}
@@ -286,7 +287,7 @@ const View = () => {
                   </Box>
                 </GridItem>
                 {/* Anime Details */}
-                <GridItem colSpan={{ base: 7, md: 3, lg: 4, "2xl": 2 }}>
+                <GridItem colSpan={{ base: 7, md: 3, lg: 3, "2xl": 2 }}>
                   <Box display="flex" flexDir="column" gap="9px 0">
                     <Text
                       as="h3"
@@ -509,7 +510,7 @@ const View = () => {
                 </GridItem>
                 {/* Episodes List */}
                 <GridItem
-                  colSpan={{ base: 7, md: 4, lg: 3, "2xl": 5 }}
+                  colSpan={{ base: 7, md: 4, lg: 4, "2xl": 5 }}
                   mt={{ base: "20px", md: 0 }}
                   id="episodes"
                 >

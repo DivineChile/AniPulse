@@ -121,7 +121,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                   <Image
                     src={poster}
                     bg="#191919"
-                    w={{ base: "54.94px", lg: "69px" }}
+                    w={{ base: "60.94px", lg: "69px" }}
                     borderRadius="10px"
                   />
                 </Box>
