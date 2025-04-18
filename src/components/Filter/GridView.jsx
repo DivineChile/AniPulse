@@ -18,14 +18,13 @@ import { BsInfoCircle } from "react-icons/bs";
 const GridView = ({ results }) => {
   return (
     <Grid
-      gridTemplateColumns={{
-        base: "repeat(1, 1fr)",
-        sm: "repeat(2, 1fr)",
-        md: "repeat(3, 1fr)",
-        lg: "repeat(3, 1fr)",
-        xl: "repeat(4, 1fr)",
-      }}
-      gap={{ base: "20px 0", sm: "20px", md: "40px 25px" }}
+    gridTemplateColumns={{
+      base: "repeat(2, 1fr)",
+      md: "repeat(3, 1fr)",
+      lg: "repeat(4, 1fr)",
+      "2xl": "repeat(5, 1fr)",
+    }}
+    gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
     >
       {results && results?.length > 0
         ? results.map((item, index) => {
@@ -44,8 +43,8 @@ const GridView = ({ results }) => {
                     overflow="hidden!important"
                     className={`episode-container`}
                     h={{
-                      base: "400.23px",
-                      sm: "380.23px",
+                      base: "216px",
+                      sm: "290.23px",
                       md: "350px",
                       lg: "360px",
                       "2xl": "408.19px",
@@ -124,16 +123,16 @@ const GridView = ({ results }) => {
                       as="span"
                       color="var(--text-color)"
                       cursor="pointer"
-                      p="3px 10px"
+                      p={{base: "0px 6px", lg: "3px 10px"}}
                       transition="all ease 0.25s"
                       _hover={{
                         color: "var(--background-color)",
                         bgColor: "var(--accent-color)",
-                        border: "2px solid var(--accent-color)",
+                        borderColor: "var(--accent-color)"
                       }}
                       borderRadius="8px"
-                      border="2px solid var(--text-color)"
-                      fontSize={{ base: "14.63px" }}
+                      border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                      fontSize={{ base: "12.63px", md: "14.63px" }}
                       lineHeight="24px"
                       letterSpacing="0.5px"
                       textTransform="uppercase"
@@ -144,16 +143,16 @@ const GridView = ({ results }) => {
                       as="span"
                       color="var(--text-color)"
                       cursor="pointer"
-                      p="3px 10px"
+                      p={{base: "0px 6px", lg: "3px 10px"}}
                       transition="all ease 0.25s"
                       _hover={{
                         color: "var(--background-color)",
                         bgColor: "var(--accent-color)",
-                        border: "2px solid var(--accent-color)",
+                        borderColor: "var(--accent-color)"
                       }}
                       borderRadius="8px"
-                      border="2px solid var(--text-color)"
-                      fontSize={{ base: "14.63px" }}
+                      border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                      fontSize={{ base: "12.63px", md: "14.63px" }}
                       lineHeight="24px"
                       letterSpacing="0.5px"
                       textTransform="uppercase"
@@ -164,12 +163,13 @@ const GridView = ({ results }) => {
                       as="span"
                       color="var(--text-color)"
                       cursor="pointer"
-                      p="3px 10px"
+                      hideBelow="sm"
+                      p={{base: "0px 6px", lg: "3px 10px"}}
                       transition="all ease 0.25s"
                       _hover={{
                         color: "var(--accent-color)",
                       }}
-                      fontSize={{ base: "14.63px" }}
+                      fontSize={{ base: "12.63px", md: "14.63px" }}
                       lineHeight="24px"
                       letterSpacing="0.5px"
                       textTransform="uppercase"
@@ -192,7 +192,6 @@ const GridView = ({ results }) => {
                         "2xl": "22.88px",
                       }}
                       lineHeight="26px"
-                      // mt="5px"
                       letterSpacing="0.5px"
                       fontWeight="500"
                       textAlign={{ base: "start" }}
@@ -201,7 +200,7 @@ const GridView = ({ results }) => {
                       _hover={{ color: "var(--accent-color)" }}
                     >
                       {resultTitle?.length > 30
-                        ? `${resultTitle.slice(0, 30)}...`
+                        ? `${resultTitle.slice(0, 20)}...`
                         : resultTitle}
                     </Text>
                   </ChakraLink>
@@ -214,8 +213,8 @@ const GridView = ({ results }) => {
               <Skeleton
                 borderRadius="10px"
                 h={{
-                  base: "400.23px",
-                  sm: "380.23px",
+                  base: "216px",
+                  sm: "290.23px",
                   md: "350px",
                   lg: "360px",
                   "2xl": "408.19px",
