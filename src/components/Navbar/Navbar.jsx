@@ -127,11 +127,13 @@ const Navbar = () => {
     <Box
       className="navbar"
       background="var(--primary-background-color)"
-      width={{ base: "100%" }}
+      width={{ base: isOpen ? "100%" : "initial" }}
       py={{ base: "15px", lg: "20px" }}
-      pos="relative"
       boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
       // border="1px solid red"
+      position={{base: isOpen ? "fixed" : "relative", }}
+      top={{ base: isOpen ? "0" : "initial" }}
+      zIndex="9999"
     >
       <Box
         maxW={{
@@ -144,6 +146,7 @@ const Navbar = () => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
+        
       >
         <Box>
           <Heading m="0">
@@ -198,7 +201,7 @@ const Navbar = () => {
             gap={{ base: "10px 0", lg: "0" }}
             h={
               isOpen
-                ? { base: "fit-content", lg: "initial" }
+                ? { base: "calc(100dvh - 70px)", md: "calc(100dvh - 73px)", lg: "initial" }
                 : { base: "0", lg: "initial" }
             }
             zIndex="999"
