@@ -168,7 +168,7 @@ const Hero = () => {
                         </Heading>
                         <Heading
                           as="h4"
-                          textTransform="uppercase"
+                          textTransform="capitalize"
                           color="var(--text-color)"
                           fontSize={{
                             base: "20.97px",
@@ -184,7 +184,7 @@ const Hero = () => {
                           fontWeight="400"
                           mt={{ base: "10px", "2xl": "15px" }}
                         >
-                          Status: {animeMoreInfo.status}
+                          Status: <Text as="span" textTransform="capitalize">{animeMoreInfo.status}</Text>
                         </Heading>
                         <HStack my="10px" gap="10px 10px" flexWrap="wrap">
                           {animeMoreInfo.genres.map((genre, i) => (
@@ -220,7 +220,7 @@ const Hero = () => {
                         </HStack>
                         <Heading
                           as="h4"
-                          textTransform="uppercase"
+                          textTransform="capitalize"
                           color="var(--text-color)"
                           fontSize={{
                             base: "19.38px",

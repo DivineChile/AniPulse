@@ -3,7 +3,7 @@ a.play-now-btn {
   height: 68px;
   color: var(--text-color);
   border-radius: 10px;
-  padding: 5px 100px;
+  padding: 5px 50px;
   font-size: 37.5px;
   background: #191919;
   border: 2px solid var(--secondary-color);
@@ -45,7 +45,7 @@ a.play-now-btn:hover::after {
     height: 48px;
     color: var(--text-color) !important;
     border-radius: 10px;
-    padding: 8px 44px !important;
+    padding: 8px 38px !important;
     font-size: 20px;
     background: #191919;
     border: 2px solid var(--secondary-color);
@@ -69,7 +69,7 @@ a.play-now-btn:hover::after {
     height: 50px;
     color: var(--text-color) !important;
     border-radius: 10px;
-    padding: 7px 90px;
+    padding: 7px 80px;
     font-size: 20px;
     background: #191919;
     border: 2px solid var(--secondary-color);
@@ -93,7 +93,7 @@ a.play-now-btn:hover::after {
     height: 50px;
     color: var(--text-color) !important;
     border-radius: 10px;
-    padding: 7px 90px;
+    padding: 7px 80px;
     font-size: 20px;
     background: #191919;
     border: 2px solid var(--secondary-color);
