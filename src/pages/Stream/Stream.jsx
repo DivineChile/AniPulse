@@ -270,14 +270,7 @@ const Stream = () => {
                                         : "episode"
                                     }
                                   >
-                                    {`Episode ${epNo} `}
-                                    <Text
-                                      as="span"
-                                      display={{ base: "none", lg: "initial" }}
-                                      fontFamily="var(--font-family)"
-                                    >
-                                      {`- ${epTitle}`}
-                                    </Text>
+                                    {`Episode ${epNo}`}
                                   </Link>
                                 )
                               )
