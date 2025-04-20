@@ -22,7 +22,7 @@ const Hero = () => {
     animeInfo: [],
   });
 
-  const apiBase = "https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime";
+  const apiBase = "https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime";
 
   const fetchAnimeData = async () => {
     try {

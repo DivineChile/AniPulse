@@ -38,7 +38,7 @@ const Stream = () => {
   const [currentEpisode, setCurrentEpisode] = useState(null);
 
   const api = "https://consumet-api-puce.vercel.app/";
-  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const location = useLocation();
   const fullPath = `${watchId}${location.search}`;

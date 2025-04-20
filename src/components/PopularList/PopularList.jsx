@@ -26,7 +26,7 @@ const PopularList = () => {
   const [results, setResults] = useState([]);
 
   const api = "https://consumet-api-puce.vercel.app/";
-  const backup_api = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchPopularAnimes = async () => {

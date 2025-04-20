@@ -23,7 +23,7 @@ const Recents = () => {
   const [showAll, setShowAll] = useState(false);
 
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
-  const backupApi = "https://aniwatch-api-gamma-wheat.vercel.app/";
+  const backupApi = "https://aniwatch-api-production-68fd.up.railway.app/";
 
   const fetchRecentReleaseAnime = async () => {
     setIsLoading(true);

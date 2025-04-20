@@ -27,7 +27,7 @@ const Player = ({ dub, sub }) => {
       setVideoData(null);
 
       const response = await fetch(
-        `${proxy}https://aniwatch-api-gamma-wheat.vercel.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${queryParams}&server=hd-2&category=${category}`
+        `${proxy}https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${queryParams}&server=hd-2&category=${category}`
       );
 
       if (!response.ok) {
@@ -92,7 +92,7 @@ const Player = ({ dub, sub }) => {
         hls: (videoElement, url) => {
           if (Hls.isSupported()) {
             hlsInstance = new Hls();
-            hlsInstance.loadSource(`https://hianime-proxy-zeta.vercel.app/m3u8-proxy?url=${url}`);
+            hlsInstance.loadSource(`https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=${url}`);
             hlsInstance.attachMedia(videoElement);
           } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
             videoElement.src = url;
