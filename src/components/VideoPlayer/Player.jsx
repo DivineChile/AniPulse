@@ -5,21 +5,22 @@ import { useLocation, useParams } from "react-router-dom";
 import Loading from "../ErrorPage/Loading";
 import Error from "../ErrorPage/Error";
 import { Box } from "@chakra-ui/react";
-
 import "./style.css";
 
 const Player = ({ dub, sub }) => {
   const location = useLocation();
   const { watchId } = useParams();
-  const queryParams = location?.search || ""; // Safely handle location.search
+  const queryParams = location?.search || "";
   const artRef = useRef(null);
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/"; // Keep proxy URL as is
+
+  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const streamProxy = "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
   const [videoData, setVideoData] = useState(null);
+  const [qualities, setQualities] = useState([]);
 
-  // Unified fetch function for video data
   const fetchVideoData = async (category = "sub") => {
     try {
       setLoading(true);
@@ -30,30 +31,49 @@ const Player = ({ dub, sub }) => {
         `${proxy}https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${queryParams}&server=hd-2&category=${category}`
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch video data.");
-      }
+      if (!response.ok) throw new Error("Failed to fetch video data.");
 
       const data = await response.json();
 
-      if (!data.success || !data.data?.sources?.length) {
+      if (!data.success || !data.data?.sources?.length)
         throw new Error("No video sources available.");
-      }
 
       setVideoData(data.data);
-      console.log(`${category} video data loaded`);
     } catch (err) {
-      if (err.name === "TypeError") {
-        setStreamError("Network error. Please check your connection.");
-      } else {
-        setStreamError(err.message || "An unexpected error occurred.");
-      }
+      setStreamError(
+        err.name === "TypeError"
+          ? "Network error. Please check your connection."
+          : err.message || "An unexpected error occurred."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch video data based on dub/sub props
+  const extractHLSQualities = async (masterUrl) => {
+    try {
+      const proxiedUrl = `${streamProxy}${encodeURIComponent(masterUrl)}`;
+      const res = await fetch(proxiedUrl);
+      const text = await res.text();
+
+      const variantLines = text.split("#EXT-X-STREAM-INF").slice(1);
+      const variants = variantLines.map((entry) => {
+        const resolutionMatch = entry.match(/RESOLUTION=\d+x(\d+)/);
+        const quality = resolutionMatch ? `${resolutionMatch[1]}p` : "Auto";
+        const urlMatch = entry.split("\n")[1]?.trim();
+        return {
+          html: quality,
+          url: urlMatch?.startsWith("http") ? urlMatch : masterUrl.replace(/\/[^/]*$/, `/${urlMatch}`),
+        };
+      });
+
+      return variants;
+    } catch (err) {
+      console.error("Error extracting qualities:", err);
+      return [];
+    }
+  };
+
   useEffect(() => {
     if (sub) {
       fetchVideoData("sub");
@@ -62,87 +82,86 @@ const Player = ({ dub, sub }) => {
     } else {
       fetchVideoData("sub");
     }
-  }, [watchId, queryParams, dub, sub]); // Cleaned up dependencies
+  }, [watchId, queryParams, dub, sub]);
 
-  // Initialize Artplayer when videoData is available
   useEffect(() => {
-    if (!videoData || artRef.current) return;
+    const initPlayer = async () => {
+      if (!videoData || artRef.current) return;
 
-    const defaultSource = videoData?.sources?.[0]?.url;
-    const subtitles = videoData?.tracks?.map((track) => ({
-      url: track.file,
-      type: "vtt",
-      label: track.label,
-      default: track.label === "English",
-    }));
+      const defaultSource = videoData.sources?.[0]?.url;
+      if (!defaultSource) {
+        setStreamError("No valid video source found.");
+        return;
+      }
 
-    const defaultSubtitle = subtitles?.find((subtitle) => subtitle.default) || subtitles?.[0];
+      const subtitleList = videoData?.tracks?.map((track) => ({
+        url: track.file,
+        type: "vtt",
+        label: track.label,
+        default: track.label === "English",
+      }));
 
-    if (!defaultSource) {
-      console.error("No valid video source found.");
-      return;
-    }
+      const subtitle = subtitleList?.find((s) => s.default) || subtitleList?.[0];
 
-    let hlsInstance = null; // Track HLS instance for cleanup
+      const availableQualities = await extractHLSQualities(defaultSource);
+      setQualities(availableQualities);
 
-    // Initialize ArtPlayer
-    artRef.current = new Artplayer({
-      container: ".artplayer-container",
-      customType: {
-        hls: (videoElement, url) => {
-          if (Hls.isSupported()) {
-            hlsInstance = new Hls();
-            hlsInstance.loadSource(`https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=${url}`);
-            hlsInstance.attachMedia(videoElement);
-          } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
-            videoElement.src = url;
-          } else {
-            console.error("HLS is not supported in this browser.");
-          }
+      let hlsInstance = null;
+
+      artRef.current = new Artplayer({
+        container: ".artplayer-container",
+        customType: {
+          hls: (videoElement, url) => {
+            const cleanUrl = url.includes("m3u8-proxy") ? decodeURIComponent(url.split("url=")[1]) : url;
+            const proxied = `${streamProxy}${encodeURIComponent(cleanUrl)}`;
+            if (Hls.isSupported()) {
+              hlsInstance = new Hls();
+              hlsInstance.loadSource(proxied);
+              hlsInstance.attachMedia(videoElement);
+            } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+              videoElement.src = proxied;
+            } else {
+              console.error("HLS is not supported in this browser.");
+            }
+          },
         },
-      },
-      type: videoData.sources[0]?.type || "hls",
-      url: defaultSource,
-      subtitle: defaultSubtitle || {},
-      subtitleOffset: true,
-      autoSize: true,
-      autoplay: true,
-      autoMini: false,
-      theme: "var(--accent-color)",
-      screenshot: true,
-      setting: true,
-      playbackRate: true,
-      fullscreen: true,
-      quality: videoData.sources.map((source) => ({
-        html: "Quality",
-        url: source.url,
-        default: source === defaultSource,
-      })),
-    });
+        type: "hls",
+        url: defaultSource,
+        subtitle,
+        subtitleOffset: true,
+        autoSize: true,
+        autoplay: true,
+        autoMini: false,
+        theme: "var(--accent-color)",
+        screenshot: true,
+        setting: true,
+        playbackRate: true,
+        fullscreen: true,
+        quality: availableQualities.map((q, idx) => ({
+          ...q,
+          default: idx === 0,
+        })),
+      });
 
-    // Handle quality switching
-    artRef.current.on("quality", (quality) => {
-      artRef.current.switchUrl(quality.url);
-    });
+      artRef.current.on("quality", (quality) => {
+        artRef.current.switchUrl(quality.url, "hls");
+      });
 
-    // Cleanup on unmount
-    return () => {
-      if (hlsInstance) {
-        hlsInstance.destroy();
-        hlsInstance = null;
-      }
-      if (artRef.current) {
-        artRef.current.destroy();
-        artRef.current = null;
-      }
+      return () => {
+        if (hlsInstance) hlsInstance.destroy();
+        if (artRef.current) {
+          artRef.current.destroy();
+          artRef.current = null;
+        }
+      };
     };
+
+    initPlayer();
   }, [videoData]);
 
-  // Render loading or error components
   if (loading) return <Loading bg="var(--primary-background-color)" height="100%" />;
   if (streamError) return <Error message={streamError} bg="var(--primary-background-color)" height="100%" />;
 
-  // Render the player container
   return <Box className="artplayer-container" w="100%" h="100%"></Box>;
 };
 
