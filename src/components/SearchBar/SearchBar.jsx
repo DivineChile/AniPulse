@@ -82,7 +82,7 @@ const SearchBar = ({ above, below, displayProp }) => {
   };
 
   // Extract top 7 results for the dropdown
-  const top7Items = searchResults.slice(0, 7);
+  const top7Items = searchResults.slice(0, 5);
 
   return (
     <Box

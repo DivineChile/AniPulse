@@ -108,10 +108,8 @@ const Stream = () => {
       }
     };
     
-
     fetchEpisodes();
     fetchAnimeData();
-    
   }, [watchId]);
 
   useEffect(() => {
@@ -357,7 +355,7 @@ fetchEpisodeSession(sessionId, realEpNo)
                     xl: "450px!important",
                     "2xl": "600px!important",
                   }}
-                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  boxShadow="0 0 10px 0 var(--card-background-color)"
                   bg="var(--primary-background-color)"
                   borderRadius="10px"
                   pos="relative"
@@ -375,7 +373,7 @@ fetchEpisodeSession(sessionId, realEpNo)
                     "2xl": "600px",
                   }}
                   overflowY="scroll"
-                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  boxShadow="0 0 10px 0 var(--card-background-color)"
                   bg="var(--primary-background-color)"
                   borderRadius="10px"
                   width={{ base: "220px", md: "50%", lg: "100%" }}
@@ -467,7 +465,7 @@ fetchEpisodeSession(sessionId, realEpNo)
                 {/* Anime Dets / Servers / Downlaod */}
                 <GridItem
                   colSpan="6"
-                  boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
+                  boxShadow="0 0 10px 0 var(--card-background-color)"
                   bg="var(--primary-background-color)"
                   borderRadius="10px"
                   transition="all ease 0.25s"

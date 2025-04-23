@@ -226,7 +226,7 @@ const Navbar = () => {
                 </ListItem>
               );
             })}
-            {authUser != null ? (
+            {/* {authUser != null ? (
               <ListItem
                 className="nav-item"
                 textAlign="center"
@@ -249,8 +249,8 @@ const Navbar = () => {
               </ListItem>
             ) : (
               <></>
-            )}
-            <Box
+            )} */}
+            {/* <Box
               className="authCon"
               hideFrom="lg"
               borderTop={isOpen ? "1px solid #333333" : "none"}
@@ -298,7 +298,7 @@ const Navbar = () => {
                   </Link>
                 </Box>
               )}
-            </Box>
+            </Box> */}
           </List>
 
           <SearchBar below="lg" />
@@ -350,7 +350,7 @@ const Navbar = () => {
           )}
 
           {/* Auth Links */}
-          <Box className="authCon" pos="relative" hideBelow="lg">
+          {/* <Box className="authCon" pos="relative" hideBelow="lg">
             {authUser != null ? (
               <Avatar
                 src={authUser.photoUrl}
@@ -442,7 +442,7 @@ const Navbar = () => {
                 </Box>
               </Box>
             </Box>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
     </Box>
