@@ -4,6 +4,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import { useState } from "react";
 
 //import Pages
 import Home from "./pages/Home/Home";
@@ -16,6 +17,9 @@ import Filter from "./pages/Search/Filter";
 import Login from "./auth/Login/Login";
 import Signup from "./auth/Signup/Signup";
 import Profile from "./pages/Profile/Profile";
+import { PlayerContext } from "./contexts/PlayerContext";
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,7 +39,11 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  const [selectedQuality, setSelectedQuality] = useState(null);
+  const [availableQualities, setAvailableQualities] = useState([]);
+  return <PlayerContext.Provider value={{ selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities }}>
+    <RouterProvider router={router} />
+  </PlayerContext.Provider>;
 };
 
 export default App;

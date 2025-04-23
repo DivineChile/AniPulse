@@ -8,8 +8,8 @@ import {
   GridItem,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -17,6 +17,10 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import "./style.css";
 import Loading from "../../components/ErrorPage/Loading";
 import Player from "../../components/VideoPlayer/Player";
+import { PlayerContext } from "../../contexts/PlayerContext";
+import DownloadLinksSelect from "./DownloadLinksSelect";
+
+
 
 const Stream = () => {
   const { watchId } = useParams();
@@ -36,12 +40,21 @@ const Stream = () => {
   const [activeLink, setActiveLink] = useState(null);
   const [activeDubLink, setActiveDubLink] = useState(null);
   const [currentEpisode, setCurrentEpisode] = useState(null);
+  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } = useContext(PlayerContext);
+  const [fileSizes, setFileSizes] = useState({});
+  const [sessionId, setSessionId] = useState("");
+  const [sesssionEpisode, setSessionEpisode] = useState("");
+  const [sessionResult, setSessionResult] = useState({});
 
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const streamProxy = "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
+  const api_backend = "https://anipy-backend-production.up.railway.app/"
+  const animePahe_api = "https://paheapi-production.up.railway.app/"
   const location = useLocation();
   const fullPath = `${watchId}${location.search}`;
+ 
 
   const handleClick = (index) => {
     setActiveLink(index); // Update the active link index;
@@ -94,9 +107,11 @@ const Stream = () => {
         setLoading(false);
       }
     };
+    
 
     fetchEpisodes();
     fetchAnimeData();
+    
   }, [watchId]);
 
   useEffect(() => {
@@ -117,6 +132,173 @@ const Stream = () => {
     }
   }, [location, episodes, animeTitle]);
 
+  //Useffect to fetch download sizes
+  useEffect(() => {
+    const estimateSizes = async () => {
+      const sizes = {};
+  
+      for (const quality of availableQualities) {
+        try {
+          const playlistRes = await fetch(quality.url);
+          const playlistText = await playlistRes.text();
+  
+          const segmentUrls = playlistText
+            .split('\n')
+            .filter(line => line && !line.startsWith('#'))
+            .map(line => {
+              if (line.startsWith('http')) return line;
+              const base = new URL(quality.url);
+              return new URL(line, base).href;
+            });
+  
+          let totalBytes = 0;
+  
+          // We'll check the first 5 segments and estimate from there
+          const sampleCount = Math.min(segmentUrls.length, 5);
+          for (let i = 0; i < sampleCount; i++) {
+            try {
+              const res = await fetch(segmentUrls[i], { method: 'HEAD' });
+              const len = res.headers.get('content-length');
+              if (len) totalBytes += parseInt(len);
+            } catch (e) {
+              // Ignore broken segment
+            }
+          }
+  
+          const estimatedSize =
+            segmentUrls.length > 0
+              ? ((totalBytes / sampleCount) * segmentUrls.length) / (1024 * 1024)
+              : 0;
+  
+          sizes[quality.url] = estimatedSize
+            ? `${estimatedSize.toFixed(2)} MB (est)`
+            : 'Unknown size';
+        } catch (err) {
+          sizes[quality.url] = 'Error';
+        }
+      }
+      
+      setFileSizes(sizes);
+    };
+  
+    if (availableQualities.length > 0) {
+      estimateSizes();
+    }
+  }, [availableQualities]);
+
+  //Fetch session id of anime
+  const fetchSessionId = async () => {
+    if (!animeTitle) return;
+  
+    try {
+      const response = await fetch(`${animePahe_api}/search/${encodeURIComponent(animeTitle)}`);
+      const data = await response.json();
+  
+      const results = data.results || [];
+  
+      // Find exact match
+      const exactMatch = results.find(
+        (anime) =>
+          anime.title?.toLowerCase() === animeTitle.toLowerCase() ||
+          anime.japanese_title?.toLowerCase() === animeTitle.toLowerCase()
+      );
+  
+      if (exactMatch?.session_id) {
+        setSessionId(exactMatch.session_id);
+        setSessionResult(exactMatch); // Optional: store full details for later use
+      } else {
+        console.error("No exact match found with a valid session ID.");
+      }
+    } catch (error) {
+      console.error("Error fetching session ID:", error);
+    }
+  };
+  
+  useEffect(() => {
+    if (animeTitle) {
+      fetchSessionId();
+    }
+  }, [animeTitle]);
+
+  let epNo = currentEpisode?.match(/\d+/); // Extracts the first number from the string
+  let realEpNo = epNo ? parseInt(epNo[0]) : null;
+ // fetch episode session of anime
+async function fetchEpisodeSession(sessionId, episodeNumber) {
+  try {
+    // Make initial API request to get the first page
+    const response = await fetch(`${animePahe_api}episodes/${sessionId}/page=1`);
+    const firstPageData = await response.json();
+   
+
+    // Check if there is more than 1 page
+    const totalPages = firstPageData.total_pages;
+    
+    if (totalPages > 1) {
+      // If there are more pages, fetch all pages concurrently
+      const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+      // Fetch all pages concurrently
+      const pageDataPromises = pageNumbers.map(page =>
+        fetch(`${animePahe_api}episodes/${sessionId}/page=${page}`).then(res => res.json())
+      );
+
+      // Wait for all pages to be fetched
+      const allPagesData = await Promise.all(pageDataPromises);
+
+      // Flatten the list of episodes from all pages
+      const allEpisodes = allPagesData.flatMap(pageData => pageData.episodes);
+
+      // Find the episode matching the episodeNumber
+      const episode = allEpisodes.find(ep => parseInt(ep.episode) === episodeNumber);
+     
+
+      if (episode) {
+        // Return the episode session info
+        return {
+          episode: episode.episode,
+          session: episode.session,
+          title: episode.title,
+          snapshot: episode.snapshot,
+          aired: episode.created_at,
+        };
+      } else {
+        console.error(`Episode ${episodeNumber} not found`);
+      }
+    } else {
+      // If there is only one page, just check the episodes from the first page
+      const episode = firstPageData.episodes.find(ep => parseInt(ep.episode) === episodeNumber);
+
+      if (episode) {
+        // Return the episode session info
+        return {
+          episode: episode.episode,
+          session: episode.session,
+          title: episode.title,
+          snapshot: episode.snapshot,
+          aired: episode.aired,
+        };
+      } else {
+        console.error(`Episode ${episodeNumber} not found`);
+      }
+    }
+
+  } catch (error) {
+    console.error("Error fetching episode session:", error);
+  }
+}
+
+// Example usage
+fetchEpisodeSession(sessionId, realEpNo)
+  .then(episodeData => {
+    setSessionEpisode(episodeData.session);
+    
+    // You can now use the episode session data, e.g., display or trigger download
+  })
+  .catch(error => {
+    console.error("Failed to retrieve episode session:", error);
+  });
+
+  
   return (
     <Box>
       <Navbar />
@@ -257,7 +439,6 @@ const Stream = () => {
                                 ({
                                   number: epNo,
                                   episodeId: epId,
-                                  title: epTitle,
                                 }) => (
                                   <Link
                                     key={epId}
@@ -438,35 +619,8 @@ const Stream = () => {
                     mt={{ base: "20px", md: "0" }}
                     width={{ base: "initial" }}
                   >
-                    {/* <a
-                      className="downloadBtn"
-                      href={`${downloadUrl}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        pointerEvents: downloadLoading
-                          ? "none"
-                          : downloadError
-                          ? "none"
-                          : "visible",
-                        border: downloadLoading
-                          ? "2px solid var(--text-color)"
-                          : downloadError
-                          ? "2px solid var(--text-color)"
-                          : "2px solid var(--secondary-color)",
-                        display: downloadLoading
-                          ? "none"
-                          : downloadError
-                          ? "none"
-                          : "flex",
-                      }}
-                    >
-                      {downloadLoading
-                        ? "Loading..."
-                        : downloadError
-                        ? "Error Loading..."
-                        : "Download Now"}
-                    </a> */}
+                  <DownloadLinksSelect episodeSession={sesssionEpisode} sessionId={sessionId}/>
+                    
                     <Text
                       fontSize={{ base: "15.58px", "2xl": "24.41px" }}
                       lineHeight={{ base: "28.8px", "2xl": "37.5px" }}

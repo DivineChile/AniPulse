@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import { useLocation, useParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import Loading from "../ErrorPage/Loading";
 import Error from "../ErrorPage/Error";
 import { Box } from "@chakra-ui/react";
 import "./style.css";
+import { PlayerContext } from "../../contexts/PlayerContext";
 
 //Function to extract Stream Qualities from file
 const extractHLSQualities = async (m3u8Url) => {
@@ -54,6 +55,7 @@ const Player = ({ dub, sub }) => {
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
   const [videoData, setVideoData] = useState(null);
+  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } = useContext(PlayerContext);
 
   const fetchVideoData = async (category = "sub") => {
     try {
@@ -133,6 +135,8 @@ const Player = ({ dub, sub }) => {
               default: true,
             },
           ];
+          setSelectedQuality(qualities.find((q) => q.default));
+          setAvailableQualities(qualities);
   
       artRef.current = new Artplayer({
         container: ".artplayer-container",

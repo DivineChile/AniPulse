@@ -10,7 +10,7 @@ import {
   useToast,
   Image,
 } from "@chakra-ui/react";
-import { NavList } from "../utils/NavUtil";
+import { NavList } from "./utils/NavUtil";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
