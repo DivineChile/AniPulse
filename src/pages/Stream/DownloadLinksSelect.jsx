@@ -40,7 +40,7 @@ const DownloadLinksSelect = ({ sessionId, episodeSession }) => {
   return (
     <Box display="flex" gap="10px" flexDir={{ base: "column", sm: "row" }}>
         <Select id="download-links" onChange={handleSelectChange} value={selectedLink} color="var(--text-color)" background="var(--primary-background-color)">
-          <option value="">Select a quality</option>
+          <option value="">{ downloadLinks ? "Select a Quality" : "Loading..."}</option>
           {downloadLinks.map((link, index) => (
             <option key={index} value={link.direct_url} style={{color: "var(--text-color)", background: "var(--primary-background-color)"}}>
               {link.quality}
