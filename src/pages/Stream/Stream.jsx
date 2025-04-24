@@ -44,6 +44,7 @@ const Stream = () => {
   const [fileSizes, setFileSizes] = useState({});
   const [sessionId, setSessionId] = useState("");
   const [sesssionEpisode, setSessionEpisode] = useState("");
+  const [nextSessionEpisode, setNextSessionEpisode] = useState("");
   const [sessionResult, setSessionResult] = useState({});
 
   const api = "https://consumet-api-puce.vercel.app/";
@@ -221,82 +222,81 @@ const Stream = () => {
   let epNo = currentEpisode?.match(/\d+/); // Extracts the first number from the string
   let realEpNo = epNo ? parseInt(epNo[0]) : null;
  // fetch episode session of anime
-async function fetchEpisodeSession(sessionId, episodeNumber) {
+ async function fetchEpisodeSession(sessionId, realEpisodeNumber) {
   try {
-    // Make initial API request to get the first page
-    const response = await fetch(`${animePahe_api}episodes/${sessionId}/page=1`);
-    const firstPageData = await response.json();
-   
+    console.log(`[🔍] Fetching episode session for sessionId: ${sessionId}, realEpisodeNumber (UI): ${realEpisodeNumber}`);
 
-    // Check if there is more than 1 page
+    const firstPageRes = await fetch(`${animePahe_api}episodes/${sessionId}/page=1`);
+    const firstPageData = await firstPageRes.json();
     const totalPages = firstPageData.total_pages;
-    
-    if (totalPages > 1) {
-      // If there are more pages, fetch all pages concurrently
-      const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-      // Fetch all pages concurrently
-      const pageDataPromises = pageNumbers.map(page =>
-        fetch(`${animePahe_api}episodes/${sessionId}/page=${page}`).then(res => res.json())
-      );
-
-      // Wait for all pages to be fetched
-      const allPagesData = await Promise.all(pageDataPromises);
-
-      // Flatten the list of episodes from all pages
-      const allEpisodes = allPagesData.flatMap(pageData => pageData.episodes);
-
-      // Find the episode matching the episodeNumber
-      const episode = allEpisodes.find(ep => parseInt(ep.episode) === episodeNumber);
-     
-
-      if (episode) {
-        // Return the episode session info
-        return {
-          episode: episode.episode,
-          session: episode.session,
-          title: episode.title,
-          snapshot: episode.snapshot,
-          aired: episode.created_at,
-        };
+    const getAllEpisodes = async () => {
+      if (totalPages > 1) {
+        console.log(`[📄] Total Pages: ${totalPages}. Fetching all pages concurrently...`);
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+        const pages = await Promise.all(
+          pageNumbers.map(p => fetch(`${animePahe_api}episodes/${sessionId}/page=${p}`).then(res => res.json()))
+        );
+        return pages.flatMap(p => p.episodes);
       } else {
-        console.error(`Episode ${episodeNumber} not found`);
+        console.log(`[📄] Only 1 page found. Using first page episodes.`);
+        return firstPageData.episodes;
       }
-    } else {
-      // If there is only one page, just check the episodes from the first page
-      const episode = firstPageData.episodes.find(ep => parseInt(ep.episode) === episodeNumber);
+    };
 
-      if (episode) {
-        // Return the episode session info
-        return {
-          episode: episode.episode,
-          session: episode.session,
-          title: episode.title,
-          snapshot: episode.snapshot,
-          aired: episode.aired,
-        };
-      } else {
-        console.error(`Episode ${episodeNumber} not found`);
-      }
+    const allEpisodes = await getAllEpisodes();
+
+    if (!allEpisodes || allEpisodes.length === 0) {
+      console.error(`[❌] No episodes found for this anime.`);
+      return null;
     }
 
-  } catch (error) {
-    console.error("Error fetching episode session:", error);
+    const apiFirstEp = Math.min(...allEpisodes.map(ep => parseInt(ep.episode)));
+    const offset = apiFirstEp - 1;
+    const adjustedEpisode = realEpisodeNumber + offset;
+    const adjustedNextEpisode = adjustedEpisode + 1;
+
+    console.log(`[🧠] API first episode: ${apiFirstEp}`);
+    console.log(`[🧮] Offset applied: ${offset}`);
+    console.log(`[📺] Adjusted episode number: ${adjustedEpisode}`);
+    console.log(`[➡️] Adjusted next episode number: ${adjustedNextEpisode}`);
+
+    const matchedCurrent = allEpisodes.find(ep => parseInt(ep.episode) === adjustedEpisode);
+    const matchedNext = allEpisodes.find(ep => parseInt(ep.episode) === adjustedNextEpisode);
+
+    return {
+      current: matchedCurrent ? {
+        episode: matchedCurrent.episode,
+        session: matchedCurrent.session,
+        title: matchedCurrent.title,
+        snapshot: matchedCurrent.snapshot,
+        aired: matchedCurrent.created_at,
+      } : null,
+      next: matchedNext ? {
+        episode: matchedNext.episode,
+        session: matchedNext.session,
+        title: matchedNext.title,
+        snapshot: matchedNext.snapshot,
+        aired: matchedNext.created_at,
+      } : null
+    };
+
+  } catch (err) {
+    console.error(`[🔥] Error fetching episode session:`, err);
+    return null;
   }
 }
 
-// Example usage
-fetchEpisodeSession(sessionId, realEpNo)
-  .then(episodeData => {
-    setSessionEpisode(episodeData.session);
-    
-    // You can now use the episode session data, e.g., display or trigger download
-  })
-  .catch(error => {
-    console.error("Failed to retrieve episode session:", error);
-  });
+fetchEpisodeSession(sessionId, realEpNo).then(data => {
+  if (data?.current?.session) {
+    setSessionEpisode(data.current.session);
+  }
+  if (data?.next?.session) {
+    setNextSessionEpisode(data.next.session); // You can use this for prefetching
+  }
+});
 
-  
+  console.log(nextSessionEpisode);
   return (
     <Box>
       <Navbar />
@@ -617,7 +617,7 @@ fetchEpisodeSession(sessionId, realEpNo)
                     mt={{ base: "20px", md: "0" }}
                     width={{ base: "initial" }}
                   >
-                  <DownloadLinksSelect episodeSession={sesssionEpisode} sessionId={sessionId}/>
+                  <DownloadLinksSelect episodeSession={sesssionEpisode} sessionId={sessionId} nextSessionEpisode={nextSessionEpisode}/>
                     
                     <Text
                       fontSize={{ base: "15.58px", "2xl": "24.41px" }}

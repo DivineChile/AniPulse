@@ -1,70 +1,113 @@
 import { useState, useEffect } from 'react';
-import { Select, Box, Button, Link } from '@chakra-ui/react';
-import { set } from 'lodash';
+import { Select, Box, Link, Text, Button, HStack } from '@chakra-ui/react';
 
-const DownloadLinksSelect = ({ sessionId, episodeSession }) => {
+const downloadLinksCache = new Map();
+
+const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) => {
   const [downloadLinks, setDownloadLinks] = useState([]);
   const [selectedLink, setSelectedLink] = useState('');
-  const [err, setErr] = useState("");
- const animePahe_api = "https://paheapi-production.up.railway.app/"
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
+  const animePahe_api = "https://paheapi-production.up.railway.app/";
 
-  // Function to fetch the download links for the selected episode session
-  const fetchDownloadLinks = async () => {
+  const fetchDownloadLinks = async (key, isPrefetch = false) => {
     try {
-      const response = await fetch(`${animePahe_api}/download/${sessionId}/${episodeSession}`);
+      if (downloadLinksCache.has(key)) {
+        if (!isPrefetch) {
+          console.log(`[⚡] Using cached links for ${key}`);
+          setDownloadLinks(downloadLinksCache.get(key));
+          setLoading(false);
+        }
+        return;
+      }
+
+      if (!isPrefetch) setLoading(true);
+      const response = await fetch(`${animePahe_api}download/${sessionId}/${key}`);
       const data = await response.json();
 
       if (data.success_count > 0) {
-        setDownloadLinks(data.results); // Set the list of download links
+        downloadLinksCache.set(key, data.results);
+        if (!isPrefetch) {
+          setDownloadLinks(data.results);
+        }
       } else {
-        setErr("No download links available for this episode.");
+        if (!isPrefetch) setErr("No download links available for this episode.");
       }
     } catch (error) {
-      setErr("Failed to fetch download links. Please try again later.");
+      if (!isPrefetch) setErr("Failed to fetch download links. Please try again later.");
+    } finally {
+      if (!isPrefetch) setLoading(false);
     }
   };
 
-  // Effect to fetch download links when the component mounts
   useEffect(() => {
     if (sessionId && episodeSession) {
-      fetchDownloadLinks();
+      fetchDownloadLinks(episodeSession);
     }
-  }, [sessionId, episodeSession]);
 
-  // Handle the change event when a new quality is selected
+    if (sessionId && nextSessionEpisode) {
+      // Prefetch in background
+      fetchDownloadLinks(nextSessionEpisode, true);
+    }
+  }, [sessionId, episodeSession, nextSessionEpisode]);
+
   const handleSelectChange = (event) => {
-    const selectedUrl = event.target.value;
-    setSelectedLink(selectedUrl);
+    setSelectedLink(event.target.value);
   };
 
   return (
-    <Box display="flex" gap="10px" flexDir={{ base: "column", sm: "row" }}>
-        <Select id="download-links" onChange={handleSelectChange} value={selectedLink} color="var(--text-color)" background="var(--primary-background-color)">
-          <option value="">{ downloadLinks ? "Select a Quality" : "Loading..."}</option>
+    <Box display="flex" flexDir="column" gap="10px">
+      <Box display="flex" gap="10px" flexDir={{ base: "column", sm: "row" }}>
+        <Select
+          id="download-links"
+          onChange={handleSelectChange}
+          value={selectedLink}
+          isDisabled={loading || downloadLinks.length === 0}
+          color="var(--text-color)"
+          background="var(--primary-background-color)"
+        >
+          <option value="">
+            {loading ? 'Loading Qualities...' : 'Select a Quality'}
+          </option>
           {downloadLinks.map((link, index) => (
-            <option key={index} value={link.direct_url} style={{color: "var(--text-color)", background: "var(--primary-background-color)"}}>
+            <option
+              key={index}
+              value={link.direct_url}
+              style={{ color: "var(--text-color)", background: "var(--primary-background-color)" }}
+            >
               {link.quality}
             </option>
           ))}
         </Select>
-  
-        {/* Display the selected download link */}
+
         {selectedLink && (
-            <Link
-                className="downloadBtn"
-                border="2px solid var(--accent-color)"
-                background="var(--primary-background-color)"
-                color="var(--text-color)"
-                fontWeight="400"
-                px="20px"
-                href={selectedLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                _hover={{background: "var(--accent-color)", color: "var(--primary-background-color)"}}
-                >
-                Download
-            </Link>
+          <Link
+            className="downloadBtn"
+            border="2px solid var(--accent-color)"
+            background="var(--primary-background-color)"
+            color="var(--text-color)"
+            fontWeight="400"
+            px="20px"
+            href={selectedLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            _hover={{ background: "var(--accent-color)", color: "var(--primary-background-color)" }}
+          >
+            Download
+          </Link>
         )}
+      </Box>
+
+      {err && (
+        <HStack spacing={4}>
+          <Text color="red.400" fontSize="sm" fontWeight="500">
+            {err}
+          </Text>
+          <Button size="sm" colorScheme="red" variant="outline" onClick={() => fetchDownloadLinks(episodeSession)}>
+            Retry
+          </Button>
+        </HStack>
+      )}
     </Box>
   );
 };
