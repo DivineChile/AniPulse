@@ -8,7 +8,7 @@ import { Box } from "@chakra-ui/react";
 import "./style.css";
 import { PlayerContext } from "../../contexts/PlayerContext";
 
-// Function to extract Stream Qualities from file
+// Function to extract stream qualities
 const extractHLSQualities = async (m3u8Url) => {
   try {
     const response = await fetch(m3u8Url);
@@ -20,7 +20,7 @@ const extractHLSQualities = async (m3u8Url) => {
       if (lines[i].includes("#EXT-X-STREAM-INF")) {
         const resolutionMatch = lines[i].match(/RESOLUTION=(\d+)x(\d+)/);
         let label = "Unknown";
-        const url = lines[i + 1].trim();
+        const url = lines[i + 1]?.trim();
 
         if (resolutionMatch) {
           const height = resolutionMatch[2];
@@ -45,9 +45,8 @@ const Player = ({ dub, sub }) => {
   const location = useLocation();
   const { watchId } = useParams();
   const queryParams = location?.search || "";
-
+  const containerRef = useRef(null);
   const artRef = useRef(null);
-  const containerRef = useRef(null); // ✅ NEW REF for the container
 
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const streamProxy = "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
@@ -55,9 +54,7 @@ const Player = ({ dub, sub }) => {
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
   const [videoData, setVideoData] = useState(null);
-
-  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } =
-    useContext(PlayerContext);
+  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } = useContext(PlayerContext);
 
   const fetchVideoData = async (category = "sub") => {
     try {
@@ -72,7 +69,6 @@ const Player = ({ dub, sub }) => {
       if (!response.ok) throw new Error("Failed to fetch video data.");
 
       const data = await response.json();
-
       if (!data.success || !data.data?.sources?.length) {
         throw new Error("No video sources available.");
       }
@@ -96,8 +92,9 @@ const Player = ({ dub, sub }) => {
   }, [watchId, queryParams, dub, sub]);
 
   useEffect(() => {
-    if (!videoData || !containerRef.current) return;
+    if (!videoData) return;
 
+    // Destroy any existing player
     if (artRef.current) {
       artRef.current.destroy();
       artRef.current = null;
@@ -111,7 +108,9 @@ const Player = ({ dub, sub }) => {
       default: track.label === "English",
     }));
 
-    const defaultSubtitle = subtitles?.find((subtitle) => subtitle.default) || subtitles?.[0];
+    const validSubtitles = subtitles?.filter(sub => sub?.url?.endsWith(".vtt"));
+    const defaultSubtitle = validSubtitles?.find(sub => sub.default) || validSubtitles?.[0];
+
     let hlsInstance = null;
 
     const setupPlayer = async () => {
@@ -120,7 +119,6 @@ const Player = ({ dub, sub }) => {
         : defaultSource;
 
       const finalUrl = `${streamProxy}${encodeURIComponent(cleanUrl)}`;
-
       const extractedQualities = await extractHLSQualities(finalUrl);
 
       const qualities = extractedQualities.length
@@ -128,19 +126,17 @@ const Player = ({ dub, sub }) => {
             ...q,
             default: index === 0,
           }))
-        : [
-            {
-              html: "Auto",
-              url: defaultSource,
-              default: true,
-            },
-          ];
+        : [{
+            html: "Auto",
+            url: defaultSource,
+            default: true,
+          }];
 
       setSelectedQuality(qualities.find((q) => q.default));
       setAvailableQualities(qualities);
 
-      artRef.current = new Artplayer({
-        container: containerRef.current, // ✅ ref instead of class selector
+      const artConfig = {
+        container: containerRef.current,
         customType: {
           hls: (video, url) => {
             const actualUrl = url.includes("m3u8-proxy")
@@ -160,7 +156,6 @@ const Player = ({ dub, sub }) => {
         },
         type: "hls",
         url: defaultSource,
-        subtitle: defaultSubtitle || {},
         subtitleOffset: true,
         autoSize: true,
         autoplay: true,
@@ -171,7 +166,13 @@ const Player = ({ dub, sub }) => {
         playbackRate: true,
         fullscreen: true,
         quality: qualities,
-      });
+      };
+
+      if (defaultSubtitle?.url) {
+        artConfig.subtitle = defaultSubtitle;
+      }
+
+      artRef.current = new Artplayer(artConfig);
 
       artRef.current.on("quality", (quality) => {
         artRef.current.switchUrl(quality.url, true);
@@ -195,7 +196,7 @@ const Player = ({ dub, sub }) => {
   if (loading) return <Loading bg="var(--primary-background-color)" height="100%" />;
   if (streamError) return <Error message={streamError} bg="var(--primary-background-color)" height="100%" />;
 
-  return <Box ref={containerRef} className="artplayer-container" w="100%" h="100%"></Box>;
+  return <Box ref={containerRef} className="artplayer-container" w="100%" h="100%" />;
 };
 
 export default Player;
