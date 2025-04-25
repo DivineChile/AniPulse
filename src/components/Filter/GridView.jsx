@@ -19,12 +19,11 @@ const GridView = ({ results }) => {
   return (
     <Grid
     gridTemplateColumns={{
-      base: "repeat(2, 1fr)",
-      md: "repeat(3, 1fr)",
-      lg: "repeat(4, 1fr)",
-      "2xl": "repeat(5, 1fr)",
-    }}
-    gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
+        base: "repeat(2, 1fr)",
+        md: "repeat(3, 1fr)",
+        lg: "repeat(4, 1fr)",
+      }}
+      gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
     >
       {results && results?.length > 0
         ? results.map((item, index) => {

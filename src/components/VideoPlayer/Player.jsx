@@ -8,12 +8,11 @@ import { Box } from "@chakra-ui/react";
 import "./style.css";
 import { PlayerContext } from "../../contexts/PlayerContext";
 
-//Function to extract Stream Qualities from file
+// Function to extract Stream Qualities from file
 const extractHLSQualities = async (m3u8Url) => {
   try {
     const response = await fetch(m3u8Url);
     const playlist = await response.text();
-
     const lines = playlist.split("\n");
     const qualities = [];
 
@@ -42,12 +41,13 @@ const extractHLSQualities = async (m3u8Url) => {
   }
 };
 
-
 const Player = ({ dub, sub }) => {
   const location = useLocation();
   const { watchId } = useParams();
   const queryParams = location?.search || "";
+
   const artRef = useRef(null);
+  const containerRef = useRef(null); // ✅ NEW REF for the container
 
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const streamProxy = "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
@@ -55,7 +55,9 @@ const Player = ({ dub, sub }) => {
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
   const [videoData, setVideoData] = useState(null);
-  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } = useContext(PlayerContext);
+
+  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } =
+    useContext(PlayerContext);
 
   const fetchVideoData = async (category = "sub") => {
     try {
@@ -67,9 +69,7 @@ const Player = ({ dub, sub }) => {
         `${proxy}https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${queryParams}&server=hd-2&category=${category}`
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch video data.");
-      }
+      if (!response.ok) throw new Error("Failed to fetch video data.");
 
       const data = await response.json();
 
@@ -96,13 +96,13 @@ const Player = ({ dub, sub }) => {
   }, [watchId, queryParams, dub, sub]);
 
   useEffect(() => {
-    if (!videoData) return;
-  
+    if (!videoData || !containerRef.current) return;
+
     if (artRef.current) {
       artRef.current.destroy();
       artRef.current = null;
     }
-  
+
     const defaultSource = videoData?.sources?.[0]?.url;
     const subtitles = videoData?.tracks?.map((track) => ({
       url: track.file,
@@ -110,19 +110,19 @@ const Player = ({ dub, sub }) => {
       label: track.label,
       default: track.label === "English",
     }));
-  
+
     const defaultSubtitle = subtitles?.find((subtitle) => subtitle.default) || subtitles?.[0];
-  
     let hlsInstance = null;
-  
+
     const setupPlayer = async () => {
       const cleanUrl = defaultSource.includes("m3u8-proxy")
         ? decodeURIComponent(defaultSource.split("url=")[1])
         : defaultSource;
-  
+
       const finalUrl = `${streamProxy}${encodeURIComponent(cleanUrl)}`;
-  
+
       const extractedQualities = await extractHLSQualities(finalUrl);
+
       const qualities = extractedQualities.length
         ? extractedQualities.map((q, index) => ({
             ...q,
@@ -135,19 +135,20 @@ const Player = ({ dub, sub }) => {
               default: true,
             },
           ];
-          setSelectedQuality(qualities.find((q) => q.default));
-          setAvailableQualities(qualities);
-  
+
+      setSelectedQuality(qualities.find((q) => q.default));
+      setAvailableQualities(qualities);
+
       artRef.current = new Artplayer({
-        container: ".artplayer-container",
+        container: containerRef.current, // ✅ ref instead of class selector
         customType: {
           hls: (video, url) => {
             const actualUrl = url.includes("m3u8-proxy")
               ? decodeURIComponent(url.split("url=")[1])
               : url;
-  
+
             const streamUrl = `${streamProxy}${encodeURIComponent(actualUrl)}`;
-  
+
             if (Hls.isSupported()) {
               hlsInstance = new Hls();
               hlsInstance.loadSource(streamUrl);
@@ -171,14 +172,14 @@ const Player = ({ dub, sub }) => {
         fullscreen: true,
         quality: qualities,
       });
-  
+
       artRef.current.on("quality", (quality) => {
         artRef.current.switchUrl(quality.url, true);
       });
     };
-  
+
     setupPlayer();
-  
+
     return () => {
       if (hlsInstance) {
         hlsInstance.destroy();
@@ -190,12 +191,11 @@ const Player = ({ dub, sub }) => {
       }
     };
   }, [videoData]);
-  
 
   if (loading) return <Loading bg="var(--primary-background-color)" height="100%" />;
   if (streamError) return <Error message={streamError} bg="var(--primary-background-color)" height="100%" />;
 
-  return <Box className="artplayer-container" w="100%" h="100%"></Box>;
+  return <Box ref={containerRef} className="artplayer-container" w="100%" h="100%"></Box>;
 };
 
 export default Player;

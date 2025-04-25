@@ -185,118 +185,116 @@ const Stream = () => {
     }
   }, [availableQualities]);
 
-  //Fetch session id of anime
-  const fetchSessionId = async () => {
-    if (!animeTitle) return;
-  
-    try {
-      const response = await fetch(`${animePahe_api}/search/${encodeURIComponent(animeTitle)}`);
-      const data = await response.json();
-  
-      const results = data.results || [];
-  
-      // Find exact match
-      const exactMatch = results.find(
+ // Fetch session ID of anime
+ const fetchSessionId = async () => {
+  if (!animeTitle) return;
+
+  try {
+    const response = await fetch(`${animePahe_api}/search/${encodeURIComponent(animeTitle)}`);
+    const data = await response.json();
+
+    const results = data.results || [];
+
+    // Normalize strings for better matching
+    const normalize = (str) => str?.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Try to find a close match
+    const exactMatch =
+      results.find(
         (anime) =>
-          anime.title?.toLowerCase() === animeTitle.toLowerCase() ||
-          anime.japanese_title?.toLowerCase() === animeTitle.toLowerCase()
-      );
-  
-      if (exactMatch?.session_id) {
-        setSessionId(exactMatch.session_id);
-        setSessionResult(exactMatch); // Optional: store full details for later use
-      } else {
-        console.error("No exact match found with a valid session ID.");
+          normalize(anime.title) === normalize(animeTitle) ||
+          normalize(anime.japanese_title) === normalize(animeTitle)
+      ) || results.find(
+        (anime) =>
+          anime.title?.toLowerCase().includes(animeTitle.toLowerCase()) ||
+          anime.japanese_title?.toLowerCase().includes(animeTitle.toLowerCase())
+      ) || results[0]; // fallback to first result
+      console.log(exactMatch)
+
+    if (exactMatch?.session_id) {
+      setSessionId(exactMatch.session_id);
+      setSessionResult(exactMatch);
+    } else {
+      console.error("No matching anime with a session ID found.");
+    }
+  } catch (error) {
+    console.error("Error fetching session ID:", error);
+  }
+};
+
+
+useEffect(() => {
+  if (animeTitle) {
+    fetchSessionId();
+  }
+}, [animeTitle]);
+
+let epNo = currentEpisode?.match(/\d+/);
+let realEpNo = epNo ? parseInt(epNo[0]) : null;
+
+// Fetch episode session of anime — only when sessionId & realEpNo are valid
+useEffect(() => {
+  if (!sessionId || !realEpNo) return;
+
+  const fetchEpisodeSession = async () => {
+    try {
+      console.log(`[🔍] Fetching episode session for sessionId: ${sessionId}, realEpisodeNumber: ${realEpNo}`);
+
+      const firstPageRes = await fetch(`${animePahe_api}episodes/${sessionId}/page=1`);
+      const firstPageData = await firstPageRes.json();
+      const totalPages = firstPageData.total_pages;
+
+      const getAllEpisodes = async () => {
+        if (totalPages > 1) {
+          console.log(`[📄] Total Pages: ${totalPages}. Fetching all pages concurrently...`);
+          const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+          const pages = await Promise.all(
+            pageNumbers.map(p => fetch(`${animePahe_api}episodes/${sessionId}/page=${p}`).then(res => res.json()))
+          );
+          return pages.flatMap(p => p.episodes);
+        } else {
+          console.log(`[📄] Only 1 page found. Using first page episodes.`);
+          return firstPageData.episodes;
+        }
+      };
+
+      const allEpisodes = await getAllEpisodes();
+
+      if (!allEpisodes || allEpisodes.length === 0) {
+        console.error(`[❌] No episodes found for this anime.`);
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching session ID:", error);
+
+      const apiFirstEp = Math.min(...allEpisodes.map(ep => parseInt(ep.episode)));
+      const offset = apiFirstEp - 1;
+      const adjustedEpisode = realEpNo + offset;
+      const adjustedNextEpisode = adjustedEpisode + 1;
+
+      console.log(`[🧠] API first episode: ${apiFirstEp}`);
+      console.log(`[🧮] Offset applied: ${offset}`);
+      console.log(`[📺] Adjusted episode number: ${adjustedEpisode}`);
+      console.log(`[➡️] Adjusted next episode number: ${adjustedNextEpisode}`);
+
+      const matchedCurrent = allEpisodes.find(ep => parseInt(ep.episode) === adjustedEpisode);
+      const matchedNext = allEpisodes.find(ep => parseInt(ep.episode) === adjustedNextEpisode);
+
+      if (matchedCurrent?.session) {
+        setSessionEpisode(matchedCurrent.session);
+      }
+
+      if (matchedNext?.session) {
+        setNextSessionEpisode(matchedNext.session);
+      }
+
+    } catch (err) {
+      console.error(`[🔥] Error fetching episode session:`, err);
     }
   };
-  
-  useEffect(() => {
-    if (animeTitle) {
-      fetchSessionId();
-    }
-  }, [animeTitle]);
 
-  let epNo = currentEpisode?.match(/\d+/); // Extracts the first number from the string
-  let realEpNo = epNo ? parseInt(epNo[0]) : null;
- // fetch episode session of anime
- async function fetchEpisodeSession(sessionId, realEpisodeNumber) {
-  try {
-    console.log(`[🔍] Fetching episode session for sessionId: ${sessionId}, realEpisodeNumber (UI): ${realEpisodeNumber}`);
+  fetchEpisodeSession();
 
-    const firstPageRes = await fetch(`${animePahe_api}episodes/${sessionId}/page=1`);
-    const firstPageData = await firstPageRes.json();
-    const totalPages = firstPageData.total_pages;
+}, [sessionId, realEpNo]);
 
-    const getAllEpisodes = async () => {
-      if (totalPages > 1) {
-        console.log(`[📄] Total Pages: ${totalPages}. Fetching all pages concurrently...`);
-        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-        const pages = await Promise.all(
-          pageNumbers.map(p => fetch(`${animePahe_api}episodes/${sessionId}/page=${p}`).then(res => res.json()))
-        );
-        return pages.flatMap(p => p.episodes);
-      } else {
-        console.log(`[📄] Only 1 page found. Using first page episodes.`);
-        return firstPageData.episodes;
-      }
-    };
-
-    const allEpisodes = await getAllEpisodes();
-
-    if (!allEpisodes || allEpisodes.length === 0) {
-      console.error(`[❌] No episodes found for this anime.`);
-      return null;
-    }
-
-    const apiFirstEp = Math.min(...allEpisodes.map(ep => parseInt(ep.episode)));
-    const offset = apiFirstEp - 1;
-    const adjustedEpisode = realEpisodeNumber + offset;
-    const adjustedNextEpisode = adjustedEpisode + 1;
-
-    console.log(`[🧠] API first episode: ${apiFirstEp}`);
-    console.log(`[🧮] Offset applied: ${offset}`);
-    console.log(`[📺] Adjusted episode number: ${adjustedEpisode}`);
-    console.log(`[➡️] Adjusted next episode number: ${adjustedNextEpisode}`);
-
-    const matchedCurrent = allEpisodes.find(ep => parseInt(ep.episode) === adjustedEpisode);
-    const matchedNext = allEpisodes.find(ep => parseInt(ep.episode) === adjustedNextEpisode);
-
-    return {
-      current: matchedCurrent ? {
-        episode: matchedCurrent.episode,
-        session: matchedCurrent.session,
-        title: matchedCurrent.title,
-        snapshot: matchedCurrent.snapshot,
-        aired: matchedCurrent.created_at,
-      } : null,
-      next: matchedNext ? {
-        episode: matchedNext.episode,
-        session: matchedNext.session,
-        title: matchedNext.title,
-        snapshot: matchedNext.snapshot,
-        aired: matchedNext.created_at,
-      } : null
-    };
-
-  } catch (err) {
-    console.error(`[🔥] Error fetching episode session:`, err);
-    return null;
-  }
-}
-
-fetchEpisodeSession(sessionId, realEpNo).then(data => {
-  if (data?.current?.session) {
-    setSessionEpisode(data.current.session);
-  }
-  if (data?.next?.session) {
-    setNextSessionEpisode(data.next.session); // You can use this for prefetching
-  }
-});
-
-  console.log(nextSessionEpisode);
   return (
     <Box>
       <Navbar />
