@@ -66,7 +66,7 @@ const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) 
           color="var(--text-color)"
           background="var(--primary-background-color)"
         >
-          <option value="">
+          <option value="" style={{textAlign: "center"}}>
             {loading ? 'Loading Download Links...' : 'Download'}
           </option>
           {downloadLinks.map((link, index) => (
