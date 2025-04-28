@@ -67,7 +67,7 @@ const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) 
           background="var(--primary-background-color)"
         >
           <option value="">
-            {loading ? 'Loading Qualities...' : 'Select a Quality'}
+            {loading ? 'Loading Download Links...' : 'Download'}
           </option>
           {downloadLinks.map((link, index) => (
             <option
