@@ -107,9 +107,12 @@ const Player = ({ dub, sub }) => {
       label: track.label,
       default: track.label === "English",
     }));
+    console.log(subtitles)
 
     const validSubtitles = subtitles?.filter(sub => sub?.url?.endsWith(".vtt"));
     const defaultSubtitle = validSubtitles?.find(sub => sub.default) || validSubtitles?.[0];
+    console.log(validSubtitles)
+    console.log(defaultSubtitle)
 
     let hlsInstance = null;
 
@@ -168,8 +171,12 @@ const Player = ({ dub, sub }) => {
         quality: qualities,
       };
 
-      if (defaultSubtitle?.url) {
-        artConfig.subtitle = defaultSubtitle;
+      if(!dub) {
+        if (defaultSubtitle?.url) {
+          artConfig.subtitle = defaultSubtitle;
+        }
+      } else {
+        artConfig.subtitle = {}
       }
 
       artRef.current = new Artplayer(artConfig);
