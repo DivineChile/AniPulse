@@ -285,9 +285,9 @@ const Upcoming = () => {
                         <Text
                           key={unit}
                           as="span"
-                          color="var(--primary-background-color)"
+                          color="var(--text-color)"
                           p="10px"
-                          bg="#fff"
+                          bg="var(--primary-background-color)"
                           borderRadius="8px"
                           boxShadow="0 0 10px 0 var(--secondary-color)"
                           fontSize={{
@@ -309,6 +309,7 @@ const Upcoming = () => {
                               "2xl": "20px",
                             }}
                             fontWeight="light"
+                            color="var(--text-color)"
                           >
                             {unit[0]}
                           </Text>
