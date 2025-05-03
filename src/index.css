@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@200;300;400;500;600;700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Russo+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 :root {
   --font-family: "Russo One", "Poppins", sans-serif !important;
   --body-font: "Nunito", "Poppins", sans-serif !important;
@@ -26,16 +26,16 @@
   --text-secondary: #B0B0B0;
   --link-color: #2BDEFD; 
   --link-hover-color: 	#FF3CAC;  */
-  --primary-color: 	#8E44AD; 
-  --secondary-color: 	#3498DB; 
-  --primary-background-color:#0B0C10; 
-  --accent-color: 	#F1C40F; 
-  --text-color: #EAEAEA; 
-  --text-secondary: #AAB1B9;
-  --link-color: #3498DB; 
-  --card-background-color: #1F2833;
-  --link-hover-color: 	#F1C40F; 
-  --linear-gradient: linear-gradient(135deg, #8E44AD 0%, #3498DB 100%);
+  --primary-color: #8e44ad;
+  --secondary-color: #3498db;
+  --primary-background-color: #0b0c10;
+  --accent-color: #f1c40f;
+  --text-color: #eaeaea;
+  --text-secondary: #aab1b9;
+  --link-color: #3498db;
+  --card-background-color: #1f2833;
+  --link-hover-color: #f1c40f;
+  --linear-gradient: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);
   /* Primary Color	# or #E63946	
 Secondary Color	# or #5F27CD
 Accent	#00cec9 or #00B894	
@@ -44,7 +44,7 @@ Text	#FFFFFF or #EAEAEA
 Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
 
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-background-color) #111;
+  scrollbar-color: var(--primary-color) #111;
 }
 
 * {
