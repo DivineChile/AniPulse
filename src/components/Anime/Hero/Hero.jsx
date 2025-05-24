@@ -1,10 +1,10 @@
 import { Box, Flex, HStack, Heading, Text, VStack } from "@chakra-ui/react";
-import Navbar from "../Navbar/Navbar";
+import Navbar from "../../Navbar/Navbar";
 import { Link } from "react-router-dom";
 import "./Hero.css";
 import { useEffect, useState } from "react";
-import Loading from "../ErrorPage/Loading";
-import Error from "../ErrorPage/Error";
+import Loading from "../../ErrorPage/Loading";
+import Error from "../../ErrorPage/Error";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -22,7 +22,8 @@ const Hero = () => {
     animeInfo: [],
   });
 
-  const apiBase = "https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime";
+  const apiBase =
+    "https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime";
 
   const fetchAnimeData = async () => {
     try {
@@ -66,7 +67,10 @@ const Hero = () => {
       <Navbar />
 
       {isLoading ? (
-        <Loading height="100%" bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)" />
+        <Loading
+          height="100%"
+          bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
+        />
       ) : error ? (
         <Error msg={error} height="100%" bg="#191919" />
       ) : (
@@ -184,7 +188,10 @@ const Hero = () => {
                           fontWeight="400"
                           mt={{ base: "10px", "2xl": "15px" }}
                         >
-                          Status: <Text as="span" textTransform="capitalize">{animeMoreInfo.status}</Text>
+                          Status:{" "}
+                          <Text as="span" textTransform="capitalize">
+                            {animeMoreInfo.status}
+                          </Text>
                         </Heading>
                         <HStack my="10px" gap="10px 10px" flexWrap="wrap">
                           {animeMoreInfo.genres.map((genre, i) => (
@@ -261,6 +268,7 @@ const Hero = () => {
                           <Link
                             to={`anime/${animeInfo.id}`}
                             className="play-now-btn"
+                            style={{ textAlign: "center" }}
                           >
                             VIEW MORE
                           </Link>

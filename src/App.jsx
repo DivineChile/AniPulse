@@ -12,14 +12,14 @@ import Trending from "./pages/Trending/Trending";
 import Movies from "./pages/Movies/Movies";
 import Popular from "./pages/Popular/Popular";
 import Stream from "./pages/Stream/Stream";
-import View from "./components/ViewAnime/View";
+import View from "./components/Anime/ViewAnime/View";
 import Filter from "./pages/Search/Filter";
 import Login from "./auth/Login/Login";
 import Signup from "./auth/Signup/Signup";
 import Profile from "./pages/Profile/Profile";
+
+import ViewMovie from "./components/Movie/ViewMovie/ViewMovie";
 import { PlayerContext } from "./contexts/PlayerContext";
-
-
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +32,8 @@ const router = createBrowserRouter(
       <Route path="/popular" element={<Popular />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/anime/:id" element={<View />} />
+      <Route path="/movies/movie/:id" element={<ViewMovie />} />
+      <Route path="/movies/tv/:id" element={<ViewMovie />} />
       <Route path="/search/keyword/:searchQuery" element={<Filter />} />
       <Route path="/watch/:watchId" element={<Stream />} />
     </>
@@ -41,9 +43,18 @@ const router = createBrowserRouter(
 const App = () => {
   const [selectedQuality, setSelectedQuality] = useState(null);
   const [availableQualities, setAvailableQualities] = useState([]);
-  return <PlayerContext.Provider value={{ selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities }}>
-    <RouterProvider router={router} />
-  </PlayerContext.Provider>;
+  return (
+    <PlayerContext.Provider
+      value={{
+        selectedQuality,
+        availableQualities,
+        setSelectedQuality,
+        setAvailableQualities,
+      }}
+    >
+      <RouterProvider router={router} />
+    </PlayerContext.Provider>
+  );
 };
 
 export default App;

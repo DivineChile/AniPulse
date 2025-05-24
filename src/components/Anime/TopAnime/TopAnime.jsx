@@ -11,7 +11,7 @@ import {
   SkeletonText,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import Error from "../ErrorPage/Error";
+import Error from "../../ErrorPage/Error";
 
 const TopAnime = ({ data, numbers, heading, loading, error }) => {
   // Display up to 6 anime items
@@ -65,7 +65,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
   }
 
   return (
-    <VStack alignItems={{base: "center", lg: "start"}} gap="20px" w="100%">
+    <VStack alignItems={{ base: "center", lg: "start" }} gap="20px" w="100%">
       <Heading
         fontFamily="var(--font-family)"
         fontWeight="400"
@@ -73,7 +73,6 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
         lineHeight={{ base: "26.4px", md: "33px" }}
         letterSpacing="1.5px"
         color="var(--text-color)"
-        
       >
         {heading}
       </Heading>

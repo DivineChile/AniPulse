@@ -14,7 +14,7 @@ import { NavList } from "./utils/NavUtil";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
-import SearchBar from "../SearchBar/SearchBar";
+import SearchBar from "../Anime/SearchBar/SearchBar";
 import { CloseIcon } from "@chakra-ui/icons";
 import navIcon from "../../assets/navIcon.png";
 import { useState, useEffect } from "react";
@@ -83,41 +83,6 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const navLinks = document.querySelectorAll(".navbar ul li.nav-item");
-
-  const toggleNav = (link) => {
-    let i = 0;
-    while (i < navLinks.length) {
-      if (navLinks[i].classList.contains("active")) {
-        navLinks[i].classList.remove("active");
-      }
-      i++;
-    }
-
-    if (link) {
-      link.classList.toggle("active");
-    }
-  };
-
-  switch (location) {
-    case "/":
-      toggleNav(navLinks[0]);
-      break;
-    case "/trending":
-      toggleNav(navLinks[1]);
-      break;
-    case "/movies":
-      toggleNav(navLinks[2]);
-      break;
-    case "/popular":
-      toggleNav(navLinks[3]);
-      break;
-
-    default:
-      toggleNav(null);
-      break;
-  }
-
   if (authUser != null && authUser.displayName == null) {
     userName = authUser.email?.split("@")[0];
   }
@@ -131,7 +96,7 @@ const Navbar = () => {
       py={{ base: "15px", lg: "20px" }}
       boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
       // border="1px solid red"
-      position={{base: isOpen ? "fixed" : "relative", }}
+      position={{ base: isOpen ? "fixed" : "relative" }}
       top={{ base: isOpen ? "0" : "initial" }}
       zIndex="9999"
     >
@@ -146,7 +111,6 @@ const Navbar = () => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        
       >
         <Box>
           <Heading m="0">
@@ -201,7 +165,11 @@ const Navbar = () => {
             gap={{ base: "10px 0", lg: "0" }}
             h={
               isOpen
-                ? { base: "calc(100dvh - 70px)", md: "calc(100dvh - 73px)", lg: "initial" }
+                ? {
+                    base: "calc(100dvh - 70px)",
+                    md: "calc(100dvh - 73px)",
+                    lg: "initial",
+                  }
                 : { base: "0", lg: "initial" }
             }
             zIndex="999"
@@ -209,9 +177,12 @@ const Navbar = () => {
             <SearchBar above="lg" displayProp={isOpen ? "block" : "none"} />
 
             {NavList.map((item, key) => {
+              const isActive =
+                location === item.to || location.startsWith(`${item.to}/`);
+
               return (
                 <ListItem
-                  className="nav-item"
+                  className={`nav-item${isActive ? " active" : ""}`}
                   textAlign="center"
                   mx={{ base: "5px", md: "10px" }}
                   px={{ base: "5px", md: "10px" }}

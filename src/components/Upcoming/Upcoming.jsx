@@ -285,9 +285,9 @@ const Upcoming = () => {
                         <Text
                           key={unit}
                           as="span"
-                          color="var(--text-color)"
+                          color="var(--primary-background-color)"
                           p="10px"
-                          bg="var(--primary-background-color)"
+                          bg="var(--text-color)"
                           borderRadius="8px"
                           boxShadow="0 0 10px 0 var(--secondary-color)"
                           fontSize={{
@@ -304,12 +304,12 @@ const Upcoming = () => {
                             as="sub"
                             ms="5px"
                             fontSize={{
-                              base: "12px",
-                              md: "16px",
-                              "2xl": "20px",
+                              base: "15px",
+                              md: "19px",
+                              "2xl": "23px",
                             }}
                             fontWeight="light"
-                            color="var(--text-color)"
+                            color="var(--primary-background-color)"
                           >
                             {unit[0]}
                           </Text>

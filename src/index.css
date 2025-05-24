@@ -89,3 +89,15 @@ Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
     background-color: rgba(0, 0, 0, 0.85);
   }
 }
+
+.episode-container:hover img {
+  transform: scale(1);
+}
+.episode-container:hover .overlay {
+  height: 100%;
+  opacity: 1;
+}
+
+.playNowBtn:hover .playIcon {
+  color: var(--accent-color);
+}

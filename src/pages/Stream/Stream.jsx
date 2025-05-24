@@ -16,11 +16,9 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import "./style.css";
 import Loading from "../../components/ErrorPage/Loading";
-import Player from "../../components/VideoPlayer/Player";
+import Player from "../../components/Anime/VideoPlayer/Player";
 import { PlayerContext } from "../../contexts/PlayerContext";
 import DownloadLinksSelect from "./DownloadLinksSelect";
-
-
 
 const Stream = () => {
   const { watchId } = useParams();
@@ -40,7 +38,12 @@ const Stream = () => {
   const [activeLink, setActiveLink] = useState(null);
   const [activeDubLink, setActiveDubLink] = useState(null);
   const [currentEpisode, setCurrentEpisode] = useState(null);
-  const { selectedQuality, availableQualities, setSelectedQuality, setAvailableQualities } = useContext(PlayerContext);
+  const {
+    selectedQuality,
+    availableQualities,
+    setSelectedQuality,
+    setAvailableQualities,
+  } = useContext(PlayerContext);
   const [fileSizes, setFileSizes] = useState({});
   const [sessionId, setSessionId] = useState("");
   const [sesssionEpisode, setSessionEpisode] = useState("");
@@ -50,12 +53,12 @@ const Stream = () => {
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
-  const streamProxy = "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
-  const api_backend = "https://anipy-backend-production.up.railway.app/"
-  const animePahe_api = "https://paheapi-production.up.railway.app/"
+  const streamProxy =
+    "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
+  const api_backend = "https://anipy-backend-production.up.railway.app/";
+  const animePahe_api = "https://paheapi-production.up.railway.app/";
   const location = useLocation();
   const fullPath = `${watchId}${location.search}`;
- 
 
   const handleClick = (index) => {
     setActiveLink(index); // Update the active link index;
@@ -108,7 +111,7 @@ const Stream = () => {
         setLoading(false);
       }
     };
-    
+
     fetchEpisodes();
     fetchAnimeData();
   }, [watchId]);
@@ -125,7 +128,9 @@ const Stream = () => {
         `Episode ${activeEpisode.number} - ${activeEpisode.title}`
       );
       setEpisodeNumber(activeEpisode.number);
-      document.title = `Watching ${animeTitle} Episode ${activeEpisode.number} - ${activeEpisode.title} | AniPulse`;
+      document.title = `Watching ${animeTitle}  ${
+        dubStatus ? "(Dub)" : ""
+      } Episode ${activeEpisode.number} - ${activeEpisode.title} | AniPulse`;
     } else {
       document.title = "AniPulse";
     }
@@ -135,165 +140,190 @@ const Stream = () => {
   useEffect(() => {
     const estimateSizes = async () => {
       const sizes = {};
-  
+
       for (const quality of availableQualities) {
         try {
           const playlistRes = await fetch(quality.url);
           const playlistText = await playlistRes.text();
-  
+
           const segmentUrls = playlistText
-            .split('\n')
-            .filter(line => line && !line.startsWith('#'))
-            .map(line => {
-              if (line.startsWith('http')) return line;
+            .split("\n")
+            .filter((line) => line && !line.startsWith("#"))
+            .map((line) => {
+              if (line.startsWith("http")) return line;
               const base = new URL(quality.url);
               return new URL(line, base).href;
             });
-  
+
           let totalBytes = 0;
-  
+
           // We'll check the first 5 segments and estimate from there
           const sampleCount = Math.min(segmentUrls.length, 5);
           for (let i = 0; i < sampleCount; i++) {
             try {
-              const res = await fetch(segmentUrls[i], { method: 'HEAD' });
-              const len = res.headers.get('content-length');
+              const res = await fetch(segmentUrls[i], { method: "HEAD" });
+              const len = res.headers.get("content-length");
               if (len) totalBytes += parseInt(len);
             } catch (e) {
               // Ignore broken segment
             }
           }
-  
+
           const estimatedSize =
             segmentUrls.length > 0
-              ? ((totalBytes / sampleCount) * segmentUrls.length) / (1024 * 1024)
+              ? ((totalBytes / sampleCount) * segmentUrls.length) /
+                (1024 * 1024)
               : 0;
-  
+
           sizes[quality.url] = estimatedSize
             ? `${estimatedSize.toFixed(2)} MB (est)`
-            : 'Unknown size';
+            : "Unknown size";
         } catch (err) {
-          sizes[quality.url] = 'Error';
+          sizes[quality.url] = "Error";
         }
       }
-      
+
       setFileSizes(sizes);
     };
-  
+
     if (availableQualities.length > 0) {
       estimateSizes();
     }
   }, [availableQualities]);
 
- // Fetch session ID of anime
- const fetchSessionId = async () => {
-  if (!animeTitle) return;
+  // Fetch session ID of anime
+  const fetchSessionId = async () => {
+    if (!animeTitle) return;
 
-  try {
-    const response = await fetch(`${animePahe_api}/search/${encodeURIComponent(animeTitle)}`);
-    const data = await response.json();
-
-    const results = data.results || [];
-
-    // Normalize strings for better matching
-    const normalize = (str) => str?.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-    // Try to find a close match
-    const exactMatch =
-      results.find(
-        (anime) =>
-          normalize(anime.title) === normalize(animeTitle) ||
-          normalize(anime.japanese_title) === normalize(animeTitle)
-      ) || results.find(
-        (anime) =>
-          anime.title?.toLowerCase().includes(animeTitle.toLowerCase()) ||
-          anime.japanese_title?.toLowerCase().includes(animeTitle.toLowerCase())
-      ) || results[0]; // fallback to first result
-      console.log(exactMatch)
-
-    if (exactMatch?.session_id) {
-      setSessionId(exactMatch.session_id);
-      setSessionResult(exactMatch);
-    } else {
-      console.error("No matching anime with a session ID found.");
-    }
-  } catch (error) {
-    console.error("Error fetching session ID:", error);
-  }
-};
-
-
-useEffect(() => {
-  if (animeTitle) {
-    fetchSessionId();
-  }
-}, [animeTitle]);
-
-let epNo = currentEpisode?.match(/\d+/);
-let realEpNo = epNo ? parseInt(epNo[0]) : null;
-
-// Fetch episode session of anime — only when sessionId & realEpNo are valid
-useEffect(() => {
-  if (!sessionId || !realEpNo) return;
-
-  const fetchEpisodeSession = async () => {
     try {
-      console.log(`[🔍] Fetching episode session for sessionId: ${sessionId}, realEpisodeNumber: ${realEpNo}`);
+      const response = await fetch(
+        `${animePahe_api}/search/${encodeURIComponent(animeTitle)}`
+      );
+      const data = await response.json();
 
-      const firstPageRes = await fetch(`${animePahe_api}episodes/${sessionId}/page=1`);
-      const firstPageData = await firstPageRes.json();
-      const totalPages = firstPageData.total_pages;
+      const results = data.results || [];
 
-      const getAllEpisodes = async () => {
-        if (totalPages > 1) {
-          console.log(`[📄] Total Pages: ${totalPages}. Fetching all pages concurrently...`);
-          const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-          const pages = await Promise.all(
-            pageNumbers.map(p => fetch(`${animePahe_api}episodes/${sessionId}/page=${p}`).then(res => res.json()))
-          );
-          return pages.flatMap(p => p.episodes);
-        } else {
-          console.log(`[📄] Only 1 page found. Using first page episodes.`);
-          return firstPageData.episodes;
-        }
-      };
+      // Normalize strings for better matching
+      const normalize = (str) => str?.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-      const allEpisodes = await getAllEpisodes();
+      // Try to find a close match
+      const exactMatch =
+        results.find(
+          (anime) =>
+            normalize(anime.title) === normalize(animeTitle) ||
+            normalize(anime.japanese_title) === normalize(animeTitle)
+        ) ||
+        results.find(
+          (anime) =>
+            anime.title?.toLowerCase().includes(animeTitle.toLowerCase()) ||
+            anime.japanese_title
+              ?.toLowerCase()
+              .includes(animeTitle.toLowerCase())
+        ) ||
+        results[0]; // fallback to first result
+      console.log(exactMatch);
 
-      if (!allEpisodes || allEpisodes.length === 0) {
-        console.error(`[❌] No episodes found for this anime.`);
-        return;
+      if (exactMatch?.session_id) {
+        setSessionId(exactMatch.session_id);
+        setSessionResult(exactMatch);
+      } else {
+        console.error("No matching anime with a session ID found.");
       }
-
-      const apiFirstEp = Math.min(...allEpisodes.map(ep => parseInt(ep.episode)));
-      const offset = apiFirstEp - 1;
-      const adjustedEpisode = realEpNo + offset;
-      const adjustedNextEpisode = adjustedEpisode + 1;
-
-      console.log(`[🧠] API first episode: ${apiFirstEp}`);
-      console.log(`[🧮] Offset applied: ${offset}`);
-      console.log(`[📺] Adjusted episode number: ${adjustedEpisode}`);
-      console.log(`[➡️] Adjusted next episode number: ${adjustedNextEpisode}`);
-
-      const matchedCurrent = allEpisodes.find(ep => parseInt(ep.episode) === adjustedEpisode);
-      const matchedNext = allEpisodes.find(ep => parseInt(ep.episode) === adjustedNextEpisode);
-
-      if (matchedCurrent?.session) {
-        setSessionEpisode(matchedCurrent.session);
-      }
-
-      if (matchedNext?.session) {
-        setNextSessionEpisode(matchedNext.session);
-      }
-
-    } catch (err) {
-      console.error(`[🔥] Error fetching episode session:`, err);
+    } catch (error) {
+      console.error("Error fetching session ID:", error);
     }
   };
 
-  fetchEpisodeSession();
+  useEffect(() => {
+    if (animeTitle) {
+      fetchSessionId();
+    }
+  }, [animeTitle]);
 
-}, [sessionId, realEpNo]);
+  let epNo = currentEpisode?.match(/\d+/);
+  let realEpNo = epNo ? parseInt(epNo[0]) : null;
+
+  // Fetch episode session of anime — only when sessionId & realEpNo are valid
+  useEffect(() => {
+    if (!sessionId || !realEpNo) return;
+
+    const fetchEpisodeSession = async () => {
+      try {
+        console.log(
+          `[🔍] Fetching episode session for sessionId: ${sessionId}, realEpisodeNumber: ${realEpNo}`
+        );
+
+        const firstPageRes = await fetch(
+          `${animePahe_api}episodes/${sessionId}/page=1`
+        );
+        const firstPageData = await firstPageRes.json();
+        const totalPages = firstPageData.total_pages;
+
+        const getAllEpisodes = async () => {
+          if (totalPages > 1) {
+            console.log(
+              `[📄] Total Pages: ${totalPages}. Fetching all pages concurrently...`
+            );
+            const pageNumbers = Array.from(
+              { length: totalPages },
+              (_, i) => i + 1
+            );
+            const pages = await Promise.all(
+              pageNumbers.map((p) =>
+                fetch(`${animePahe_api}episodes/${sessionId}/page=${p}`).then(
+                  (res) => res.json()
+                )
+              )
+            );
+            return pages.flatMap((p) => p.episodes);
+          } else {
+            console.log(`[📄] Only 1 page found. Using first page episodes.`);
+            return firstPageData.episodes;
+          }
+        };
+
+        const allEpisodes = await getAllEpisodes();
+
+        if (!allEpisodes || allEpisodes.length === 0) {
+          console.error(`[❌] No episodes found for this anime.`);
+          return;
+        }
+
+        const apiFirstEp = Math.min(
+          ...allEpisodes.map((ep) => parseInt(ep.episode))
+        );
+        const offset = apiFirstEp - 1;
+        const adjustedEpisode = realEpNo + offset;
+        const adjustedNextEpisode = adjustedEpisode + 1;
+
+        console.log(`[🧠] API first episode: ${apiFirstEp}`);
+        console.log(`[🧮] Offset applied: ${offset}`);
+        console.log(`[📺] Adjusted episode number: ${adjustedEpisode}`);
+        console.log(
+          `[➡️] Adjusted next episode number: ${adjustedNextEpisode}`
+        );
+
+        const matchedCurrent = allEpisodes.find(
+          (ep) => parseInt(ep.episode) === adjustedEpisode
+        );
+        const matchedNext = allEpisodes.find(
+          (ep) => parseInt(ep.episode) === adjustedNextEpisode
+        );
+
+        if (matchedCurrent?.session) {
+          setSessionEpisode(matchedCurrent.session);
+        }
+
+        if (matchedNext?.session) {
+          setNextSessionEpisode(matchedNext.session);
+        }
+      } catch (err) {
+        console.error(`[🔥] Error fetching episode session:`, err);
+      }
+    };
+
+    fetchEpisodeSession();
+  }, [sessionId, realEpNo]);
 
   return (
     <Box>
@@ -331,7 +361,9 @@ useEffect(() => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>{`Stream / ${animeTitle} ${currentEpisode}`}</BreadcrumbLink>
+              <BreadcrumbLink>{`Stream / ${animeTitle} ${
+                dubStatus ? "(Dub)" : ""
+              } ${currentEpisode}`}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -432,14 +464,14 @@ useEffect(() => {
                           <>
                             {episodes && episodes.length > 0 ? (
                               episodes.map(
-                                ({
-                                  number: epNo,
-                                  episodeId: epId,
-                                }) => (
+                                ({ number: epNo, episodeId: epId }) => (
                                   <Link
                                     key={epId}
                                     to={`/watch/${epId}`}
-                                    style={{ textDecoration: "none", fontFamily: "var(--font-family)" }}
+                                    style={{
+                                      textDecoration: "none",
+                                      fontFamily: "var(--font-family)",
+                                    }}
                                     className={
                                       `${location.pathname}${location.search}` ===
                                       `/watch/${epId}`
@@ -547,7 +579,7 @@ useEffect(() => {
                                   ? "server active"
                                   : "server"
                               }
-                              style={{fontFamily: "var(--body-font)"}}
+                              style={{ fontFamily: "var(--body-font)" }}
                               onClick={() => handleClick(index)} // Set the active index on click
                             >
                               {server}
@@ -590,7 +622,7 @@ useEffect(() => {
                                     ? "server active"
                                     : "server"
                                 }
-                                style={{fontFamily: "var(--body-font)"}}
+                                style={{ fontFamily: "var(--body-font)" }}
                                 onClick={() => handleDubClick(index)} // Set the active index on click
                               >
                                 {server}
@@ -598,7 +630,12 @@ useEffect(() => {
                             )
                           )
                         ) : (
-                          <Text color="var(--text-color)" fontFamily="var(--body-font)">N/A</Text>
+                          <Text
+                            color="var(--text-color)"
+                            fontFamily="var(--body-font)"
+                          >
+                            N/A
+                          </Text>
                         )}
                       </Flex>
                     </Box>
@@ -615,8 +652,12 @@ useEffect(() => {
                     mt={{ base: "20px", md: "0" }}
                     width={{ base: "initial" }}
                   >
-                  <DownloadLinksSelect episodeSession={sesssionEpisode} sessionId={sessionId} nextSessionEpisode={nextSessionEpisode}/>
-                    
+                    <DownloadLinksSelect
+                      episodeSession={sesssionEpisode}
+                      sessionId={sessionId}
+                      nextSessionEpisode={nextSessionEpisode}
+                    />
+
                     <Text
                       fontSize={{ base: "15.58px", "2xl": "24.41px" }}
                       lineHeight={{ base: "28.8px", "2xl": "37.5px" }}

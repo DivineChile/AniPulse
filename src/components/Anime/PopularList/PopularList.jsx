@@ -13,12 +13,12 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import Error from "../ErrorPage/Error";
+import Error from "../../ErrorPage/Error";
 import "./style.css";
 import { useEffect, useState } from "react";
 
 import { BsInfoCircle } from "react-icons/bs";
-import Loading from "../ErrorPage/Loading";
+import Loading from "../../ErrorPage/Loading";
 
 const PopularList = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -173,7 +173,7 @@ const PopularList = () => {
                           color: "var(--accent-color)",
                           transition: "all ease 0.25s",
                         }}
-                        fontSize={{base: "15px", sm: "18.88px"}}
+                        fontSize={{ base: "15px", sm: "18.88px" }}
                         lineHeight="36px"
                         letterSpacing="0.5px"
                         fontWeight="500"
@@ -187,8 +187,8 @@ const PopularList = () => {
                           color="var(--text-color)"
                           transition="all ease 0.25s"
                           className="playIcon"
-                          h={{base:"20px", "2xl": "40px"}}
-                          w={{base:"20px", "2xl": "40px"}}
+                          h={{ base: "20px", "2xl": "40px" }}
+                          w={{ base: "20px", "2xl": "40px" }}
                         />
                         View Anime
                       </ChakraLink>
@@ -205,15 +205,18 @@ const PopularList = () => {
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
-                        p={{base: "0px 6px", lg: "3px 10px"}}
+                        p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
-                          borderColor: "var(--accent-color)"
+                          borderColor: "var(--accent-color)",
                         }}
                         borderRadius="8px"
-                        border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                        border={{
+                          base: "1px solid var(--text-color)",
+                          md: "2px solid var(--text-color)",
+                        }}
                         fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
@@ -225,15 +228,18 @@ const PopularList = () => {
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
-                        p={{base: "0px 6px", lg: "3px 10px"}}
+                        p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
-                          borderColor: "var(--accent-color)"
+                          borderColor: "var(--accent-color)",
                         }}
                         borderRadius="8px"
-                        border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                        border={{
+                          base: "1px solid var(--text-color)",
+                          md: "2px solid var(--text-color)",
+                        }}
                         fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
@@ -246,7 +252,7 @@ const PopularList = () => {
                         color="var(--text-color)"
                         hideBelow="sm"
                         cursor="pointer"
-                        p={{base: "0px 6px", lg: "3px 10px"}}
+                        p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--accent-color)",

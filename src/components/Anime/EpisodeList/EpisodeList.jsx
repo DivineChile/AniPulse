@@ -1,7 +1,7 @@
 import { Link as ChakraLink, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import Error from "../ErrorPage/Error";
+import Error from "../../ErrorPage/Error";
 
 const EpisodeList = ({ items, itemId }) => {
   const [showAll, setShowAll] = useState(false);
@@ -47,7 +47,11 @@ const EpisodeList = ({ items, itemId }) => {
           key={index}
         >
           {`Episode ${index + 1}`}
-          <Text as="span" display={{ base: "none", lg: "initial" }} fontFamily="var(--body-font)">
+          <Text
+            as="span"
+            display={{ base: "none", lg: "initial" }}
+            fontFamily="var(--body-font)"
+          >
             {" "}
             - {_.title}
           </Text>

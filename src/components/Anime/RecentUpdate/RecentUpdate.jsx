@@ -1,6 +1,6 @@
 import { Box, Grid, Heading, Text } from "@chakra-ui/react";
 
-import RecentSub from "../RecentList/RecentSub";
+import RecentSub from "../../RecentList/RecentSub";
 
 const RecentUpdate = () => {
   const getCurrentDate = () => {

@@ -11,11 +11,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
-import Navbar from "../Navbar/Navbar";
-import Error from "../ErrorPage/Error";
+import Navbar from "../../Navbar/Navbar";
+import Error from "../../ErrorPage/Error";
 
 import EpisodeList from "../EpisodeList/EpisodeList";
-import Loading from "../ErrorPage/Loading";
+import Loading from "../../ErrorPage/Loading";
 
 const View = () => {
   const { id } = useParams();
@@ -97,21 +97,28 @@ const View = () => {
       <Navbar />
       {isLoading && <Loading bg="var(--linear-gradient)" height="100vh" />}
 
-      {error && <Error height="100vh" bg="var(--primary-background-color)" msg="Still Loading..." />}
+      {error && (
+        <Error
+          height="100vh"
+          bg="var(--primary-background-color)"
+          msg="Still Loading..."
+        />
+      )}
 
       {!isLoading && !error && (
-        <Box  bg={
-          animeData.info.poster
-            ? `url(${animeData.info.poster})`
-            : "var(--primary-background-color)"
-        }
-        bgRepeat="no-repeat"
-        bgSize="cover"
-        bgPos="center"
-        bgAttachment="fixed"
-        bgBlendMode="overlay"
-        bgColor="rgba(0,0,0,1)"
-        className="fade-background"
+        <Box
+          bg={
+            animeData.info.poster
+              ? `url(${animeData.info.poster})`
+              : "var(--primary-background-color)"
+          }
+          bgRepeat="no-repeat"
+          bgSize="cover"
+          bgPos="center"
+          bgAttachment="fixed"
+          bgBlendMode="overlay"
+          bgColor="rgba(0,0,0,1)"
+          className="fade-background"
         >
           <Box
             maxW={{
@@ -254,7 +261,6 @@ const View = () => {
                             </Text>
                           )}
                       </Text>
-                      ;
                     </Box>
                     <Box w="100%" h="47px">
                       <ChakraLink
@@ -306,7 +312,7 @@ const View = () => {
                         as="p"
                         color="var(--text-color)"
                         fontSize="15px"
-                       fontFamily="var(--font-family)"
+                        fontFamily="var(--font-family)"
                         fontWeight="300"
                         lineHeight="24px"
                         transition="background ease 0.25s"

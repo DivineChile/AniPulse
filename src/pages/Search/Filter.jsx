@@ -29,16 +29,16 @@ import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 
 import "./style.css";
-import GridView from "../../components/Filter/GridView";
+import GridView from "../../components/Anime/Filter/GridView";
 import { BsGrid, BsListUl, BsX } from "react-icons/bs";
-import ListView from "../../components/Filter/ListView";
-import axios from "axios";
+import ListView from "../../components/Anime/Filter/ListView";
 
 const Filter = () => {
   const { searchQuery } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchResults, setSearchResults] = useState([]);
+  const [animeResults, setAnimeResults] = useState([]);
+  const [movieResults, setMovieResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [animePerPage, setAnimePerPage] = useState(0);
@@ -48,9 +48,16 @@ const Filter = () => {
   const [listView, setListView] = useState(false);
   const [gridView, setGridView] = useState(true);
   const [showClear, setShowClear] = useState(true);
+
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
+
+  const headers = {
+    Authorization: `Bearer ${BEARER_TOKEN}`,
+    "Content-Type": "application/json;charset=utf-8",
+  };
 
   const navigate = useNavigate();
 
@@ -62,7 +69,7 @@ const Filter = () => {
         `${proxy}${backup_api}/api/v2/hianime/search?q=${searchQuery}`
       );
       const data = await response.json();
-      setSearchResults(data.data.animes);
+      setAnimeResults(data.data.animes);
       setCurrentPage(data.data.currentPage);
       setTotalPages(data.data.totalPages);
       setIsLoading(false);
@@ -72,12 +79,27 @@ const Filter = () => {
       setIsLoading(false);
       setError(true);
     }
+  };
 
-    // console.log(searchResults);
+  const requestMovie = async () => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/multi?query=${searchQuery}`,
+        { headers }
+      );
+      const data = await response.json();
+      const filteredResults = data.results.filter(
+        (item) => item.media_type === "movie" || item.media_type === "tv"
+      );
+      setMovieResults(filteredResults);
+    } catch (error) {
+      console.error("Error fetching movies:", error.message);
+    }
   };
 
   useEffect(() => {
     requestAnime();
+    requestMovie();
     setNewQueryValue(searchQuery);
     document.title = `${searchQuery} - AniPulse`;
   }, [searchQuery]);
@@ -94,7 +116,7 @@ const Filter = () => {
         `${proxy}${backup_api}/api/v2/hianime/search?q=${newQueryValue}`
       );
       const data = await response.json();
-      setSearchResults(data.data.animes);
+      setAnimeResults(data.data.animes);
       setCurrentPage(data.data.currentPage);
       setIsLoading(false);
       setError(false);
@@ -133,11 +155,9 @@ const Filter = () => {
     if (gridView) {
       setListView(true);
       setGridView(false);
-      console.log(listView);
     } else {
       setListView(true);
       setGridView(false);
-      console.log(listView);
     }
   };
 
@@ -145,13 +165,12 @@ const Filter = () => {
     if (listView) {
       setGridView(true);
       setListView(false);
-      console.log(gridView);
     } else {
       setGridView(true);
       setListView(false);
-      console.log(gridView);
     }
   };
+
   return (
     <Box>
       <Box>
@@ -268,7 +287,7 @@ const Filter = () => {
                     >
                       {`Showing 1 - ${
                         isNaN(animePerPage) ? "0" : animePerPage
-                      } of ${totalPages} Anime`}
+                      } of ${totalPages} Results`}
                     </Text>
                   </Box>
                 </Box>
@@ -429,10 +448,41 @@ const Filter = () => {
 
             {/* Results */}
             <Box mt="20px">
+              <Heading
+                as="h1"
+                color="#fff"
+                textTransform="uppercase"
+                fontSize={{ base: "24.83px", lg: "27.28px" }}
+                lineHeight={{ base: "30px", lg: "34px" }}
+                letterSpacing="1.5px"
+                fontFamily="var(--font-family)"
+                mb="20px"
+              >
+                Anime
+              </Heading>
               {gridView ? (
-                <GridView results={searchResults} />
+                <GridView results={animeResults} />
               ) : (
-                <ListView results={searchResults} />
+                <ListView results={animeResults} />
+              )}
+            </Box>
+            <Box mt="40px">
+              <Heading
+                as="h1"
+                color="#fff"
+                textTransform="uppercase"
+                fontSize={{ base: "24.83px", lg: "27.28px" }}
+                lineHeight={{ base: "30px", lg: "34px" }}
+                letterSpacing="1.5px"
+                fontFamily="var(--font-family)"
+                mb="20px"
+              >
+                Movies & TV
+              </Heading>
+              {gridView ? (
+                <GridView results={movieResults} />
+              ) : (
+                <ListView results={movieResults} />
               )}
             </Box>
           </Box>
