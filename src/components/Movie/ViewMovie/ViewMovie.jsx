@@ -6,11 +6,9 @@ import {
   BreadcrumbLink,
   Grid,
   GridItem,
-  Tag,
   Heading,
   Image,
   HStack,
-  Badge,
   Link as ChakraLink,
   Link,
   Skeleton,
@@ -54,7 +52,12 @@ const ViewMovie = () => {
         { headers }
       );
       setMovieDetails(data);
-      const trailerPriority = ["official trailer", "final trailer", "trailer"];
+      const trailerPriority = [
+        "official trailer",
+        "final trailer",
+        "trailer",
+        "official",
+      ];
 
       const trailers = data.videos.results
         .filter(
@@ -78,7 +81,7 @@ const ViewMovie = () => {
       setMovieTrailers(trailers);
 
       document.title = `${
-        isTV ? movieDetails.name : movieDetails?.title
+        isTV ? `${data.name} (TV Series)` : data.title
       } - AniPulse`;
     } catch (err) {
       console.error("Failed to fetch movie details", err);
@@ -107,8 +110,6 @@ const ViewMovie = () => {
     fetchMovieDetails();
   }, [id, isTV]);
 
-  console.log(movieDetails);
-
   return (
     <>
       <Navbar />
@@ -119,7 +120,6 @@ const ViewMovie = () => {
         />
       ) : null}
 
-      {console.log(movieTrailers[0])}
       {error && !loading && (
         <Error
           height={{ base: "calc(100dvh - 70px)", md: "calc(100dvh - 73px)" }}
@@ -237,7 +237,7 @@ const ViewMovie = () => {
                       transition="background ease 0.25s"
                     >
                       {isTV
-                        ? movieDetails.name
+                        ? `${movieDetails.name} (TV Series)`
                         : movieDetails.title
                         ? movieDetails.title !== ""
                           ? movieDetails.title
@@ -354,31 +354,22 @@ const ViewMovie = () => {
                       >
                         Produced By:{"  "}
                       </Text>
-                      <HStack flexWrap="wrap">
-                        {movieDetails.production_companies?.map((company) =>
-                          company.logo_path ? (
-                            <Badge
-                              key={company.id}
-                              background="var(--text-secondary)"
-                            >
-                              <Image
-                                key={company.id}
-                                src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
-                                alt={company.name}
-                                height={{
-                                  base: "16px",
-                                  md: "23px",
-                                  lg: "30px",
-                                }}
-                                objectFit="contain"
-                              />
-                            </Badge>
-                          ) : (
-                            <Badge key={company.id} textTransform="capitalize">
-                              {company.name}
-                            </Badge>
-                          )
-                        )}
+                      <HStack flexWrap="wrap" gap="5px">
+                        {movieDetails.production_companies?.map((company) => (
+                          <Text
+                            color="var(--accent-color)"
+                            as="span"
+                            fontSize="15px"
+                            fontWeight="300"
+                            fontFamily="var(--body-font)"
+                            lineHeight="24px"
+                            transition="background ease 0.25s"
+                            textTransform="capitalize"
+                            key={company.id}
+                          >
+                            {company.name + ","}
+                          </Text>
+                        ))}
                       </HStack>
                     </Box>
                     {/* Movie / Series Runtime */}
@@ -427,6 +418,7 @@ const ViewMovie = () => {
                         fontWeight="300"
                         transition="background ease 0.25s"
                         lineHeight="24px"
+                        fontFamily="var(--body-font)"
                       >
                         {formattedDate ? formattedDate : "Loading..."}
                       </Text>
@@ -447,9 +439,19 @@ const ViewMovie = () => {
                       <Box display="flex" gap="4px" flexWrap="wrap">
                         {movieDetails.genres?.map((genre) => {
                           return (
-                            <Tag key={genre.id} size="sm" colorScheme="yellow">
-                              {genre.name}
-                            </Tag>
+                            <Text
+                              color="var(--accent-color)"
+                              as="span"
+                              fontSize="15px"
+                              fontWeight="300"
+                              fontFamily="var(--body-font)"
+                              lineHeight="24px"
+                              transition="background ease 0.25s"
+                              textTransform="capitalize"
+                              key={genre.id}
+                            >
+                              {genre.name + ","}
+                            </Text>
                           );
                         })}
                       </Box>
@@ -475,6 +477,7 @@ const ViewMovie = () => {
                         fontWeight="300"
                         transition="background ease 0.25s"
                         lineHeight="24px"
+                        fontFamily="var(--body-font)"
                       >
                         {movieDetails.vote_average
                           ? `${movieDetails.vote_average} by ${movieDetails.vote_count} views`
@@ -560,15 +563,6 @@ const ViewMovie = () => {
                         />
                       )}
                     </Box>
-                    {/* <Box mt="20px" pos="relative">
-                      {episodes.length !== 0 && (
-                        <EpisodeList
-                          items={episodes}
-                          itemId={episodes.map((episode) => episode.episodeId)}
-                          aniId={id}
-                        />
-                      )}
-                    </Box> */}
                   </Box>
                 </GridItem>
 
@@ -576,6 +570,17 @@ const ViewMovie = () => {
                   colSpan={{ base: 7, md: 3, lg: 3, "2xl": 5 }}
                   mt={{ base: "20px", md: 0 }}
                 >
+                  <Heading
+                    color="var(--text-color)"
+                    fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
+                    fontWeight="400"
+                    fontFamily="var(--font-family)"
+                    lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
+                    letterSpacing="1.5px"
+                    mb="20px"
+                  >
+                    Seasons
+                  </Heading>
                   <Box w={{ base: "100%", sm: "100%", md: "100%" }}>
                     {isTV ? (
                       <SeasonTabs tvId={id} />

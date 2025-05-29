@@ -112,9 +112,9 @@ const SeasonTabs = ({ tvId }) => {
       <TabList
         mb={4}
         overflowX={{ base: "unset", lg: "auto" }}
-        display={{ base: "grid", lg: "flex" }}
-        gridTemplateColumns={{ base: "repeat(3, 1fr)", sm: "repeat(3, 1fr)" }}
-        gap={2}
+        display={{ base: "flex", lg: "flex" }}
+        flexWrap="wrap"
+        gap={4}
         sx={{
           "::-webkit-scrollbar": { display: "none" },
         }}
@@ -129,6 +129,8 @@ const SeasonTabs = ({ tvId }) => {
             }}
             textAlign="center"
             border="1px solid var(--text-secondary)"
+            py={3}
+            px={6}
           >
             S{season.season_number}
           </Tab>
@@ -151,13 +153,19 @@ const SeasonTabs = ({ tvId }) => {
                 <>
                   {isMobile ? (
                     // ✅ Mobile: grid of episode numbers
-                    <SimpleGrid columns={[4, 5]} spacing={2}>
+                    <SimpleGrid columns={[4, 5]} spacing={{ base: 4, md: 3 }}>
+                      {loading && (
+                        <Text color="var(--accent-color)">Loading...</Text>
+                      )}
                       {episodesData[season.season_number].map((episode) => (
                         <Button
                           key={episode.id}
-                          color="var(--primary-background-color)"
-                          bg="var(--link-color)"
+                          color="var(--text-color)"
+                          bg="var(--card-background-color)"
                           size="sm"
+                          borderRadius="none"
+                          px={{ base: 2, md: 3 }}
+                          py={{ base: 5, md: 3 }}
                           onClick={() =>
                             console.log(
                               `Watch Episode ${episode.episode_number} of Season ${season.season_number}`
@@ -316,7 +324,7 @@ const SeasonTabs = ({ tvId }) => {
                             }
                             fontFamily={"var(--body-font)"}
                           >
-                            {showAll ? "Show Less" : "Show All"}
+                            {showAll ? "Show Less" : "Show All Episodes"}
                           </Button>
                         </Box>
                       )}

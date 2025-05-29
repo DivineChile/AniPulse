@@ -14,13 +14,13 @@ import {
   ButtonSpinner,
   Icon,
   Text,
+  Select,
 } from "@chakra-ui/react";
 import {
   Link as ReactRouterLink,
   useParams,
   useNavigate,
 } from "react-router-dom";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { filterTypes } from "./utils/FilterTypes";
 import { filterLetters } from "./utils/FilterLetters";
@@ -36,6 +36,8 @@ import ListView from "../../components/Anime/Filter/ListView";
 const Filter = () => {
   const { searchQuery } = useParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [movieLoading, setMovieLoading] = useState(true);
+  const [movieError, setMovieError] = useState(null);
   const [error, setError] = useState(null);
   const [animeResults, setAnimeResults] = useState([]);
   const [movieResults, setMovieResults] = useState([]);
@@ -44,7 +46,6 @@ const Filter = () => {
   const [animePerPage, setAnimePerPage] = useState(0);
   const [newQueryValue, setNewQueryValue] = useState("");
   const [newQueryParam, setNewQueryParam] = useState("");
-  const [buttonRotate, setButtonRotate] = useState(false);
   const [listView, setListView] = useState(false);
   const [gridView, setGridView] = useState(true);
   const [showClear, setShowClear] = useState(true);
@@ -61,17 +62,18 @@ const Filter = () => {
 
   const navigate = useNavigate();
 
-  const requestAnime = async () => {
+  const requestAnime = async (query = searchQuery, filter = "") => {
     setIsLoading(true);
     setError(false);
     try {
       const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/search?q=${searchQuery}`
+        `${proxy}${backup_api}/api/v2/hianime/search?q=${query}${filter}`
       );
       const data = await response.json();
       setAnimeResults(data.data.animes);
       setCurrentPage(data.data.currentPage);
       setTotalPages(data.data.totalPages);
+      setAnimePerPage(data.data.animes.length); // set animePerPage here
       setIsLoading(false);
       setError(false);
     } catch (error) {
@@ -82,6 +84,7 @@ const Filter = () => {
   };
 
   const requestMovie = async () => {
+    setMovieLoading(true);
     try {
       const response = await fetch(
         `https://api.themoviedb.org/3/search/multi?query=${searchQuery}`,
@@ -92,8 +95,13 @@ const Filter = () => {
         (item) => item.media_type === "movie" || item.media_type === "tv"
       );
       setMovieResults(filteredResults);
+      setMovieLoading(false);
     } catch (error) {
+      setMovieLoading(false);
+      setMovieError("Error fetching movies");
       console.error("Error fetching movies:", error.message);
+    } finally {
+      setMovieLoading(false);
     }
   };
 
@@ -129,6 +137,7 @@ const Filter = () => {
 
   const handleSearch = () => {
     handleNewRequestAnime();
+    requestMovie();
     navigate(`/search/keyword/${encodeURIComponent(newQueryValue)}`);
     document.title = `${newQueryValue} - AniPulse`;
   };
@@ -383,33 +392,25 @@ const Filter = () => {
                 })}
                 {filterTypes.map((item, index) => {
                   return (
-                    <Button
-                      type="button"
+                    <Select
                       h="38px"
                       borderRadius="5px"
                       background="#111111"
                       fontSize="16px"
+                      w="fit-content"
                       fontWeight="400"
                       lineHeight="24px"
                       letterSpacing="0.5px"
                       color="#b4b4b4"
+                      border="none"
                       _hover={{
                         color: "var(--secondary-color)",
                         background: "#111111",
                       }}
                       key={index}
-                      onClick={requestAnime}
                     >
-                      <Text as="span">{item.desc}</Text>
-                      <ChevronDownIcon
-                        h="26px"
-                        w="24px"
-                        className={
-                          buttonRotate === true ? `icon_rotated` : "icon"
-                        }
-                        transition="all ease 0.25s"
-                      />
-                    </Button>
+                      <option>{item.desc}</option>
+                    </Select>
                   );
                 })}
               </Box>
@@ -461,9 +462,17 @@ const Filter = () => {
                 Anime
               </Heading>
               {gridView ? (
-                <GridView results={animeResults} />
+                <GridView
+                  results={animeResults}
+                  isLoading={isLoading}
+                  error={error}
+                />
               ) : (
-                <ListView results={animeResults} />
+                <ListView
+                  results={animeResults}
+                  loading={isLoading}
+                  error={error}
+                />
               )}
             </Box>
             <Box mt="40px">
@@ -480,9 +489,17 @@ const Filter = () => {
                 Movies & TV
               </Heading>
               {gridView ? (
-                <GridView results={movieResults} />
+                <GridView
+                  results={movieResults}
+                  isLoading={movieLoading}
+                  error={movieError}
+                />
               ) : (
-                <ListView results={movieResults} />
+                <ListView
+                  results={movieResults}
+                  loading={movieLoading}
+                  error={movieError}
+                />
               )}
             </Box>
           </Box>

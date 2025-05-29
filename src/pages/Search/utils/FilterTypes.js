@@ -2,21 +2,21 @@ export const filterTypes = [
   {
     desc: "Genres",
     queryParam: "genre",
-    query: [{}],
+    query: [],
   },
   {
-    desc: "Tags",
-    queryParam: "tags",
-    query: [{}],
+    desc: "Status",
+    queryParam: "status",
+    query: "",
   },
   {
     desc: "Sort By",
     queryParam: "sort",
-    query: [{}],
+    query: [],
   },
   {
     desc: "Type",
-    queryParam: "format",
+    queryParam: "type",
     query: "",
   },
   {
