@@ -22,6 +22,9 @@ import DownloadLinksSelect from "./DownloadLinksSelect";
 
 const Stream = () => {
   const { watchId } = useParams();
+  const searchParams = new URLSearchParams(window.location.search);
+  const season = searchParams.get("season");
+  const episode = searchParams.get("episode");
   const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
   const [animeData, setAnimeData] = useState([]);
@@ -269,6 +272,10 @@ const Stream = () => {
 
     fetchEpisodeSession();
   }, [sessionId, realEpNo]);
+
+  console.log(watchId);
+  console.log(season);
+  console.log(window.location);
 
   return (
     <Box>

@@ -560,6 +560,8 @@ const ViewMovie = () => {
                             sm: "250px",
                             md: "250px",
                             lg: "270px",
+                            xl: "250px",
+                            "2xl": "400px",
                           }}
                           w={{ base: "100%", sm: "100%", md: "100%" }}
                           title={movieTrailers[0].name || "Movie Trailer"}
