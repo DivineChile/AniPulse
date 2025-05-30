@@ -20,7 +20,7 @@ const MovieHero = () => {
   const [genreError, setGenreError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  // const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchPopularMovies = async () => {
     setLoading(true);
