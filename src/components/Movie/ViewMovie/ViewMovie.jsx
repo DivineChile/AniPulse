@@ -33,12 +33,12 @@ const ViewMovie = () => {
   const { id } = useParams();
   const isTV = location.pathname.includes("/tv");
   const endpoint = isTV
-    ? `/tv/${id}?api_key=${
+    ? `/tv/${id}?append_to_response=videos&?api_key=${
         import.meta.env.VITE_TMDB_API_KEY
-      }?append_to_response=videos&language=en-US`
-    : `/movie/${id}?api_key=${
+      }&language=en-US`
+    : `/movie/${id}?append_to_response=videos&?api_key=${
         import.meta.env.VITE_TMDB_API_KEY
-      }?append_to_response=videos&language=en-US`;
+      }&language=en-US`;
   const url = `https://api.themoviedb.org/3${endpoint}`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
@@ -62,7 +62,7 @@ const ViewMovie = () => {
         "trailer",
         "official",
       ];
-
+      console.log(data);
       const trailers = data.videos.results
         .filter(
           (vid) =>
