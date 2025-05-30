@@ -29,7 +29,9 @@ const MovieHero = () => {
     try {
       const data = await cacheFetch(
         "tmdb_popular",
-        "https://api.themoviedb.org/3/movie/popular",
+        `https://api.themoviedb.org/3/movie/popular?api_key=${
+          import.meta.env.VITE_TMDB_API_KEY
+        }`,
         10 * 60 * 1000,
         {
           headers: {
@@ -53,7 +55,9 @@ const MovieHero = () => {
     try {
       const data = await cacheFetch(
         "tmdb_genres",
-        "https://api.themoviedb.org/3/genre/movie/list",
+        `https://api.themoviedb.org/3/genre/movie/list?api_key=${
+          import.meta.env.VITE_TMDB_API_KEY
+        }`,
         7 * 24 * 60 * 60 * 1000,
         {
           headers: {

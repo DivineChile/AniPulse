@@ -18,7 +18,9 @@ import {
   AccordionIcon,
   SimpleGrid,
   useBreakpointValue,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 const SeasonTabs = ({ tvId }) => {
   const [episodesData, setEpisodesData] = useState([]);
@@ -40,7 +42,9 @@ const SeasonTabs = ({ tvId }) => {
     if (!isTV || !tvId) return;
     if (episodesData[seasonNumber]) return;
 
-    const url = `https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}?language=en-US`;
+    const url = `https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}?api_key=${
+      import.meta.env.VITE_TMDB_API_KEY
+    }?language=en-US`;
     try {
       const data = await cacheFetch(
         `tv_season_${tvId}_${seasonNumber}`,
@@ -58,7 +62,9 @@ const SeasonTabs = ({ tvId }) => {
     const fetchSeasons = async () => {
       if (!isTV || !tvId) return;
 
-      const url = `https://api.themoviedb.org/3/tv/${tvId}?language=en-US`;
+      const url = `https://api.themoviedb.org/3/tv/${tvId}?api_key=${
+        import.meta.env.VITE_TMDB_API_KEY
+      }?language=en-US`;
       try {
         const data = await cacheFetch(
           `tv_seasons_${tvId}`,
@@ -158,7 +164,9 @@ const SeasonTabs = ({ tvId }) => {
                         <Text color="var(--accent-color)">Loading...</Text>
                       )}
                       {episodesData[season.season_number].map((episode) => (
-                        <Button
+                        <ChakraLink
+                          as={ReactRouterLink}
+                          to={`/watch/${tvId}&season=${season.season_number}&episode=${episode.episode_number}`}
                           key={episode.id}
                           color="var(--text-color)"
                           bg="var(--card-background-color)"
@@ -177,7 +185,7 @@ const SeasonTabs = ({ tvId }) => {
                           }}
                         >
                           E{episode.episode_number}
-                        </Button>
+                        </ChakraLink>
                       ))}
                     </SimpleGrid>
                   ) : (
@@ -291,10 +299,17 @@ const SeasonTabs = ({ tvId }) => {
                                   {episode.runtime} mins
                                 </Text>
                               )}
-                              <Button
-                                mt={2}
-                                colorScheme="purple"
-                                size="sm"
+                              <ChakraLink
+                                as={ReactRouterLink}
+                                to={`/watch/${tvId}&season=${season.season_number}&episode=${episode.episode_number}`}
+                                mt={4}
+                                background="var(--link-color)"
+                                p={1.5}
+                                _hover={{
+                                  background: "var(--link-hover-color)",
+                                  textDecor: "none",
+                                }}
+                                fontSize="14px"
                                 onClick={() =>
                                   console.log(
                                     `Watch Episode ${episode.episode_number} of Season ${season.season_number}`
@@ -303,7 +318,7 @@ const SeasonTabs = ({ tvId }) => {
                                 fontFamily="var(--body-font)"
                               >
                                 Watch Episode
-                              </Button>
+                              </ChakraLink>
                             </AccordionPanel>
                           </AccordionItem>
                         ))}

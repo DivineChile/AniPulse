@@ -87,7 +87,9 @@ const Filter = () => {
     setMovieLoading(true);
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/search/multi?query=${searchQuery}`,
+        `https://api.themoviedb.org/3/search/multi?query=${searchQuery}?api_key=${
+          import.meta.env.VITE_TMDB_API_KEY
+        }`,
         { headers }
       );
       const data = await response.json();

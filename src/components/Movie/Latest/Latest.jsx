@@ -32,7 +32,9 @@ const Latest = () => {
   const day = String(today.getDate()).padStart(2, "0");
   const full = `${year}-${month}-${day}`;
 
-  const API_URL = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&primary_release_year=${year}&primary_release_date.lte=${full}&sort_by=popularity.desc`;
+  const API_URL = `https://api.themoviedb.org/3/discover/movie?api_key=${
+    import.meta.env.VITE_TMDB_API_KEY
+  }?include_adult=false&include_video=false&language=en-US&page=1&primary_release_year=${year}&primary_release_date.lte=${full}&sort_by=popularity.desc`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
   const fetchAllPages = async () => {

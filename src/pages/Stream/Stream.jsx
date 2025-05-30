@@ -44,7 +44,7 @@ const Stream = () => {
     setSelectedQuality,
     setAvailableQualities,
   } = useContext(PlayerContext);
-  const [fileSizes, setFileSizes] = useState({});
+
   const [sessionId, setSessionId] = useState("");
   const [sesssionEpisode, setSessionEpisode] = useState("");
   const [nextSessionEpisode, setNextSessionEpisode] = useState("");
@@ -135,61 +135,6 @@ const Stream = () => {
       document.title = "AniPulse";
     }
   }, [location, episodes, animeTitle]);
-
-  //Useffect to fetch download sizes
-  useEffect(() => {
-    const estimateSizes = async () => {
-      const sizes = {};
-
-      for (const quality of availableQualities) {
-        try {
-          const playlistRes = await fetch(quality.url);
-          const playlistText = await playlistRes.text();
-
-          const segmentUrls = playlistText
-            .split("\n")
-            .filter((line) => line && !line.startsWith("#"))
-            .map((line) => {
-              if (line.startsWith("http")) return line;
-              const base = new URL(quality.url);
-              return new URL(line, base).href;
-            });
-
-          let totalBytes = 0;
-
-          // We'll check the first 5 segments and estimate from there
-          const sampleCount = Math.min(segmentUrls.length, 5);
-          for (let i = 0; i < sampleCount; i++) {
-            try {
-              const res = await fetch(segmentUrls[i], { method: "HEAD" });
-              const len = res.headers.get("content-length");
-              if (len) totalBytes += parseInt(len);
-            } catch (e) {
-              // Ignore broken segment
-            }
-          }
-
-          const estimatedSize =
-            segmentUrls.length > 0
-              ? ((totalBytes / sampleCount) * segmentUrls.length) /
-                (1024 * 1024)
-              : 0;
-
-          sizes[quality.url] = estimatedSize
-            ? `${estimatedSize.toFixed(2)} MB (est)`
-            : "Unknown size";
-        } catch (err) {
-          sizes[quality.url] = "Error";
-        }
-      }
-
-      setFileSizes(sizes);
-    };
-
-    if (availableQualities.length > 0) {
-      estimateSizes();
-    }
-  }, [availableQualities]);
 
   // Fetch session ID of anime
   const fetchSessionId = async () => {

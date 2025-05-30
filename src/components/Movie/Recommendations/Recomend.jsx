@@ -22,7 +22,9 @@ const Recomend = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const url = `https://api.themoviedb.org/3/movie/top_rated`;
+  const url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${
+    import.meta.env.VITE_TMDB_API_KEY
+  }`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
   const headers = {

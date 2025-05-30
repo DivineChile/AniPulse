@@ -33,8 +33,12 @@ const ViewMovie = () => {
   const { id } = useParams();
   const isTV = location.pathname.includes("/tv");
   const endpoint = isTV
-    ? `/tv/${id}?append_to_response=videos&language=en-US`
-    : `/movie/${id}?append_to_response=videos&language=en-US`;
+    ? `/tv/${id}?api_key=${
+        import.meta.env.VITE_TMDB_API_KEY
+      }?append_to_response=videos&language=en-US`
+    : `/movie/${id}?api_key=${
+        import.meta.env.VITE_TMDB_API_KEY
+      }?append_to_response=videos&language=en-US`;
   const url = `https://api.themoviedb.org/3${endpoint}`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
@@ -303,7 +307,10 @@ const ViewMovie = () => {
                   </Box>
                 </GridItem>
                 {/* Anime Details */}
-                <GridItem colSpan={{ base: 7, md: 3, lg: 3, "2xl": 2 }}>
+                <GridItem
+                  colSpan={{ base: 7, md: 3, lg: 4, "2xl": 2 }}
+                  // order={1}
+                >
                   <Box display="flex" flexDir="column" gap="9px 0">
                     <Text
                       as="h3"
@@ -517,7 +524,7 @@ const ViewMovie = () => {
                 </GridItem>
                 {/* Episodes List */}
                 <GridItem
-                  colSpan={{ base: 7, md: 4, lg: 4, "2xl": 5 }}
+                  colSpan={{ base: 7, md: 4, lg: 3, "2xl": 5 }}
                   mt={{ base: "20px", md: 0 }}
                   id="episodes"
                 >
@@ -567,7 +574,7 @@ const ViewMovie = () => {
                 </GridItem>
 
                 <GridItem
-                  colSpan={{ base: 7, md: 3, lg: 3, "2xl": 5 }}
+                  colSpan={{ base: 7, md: 3, lg: 4, "2xl": 5 }}
                   mt={{ base: "20px", md: 0 }}
                 >
                   <Heading
@@ -587,7 +594,8 @@ const ViewMovie = () => {
                     ) : (
                       <Box w="100%" h="47px">
                         <ChakraLink
-                          href="#episodes"
+                          as={ReactRouterLink}
+                          to={`/watch/${id}`}
                           w="100%"
                           h="47px!important"
                           color="var(--link-color)"
