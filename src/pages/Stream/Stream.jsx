@@ -603,7 +603,7 @@ const Stream = () => {
                       You&apos;re watching{" "}
                       <Text as="span" color="var(--accent-color)">
                         {contentType === "anime"
-                          ? `Episode ${episodeNumber}`
+                          ? `Episode ${realEpNo}`
                           : contentType === "movie"
                           ? "Full Movie"
                           : `Season ${season} Episode ${episode}`}
