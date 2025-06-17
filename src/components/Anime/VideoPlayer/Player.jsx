@@ -128,8 +128,6 @@ const Player = ({ dub, sub }) => {
     );
     const defaultSubtitle =
       validSubtitles?.find((sub) => sub.default) || validSubtitles?.[0];
-    console.log(validSubtitles);
-    console.log(defaultSubtitle);
 
     let hlsInstance = null;
 

@@ -222,7 +222,7 @@ const Stream = () => {
       const current = episodes?.find((ep) =>
         ep.id.endsWith(`ep=${activeEpId}`)
       );
-      console.log(episodes.find((ep) => ep.episode_no === 1));
+
       const currentEpNo = current?.episode_no ?? "??";
 
       title = `Watching ${animeTitle} Episode ${currentEpNo} | AniPulse`;
@@ -697,7 +697,7 @@ const Stream = () => {
                         flexWrap="wrap"
                         justifyContent={{ base: "center", md: "start" }}
                       >
-                        {isDub.dub ? (
+                        {isDub ? (
                           ["Server 1", "Server 2", "Server 3", "Server 4"].map(
                             (server, index) => (
                               <Link
