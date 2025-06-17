@@ -105,7 +105,7 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
             const resultImg =
               item.poster ||
               `https://image.tmdb.org/t/p/w500${item.poster_path}`;
-            const resultType = item.type || item.media_type;
+            const resultType = item.tvInfo.showType || item.media_type;
             const route = isAnime
               ? `/anime/${resultId}`
               : mediaType === "movie"
@@ -200,8 +200,8 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
                     alignItems="flex-start"
                   >
                     <Flex gap="10px" mt="5px" mb="10px">
-                      <TextTag label={`SUB ${item.episodes?.sub}`} />
-                      <TextTag label={`DUB ${item.episodes?.sub}`} />
+                      <TextTag label={`SUB ${item.tvInfo?.sub || "N/A"}`} />
+                      <TextTag label={`DUB ${item.tvInfo?.dub || "N/A"}`} />
                       <TextTag label={resultType} hideBelow="sm" />
                     </Flex>
 

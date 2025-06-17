@@ -59,7 +59,7 @@ const ListView = ({
     const resultTitle = result.title || result.name;
     const resultImg =
       result.poster || `https://image.tmdb.org/t/p/w500${result.poster_path}`;
-    const resultType = result.type || result.media_type;
+    const resultType = result.tvInfo.showType || result.media_type;
 
     const date = new Date(
       media_type === "tv" ? result.first_air_date : result.release_date
@@ -147,9 +147,7 @@ const ListView = ({
                   textTransform="uppercase"
                 >
                   {!media_type_exist
-                    ? result.episodes?.sub
-                      ? `SUB ${result.episodes.sub}`
-                      : "SUB N/A"
+                    ? `SUB ${result.tvInfo.sub || "N/A"}`
                     : formattedDate}
                 </Text>
                 {!media_type_exist && (
@@ -170,9 +168,7 @@ const ListView = ({
                     letterSpacing="0.5px"
                     textTransform="uppercase"
                   >
-                    {result.episodes?.dub
-                      ? `DUB ${result.episodes.dub}`
-                      : "DUB N/A"}
+                    {`DUB ${result.tvInfo.dub || "N/A"}`}
                   </Text>
                 )}
               </Box>

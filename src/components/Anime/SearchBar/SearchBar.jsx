@@ -28,7 +28,7 @@ const SearchBar = ({ above, below, displayProp }) => {
   const navigate = useNavigate();
 
   // APIs
-  const animeApi = "https://aniwatch-api-production-68fd.up.railway.app/";
+  const animeApi = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const url = `https://api.themoviedb.org/3/search/multi`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
@@ -42,10 +42,11 @@ const SearchBar = ({ above, below, displayProp }) => {
   const fetchAnimeResults = async (query) => {
     try {
       const res = await fetch(
-        `${proxy}${animeApi}/api/v2/hianime/search?q=${query}`
+        `${proxy}${animeApi}/api/search?keyword=${query}`
       );
       const data = await res.json();
-      return data.data.animes || [];
+
+      return data.results.data || [];
     } catch (err) {
       throw new Error("Failed to fetch anime");
     }
@@ -217,7 +218,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                     w="50px"
                     borderRadius="6px"
                     src={item.poster}
-                    alt={item.name}
+                    alt={item.title}
                   />
                   <Box>
                     <Heading
@@ -226,21 +227,21 @@ const SearchBar = ({ above, below, displayProp }) => {
                       _hover={{ color: "var(--accent-color)" }}
                       transition="all ease 0.25s"
                     >
-                      {item.name}
+                      {item.title}
                     </Heading>
                     <Flex gap="5px" fontSize="12px" color="var(--text-color)">
-                      <Text>Sub: {item.episodes.sub || "N/A"}</Text>
-                      <Text>Dub: {item.episodes.dub || "N/A"}</Text>
+                      <Text>Sub: {item.tvInfo.sub || "N/A"}</Text>
+                      <Text>Dub: {item.tvInfo.dub || "N/A"}</Text>
                     </Flex>
                     <Text fontSize="12px" color="gray.400">
-                      {item.type}
+                      {item.tvInfo.showType}
                     </Text>
                   </Box>
                 </ChakraLink>
               ))}
             </Box>
           )}
-          {console.log(movieResults)}
+
           {movieResults.length > 0 && (
             <Box>
               <Heading fontSize="16px" mb="10px" color="var(--accent-color)">

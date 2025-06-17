@@ -51,7 +51,7 @@ const Filter = () => {
   const [showClear, setShowClear] = useState(true);
 
   const api = "https://consumet-api-puce.vercel.app/";
-  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
+  const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
@@ -67,13 +67,13 @@ const Filter = () => {
     setError(false);
     try {
       const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/search?q=${query}${filter}`
+        `${proxy}${backup_api}/api/search?keyword=${query}${filter}`
       );
       const data = await response.json();
-      setAnimeResults(data.data.animes);
-      setCurrentPage(data.data.currentPage);
-      setTotalPages(data.data.totalPages);
-      setAnimePerPage(data.data.animes.length); // set animePerPage here
+      setAnimeResults(data.results.data);
+      setCurrentPage(data.results.currentPage);
+      setTotalPages(data.results.totalPage);
+      setAnimePerPage(data.results.data.length); // set animePerPage here
       setIsLoading(false);
       setError(false);
     } catch (error) {
