@@ -80,8 +80,8 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
         {truncatedResults?.map((item, index) => {
           const animeId = item.id;
           const poster = item.poster;
-          const title = item.name;
-          const type = item.type;
+          const title = item.title;
+          const type = item.tvInfo.showType;
 
           return (
             <Box key={animeId || index} w="100%">
@@ -145,7 +145,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                     lineHeight={{ base: "18px", md: "22.5px" }}
                     letterSpacing="0.5px"
                   >
-                    {title?.length > 30 ? `${title.slice(0, 30)}...` : title}
+                    {title?.length > 30 ? `${title.slice(0, 23)}...` : title}
                   </Heading>
                   <Flex
                     justifyContent="space-between"
@@ -173,8 +173,8 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {item.episodes?.sub
-                          ? `SUB ${item.episodes.sub}`
+                        {item?.tvInfo.sub
+                          ? `SUB ${item.tvInfo.sub}`
                           : "SUB N/A"}
                       </Text>
                       <Text
@@ -195,8 +195,8 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {item.episodes?.dub
-                          ? `DUB ${item.episodes.dub}`
+                        {item.tvInfo?.dub
+                          ? `DUB ${item.tvInfo.dub}`
                           : "DUB N/A"}
                       </Text>
                     </Box>

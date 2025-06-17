@@ -56,7 +56,6 @@ const Player = ({ dub, sub }) => {
   const queryParams = location?.search || "";
   const containerRef = useRef(null);
   const artRef = useRef(null);
-
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const streamProxy =
     "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
@@ -78,17 +77,17 @@ const Player = ({ dub, sub }) => {
       setVideoData(null);
 
       const response = await fetch(
-        `${proxy}https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime/episode/sources?animeEpisodeId=${watchId}${queryParams}&server=hd-2&category=${category}`
+        `${proxy}https://anime-api-ri6f4g.fly.dev/api/stream?id=${watchId}${queryParams}&server=hd-2&type=${category}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch video data.");
 
       const data = await response.json();
-      if (!data.success || !data.data?.sources?.length) {
-        throw new Error("No video sources available.");
+      if (!data.success || !data.results?.streamingLink?.link?.file.length) {
+        console.error("No sources available");
       }
 
-      setVideoData(data.data);
+      setVideoData(data.results);
     } catch (err) {
       setStreamError(err.message || "An unexpected error occurred.");
     } finally {
@@ -115,14 +114,14 @@ const Player = ({ dub, sub }) => {
       artRef.current = null;
     }
 
-    const defaultSource = videoData?.sources?.[0]?.url;
-    const subtitles = videoData?.tracks?.map((track) => ({
+    const stream = videoData.streamingLink;
+    const defaultSource = stream?.link.file;
+    const subtitles = stream?.tracks?.map((track) => ({
       url: track.file,
       type: "vtt",
       label: track.label,
       default: track.label === "English",
     }));
-    // console.log(subtitles);
 
     const validSubtitles = subtitles?.filter((sub) =>
       sub?.url?.endsWith(".vtt")
@@ -141,8 +140,6 @@ const Player = ({ dub, sub }) => {
 
       const finalUrl = `${streamProxy}${encodeURIComponent(cleanUrl)}`;
       const extractedQualities = await extractHLSQualities(finalUrl);
-
-      console.log(extractedQualities);
 
       const qualities = extractedQualities.length
         ? extractedQualities.map((q, index) => ({

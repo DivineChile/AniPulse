@@ -36,7 +36,7 @@ const View = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const api = "https://consumet-api-puce.vercel.app/";
-  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
+  const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchAnimeData = async () => {
@@ -44,20 +44,19 @@ const View = () => {
     setError(null);
 
     try {
-      const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/anime/${id}`
-      );
+      const response = await fetch(`${proxy}${backup_api}/api/info?id=${id}`);
       const data = await response.json();
 
       // Set anime information
-      setAnimeData(data.data.anime);
-      setAnimeTitle(data.data.anime.info.name);
+      setAnimeData(data.results.data);
 
-      setAnimeGenres(data.data.anime.moreInfo.genres);
-      setAnimeStudios(data.data.anime.moreInfo.producers);
+      setAnimeTitle(data.results.data.title);
+
+      setAnimeGenres(data.results.data.animeInfo.Genres);
+      setAnimeStudios(data.results.data.animeInfo.Studios);
 
       // Set document title
-      document.title = `${data.data.anime.info.name} - AniPulse`;
+      document.title = `${data.results.data.title} - AniPulse`;
     } catch (err) {
       setError("Failed to load anime data. Please try again.");
       console.error("Error fetching anime data:", err);
@@ -70,12 +69,11 @@ const View = () => {
     setInfoLoading(true);
 
     try {
-      const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/anime/${id}/episodes`
-      );
+      const response = await fetch(`${proxy}${backup_api}/api/episodes/${id}`);
       const data = await response.json();
-      setEpisodes(data.data.episodes);
-      setEpisodeCount(data.data.totalEpisodes);
+
+      setEpisodes(data.results.episodes);
+      setEpisodeCount(data.results.totalEpisodes);
 
       // console.log(response2);
     } catch (err) {
@@ -108,8 +106,8 @@ const View = () => {
       {!isLoading && !error && (
         <Box
           bg={
-            animeData.info.poster
-              ? `url(${animeData.info.poster})`
+            animeData.poster
+              ? `url(${animeData.poster})`
               : "var(--primary-background-color)"
           }
           bgRepeat="no-repeat"
@@ -152,7 +150,7 @@ const View = () => {
                 color="var(--accent-color)"
                 _hover={{ color: "var(--link-hover-color)" }}
               >
-                <BreadcrumbLink>Anime / {animeData?.info.name}</BreadcrumbLink>
+                <BreadcrumbLink>Anime / {animeData?.title}</BreadcrumbLink>
               </BreadcrumbItem>
             </Breadcrumb>
 
@@ -173,8 +171,8 @@ const View = () => {
                   <Box
                     w={{ base: "100%", md: "30%", lg: "40%" }}
                     bg={
-                      animeData.info.poster
-                        ? `url(${animeData.info.poster})`
+                      animeData.poster
+                        ? `url(${animeData.poster})`
                         : "rgba(25, 27, 40, 0.7)"
                     }
                     bgSize="cover"
@@ -200,9 +198,9 @@ const View = () => {
                       lineHeight="38.5px"
                       transition="background ease 0.25s"
                     >
-                      {animeData.info.name
-                        ? animeData.info.name !== ""
-                          ? animeData.info.name
+                      {animeData.title
+                        ? animeData.title !== ""
+                          ? animeData.title
                           : "NIL"
                         : "NIL"}
                     </Heading>
@@ -240,15 +238,15 @@ const View = () => {
                         letterSpacing="0.5px"
                         transition="background ease 0.25s"
                       >
-                        {animeData.info.description
+                        {animeData?.animeInfo.Overview
                           ? isExpanded
-                            ? animeData.info.description
-                            : animeData.info.description.length > 250
-                            ? `${animeData.info.description.slice(0, 250)}...`
-                            : animeData.info.description
+                            ? animeData.animeInfo.Overview
+                            : animeData.animeInfo.Overview.length > 250
+                            ? `${animeData.animeInfo.Overview.slice(0, 250)}...`
+                            : animeData.animeInfo.Overview
                           : "NIL"}
-                        {animeData.info.description &&
-                          animeData.info.description.length > 250 && (
+                        {animeData.animeInfo.Overview &&
+                          animeData.animeInfo.Overview.length > 250 && (
                             <Text
                               as="span"
                               color="var(--accent-color)"
@@ -327,8 +325,8 @@ const View = () => {
                         fontFamily="var(--body-font)"
                         lineHeight="24px"
                       >
-                        {animeData.moreInfo.aired
-                          ? animeData.moreInfo.aired
+                        {animeData.animeInfo.Aired
+                          ? animeData.animeInfo.Aired
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -353,28 +351,7 @@ const View = () => {
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
-                        {animeStudios?.length === 0
-                          ? "NIL"
-                          : animeStudios?.length > 0
-                          ? animeStudios?.map((studio, index) => {
-                              return (
-                                <Text
-                                  color="var(--accent-color)"
-                                  as="span"
-                                  fontSize="15px"
-                                  fontWeight="300"
-                                  fontFamily="var(--body-font)"
-                                  lineHeight="24px"
-                                  transition="background ease 0.25s"
-                                  key={index}
-                                >
-                                  {`${studio}${
-                                    animeStudios?.length > 1 ? "," : ""
-                                  }`}
-                                </Text>
-                              );
-                            })
-                          : "NIL"}
+                        {animeData.animeInfo.Studios || "Unknown"}
                       </Text>
                     </Box>
                     {/* Anime Season */}
@@ -398,8 +375,8 @@ const View = () => {
                         fontFamily="var(--body-font)"
                         transition="background ease 0.25s"
                       >
-                        {animeData.moreInfo.premiered
-                          ? animeData.moreInfo.premiered
+                        {animeData.animeInfo.Premiered
+                          ? animeData.animeInfo.Premiered
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -423,8 +400,8 @@ const View = () => {
                         transition="background ease 0.25s"
                         lineHeight="24px"
                       >
-                        {animeData.moreInfo.premiered
-                          ? animeData.moreInfo.premiered.split(" ")[1]
+                        {animeData.animeInfo.Premiered
+                          ? animeData.animeInfo.Premiered.split("-")[1]
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -449,8 +426,8 @@ const View = () => {
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
-                        {animeData.moreInfo.status
-                          ? animeData.moreInfo.status
+                        {animeData.animeInfo.Status
+                          ? animeData.animeInfo.Status
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -507,8 +484,8 @@ const View = () => {
                         fontFamily="var(--body-font)"
                         lineHeight="24px"
                       >
-                        {animeData.moreInfo.malscore
-                          ? animeData.moreInfo.malscore
+                        {animeData.animeInfo["MAL Score"]
+                          ? animeData.animeInfo["MAL Score"]
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -535,7 +512,7 @@ const View = () => {
                       {episodes.length !== 0 && (
                         <EpisodeList
                           items={episodes}
-                          itemId={episodes.map((episode) => episode.episodeId)}
+                          itemId={episodes.map((episode) => episode.id)}
                           aniId={id}
                         />
                       )}

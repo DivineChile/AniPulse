@@ -22,24 +22,22 @@ const Hero = () => {
     animeInfo: [],
   });
 
-  const apiBase =
-    "https://aniwatch-api-production-68fd.up.railway.app/api/v2/hianime";
+  const apiBase = "https://anime-api-production-bc3d.up.railway.app/";
 
   const fetchAnimeData = async () => {
     try {
       // Fetch top airing anime IDs
       const topAiringResponse = await fetch(
-        `https://fluoridated-recondite-coast.glitch.me/${apiBase}/category/top-airing`
+        `https://fluoridated-recondite-coast.glitch.me/${apiBase}api/top-ten`
       );
       const topAiringData = await topAiringResponse.json();
-      const animeIds = topAiringData.data.top10Animes.today.map(
-        (anime) => anime.id
-      );
+
+      const animeIds = topAiringData.results.today.map((anime) => anime.id);
 
       // Fetch all anime details in parallel
       const animeDetailsPromises = animeIds.map((id) =>
         fetch(
-          `https://fluoridated-recondite-coast.glitch.me/${apiBase}/anime/${id}`
+          `https://fluoridated-recondite-coast.glitch.me/${apiBase}api/info?id=${id}`
         ).then((res) => {
           if (!res.ok)
             throw new Error(`Failed to fetch details for anime ID ${id}`);
@@ -49,7 +47,8 @@ const Hero = () => {
       const animeDetails = await Promise.all(animeDetailsPromises);
 
       // Extract anime info and update state
-      const animeInfo = animeDetails.map((detail) => detail.data.anime);
+      const animeInfo = animeDetails.map((detail) => detail.results.data);
+
       setState({ isLoading: false, error: null, animeInfo });
     } catch (err) {
       setState({ isLoading: false, error: err.message, animeInfo: [] });
@@ -116,13 +115,12 @@ const Hero = () => {
             </Box>
 
             {animeInfo.map((anime, index) => {
-              const animeInfo = anime.info;
-              const animeMoreInfo = anime.moreInfo;
+              const animeInfo = anime.animeInfo;
 
               return (
                 <SwiperSlide key={index}>
                   <Box
-                    background={`url(${animeInfo.poster})`}
+                    background={`url(${anime.poster})`}
                     backgroundPosition="center"
                     backgroundSize="cover"
                     backgroundBlendMode="overlay"
@@ -166,9 +164,9 @@ const Hero = () => {
                           }}
                           letterSpacing="1.5px"
                         >
-                          {animeInfo.name?.length > 20
-                            ? `${animeInfo.name.slice(0, 25)}...`
-                            : animeInfo.name}
+                          {anime.title?.length > 20
+                            ? `${anime.title.slice(0, 25)}...`
+                            : anime.title}
                         </Heading>
                         <Heading
                           as="h4"
@@ -190,11 +188,11 @@ const Hero = () => {
                         >
                           Status:{" "}
                           <Text as="span" textTransform="capitalize">
-                            {animeMoreInfo.status}
+                            {animeInfo.Status || "Unknown"}
                           </Text>
                         </Heading>
                         <HStack my="10px" gap="10px 10px" flexWrap="wrap">
-                          {animeMoreInfo.genres.map((genre, i) => (
+                          {animeInfo.Genres.map((genre, i) => (
                             <Text
                               key={i}
                               as="span"
@@ -242,7 +240,7 @@ const Hero = () => {
                           }}
                           fontWeight="400"
                         >
-                          Release year: {animeMoreInfo.premiered}
+                          Release year: {animeInfo.Premiered}
                         </Heading>
                         <Text
                           as="p"
@@ -260,13 +258,13 @@ const Hero = () => {
                           color="var(--text-color)"
                           my="10px"
                         >
-                          {animeInfo.description?.length > 200
-                            ? `${animeInfo.description.slice(0, 200)}...`
-                            : animeInfo.description}
+                          {animeInfo.Overview?.length > 200
+                            ? `${animeInfo.Overview.slice(0, 200)}...`
+                            : animeInfo.Overview}
                         </Text>
                         <Box width="100%" my={{ base: "15px", md: "10px" }}>
                           <Link
-                            to={`anime/${animeInfo.id}`}
+                            to={`anime/${anime.id}`}
                             className="play-now-btn"
                             style={{ textAlign: "center" }}
                           >
@@ -278,9 +276,7 @@ const Hero = () => {
                       <Box hideBelow="xl">
                         <Box
                           background={
-                            animeInfo.poster
-                              ? `url(${animeInfo.poster})`
-                              : "#191919"
+                            anime.poster ? `url(${anime.poster})` : "#191919"
                           }
                           w={{ lg: "550px", "2xl": "670px" }}
                           h={{ lg: "450px", "2xl": "600px" }}

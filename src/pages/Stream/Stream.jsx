@@ -19,12 +19,16 @@ import Loading from "../../components/ErrorPage/Loading";
 import Player from "../../components/Anime/VideoPlayer/Player";
 import { PlayerContext } from "../../contexts/PlayerContext";
 import DownloadLinksSelect from "./DownloadLinksSelect";
+import MoviePlayer from "../../components/Anime/VideoPlayer/MoviePlayer";
 
 const Stream = () => {
   const { watchId } = useParams();
-  const searchParams = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const season = searchParams.get("season");
   const episode = searchParams.get("episode");
+  const activeEpId = searchParams.get("ep"); // e.g., "138379"
+  const [contentType, setContentType] = useState(null);
   const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
   const [animeData, setAnimeData] = useState([]);
@@ -53,14 +57,15 @@ const Stream = () => {
   const [nextSessionEpisode, setNextSessionEpisode] = useState("");
   const [sessionResult, setSessionResult] = useState({});
 
-  const api = "https://consumet-api-puce.vercel.app/";
-  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
+  //Base URLS
+  const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
   const streamProxy =
     "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
-  const api_backend = "https://anipy-backend-production.up.railway.app/";
+
   const animePahe_api = "https://paheapi-production.up.railway.app/";
-  const location = useLocation();
+  const TMDB_API = "https://api.themoviedb.org/3";
+  const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY;
   const fullPath = `${watchId}${location.search}`;
 
   const handleClick = (index) => {
@@ -77,22 +82,20 @@ const Stream = () => {
     setSubStatus(false);
   };
 
+  // Determine content type
   useEffect(() => {
-    const fetchEpisodes = async () => {
-      setEpLoading(true);
-      setEpError(null);
-      try {
-        const response = await fetch(
-          `${proxy}${backup_api}/api/v2/hianime/anime/${watchId}/episodes`
-        );
-        const data = await response.json();
-        setEpisodes(data.data.episodes || []);
-      } catch {
-        setEpError("Failed to load data. Please try again.");
-      } finally {
-        setEpLoading(false);
-      }
-    };
+    if (season && episode) {
+      setContentType("series");
+    } else if (!isNaN(watchId)) {
+      setContentType("movie");
+    } else {
+      setContentType("anime");
+    }
+  }, [watchId, season, episode]);
+
+  //Fetch Anime data
+  useEffect(() => {
+    if (contentType !== "anime") return;
 
     const fetchAnimeData = async () => {
       setLoading(true);
@@ -100,14 +103,14 @@ const Stream = () => {
 
       try {
         const response = await fetch(
-          `${proxy}${backup_api}/api/v2/hianime/anime/${watchId}`
+          `${proxy}${backup_api}/api/info?id=${watchId}`
         );
         const data = await response.json();
-        setAnimeData(data.data.anime);
-        setAnimeTitle(data.data.anime.info.name);
-        setAnimeRating(data.data.anime.moreInfo.malscore);
-        setIsDub(data.data.anime.info.stats.episodes);
-        console.log(animeData);
+
+        setAnimeData(data.results.data);
+        setAnimeTitle(data.results.data.title);
+        setAnimeRating(data.results.data.animeInfo["MAL Score"]);
+        setIsDub(data.results.data.animeInfo.tvInfo.dub);
       } catch (error) {
         setError("Failed to load data. Please try again.");
       } finally {
@@ -115,29 +118,123 @@ const Stream = () => {
       }
     };
 
-    fetchEpisodes();
+    //Fetch anime episodes
+    const fetchEpisodes = async () => {
+      setEpLoading(true);
+      setEpError(null);
+      try {
+        const response = await fetch(
+          `${proxy}${backup_api}/api/episodes/${watchId}`
+        );
+        const data = await response.json();
+
+        setEpisodes(data.results.episodes || []);
+      } catch {
+        setEpError(true);
+      } finally {
+        setEpLoading(false);
+      }
+    };
+
     fetchAnimeData();
-  }, [watchId]);
+    fetchEpisodes();
+  }, [watchId, contentType]);
 
+  // TMDb Logic (Movies & Series)
   useEffect(() => {
-    // Find the active episode based on the current location
-    const activeEpisode = episodes.find(
-      ({ episodeId: epId }) =>
-        `/watch/${epId}` === `${location.pathname}${location.search}`
-    );
+    if (contentType === "anime") return;
 
-    if (activeEpisode) {
-      setCurrentEpisode(
-        `Episode ${activeEpisode.number} - ${activeEpisode.title}`
+    const fetchTMDb = async () => {
+      setLoading(true);
+      setEpLoading(true);
+      try {
+        if (contentType === "movie") {
+          const res = await fetch(
+            `${TMDB_API}/movie/${watchId}?api_key=${TMDB_KEY}`
+          );
+          const data = await res.json();
+          setAnimeTitle(data.title);
+          setAnimeRating(data.vote_average);
+          setEpisodes([
+            {
+              title: `Full Movie - ${animeTitle}`,
+              number: 1,
+              episodeId: watchId, // or just `watchId` if your system expects that
+            },
+          ]);
+          setCurrentEpisode(`Full Movie - ${animeTitle}`);
+          setEpisodeNumber(1);
+          document.title = `Watching ${data.title} | AniPulse`;
+        } else if (contentType === "series") {
+          const res = await fetch(
+            `${TMDB_API}/tv/${watchId}?api_key=${TMDB_KEY}`
+          );
+          const data = await res.json();
+          setAnimeTitle(data.name);
+          setAnimeRating(data.vote_average);
+          document.title = `Watching ${data.name} S${season}E${episode} | AniPulse`;
+
+          // Fetch episodes for the series
+          const episodesRes = await fetch(
+            `${TMDB_API}/tv/${watchId}/season/${season}?api_key=${TMDB_KEY}`
+          );
+          const episodesData = await episodesRes.json();
+          const formattedEpisodes = episodesData.episodes.map((ep) => ({
+            title: ep.name,
+            number: ep.episode_number,
+            episodeId: `${watchId}-s${season}-e${ep.episode_number}`,
+          }));
+          setEpisodes(formattedEpisodes);
+          setCurrentEpisode(
+            `Episode ${episode} - ${
+              formattedEpisodes.find((ep) => ep.number === parseInt(episode))
+                ?.title || "Unknown"
+            }`
+          );
+          setEpisodeNumber(parseInt(episode));
+        }
+      } catch (err) {
+        setError("Failed to load movie/series data");
+      } finally {
+        setLoading(false);
+        setEpLoading(false);
+      }
+    };
+
+    fetchTMDb();
+  }, [watchId, contentType, season]);
+  // Set the document title based on the anime title and current episode
+  // This will update the title whenever animeTitle, contentType, season, or episode changes
+  useEffect(() => {
+    if (!animeTitle || !contentType) return;
+
+    let title = "AniPulse";
+    let episodeText = "";
+
+    const searchParams = new URLSearchParams(location.search);
+    const activeEpId = searchParams.get("ep");
+
+    if (contentType === "series" && season && episode) {
+      const current = episodes?.find((ep) => ep.number === parseInt(episode));
+      title = `Watching ${animeTitle} S${season}E${episode} | AniPulse`;
+      episodeText = `Episode ${episode} - ${current?.title || "Unknown"}`;
+    } else if (contentType === "anime" && activeEpId) {
+      const current = episodes?.find((ep) =>
+        ep.id.endsWith(`ep=${activeEpId}`)
       );
-      setEpisodeNumber(activeEpisode.number);
-      document.title = `Watching ${animeTitle}  ${
-        dubStatus ? "(Dub)" : ""
-      } Episode ${activeEpisode.number} - ${activeEpisode.title} | AniPulse`;
-    } else {
-      document.title = "AniPulse";
+      console.log(episodes.find((ep) => ep.episode_no === 1));
+      const currentEpNo = current?.episode_no ?? "??";
+
+      title = `Watching ${animeTitle} Episode ${currentEpNo} | AniPulse`;
+      episodeText = `Episode ${currentEpNo} - ${current?.title || "Unknown"}`;
+    } else if (contentType === "movie") {
+      title = `Watching ${animeTitle} | AniPulse`;
+      episodeText = animeTitle;
     }
-  }, [location, episodes, animeTitle]);
+
+    document.title = title;
+    setCurrentEpisode(episodeText);
+  }, [animeTitle, contentType, season, episode, episodes]);
 
   // Fetch session ID of anime
   const fetchSessionId = async () => {
@@ -169,7 +266,6 @@ const Stream = () => {
               .includes(animeTitle.toLowerCase())
         ) ||
         results[0]; // fallback to first result
-      console.log(exactMatch);
 
       if (exactMatch?.session_id) {
         setSessionId(exactMatch.session_id);
@@ -182,25 +278,25 @@ const Stream = () => {
     }
   };
 
+  // Fetch session ID when animeTitle or contentType changes
+  // This ensures we only fetch the session ID for anime content type
   useEffect(() => {
+    if (contentType !== "anime") return;
     if (animeTitle) {
       fetchSessionId();
     }
-  }, [animeTitle]);
+  }, [animeTitle, contentType]);
 
   let epNo = currentEpisode?.match(/\d+/);
   let realEpNo = epNo ? parseInt(epNo[0]) : null;
 
   // Fetch episode session of anime — only when sessionId & realEpNo are valid
   useEffect(() => {
+    if (contentType !== "anime") return;
     if (!sessionId || !realEpNo) return;
 
     const fetchEpisodeSession = async () => {
       try {
-        console.log(
-          `[🔍] Fetching episode session for sessionId: ${sessionId}, realEpisodeNumber: ${realEpNo}`
-        );
-
         const firstPageRes = await fetch(
           `${animePahe_api}episodes/${sessionId}/page=1`
         );
@@ -209,9 +305,6 @@ const Stream = () => {
 
         const getAllEpisodes = async () => {
           if (totalPages > 1) {
-            console.log(
-              `[📄] Total Pages: ${totalPages}. Fetching all pages concurrently...`
-            );
             const pageNumbers = Array.from(
               { length: totalPages },
               (_, i) => i + 1
@@ -225,7 +318,6 @@ const Stream = () => {
             );
             return pages.flatMap((p) => p.episodes);
           } else {
-            console.log(`[📄] Only 1 page found. Using first page episodes.`);
             return firstPageData.episodes;
           }
         };
@@ -243,13 +335,6 @@ const Stream = () => {
         const offset = apiFirstEp - 1;
         const adjustedEpisode = realEpNo + offset;
         const adjustedNextEpisode = adjustedEpisode + 1;
-
-        console.log(`[🧠] API first episode: ${apiFirstEp}`);
-        console.log(`[🧮] Offset applied: ${offset}`);
-        console.log(`[📺] Adjusted episode number: ${adjustedEpisode}`);
-        console.log(
-          `[➡️] Adjusted next episode number: ${adjustedNextEpisode}`
-        );
 
         const matchedCurrent = allEpisodes.find(
           (ep) => parseInt(ep.episode) === adjustedEpisode
@@ -271,11 +356,7 @@ const Stream = () => {
     };
 
     fetchEpisodeSession();
-  }, [sessionId, realEpNo]);
-
-  console.log(watchId);
-  console.log(season);
-  console.log(window.location);
+  }, [sessionId, realEpNo, contentType]);
 
   return (
     <Box>
@@ -300,8 +381,17 @@ const Stream = () => {
               color="var(--text-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink as={Link} to="/">
-                Home
+              <BreadcrumbLink
+                as={Link}
+                to={contentType === "anime" ? `/` : "/movies"}
+              >
+                {`${
+                  contentType === "anime"
+                    ? "Anime"
+                    : contentType === "movie"
+                    ? "Movies"
+                    : "Movies"
+                }`}
               </BreadcrumbLink>
             </BreadcrumbItem>
 
@@ -313,9 +403,15 @@ const Stream = () => {
               color="var(--accent-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
-              <BreadcrumbLink>{`Stream / ${animeTitle} ${
-                dubStatus ? "(Dub)" : ""
-              } ${currentEpisode}`}</BreadcrumbLink>
+              <BreadcrumbLink>{`Stream / ${
+                contentType === "anime"
+                  ? dubStatus
+                    ? `${animeTitle} ${currentEpisode} (Dub)`
+                    : `${animeTitle} ${currentEpisode}`
+                  : contentType === "movie"
+                  ? animeTitle
+                  : `${animeTitle} Season ${season} ${currentEpisode}`
+              }`}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
 
@@ -342,7 +438,11 @@ const Stream = () => {
                   borderRadius="10px"
                   pos="relative"
                 >
-                  <Player dub={dubStatus} sub={subStatus} />
+                  {contentType === "anime" ? (
+                    <Player dub={dubStatus} sub={subStatus} />
+                  ) : (
+                    <MoviePlayer />
+                  )}
                 </GridItem>
 
                 <GridItem
@@ -385,7 +485,11 @@ const Stream = () => {
                           fontSize="17.58px"
                           lineHeight="24px"
                         >
-                          Season
+                          {contentType === "anime"
+                            ? `Season`
+                            : contentType === "movie"
+                            ? "Movie"
+                            : `Season ${season}`}
                         </Text>
                         <ChevronDownIcon
                           h="18px"
@@ -394,52 +498,77 @@ const Stream = () => {
                         />
                       </Box>
 
+                      {/* Episodes List */}
                       <Box
                         display={{ base: "flex" }}
                         flexDir={{ base: "column" }}
                         pos="relative"
                         alignItems="flex-start"
                       >
-                        {/* Show Loading State */}
-                        {epLoading && <Loading bg="none" />}
+                        {(() => {
+                          if (epLoading) return <Loading bg="none" />;
+                          if (epError) return <Error bg="none" msg={epError} />;
 
-                        {/* Show Error State */}
-                        {!epLoading && epError && (
-                          <Error
-                            bg=""
-                            msg="Error loading episodes, please try again."
-                          />
-                        )}
-
-                        {/* Show Episodes or Fallback Error */}
-                        {!epLoading && !epError && (
-                          <>
-                            {episodes && episodes.length > 0 ? (
-                              episodes.map(
-                                ({ number: epNo, episodeId: epId }) => (
-                                  <Link
-                                    key={epId}
-                                    to={`/watch/${epId}`}
-                                    style={{
-                                      textDecoration: "none",
-                                      fontFamily: "var(--font-family)",
-                                    }}
-                                    className={
-                                      `${location.pathname}${location.search}` ===
-                                      `/watch/${epId}`
-                                        ? "episode active"
-                                        : "episode"
-                                    }
-                                  >
-                                    {`Episode ${epNo}`}
-                                  </Link>
-                                )
-                              )
-                            ) : (
+                          if (!episodes || episodes.length === 0) {
+                            return (
                               <Error bg="none" msg="No episodes available." />
-                            )}
-                          </>
-                        )}
+                            );
+                          }
+
+                          const renderLink = (to, label, isActive) => (
+                            <Link
+                              key={to}
+                              to={to}
+                              style={{
+                                textDecoration: "none",
+                                fontFamily: "var(--font-family)",
+                              }}
+                              className={
+                                isActive ? "episode active" : "episode"
+                              }
+                            >
+                              {label}
+                            </Link>
+                          );
+
+                          return (
+                            <>
+                              {contentType === "anime" &&
+                                episodes.map(
+                                  ({ episode_no: episode_no, id }) => {
+                                    const isActive = id.endsWith(
+                                      `ep=${activeEpId}`
+                                    );
+
+                                    return renderLink(
+                                      `/watch/${id}`,
+                                      `Episode ${episode_no}`,
+                                      isActive
+                                    );
+                                  }
+                                )}
+
+                              {contentType === "movie" &&
+                                episodes.map(({ title, episodeId }) => {
+                                  return renderLink(
+                                    `/watch/${episodeId}`,
+                                    animeTitle,
+                                    location.pathname === `/watch/${episodeId}`
+                                  );
+                                })}
+
+                              {contentType === "series" &&
+                                episodes.map(({ title, number, episodeId }) =>
+                                  renderLink(
+                                    `/watch/${watchId}?season=${season}&episode=${number}`,
+                                    `Episode ${number}`,
+                                    location.search ===
+                                      `?season=${season}&episode=${number}`
+                                  )
+                                )}
+                            </>
+                          );
+                        })()}
                       </Box>
                     </Box>
                   </Box>
@@ -473,7 +602,11 @@ const Stream = () => {
                     >
                       You&apos;re watching{" "}
                       <Text as="span" color="var(--accent-color)">
-                        Episode {episodeNumber}
+                        {contentType === "anime"
+                          ? `Episode ${episodeNumber}`
+                          : contentType === "movie"
+                          ? "Full Movie"
+                          : `Season ${season} Episode ${episode}`}
                       </Text>
                     </Text>
                     <Text

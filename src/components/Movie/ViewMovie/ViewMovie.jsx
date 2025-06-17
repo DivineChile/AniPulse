@@ -576,7 +576,7 @@ const ViewMovie = () => {
                 </GridItem>
 
                 <GridItem
-                  colSpan={{ base: 7, md: 3, lg: 4, "2xl": 5 }}
+                  colSpan={{ base: 7, md: 4, lg: 4, "2xl": 5 }}
                   mt={{ base: "20px", md: 0 }}
                 >
                   <Heading

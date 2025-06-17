@@ -166,7 +166,7 @@ const SeasonTabs = ({ tvId }) => {
                       {episodesData[season.season_number].map((episode) => (
                         <ChakraLink
                           as={ReactRouterLink}
-                          to={`/watch/${tvId}&season=${season.season_number}&episode=${episode.episode_number}`}
+                          to={`/watch/${tvId}?season=${season.season_number}&episode=${episode.episode_number}`}
                           key={episode.id}
                           color="var(--text-color)"
                           bg="var(--card-background-color)"
@@ -301,7 +301,7 @@ const SeasonTabs = ({ tvId }) => {
                               )}
                               <ChakraLink
                                 as={ReactRouterLink}
-                                to={`/watch/${tvId}&season=${season.season_number}&episode=${episode.episode_number}`}
+                                to={`/watch/${tvId}?season=${season.season_number}&episode=${episode.episode_number}`}
                                 mt={4}
                                 background="var(--link-color)"
                                 p={1.5}

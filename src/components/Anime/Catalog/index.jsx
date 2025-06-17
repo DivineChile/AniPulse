@@ -13,7 +13,7 @@ const Catalog = () => {
   const [recentError, setRecentError] = useState(null);
   const [recentlyCompletedAnime, setRecentlyCompletedAnime] = useState([]);
 
-  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
+  const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchTopRatedAnime = async () => {
@@ -21,11 +21,9 @@ const Catalog = () => {
     setTopError(null);
 
     try {
-      const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/category/most-popular`
-      );
+      const response = await fetch(`${proxy}${backup_api}/api/most-popular`);
       const data = await response.json();
-      setTopRatedAnime(data.data.animes);
+      setTopRatedAnime(data.results.data);
       console.log(topRatedAnime);
     } catch (err) {
       setTopError("Failed to load data. Please try again.");
@@ -39,11 +37,9 @@ const Catalog = () => {
     setNewError(null);
 
     try {
-      const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/category/top-upcoming`
-      );
+      const response = await fetch(`${proxy}${backup_api}/api/top-upcoming`);
       const data = await response.json();
-      setNewAnime(data.data.animes);
+      setNewAnime(data.results.data);
     } catch (err) {
       setNewError("Failed to load data. Please try again.");
     } finally {
@@ -56,11 +52,9 @@ const Catalog = () => {
     setRecentError(null);
 
     try {
-      const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/category/completed`
-      );
+      const response = await fetch(`${proxy}${backup_api}/api/completed`);
       const data = await response.json();
-      setRecentlyCompletedAnime(data.data.animes);
+      setRecentlyCompletedAnime(data.results.data);
     } catch (err) {
       setRecentError("Failed to load data. Please try again.");
     } finally {

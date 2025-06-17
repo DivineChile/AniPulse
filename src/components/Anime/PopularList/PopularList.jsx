@@ -26,18 +26,16 @@ const PopularList = () => {
   const [results, setResults] = useState([]);
 
   const api = "https://consumet-api-puce.vercel.app/";
-  const backup_api = "https://aniwatch-api-production-68fd.up.railway.app/";
+  const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
 
   const fetchPopularAnimes = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/category/most-popular`
-      );
+      const response = await fetch(`${proxy}${backup_api}/api/most-popular`);
       const data = await response.json();
-      setResults(data.data.animes);
+      setResults(data.results.data);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -115,9 +113,9 @@ const PopularList = () => {
             {error && <Error msg={error} pos="absolute" />}
             {truncatedResults.map((item, index) => {
               const nameLength =
-                item.name.length > 30
-                  ? `${item.name.slice(0, 26)}...`
-                  : item.name;
+                item.title.length > 30
+                  ? `${item.title.slice(0, 26)}...`
+                  : item.title;
               return (
                 <GridItem w={{ base: "100%" }} key={item.id}>
                   <Box
@@ -222,7 +220,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        SUB {item.episodes.sub ? item.episodes.sub : "N/A"}
+                        SUB {item.tvInfo.sub || "N/A"}
                       </Text>
                       <Text
                         as="span"
@@ -245,7 +243,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        DUB {item.episodes.dub ? item.episodes.dub : "N/A"}
+                        DUB {item.tvInfo.dub || "N/A"}
                       </Text>
                       <Text
                         as="span"
@@ -262,7 +260,7 @@ const PopularList = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {item.type}
+                        {item.tvInfo.showType || "N/A"}
                       </Text>
                     </Flex>
                     <ChakraLink

@@ -23,18 +23,16 @@ const Recents = () => {
   const [showAll, setShowAll] = useState(false);
 
   const proxy = "https://fluoridated-recondite-coast.glitch.me/";
-  const backupApi = "https://aniwatch-api-production-68fd.up.railway.app/";
+  const backupApi = "https://anime-api-production-bc3d.up.railway.app/";
 
   const fetchRecentReleaseAnime = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `${proxy}${backupApi}/api/v2/hianime/category/recently-updated`
-      );
+      const response = await fetch(`${proxy}${backupApi}/api/recently-updated`);
       const data = await response.json();
-      setSubAnimeData(data.data.animes);
+      setSubAnimeData(data.results.data);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -88,9 +86,9 @@ const Recents = () => {
             ))
           : displayedAnime.map((item) => {
               const epLength =
-                item.name.length > 30
-                  ? `${item.name.slice(0, 30)}...`
-                  : item.name;
+                item.title.length > 30
+                  ? `${item.title.slice(0, 30)}...`
+                  : item.title;
               return (
                 <GridItem key={item.id} w="100%">
                   <Box
@@ -146,7 +144,7 @@ const Recents = () => {
                           color: "var(--accent-color)",
                           transition: "all ease 0.25s",
                         }}
-                        fontSize={{base: "15px", sm: "18.88px"}}
+                        fontSize={{ base: "15px", sm: "18.88px" }}
                         lineHeight="36px"
                         letterSpacing="0.5px"
                         fontWeight="500"
@@ -160,8 +158,8 @@ const Recents = () => {
                           color="var(--text-color)"
                           transition="all ease 0.25s"
                           className="playIcon"
-                          h={{base:"20px", "2xl": "40px"}}
-                          w={{base:"20px", "2xl": "40px"}}
+                          h={{ base: "20px", "2xl": "40px" }}
+                          w={{ base: "20px", "2xl": "40px" }}
                         />
                         View Anime
                       </ChakraLink>
@@ -180,48 +178,54 @@ const Recents = () => {
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
-                        p={{base: "0px 6px", lg: "3px 10px"}}
+                        p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
-                          borderColor: "var(--accent-color)"
+                          borderColor: "var(--accent-color)",
                         }}
                         borderRadius="8px"
-                        border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                        border={{
+                          base: "1px solid var(--text-color)",
+                          md: "2px solid var(--text-color)",
+                        }}
                         fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        SUB {item.episodes.sub ? item.episodes.sub : "N/A"}
+                        SUB {item.tvInfo.sub || "N/A"}
                       </Text>
                       <Text
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
-                        p={{base: "0px 6px", lg: "3px 10px"}}
+                        p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
-                          borderColor: "var(--accent-color)"
+                          borderColor: "var(--accent-color)",
                         }}
                         borderRadius="8px"
-                        border={{base: "1px solid var(--text-color)", md: "2px solid var(--text-color)"}}
+                        border={{
+                          base: "1px solid var(--text-color)",
+                          md: "2px solid var(--text-color)",
+                        }}
                         fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        DUB {item.episodes.dub ? item.episodes.dub : "N/A"}
+                        DUB {item.tvInfo.dub || "N/A"}
                       </Text>
                       <Text
                         as="span"
                         color="var(--text-color)"
                         cursor="pointer"
                         hideBelow="sm"
-                        p={{base: "0px 6px", lg: "3px 10px"}}
+                        p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
                           color: "var(--accent-color)",
@@ -231,7 +235,7 @@ const Recents = () => {
                         letterSpacing="0.5px"
                         textTransform="uppercase"
                       >
-                        {item.type && item.type}
+                        {item.tvInfo.showType || "N/A"}
                       </Text>
                     </Flex>
                     <ChakraLink
