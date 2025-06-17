@@ -105,7 +105,7 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
             const resultImg =
               item.poster ||
               `https://image.tmdb.org/t/p/w500${item.poster_path}`;
-            const resultType = item.tvInfo.showType || item.media_type;
+            const resultType = isAnime ? item.tvInfo.showType : item.media_type;
             const route = isAnime
               ? `/anime/${resultId}`
               : mediaType === "movie"

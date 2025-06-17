@@ -59,7 +59,9 @@ const ListView = ({
     const resultTitle = result.title || result.name;
     const resultImg =
       result.poster || `https://image.tmdb.org/t/p/w500${result.poster_path}`;
-    const resultType = result.tvInfo.showType || result.media_type;
+    const resultType = media_type_exist
+      ? result.tvInfo?.showType
+      : result.media_type;
 
     const date = new Date(
       media_type === "tv" ? result.first_air_date : result.release_date
