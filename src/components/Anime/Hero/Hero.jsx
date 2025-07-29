@@ -28,7 +28,7 @@ const Hero = () => {
     try {
       // Fetch top airing anime IDs
       const topAiringResponse = await fetch(
-        `https://fluoridated-recondite-coast.glitch.me/${apiBase}api/top-ten`
+        `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/top-ten`
       );
       const topAiringData = await topAiringResponse.json();
 
@@ -37,7 +37,7 @@ const Hero = () => {
       // Fetch all anime details in parallel
       const animeDetailsPromises = animeIds.map((id) =>
         fetch(
-          `https://fluoridated-recondite-coast.glitch.me/${apiBase}api/info?id=${id}`
+          `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/info?id=${id}`
         ).then((res) => {
           if (!res.ok)
             throw new Error(`Failed to fetch details for anime ID ${id}`);

@@ -22,7 +22,7 @@ const Recents = () => {
   const [subAnimeData, setSubAnimeData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const backupApi = "https://anime-api-production-bc3d.up.railway.app/";
 
   const fetchRecentReleaseAnime = async () => {

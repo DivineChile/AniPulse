@@ -29,7 +29,7 @@ const SearchBar = ({ above, below, displayProp }) => {
 
   // APIs
   const animeApi = "https://anime-api-production-bc3d.up.railway.app/";
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const url = `https://api.themoviedb.org/3/search/multi`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 

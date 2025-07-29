@@ -55,9 +55,9 @@ const MoviePlayer = () => {
   const episode = searchParams.get("episode");
   const type = season ? "tv" : "movie";
 
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const m3u8Proxy =
-    "https://m3u8proxy.divinechile16.workers.dev/m3u8-proxy?url=";
+    "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
   const streamApi = "https://vidsrc-scraper-production.up.railway.app/extract";
 
   const [loading, setLoading] = useState(true);
@@ -116,11 +116,12 @@ const MoviePlayer = () => {
       if (!selected) return;
 
       const cleanUrl = selected.hls_url.includes("m3u8-proxy?url=")
-        ? decodeURIComponent(selected.hls_url.split("url=")[2])
+        ? decodeURIComponent(selected.hls_url.split("url=")[1])
         : selected.hls_url;
 
       const proxyUrl = `${m3u8Proxy}${cleanUrl}`;
       const qualities = await extractHLSQualities(proxyUrl);
+      console.log(qualities);
       const sortedQualities = qualities.map((q, i) => ({
         html: q.quality,
         url: q.url,
@@ -148,7 +149,7 @@ const MoviePlayer = () => {
         customType: {
           hls: (video, url) => {
             const realUrl = url.includes("m3u8-proxy?url=")
-              ? decodeURIComponent(url.split("url=")[2])
+              ? decodeURIComponent(url.split("url=")[1])
               : url;
 
             const streamUrl = `${m3u8Proxy}${realUrl}`;

@@ -52,7 +52,7 @@ const Filter = () => {
 
   const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
   const headers = {

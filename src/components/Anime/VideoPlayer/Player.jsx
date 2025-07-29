@@ -56,9 +56,9 @@ const Player = ({ dub, sub }) => {
   const queryParams = location?.search || "";
   const containerRef = useRef(null);
   const artRef = useRef(null);
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const streamProxy =
-    "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
+    "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
@@ -77,7 +77,7 @@ const Player = ({ dub, sub }) => {
       setVideoData(null);
 
       const response = await fetch(
-        `${proxy}https://anime-api-ri6f4g.fly.dev/api/stream?id=${watchId}${queryParams}&server=hd-2&type=${category}`
+        `${proxy}https://anime-api-production-bc3d.up.railway.app/api/stream?id=${watchId}${queryParams}&server=hd-2&type=${category}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch video data.");

@@ -59,9 +59,9 @@ const Stream = () => {
 
   //Base URLS
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
-  const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const streamProxy =
-    "https://gogoanime-and-hianime-proxy.vercel.app/m3u8-proxy?url=";
+    "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
 
   const animePahe_api = "https://paheapi-production.up.railway.app/";
   const TMDB_API = "https://api.themoviedb.org/3";
