@@ -58,8 +58,8 @@ const MovieCard = ({ movie }) => {
           top="0"
           left="0"
           textAlign="center"
-          background="rgba(0, 0, 0, 0.7)"
-          transition="height 0.7s ease, opacity 0.7s ease"
+          background="rgba(0, 0, 0, 0.85)"
+          transition="height 0.5s ease, opacity 0.5s ease"
           h="0"
           w="100%"
           borderRadius="10px"
@@ -73,7 +73,7 @@ const MovieCard = ({ movie }) => {
             to={is_TV ? `/movies/tv/${movie.id}` : `/movies/movie/${movie.id}`}
             color="var(--text-color)"
             _hover={{
-              color: "var(--accent-color)",
+              color: "var(--link-hover-color)",
               transition: "all ease 0.25s",
             }}
             fontSize={{ base: "15px", sm: "18.88px" }}
@@ -87,7 +87,7 @@ const MovieCard = ({ movie }) => {
           >
             <Icon
               as={BsInfoCircle}
-              color="var(--text-color)"
+              color="var(--link-hover-color)"
               transition="all ease 0.25s"
               className="playIcon"
               h={{ base: "20px", "2xl": "40px" }}
@@ -109,7 +109,7 @@ const MovieCard = ({ movie }) => {
           hideBelow="sm"
           transition="all ease 0.25s"
           _hover={{
-            color: "var(--accent-color)",
+            color: "var(--link-hover-color)",
           }}
           fontSize={{ base: "12.63px", md: "14.63px" }}
           lineHeight="24px"
@@ -140,7 +140,7 @@ const MovieCard = ({ movie }) => {
             textAlign="start"
             color="var(--text-color)"
             transition="all ease 0.25s"
-            _hover={{ color: "var(--accent-color)" }}
+            _hover={{ color: "var(--link-hover-color)" }}
           >
             {is_TV
               ? movie.name.length > 30

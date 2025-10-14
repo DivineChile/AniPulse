@@ -139,7 +139,7 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
                         src={resultImg}
                         w="100%"
                         h="100%"
-                        bg="#191919"
+                        bg="var(--card-background-color)"
                         borderRadius="10px"
                         className="thumbnail"
                         transition="transform 0.7s ease-in-out"
@@ -158,9 +158,9 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
                         alignItems="center"
                         justifyContent="center"
                         textAlign="center"
-                        background="rgba(0, 0, 0, 0.7)!important"
+                        background="rgba(0, 0, 0, 0.85)!important"
                         borderRadius="10px"
-                        transition="height 0.7s ease, opacity 0.7s ease"
+                        transition="height 0.5s ease, opacity 0.5s ease"
                       >
                         <ChakraLink
                           as={ReactRouterLink}
@@ -169,21 +169,21 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
                           alignItems="center"
                           gap="5px"
                           className="viewAnimeBtn"
-                          color="var(--text-color)"
+                          color="var(--link-hover-color)"
                           fontSize="22.88px"
                           lineHeight="36px"
                           letterSpacing="0.5px"
                           fontWeight="500"
                           _hover={{
-                            color: "var(--accent-color)",
+                            color: "var(--link-hover-color)",
                             transition: "all ease 0.25s",
                           }}
                         >
                           <Icon
                             as={BsInfoCircle}
                             className="viewIcon"
-                            color="var(--text-color)"
-                            _hover={{ color: "var(--accent-color)" }}
+                            color="var(--link-hover-color)"
+                            _hover={{ color: "var(--link-hover-color)" }}
                             transition="all ease 0.25s"
                           />
                           View Anime
@@ -224,7 +224,10 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
                         textAlign="start"
                         color="var(--text-color)"
                         transition="all ease 0.25s"
-                        _hover={{ color: "var(--accent-color)" }}
+                        _hover={{
+                          color: "var(--link-hover-color)",
+                          fontWeight: "bold",
+                        }}
                       >
                         {resultTitle?.length > 30
                           ? `${resultTitle.slice(0, 20)}...`

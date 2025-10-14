@@ -218,7 +218,7 @@ const Filter = () => {
               fontSize={{ base: "15.13px", lg: "18.75px" }}
               lineHeight={{ base: "24px", lg: "30px" }}
               letterSpacing="0.5px"
-              color="var(--accent-color)"
+              color="var(--link-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
               <BreadcrumbLink>Search / {searchQuery}</BreadcrumbLink>
@@ -261,13 +261,15 @@ const Filter = () => {
                     as={BsListUl}
                     h="20px"
                     w="20px"
+                    transition={"all 0.2s ease-in-out"}
                     color={
                       listView
-                        ? "var(--accent-color)"
+                        ? "var(--primary-color)"
                         : "var(--secondary-color)"
                     }
                     _hover={{
-                      color: "var(--accent-color)",
+                      color: "var(--link-hover-color)",
+                      transform: "scale(1.1)",
                     }}
                     cursor="pointer"
                     onClick={handleListView}
@@ -276,13 +278,15 @@ const Filter = () => {
                     as={BsGrid}
                     h="20px"
                     w="20px"
+                    transition={"all 0.2s ease-in-out"}
                     color={
                       gridView
-                        ? "var(--accent-color)"
+                        ? "var(--primary-color)"
                         : "var(--secondary-color)"
                     }
                     _hover={{
-                      color: "var(--accent-color)",
+                      color: "var(--link-hover-color)",
+                      transform: "scale(1.1)",
                     }}
                     cursor="pointer"
                     onClick={handleGridView}
@@ -432,8 +436,10 @@ const Filter = () => {
                   letterSpacing={{ base: "0.5px" }}
                   fontWeight="400"
                   _hover={{
-                    color: "#fff",
-                    background: "var(--secondary-color)",
+                    color: "var(--link-hover-color)",
+                    background: "var(--accent-color)",
+                    border: "2px solid var(--accent-color)",
+                    transform: "scale(1.02)",
                   }}
                   type="submit"
                   onClick={handleSearch}
@@ -441,7 +447,7 @@ const Filter = () => {
                   opacity={isLoading === true ? "0.5" : 1}
                 >
                   {isLoading === true ? (
-                    <ButtonSpinner color="var(--accent-color)" />
+                    <ButtonSpinner color="var(--link-hover-color)" />
                   ) : (
                     "Filter Now"
                   )}

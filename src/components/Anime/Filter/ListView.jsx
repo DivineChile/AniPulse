@@ -103,19 +103,23 @@ const ListView = ({
           display="flex"
           gap="20px"
           textDecor="none!important"
+          _hover={{
+            transform: "scale(1.05)",
+          }}
+          transition={"all 0.2s ease-in-out"}
+          padding="10px"
         >
           <Image
             src={resultImg}
             bg="#191919"
             w={{ base: "64px", lg: "70px" }}
-            borderTopLeftRadius="10px"
-            borderBottomLeftRadius="10px"
+            borderRadius="10px"
           />
           <VStack justifyContent="start" alignItems="start" w="80%" py="10px">
             <Heading
               as="h3"
               className="listItemHead"
-              fontSize={{ base: "11.81px", md: "14.77px" }}
+              fontSize={{ base: "11.81px", md: "14.77px", lg: "16.63px" }}
               color="var(--text-color)"
               _hover={{ color: "var(--accent-color)" }}
               transition="all ease 0.25s"
@@ -178,10 +182,10 @@ const ListView = ({
               <Box display="flex" alignItems="baseline">
                 <Text
                   as="span"
-                  color="var(--text-color)"
+                  color="var(--text-secondary)"
                   cursor="pointer"
                   p="3px 10px"
-                  _hover={{ color: "var(--accent-color)" }}
+                  _hover={{ color: "var(--text-color)" }}
                   fontSize="14.63px"
                   lineHeight="24px"
                   letterSpacing="0.5px"
