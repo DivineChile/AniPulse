@@ -126,8 +126,8 @@ const Recents = () => {
                       top="0"
                       left="0"
                       textAlign="center"
-                      background="rgba(0, 0, 0, 0.7)"
-                      transition="height 0.7s ease, opacity 0.7s ease"
+                      background="rgba(0, 0, 0, 0.8)"
+                      transition="height 0.5s ease, opacity 0.5s ease"
                       h="0"
                       w="100%"
                       borderRadius="10px"
@@ -139,9 +139,9 @@ const Recents = () => {
                       <ChakraLink
                         as={ReactRouterLink}
                         to={`/anime/${item.id}`}
-                        color="var(--text-color)"
+                        color="var(--link-hover-color)"
                         _hover={{
-                          color: "var(--accent-color)",
+                          color: "var(--link-hover-color)",
                           transition: "all ease 0.25s",
                         }}
                         fontSize={{ base: "15px", sm: "18.88px" }}
@@ -155,7 +155,7 @@ const Recents = () => {
                       >
                         <Icon
                           as={BsInfoCircle}
-                          color="var(--text-color)"
+                          color="var(--link-hover-color)"
                           transition="all ease 0.25s"
                           className="playIcon"
                           h={{ base: "20px", "2xl": "40px" }}
@@ -184,6 +184,7 @@ const Recents = () => {
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
                           borderColor: "var(--accent-color)",
+                          fontWeight: "bold",
                         }}
                         borderRadius="8px"
                         border={{
@@ -207,6 +208,7 @@ const Recents = () => {
                           color: "var(--background-color)",
                           bgColor: "var(--accent-color)",
                           borderColor: "var(--accent-color)",
+                          fontWeight: "bold",
                         }}
                         borderRadius="8px"
                         border={{
@@ -222,13 +224,13 @@ const Recents = () => {
                       </Text>
                       <Text
                         as="span"
-                        color="var(--text-color)"
+                        color="var(--text-secondary)"
                         cursor="pointer"
                         hideBelow="sm"
                         p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--accent-color)",
+                          color: "var(--text-color)",
                         }}
                         fontSize={{ base: "12.63px", md: "14.63px" }}
                         lineHeight="24px"
@@ -257,7 +259,10 @@ const Recents = () => {
                         textAlign="start"
                         color="var(--text-color)"
                         transition="all ease 0.25s"
-                        _hover={{ color: "var(--accent-color)" }}
+                        _hover={{
+                          color: "var(--link-hover-color)",
+                          fontWeight: "bold",
+                        }}
                       >
                         {epLength}
                       </Text>
@@ -287,9 +292,11 @@ const Recents = () => {
             width={{ base: "100%", md: "fit-content" }}
             _hover={{
               textDecor: "none",
-              color: "var(--background-color)",
+              color: "var(--link-hover-color)",
               background: "var(--accent-color)",
               border: "none",
+              fontWeight: "bold",
+              padding: { base: "7px 15px", md: "5px 45px" },
             }}
             pos="relative"
             m="20px auto 0"
