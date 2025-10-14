@@ -119,7 +119,7 @@ const Navbar = () => {
                 as="span"
                 color="var(--secondary-color)"
                 _hover={{
-                  color: "var(--accent-color)",
+                  color: "var(--primary-color)",
                 }}
                 transition="all ease 0.25s"
               >
@@ -129,7 +129,7 @@ const Navbar = () => {
                 className="logo_tag"
                 as="span"
                 color="var(--primary-color)"
-                _hover={{ color: "var(--accent-color)" }}
+                _hover={{ color: "var(--secondary-color)" }}
                 transition="all ease 0.25s"
               >
                 Pulse

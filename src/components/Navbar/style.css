@@ -13,11 +13,11 @@
 }
 
 .navbar ul li a:hover {
-  color: var(--accent-color);
+  color: var(--link-hover-color);
 }
 
 .navbar ul li.active a {
-  color: var(--accent-color);
+  color: var(--link-hover-color);
 }
 
 .navbar ul li::after {
@@ -33,7 +33,7 @@
 .navbar ul li:hover::after {
   width: 50%;
   visibility: visible;
-  background: var(--accent-color);
+  background: var(--link-hover-color);
   border-radius: 2.5px;
 }
 

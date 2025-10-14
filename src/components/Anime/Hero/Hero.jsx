@@ -47,9 +47,10 @@ const Hero = () => {
       const animeDetails = await Promise.all(animeDetailsPromises);
 
       // Extract anime info and update state
-      const animeInfo = animeDetails.map((detail) => detail.results.data);
+      const animeInfo = animeDetails?.map((detail) => detail?.results.data);
+      const filtered = animeInfo.filter((anime) => anime); // Remove any undefined entries
 
-      setState({ isLoading: false, error: null, animeInfo });
+      setState({ isLoading: false, error: null, animeInfo: filtered });
     } catch (err) {
       setState({ isLoading: false, error: err.message, animeInfo: [] });
     }
@@ -113,9 +114,10 @@ const Hero = () => {
             >
               <Next />
             </Box>
-
             {animeInfo.map((anime, index) => {
               const animeInfo = anime.animeInfo;
+              const animeStatus = animeInfo.Status.split("-").join(" ");
+              const animePremiered = animeInfo.Premiered.split("-").join(" ");
 
               return (
                 <SwiperSlide key={index}>
@@ -148,9 +150,9 @@ const Hero = () => {
                         <Heading
                           color="var(--text-color)"
                           textTransform="uppercase"
-                          fontWeight="600"
+                          fontWeight={{ base: "800", md: "800", lg: "800" }}
                           fontSize={{
-                            base: "40px",
+                            base: "45px",
                             sm: "50px",
                             md: "65px",
                             lg: "67px",
@@ -165,7 +167,7 @@ const Hero = () => {
                           letterSpacing="1.5px"
                         >
                           {anime.title?.length > 20
-                            ? `${anime.title.slice(0, 25)}...`
+                            ? `${anime.title.slice(0, 20)}...`
                             : anime.title}
                         </Heading>
                         <Heading
@@ -188,7 +190,7 @@ const Hero = () => {
                         >
                           Status:{" "}
                           <Text as="span" textTransform="capitalize">
-                            {animeInfo.Status || "Unknown"}
+                            {animeStatus || "Unknown"}
                           </Text>
                         </Heading>
                         <HStack my="10px" gap="10px 10px" flexWrap="wrap">
@@ -205,8 +207,9 @@ const Hero = () => {
                               p="3px 10px"
                               bg={i === 0 ? "var(--accent-color)" : "#191919"}
                               _hover={{
-                                color: "var(--background-color)",
+                                color: "var(--link-hover-color) !important",
                                 bgColor: "var(--accent-color)",
+                                fontWeight: "bold",
                                 border: "none",
                               }}
                               borderRadius="8px"
@@ -218,6 +221,7 @@ const Hero = () => {
                               fontSize={{ base: "14.63px", md: "16.63px" }}
                               fontFamily="var(--font-family)"
                               lineHeight="24px"
+                              transition="all 0.25s ease"
                             >
                               {genre}
                             </Text>
@@ -240,7 +244,7 @@ const Hero = () => {
                           }}
                           fontWeight="400"
                         >
-                          Release year: {animeInfo.Premiered}
+                          Release year: {animePremiered}
                         </Heading>
                         <Text
                           as="p"

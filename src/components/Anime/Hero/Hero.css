@@ -16,7 +16,8 @@ a.play-now-btn {
 }
 
 a.play-now-btn:hover {
-  color: var(--primary-background-color);
+  color: var(--link-hover-color);
+  font-weight: bold;
   border: none;
 }
 
@@ -58,7 +59,8 @@ a.play-now-btn:hover::after {
   }
 
   a.play-now-btn:hover {
-    color: var(--primary-background-color) !important;
+    color: var(--link-hover-color) !important;
+    font-weight: bold;
     border: none;
   }
 }
@@ -82,7 +84,8 @@ a.play-now-btn:hover::after {
   }
 
   a.play-now-btn:hover {
-    color: var(--primary-background-color) !important;
+    color: var(--link-hover-color) !important;
+    font-weight: bold;
     border: none;
   }
 }
@@ -106,7 +109,8 @@ a.play-now-btn:hover::after {
   }
 
   a.play-now-btn:hover {
-    color: var(--primary-background-color) !important;
+    color: var(--link-hover-color) !important;
+    font-weight: bold;
     border: none;
   }
 }

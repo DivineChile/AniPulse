@@ -2,40 +2,43 @@
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Russo+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import url("https://fonts.cdnfonts.com/css/satoshi");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+
 :root {
-  --font-family: "Russo One", "Poppins", sans-serif !important;
-  --body-font: "Nunito", "Poppins", sans-serif !important;
+  --font-family: "Satoshi", "Poppins", sans-serif !important;
+  --body-font: "Manrope", "Poppins", sans-serif !important;
+
   line-height: 1.5;
   font-weight: 400;
 
   scroll-behavior: smooth;
 
-  /* --primary-color: #ff4d4d;
-  --secondary-color: #33cc99;
-  --primary-background-color: #222222;
-  --accent-color: #ffd700;
-  --text-color: #d3d3d3;
-  --link-color: #33cc99;
-  --link-hover-color: #66ffcc; */
-
-  /* --primary-color: 	#FF3CAC; 
-  --secondary-color: 	#784BA0; 
-  --primary-background-color:#0F0E17; 
-  --accent-color: 	#2BDEFD; 
-  --text-color: #FAFAFA; 
-  --text-secondary: #B0B0B0;
-  --link-color: #2BDEFD; 
-  --link-hover-color: 	#FF3CAC;  */
-  --primary-color: #8e44ad;
-  --secondary-color: #3498db;
-  --primary-background-color: #0b0c10;
-  --accent-color: #f1c40f;
-  --text-color: #eaeaea;
-  --text-secondary: #aab1b9;
-  --link-color: #3498db;
-  --card-background-color: #1f2833;
-  --link-hover-color: #f1c40f;
-  --linear-gradient: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);
+  /* --primary-color: #6ae3ff;
+  --secondary-color: #b86bff;
+  --primary-background-color: #05020d;
+  --accent-color: #141025;
+  --text-color: #eaf8ff;
+  --text-secondary: #99b0c9;
+  --link-color: #6ae3ff;
+  --card-background-color: #111028;
+  --link-hover-color: #b86bff;
+  --linear-gradient: linear-gradient(135deg, #6ae3ff 0%, #b86bff 100%); */
+  --primary-color: #3ab0ff;
+  --secondary-color: #6ee7b7;
+  --primary-background-color: #04050a;
+  --accent-color: #0b1220;
+  --text-color: #e9f2f8;
+  --text-secondary: #9ab0c4;
+  --link-color: #3ab0ff;
+  --card-background-color: #0c1624;
+  --link-hover-color: #6ee7b7;
+  --linear-gradient: linear-gradient(135deg, #3ab0ff 0%, #6ee7b7 100%);
   /* Primary Color	# or #E63946	
 Secondary Color	# or #5F27CD
 Accent	#00cec9 or #00B894	
