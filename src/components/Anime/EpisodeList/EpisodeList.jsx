@@ -21,8 +21,8 @@ const EpisodeList = ({ items, itemId }) => {
           to={`/watch/${itemId[index]}`}
           _hover={{
             textDecor: "none",
-            color: "var(--accent-color)",
-            borderBottomColor: "var(--accent-color)",
+            color: "var(--link-hover-color)",
+            borderBottomColor: "var(--link-hover-color)",
           }}
           color="var(--text-color)"
           borderBottom="1px solid var(--text-color)"
@@ -65,8 +65,8 @@ const EpisodeList = ({ items, itemId }) => {
           onClick={() => setShowAll((prev) => !prev)}
           _hover={{
             textDecor: "none",
-            color: "var(--accent-color)",
-            borderBottomColor: "var(--accent-color)",
+            color: "var(--link-hover-color)",
+            borderBottomColor: "var(--link-hover-color)",
           }}
           color="var(--text-color)"
           borderBottom="1px solid var(--text-color)"

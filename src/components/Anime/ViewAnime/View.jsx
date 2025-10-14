@@ -89,6 +89,15 @@ const View = () => {
   }, []);
 
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
+  const animeInfoAired = animeData.animeInfo
+    ? animeData.animeInfo.Aired?.split("-").join(" ")
+    : "";
+  const animeInfoSeason = animeData.animeInfo
+    ? animeData.animeInfo.Premiered?.split("-").join(" ")
+    : "";
+  const animeInfoStatus = animeData.animeInfo
+    ? animeData.animeInfo.Status?.split("-").join(" ")
+    : "";
 
   return (
     <Box>
@@ -147,7 +156,7 @@ const View = () => {
                 fontSize={{ base: "15.13px", lg: "18.75px" }}
                 lineHeight={{ base: "24px", lg: "30px" }}
                 letterSpacing="0.5px"
-                color="var(--accent-color)"
+                color="var(--link-color)"
                 _hover={{ color: "var(--link-hover-color)" }}
               >
                 <BreadcrumbLink>Anime / {animeData?.title}</BreadcrumbLink>
@@ -190,12 +199,12 @@ const View = () => {
                     {/* Anime Name */}
                     <Heading
                       as="h2"
-                      fontSize="35px"
-                      fontWeight="500"
+                      fontSize={{ base: "35px", md: "45px" }}
+                      fontWeight={{ base: "500", md: "700" }}
                       fontFamily="var(--font-family)"
                       color="var(--text-color)"
                       letterSpacing="1.5px"
-                      lineHeight="38.5px"
+                      lineHeight={{ base: "38.5px", md: "48.5px" }}
                       transition="background ease 0.25s"
                     >
                       {animeData.title
@@ -249,7 +258,8 @@ const View = () => {
                           animeData.animeInfo.Overview.length > 250 && (
                             <Text
                               as="span"
-                              color="var(--accent-color)"
+                              color="var(--link-color)"
+                              _hover={{ color: "var(--link-hover-color)" }}
                               cursor="pointer"
                               fontWeight="500"
                               ml="5px"
@@ -270,9 +280,10 @@ const View = () => {
                         borderRadius="10px"
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--background-color)",
+                          color: "var(--link-hover-color)",
                           textDecoration: "none",
                           background: "var(--accent-color)",
+                          transform: "scale(1.05)",
                           border: "none",
                         }}
                         display="flex"
@@ -297,7 +308,7 @@ const View = () => {
                       as="h3"
                       color="var(--text-color)"
                       fontSize="24.61px"
-                      fontWeight="400"
+                      fontWeight="600"
                       lineHeight="27.5px"
                       letterSpacing="1.5px"
                       mb="10px"
@@ -326,7 +337,7 @@ const View = () => {
                         lineHeight="24px"
                       >
                         {animeData.animeInfo.Aired
-                          ? animeData.animeInfo.Aired
+                          ? animeInfoAired
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -343,7 +354,7 @@ const View = () => {
                         Studio:{"  "}
                       </Text>
                       <Text
-                        color="var(--accent-color)"
+                        color="var(--secondary-color)"
                         as="span"
                         fontSize="15px"
                         fontFamily="var(--body-font)"
@@ -367,7 +378,7 @@ const View = () => {
                         Season:{"  "}
                       </Text>
                       <Text
-                        color="var(--accent-color)"
+                        color="var(--secondary-color)"
                         as="span"
                         fontSize="15px"
                         fontWeight="300"
@@ -376,7 +387,7 @@ const View = () => {
                         transition="background ease 0.25s"
                       >
                         {animeData.animeInfo.Premiered
-                          ? animeData.animeInfo.Premiered
+                          ? animeInfoSeason
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -418,7 +429,7 @@ const View = () => {
                         Status:{"  "}
                       </Text>
                       <Text
-                        color="var(--accent-color)"
+                        color="var(--secondary-color)"
                         as="span"
                         fontSize="15px"
                         fontWeight="300"
@@ -427,7 +438,7 @@ const View = () => {
                         transition="background ease 0.25s"
                       >
                         {animeData.animeInfo.Status
-                          ? animeData.animeInfo.Status
+                          ? animeInfoStatus
                           : "Loading..."}
                       </Text>
                     </Box>
@@ -501,7 +512,7 @@ const View = () => {
                     <Heading
                       color="var(--text-color)"
                       fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
-                      fontWeight="400"
+                      fontWeight="600"
                       fontFamily="var(--font-family)"
                       lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
                       letterSpacing="1.5px"
