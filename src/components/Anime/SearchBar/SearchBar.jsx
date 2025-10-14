@@ -132,16 +132,16 @@ const SearchBar = ({ above, below, displayProp }) => {
           background="none"
           color="var(--text-color)"
           borderRight="none"
-          borderColor="#d4d4d4"
+          borderColor="var(--link-hover-color)"
           cursor="pointer"
           onClick={() => query.trim() && navigate(`/search/keyword/${query}`)}
         >
-          <SearchIcon color="#d4d4d4" />
+          <SearchIcon color="var(--link-hover-color)" />
         </InputLeftAddon>
         <Input
           borderLeft="none"
-          placeholder="Search Anime or Movies"
-          _placeholder={{ color: "#d4d4d4" }}
+          placeholder="Search anime or movies"
+          _placeholder={{ color: "var(--text-secondary)" }}
           color="var(--text-color)"
           borderColor="#d4d4d4"
           value={query}
@@ -179,7 +179,7 @@ const SearchBar = ({ above, below, displayProp }) => {
 
           {loading && (
             <Box display="flex" justifyContent="center">
-              <Spinner color="var(--accent-color)" />
+              <Spinner color="var(--link-hover-color)" />
             </Box>
           )}
 
@@ -195,7 +195,7 @@ const SearchBar = ({ above, below, displayProp }) => {
 
           {animeResults.length > 0 && (
             <Box mb="20px">
-              <Heading fontSize="16px" mb="10px" color="var(--accent-color)">
+              <Heading fontSize="16px" mb="10px" color="var(--text-color)">
                 Anime
               </Heading>
               {animeResults.slice(0, 3).map((item) => (
@@ -203,7 +203,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                   as={ReactRouterLink}
                   key={item.id}
                   _hover={{
-                    color: "var(--accent-color)",
+                    color: "var(--link-hover-color)",
                     textDecoration: "none",
                   }}
                   to={`/anime/${item.id}`}
@@ -223,8 +223,8 @@ const SearchBar = ({ above, below, displayProp }) => {
                   <Box>
                     <Heading
                       fontSize="15px"
-                      color="var(--secondary-color)"
-                      _hover={{ color: "var(--accent-color)" }}
+                      color="var(--link-color)"
+                      _hover={{ color: "var(--link-hover-color)" }}
                       transition="all ease 0.25s"
                     >
                       {item.title}
@@ -233,7 +233,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                       <Text>Sub: {item.tvInfo.sub || "N/A"}</Text>
                       <Text>Dub: {item.tvInfo.dub || "N/A"}</Text>
                     </Flex>
-                    <Text fontSize="12px" color="gray.400">
+                    <Text fontSize="12px" color="var(--text-secondary)">
                       {item.tvInfo.showType}
                     </Text>
                   </Box>
@@ -244,8 +244,8 @@ const SearchBar = ({ above, below, displayProp }) => {
 
           {movieResults.length > 0 && (
             <Box>
-              <Heading fontSize="16px" mb="10px" color="var(--accent-color)">
-                Movies
+              <Heading fontSize="16px" mb="10px" color="var(--text-color)">
+                Movies & TV Shows
               </Heading>
               {movieResults.slice(0, 3).map((movie) => (
                 <ChakraLink
@@ -262,7 +262,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                   mb="10px"
                   alignItems="center"
                   _hover={{
-                    color: "var(--accent-color)",
+                    color: "var(--link-hover-color)",
                     textDecoration: "none",
                   }}
                   transition="0.2s ease"
@@ -282,20 +282,20 @@ const SearchBar = ({ above, below, displayProp }) => {
                   <Box>
                     <Heading
                       fontSize="15px"
-                      color="var(--secondary-color)"
-                      _hover={{ color: "var(--accent-color)" }}
+                      color="var(--link-color)"
+                      _hover={{ color: "var(--link-hover-color)" }}
                       transition="all ease 0.25s"
                     >
                       {movie.title ? movie.title : movie.name}
                     </Heading>
-                    <Text fontSize="12px" color="gray.400">
+                    <Text fontSize="12px" color="var(--text-color)">
                       {movie.release_date
                         ? movie.release_date
                         : movie.first_air_date}
                     </Text>
                     <Text
                       fontSize="12px"
-                      color="gray.400"
+                      color="var(--text-secondary)"
                       textTransform="uppercase"
                     >
                       {movie.media_type ? movie.media_type : movie.media_type}
