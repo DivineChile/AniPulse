@@ -92,6 +92,11 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                 borderRadius="10px"
                 display="flex"
                 gap="20px"
+                _hover={{
+                  transform: "scale(1.05)",
+                }}
+                transition={"all 0.2s ease-in-out"}
+                padding="10px"
                 textDecor="none!important"
                 to={`/anime/${animeId}`}
                 className="listItem"
@@ -134,12 +139,17 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                     as="h3"
                     textDecor="none"
                     className="listItemHead"
-                    fontSize={{ base: "12.81px", sm: "13px", md: "14.77px" }}
+                    fontSize={{
+                      base: "12.81px",
+                      sm: "13px",
+                      md: "14.77px",
+                      lg: "16.63px",
+                    }}
                     color="var(--text-color)"
                     fontFamily="var(--font-family)"
                     fontWeight="400"
                     _hover={{
-                      color: "var(--accent-color)",
+                      color: "var(--link-hover-color)",
                     }}
                     transition="all ease 0.25s"
                     lineHeight={{ base: "18px", md: "22.5px" }}
@@ -168,7 +178,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                         }}
                         borderRadius="6px"
                         border="1px solid var(--text-color)"
-                        fontSize={{ base: "11.06" }}
+                        fontSize={{ base: "11.06", md: "11.63px" }}
                         lineHeight="18px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"
@@ -190,7 +200,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                         }}
                         borderRadius="6px"
                         border="1px solid var(--text-color)"
-                        fontSize={{ base: "11.06" }}
+                        fontSize={{ base: "11.06", md: "11.63px" }}
                         lineHeight="18px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"
@@ -204,14 +214,14 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                     <Box display="flex" alignItems="baseline">
                       <Text
                         as="span"
-                        color="var(--text-color)"
+                        color="var(--text-secondary)"
                         cursor="pointer"
                         p="3px 10px"
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--accent-color)",
+                          color: "var(--text-color)",
                         }}
-                        fontSize={{ base: "14.63px" }}
+                        fontSize={{ base: "11.63px" }}
                         lineHeight="24px"
                         letterSpacing="0.5px"
                         textTransform="uppercase"

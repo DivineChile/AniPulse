@@ -126,7 +126,7 @@ const Recents = () => {
                       top="0"
                       left="0"
                       textAlign="center"
-                      background="rgba(0, 0, 0, 0.8)"
+                      background="rgba(0, 0, 0, 0.85)"
                       transition="height 0.5s ease, opacity 0.5s ease"
                       h="0"
                       w="100%"
@@ -296,7 +296,7 @@ const Recents = () => {
               background: "var(--accent-color)",
               border: "none",
               fontWeight: "bold",
-              padding: { base: "7px 15px", md: "5px 45px" },
+              padding: { base: "7px 15px", md: "7px 45px" },
             }}
             pos="relative"
             m="20px auto 0"

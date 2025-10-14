@@ -158,7 +158,7 @@ const Upcoming = () => {
                       lg: "65.13px",
                       "2xl": "77.34px",
                     }}
-                    fontWeight="bold"
+                    fontWeight={{ base: "800", md: "800", lg: "800" }}
                     lineHeight={{
                       base: "48px",
                       md: "68px",
@@ -186,7 +186,7 @@ const Upcoming = () => {
                       lg: "40px",
                       "2xl": "60px",
                     }}
-                    textTransform="uppercase"
+                    textTransform="Capitalize"
                     mb="15px"
                     mt={{ base: "15px", md: "5px" }}
                     textColor="#fff"
@@ -293,9 +293,9 @@ const Upcoming = () => {
                           fontSize={{
                             base: "29.63px",
                             md: "40px",
-                            lg: "45px",
-                            xl: "50px",
-                            "2xl": "60px",
+                            lg: "65px",
+                            xl: "70px",
+                            "2xl": "90px",
                           }}
                           fontWeight="bold"
                         >

@@ -205,7 +205,11 @@ const Hero = () => {
                               }
                               cursor="pointer"
                               p="3px 10px"
-                              bg={i === 0 ? "var(--accent-color)" : "#191919"}
+                              bg={
+                                i === 0
+                                  ? "var(--accent-color)"
+                                  : "var(--primary-background-color)"
+                              }
                               _hover={{
                                 color: "var(--link-hover-color) !important",
                                 bgColor: "var(--accent-color)",
