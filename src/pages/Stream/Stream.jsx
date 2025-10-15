@@ -234,7 +234,7 @@ const Stream = () => {
 
     document.title = title;
     setCurrentEpisode(episodeText);
-  }, [animeTitle, contentType, season, episode, episodes]);
+  }, [animeTitle, contentType, season, episode, episodes, location.search]);
 
   // Fetch session ID of anime
   const fetchSessionId = async () => {
@@ -506,7 +506,8 @@ const Stream = () => {
                         alignItems="flex-start"
                       >
                         {(() => {
-                          if (epLoading) return <Loading bg="none" />;
+                          if (epLoading)
+                            return <Loading bg="var(--linear-gradient)" />;
                           if (epError) return <Error bg="none" msg={epError} />;
 
                           if (!episodes || episodes.length === 0) {

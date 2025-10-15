@@ -139,7 +139,7 @@ const PopularList = () => {
                     <Image
                       src={item.poster}
                       w="100%"
-                      bg="#191919"
+                      bg="var(--card-background-color)"
                       borderRadius="10px"
                       transition="transform 0.7s ease-in-out"
                       h="100%"

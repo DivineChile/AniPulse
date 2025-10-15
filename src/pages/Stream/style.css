@@ -36,13 +36,13 @@ a.server {
 }
 
 a.server.active {
-  color: var(--background-color);
+  color: var(--link-hover-color);
   background-color: var(--accent-color);
   border: none;
 }
 
 a.server:hover {
-  color: var(--background-color);
+  color: var(--link-hover-color);
   background-color: var(--accent-color);
   border: none;
 }
@@ -59,13 +59,13 @@ a.downloadBtn {
   letter-spacing: 0.5px;
   color: var(--text-color);
   border-radius: 10px;
-  text-transform: uppercase;
+  text-transform: capitalize;
   transition: all ease 0.25s;
   cursor: pointer;
 }
 
 a.downloadBtn:hover {
-  color: var(--background-color);
+  color: var(--link-hover-color);
   background-color: var(--accent-color);
   border: none;
 }

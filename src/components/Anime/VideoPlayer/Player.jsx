@@ -217,8 +217,7 @@ const Player = ({ dub, sub }) => {
     };
   }, [videoData]);
 
-  if (loading)
-    return <Loading bg="var(--primary-background-color)" height="100%" />;
+  if (loading) return <Loading bg="var(--linear-gradient)" height="100%" />;
   if (streamError)
     return (
       <Error

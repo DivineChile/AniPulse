@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Select, Box, Link, Text, Button, HStack } from '@chakra-ui/react';
+import { useState, useEffect } from "react";
+import { Select, Box, Link, Text, Button, HStack } from "@chakra-ui/react";
 
 const downloadLinksCache = new Map();
 
-const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) => {
+const DownloadLinksSelect = ({
+  sessionId,
+  episodeSession,
+  nextSessionEpisode,
+}) => {
   const [downloadLinks, setDownloadLinks] = useState([]);
-  const [selectedLink, setSelectedLink] = useState('');
+  const [selectedLink, setSelectedLink] = useState("");
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  const [err, setErr] = useState("");
   const animePahe_api = "https://paheapi-production.up.railway.app/";
 
   const fetchDownloadLinks = async (key, isPrefetch = false) => {
@@ -22,19 +26,23 @@ const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) 
       }
 
       if (!isPrefetch) setLoading(true);
-      const response = await fetch(`${animePahe_api}download/${sessionId}/${key}`);
+      const response = await fetch(
+        `${animePahe_api}download/${sessionId}/${key}`
+      );
       const data = await response.json();
 
-      if (data.success_count > 0) {
+      if (data.results.length > 0) {
         downloadLinksCache.set(key, data.results);
         if (!isPrefetch) {
           setDownloadLinks(data.results);
         }
       } else {
-        if (!isPrefetch) setErr("No download links available for this episode.");
+        if (!isPrefetch)
+          setErr("No download links available for this episode.");
       }
     } catch (error) {
-      if (!isPrefetch) setErr("Failed to fetch download links. Please try again later.");
+      if (!isPrefetch)
+        setErr("Failed to fetch download links. Please try again later.");
     } finally {
       if (!isPrefetch) setLoading(false);
     }
@@ -66,14 +74,17 @@ const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) 
           color="var(--text-color)"
           background="var(--primary-background-color)"
         >
-          <option value="" style={{textAlign: "center"}}>
-            {loading ? 'Loading Download Links...' : 'Download'}
+          <option value="" style={{ textAlign: "center" }}>
+            {loading ? "Loading Download Links..." : "Download"}
           </option>
           {downloadLinks.map((link, index) => (
             <option
               key={index}
-              value={link.direct_url}
-              style={{ color: "var(--text-color)", background: "var(--primary-background-color)" }}
+              value={link.kwik_url}
+              style={{
+                color: "var(--text-color)",
+                background: "var(--primary-background-color)",
+              }}
             >
               {link.quality}
             </option>
@@ -91,7 +102,10 @@ const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) 
             href={selectedLink}
             target="_blank"
             rel="noopener noreferrer"
-            _hover={{ background: "var(--accent-color)", color: "var(--primary-background-color)" }}
+            _hover={{
+              background: "var(--accent-color)",
+              color: "var(--link-hover-color)",
+            }}
           >
             Download
           </Link>
@@ -103,7 +117,12 @@ const DownloadLinksSelect = ({ sessionId, episodeSession, nextSessionEpisode }) 
           <Text color="red.400" fontSize="sm" fontWeight="500">
             {err}
           </Text>
-          <Button size="sm" colorScheme="red" variant="outline" onClick={() => fetchDownloadLinks(episodeSession)}>
+          <Button
+            size="sm"
+            colorScheme="red"
+            variant="outline"
+            onClick={() => fetchDownloadLinks(episodeSession)}
+          >
             Retry
           </Button>
         </HStack>

@@ -102,7 +102,9 @@ const View = () => {
   return (
     <Box>
       <Navbar />
-      {isLoading && <Loading bg="var(--linear-gradient)" height="100vh" />}
+      {isLoading && (
+        <Loading bg="var(--linear-gradient)" height="calc(100vh - 73px)" />
+      )}
 
       {error && (
         <Error
@@ -178,7 +180,7 @@ const View = () => {
                 >
                   {/* Anime Image */}
                   <Box
-                    w={{ base: "100%", md: "30%", lg: "40%" }}
+                    w={{ base: "100%", md: "30%" }}
                     bg={
                       animeData.poster
                         ? `url(${animeData.poster})`
@@ -193,7 +195,7 @@ const View = () => {
                   ></Box>
                   {/* Anime Desc */}
                   <Box
-                    w={{ base: "100%", md: "70%", lg: "60%" }}
+                    w={{ base: "100%", md: "70%" }}
                     mb={{ base: "20px", md: "0" }}
                   >
                     {/* Anime Name */}
