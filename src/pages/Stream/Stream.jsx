@@ -400,7 +400,7 @@ const Stream = () => {
               fontSize={{ base: "15.13px", lg: "18.75px" }}
               lineHeight={{ base: "24px", lg: "30px" }}
               letterSpacing="0.5px"
-              color="var(--accent-color)"
+              color="var(--link-color)"
               _hover={{ color: "var(--link-hover-color)" }}
             >
               <BreadcrumbLink>{`Stream / ${
@@ -433,7 +433,7 @@ const Stream = () => {
                     xl: "450px!important",
                     "2xl": "600px!important",
                   }}
-                  boxShadow="0 0 10px 0 var(--card-background-color)"
+                  boxShadow="0 0 20px 0 var(--card-background-color)"
                   bg="var(--primary-background-color)"
                   borderRadius="10px"
                   pos="relative"
@@ -601,7 +601,7 @@ const Stream = () => {
                       fontFamily="var(--body-font)"
                     >
                       You&apos;re watching{" "}
-                      <Text as="span" color="var(--accent-color)">
+                      <Text as="span" color="var(--link-color)">
                         {contentType === "anime"
                           ? `Episode ${realEpNo}`
                           : contentType === "movie"
@@ -640,9 +640,7 @@ const Stream = () => {
                     >
                       <Text
                         color={
-                          dubStatus
-                            ? "var(--text-color)"
-                            : "var(--accent-color)"
+                          dubStatus ? "var(--text-color)" : "var(--link-color)"
                         }
                         letterSpacing="0.5px"
                         lineHeight="24px"
@@ -682,9 +680,7 @@ const Stream = () => {
                     >
                       <Text
                         color={
-                          dubStatus
-                            ? "var(--accent-color)"
-                            : "var(--text-color)"
+                          dubStatus ? "var(--link-color)" : "var(--text-color)"
                         }
                         letterSpacing="0.5px"
                         lineHeight="24px"

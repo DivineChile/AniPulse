@@ -1,6 +1,6 @@
 a.episode.active {
-  color: var(--accent-color) !important;
-  background: #333333;
+  color: var(--text-color) !important;
+  background: var(--card-background-color);
 }
 
 a.episode {
@@ -17,8 +17,8 @@ a.episode {
 }
 
 a.episode:hover {
-  background: #262626;
-  color: var(--accent-color);
+  background: var(--accent-color);
+  color: var(--link-hover-color);
 }
 
 a.server {
