@@ -46,7 +46,7 @@ const Recents = () => {
 
   const displayedAnime = showAll
     ? subAnimeData
-    : subAnimeData.slice(0, Math.min(8, subAnimeData.length));
+    : subAnimeData?.slice(0, Math.min(8, subAnimeData.length));
 
   if (error) {
     return <Error msg={error} pos="absolute" />;
@@ -84,7 +84,7 @@ const Recents = () => {
                 <SkeletonText noOfLines={2} spacing={2} my="10px" />
               </GridItem>
             ))
-          : displayedAnime.map((item) => {
+          : displayedAnime?.map((item) => {
               const epLength =
                 item.title.length > 30
                   ? `${item.title.slice(0, 30)}...`
@@ -274,7 +274,7 @@ const Recents = () => {
       </Grid>
       <>
         {/* Show All / Show Less Button */}
-        {subAnimeData.length > 8 && (
+        {subAnimeData?.length > 8 && (
           <ChakraLink
             as="button"
             onClick={() => setShowAll((prev) => !prev)}

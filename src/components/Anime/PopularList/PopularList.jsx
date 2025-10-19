@@ -47,7 +47,7 @@ const PopularList = () => {
     fetchPopularAnimes();
   }, []);
 
-  const truncatedResults = results.length > 4 ? results.slice(0, 4) : results;
+  const truncatedResults = results?.length > 4 ? results?.slice(0, 4) : results;
 
   return (
     <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
@@ -111,7 +111,7 @@ const PopularList = () => {
                 </GridItem>
               ))}
             {error && <Error msg={error} pos="absolute" />}
-            {truncatedResults.map((item, index) => {
+            {truncatedResults?.map((item, index) => {
               const nameLength =
                 item.title.length > 30
                   ? `${item.title.slice(0, 26)}...`

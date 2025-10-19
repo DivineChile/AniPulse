@@ -80,7 +80,7 @@ const DownloadLinksSelect = ({
           {downloadLinks.map((link, index) => (
             <option
               key={index}
-              value={link.kwik_url}
+              value={link.direct_url}
               style={{
                 color: "var(--text-color)",
                 background: "var(--primary-background-color)",

@@ -28,11 +28,15 @@ const Hero = () => {
     try {
       // Fetch top airing anime IDs
       const topAiringResponse = await fetch(
-        `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/top-ten`
+        `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/top-airing`
       );
       const topAiringData = await topAiringResponse.json();
+      const airingDataSliced =
+        topAiringData.results.data.length > 10
+          ? topAiringData.results.data.slice(0, 10)
+          : topAiringData.results.data;
 
-      const animeIds = topAiringData.results.today.map((anime) => anime.id);
+      const animeIds = airingDataSliced.map((anime) => anime.id);
 
       // Fetch all anime details in parallel
       const animeDetailsPromises = animeIds.map((id) =>
@@ -49,7 +53,6 @@ const Hero = () => {
       // Extract anime info and update state
       const animeInfo = animeDetails?.map((detail) => detail?.results.data);
       const filtered = animeInfo.filter((anime) => anime); // Remove any undefined entries
-
       setState({ isLoading: false, error: null, animeInfo: filtered });
     } catch (err) {
       setState({ isLoading: false, error: err.message, animeInfo: [] });
@@ -114,7 +117,8 @@ const Hero = () => {
             >
               <Next />
             </Box>
-            {animeInfo.map((anime, index) => {
+
+            {animeInfo?.map((anime, index) => {
               const animeInfo = anime.animeInfo;
               const animeStatus = animeInfo.Status.split("-").join(" ");
               const animePremiered = animeInfo.Premiered.split("-").join(" ");
