@@ -141,7 +141,7 @@ const ListView = ({
                   cursor="pointer"
                   p="3px 10px"
                   _hover={{
-                    color: "var(--background-color)",
+                    color: "var(--text-color)",
                     bgColor: "var(--accent-color)",
                     border: "1px solid var(--accent-color)",
                   }}
@@ -163,7 +163,7 @@ const ListView = ({
                     cursor="pointer"
                     p="3px 10px"
                     _hover={{
-                      color: "var(--background-color)",
+                      color: "var(--text-color)",
                       bgColor: "var(--accent-color)",
                       border: "1px solid var(--accent-color)",
                     }}
@@ -247,7 +247,7 @@ const ListView = ({
           width={{ base: "100%", md: "fit-content" }}
           _hover={{
             textDecor: "none",
-            color: "var(--background-color)",
+            color: "var(--text-color)",
             background: "var(--accent-color)",
             border: "none",
           }}

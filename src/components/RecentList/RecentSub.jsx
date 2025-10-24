@@ -181,7 +181,7 @@ const Recents = () => {
                         p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--background-color)",
+                          color: "var(--text-color)",
                           bgColor: "var(--accent-color)",
                           borderColor: "var(--accent-color)",
                           fontWeight: "bold",
@@ -205,7 +205,7 @@ const Recents = () => {
                         p={{ base: "0px 6px", lg: "3px 10px" }}
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--background-color)",
+                          color: "var(--text-color)",
                           bgColor: "var(--accent-color)",
                           borderColor: "var(--accent-color)",
                           fontWeight: "bold",

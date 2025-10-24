@@ -293,7 +293,7 @@ const TextTag = ({ label, hideBelow }) => {
       textTransform="uppercase"
       transition="all ease 0.25s"
       _hover={{
-        color: "var(--background-color)",
+        color: "var(--text-color)",
         bgColor: "var(--accent-color)",
         borderColor: "var(--accent-color)",
       }}

@@ -171,7 +171,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                         p="3px 10px"
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--background-color)",
+                          color: "var(--text-color)",
                           bgColor: "var(--accent-color)",
                           border: "1px solid var(--accent-color)",
                           textDecor: "none",
@@ -194,7 +194,7 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
                         p="3px 10px"
                         transition="all ease 0.25s"
                         _hover={{
-                          color: "var(--background-color)",
+                          color: "var(--text-color)",
                           bgColor: "var(--accent-color)",
                           border: "1px solid var(--accent-color)",
                         }}

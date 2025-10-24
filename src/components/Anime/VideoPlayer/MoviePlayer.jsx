@@ -135,7 +135,7 @@ const MoviePlayer = () => {
 
       artRef.current = new Artplayer({
         container: containerRef.current,
-        url: sortedQualities[0].url,
+        url: "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=https://cdn.niggaflix.xyz/tv/_vHAvARg-LZuSsTcCbDPpUqugVmicKlHJbQBA4MLpmg/index.m3u8",
         type: "hls",
         autoplay: true,
         autoSize: true,
@@ -152,7 +152,7 @@ const MoviePlayer = () => {
               ? decodeURIComponent(url.split("url=")[1])
               : url;
 
-            const streamUrl = `${m3u8Proxy}${realUrl}`;
+            const streamUrl = `https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=https://cdn.niggaflix.xyz/tv/_vHAvARg-LZuSsTcCbDPpUqugVmicKlHJbQBA4MLpmg/index.m3u8`;
             if (Hls.isSupported()) {
               const hls = new Hls();
               hls.loadSource(streamUrl);
