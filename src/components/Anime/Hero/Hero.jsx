@@ -204,7 +204,7 @@ const Hero = () => {
                               as="span"
                               color={
                                 i === 0
-                                  ? "var(--background-color)"
+                                  ? "var(--text-color)"
                                   : "var(--text-color)"
                               }
                               cursor="pointer"
