@@ -442,10 +442,6 @@ const Stream = () => {
                     <Player dub={dubStatus} sub={subStatus} />
                   ) : (
                     <MoviePlayer />
-                    // <video
-                    //   preload="metadata"
-                    //   src="https://proxy.vidrock.store/https%3A%2F%2Fbcdnw.hakunaymatata.com%2Fbt%2F3589c0b3397c52581de6733d3063ff84.mp4%3Fsign%3Dfdd13993c5f06363d6aa625bf057b711%26t%3D1761248095"
-                    // ></video>
                   )}
                 </GridItem>
 
@@ -610,7 +606,7 @@ const Stream = () => {
                         {contentType === "anime"
                           ? `Episode ${realEpNo}`
                           : contentType === "movie"
-                          ? "Full Movie"
+                          ? animeTitle
                           : `Season ${season} Episode ${episode}`}
                       </Text>
                     </Text>

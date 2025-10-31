@@ -483,7 +483,9 @@ const Filter = () => {
                 />
               )}
             </Box>
-            <Box mt="40px">
+
+            {/* Movies & TV Shows */}
+            {/* <Box mt="40px">
               <Heading
                 as="h1"
                 color="#fff"
@@ -509,7 +511,7 @@ const Filter = () => {
                   error={movieError}
                 />
               )}
-            </Box>
+            </Box> */}
           </Box>
         </Box>
       </Box>

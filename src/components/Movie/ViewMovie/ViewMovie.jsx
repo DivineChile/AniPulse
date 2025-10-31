@@ -180,7 +180,7 @@ const ViewMovie = () => {
                 fontSize={{ base: "15.13px", lg: "18.75px" }}
                 lineHeight={{ base: "24px", lg: "30px" }}
                 letterSpacing="0.5px"
-                color="var(--accent-color)"
+                color="var(--primary-color)"
                 _hover={{ color: "var(--link-hover-color)" }}
               >
                 <BreadcrumbLink>
@@ -216,7 +216,8 @@ const ViewMovie = () => {
                       md: "30%",
                       lg: "auto",
                     }}
-                    transition="background ease 0.25s"
+                    transition="all ease 0.25s"
+                    _hover={{ transform: "scale(1.05)", cursor: "pointer" }}
                     borderRadius="10px"
                     display="flex"
                     alignSelf={{ base: "center", md: "initial" }}
@@ -232,12 +233,12 @@ const ViewMovie = () => {
                     {/* Movie / Series Name */}
                     <Heading
                       as="h2"
-                      fontSize="35px"
-                      fontWeight="500"
+                      fontSize={{ base: "35px", md: "40px" }}
+                      fontWeight={{ base: "500", md: "700" }}
                       fontFamily="var(--font-family)"
                       color="var(--text-color)"
                       letterSpacing="1.5px"
-                      lineHeight="38.5px"
+                      lineHeight={{ base: "38.5px", md: "43.5px" }}
                       transition="background ease 0.25s"
                     >
                       {isTV
@@ -293,7 +294,8 @@ const ViewMovie = () => {
                           movieDetails.overview.length > 250 && (
                             <Text
                               as="span"
-                              color="var(--accent-color)"
+                              color="var(--link-color)"
+                              _hover={{ color: "var(--link-hover-color)" }}
                               cursor="pointer"
                               fontWeight="500"
                               ml="5px"
@@ -364,7 +366,7 @@ const ViewMovie = () => {
                       <HStack flexWrap="wrap" gap="5px">
                         {movieDetails.production_companies?.map((company) => (
                           <Text
-                            color="var(--accent-color)"
+                            color="var(--primary-color)"
                             as="span"
                             fontSize="15px"
                             fontWeight="300"
@@ -392,7 +394,7 @@ const ViewMovie = () => {
                         Runtime:{"  "}
                       </Text>
                       <Text
-                        color="var(--accent-color)"
+                        color="var(--primary-color)"
                         as="span"
                         fontSize="15px"
                         fontWeight="300"
@@ -447,7 +449,7 @@ const ViewMovie = () => {
                         {movieDetails.genres?.map((genre) => {
                           return (
                             <Text
-                              color="var(--accent-color)"
+                              color="var(--primary-color)"
                               as="span"
                               fontSize="15px"
                               fontWeight="300"
@@ -504,7 +506,7 @@ const ViewMovie = () => {
                         External Links:{"  "}
                       </Text>
                       <Link
-                        color="var(--accent-color)"
+                        color="var(--primary-color)"
                         href={
                           movieDetails.homepage
                             ? movieDetails.homepage
@@ -531,13 +533,13 @@ const ViewMovie = () => {
                   <Box>
                     <Heading
                       color="var(--text-color)"
-                      fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
+                      fontSize="24.61px"
                       fontWeight="400"
-                      fontFamily="var(--font-family)"
-                      lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
+                      lineHeight="27.5px"
                       letterSpacing="1.5px"
+                      fontfamily="var(--font-family)"
                     >
-                      Media Info
+                      Trailer
                     </Heading>
 
                     <Box mt="20px" w="100%">
@@ -607,7 +609,7 @@ const ViewMovie = () => {
                           _hover={{
                             color: "var(--background-color)",
                             textDecoration: "none",
-                            background: "var(--accent-color)",
+                            background: "var(--primary-color)",
                             border: "none",
                           }}
                           display="flex"

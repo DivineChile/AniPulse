@@ -201,12 +201,12 @@ const View = () => {
                     {/* Anime Name */}
                     <Heading
                       as="h2"
-                      fontSize={{ base: "35px", md: "45px" }}
+                      fontSize={{ base: "35px", md: "40px" }}
                       fontWeight={{ base: "500", md: "700" }}
                       fontFamily="var(--font-family)"
                       color="var(--text-color)"
                       letterSpacing="1.5px"
-                      lineHeight={{ base: "38.5px", md: "48.5px" }}
+                      lineHeight={{ base: "38.5px", md: "43.5px" }}
                       transition="background ease 0.25s"
                     >
                       {animeData.title

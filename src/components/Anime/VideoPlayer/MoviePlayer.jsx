@@ -8,7 +8,7 @@ import Error from "../../ErrorPage/Error";
 import "./style.css";
 import { cacheFetch } from "../../../utils/cacheFetch";
 
-// Extract stream qualities from master playlist
+// ✅ Extract stream qualities from master playlist
 async function extractHLSQualities(masterUrl) {
   try {
     const masterPath = masterUrl.split("/").slice(0, -1).join("/");
@@ -55,21 +55,21 @@ const MoviePlayer = () => {
   const episode = searchParams.get("episode");
   const type = season ? "tv" : "movie";
 
-  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
+  const streamApi = "http://localhost:3000/api/scrape";
   const m3u8Proxy =
     "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
-  const streamApi = "https://vidsrc-scraper-production.up.railway.app/extract";
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
   const [videoData, setVideoData] = useState(null);
 
+  // ✅ Fetch stream data
   const fetchVideoData = async () => {
     try {
       const url =
         season && episode
-          ? `${proxy}${streamApi}?type=${type}&tmdb_id=${watchId}&season=${season}&episode=${episode}`
-          : `${proxy}${streamApi}?type=${type}&tmdb_id=${watchId}`;
+          ? `${streamApi}/${type}/${watchId}?season=${season}&episode=${episode}`
+          : `${streamApi}/${type}/${watchId}`;
 
       const cacheKey = `${watchId}-${season || "0"}-${episode || "0"}`;
       const data = await cacheFetch(cacheKey, url, 10 * 60 * 1000);
@@ -82,23 +82,94 @@ const MoviePlayer = () => {
     }
   };
 
-  const selectBestStreamAndSubtitles = (providersResponse) => {
-    const entries = Object.entries(providersResponse);
-    const hlsEntry = entries.find(
-      ([_, value]) => value.hls_url && !value.error
-    );
-    if (!hlsEntry) return null;
+  // ✅ Extract HLS + subtitles
+  const prepareStreamData = async (data) => {
+    if (!data?.preferredSource) return null;
+    const preferred = data.sources.map((s) => s.preferred);
+    const preferredSource = preferred.filter(
+      (s) =>
+        s.includes("queenselti") ||
+        s.includes("kkphimplayer6") ||
+        s.includes("phim1280")
+    )[0];
+    const hlsUrl = preferredSource;
+    const qualities = await extractHLSQualities(hlsUrl);
 
-    const [_, hlsData] = hlsEntry;
     const subtitle =
-      hlsData.subtitles?.[0] ||
-      entries.find(([_, value]) => value.subtitles?.length > 0)?.[1]
-        ?.subtitles?.[0];
+      data.subtitles?.find((sub) =>
+        sub.label.toLowerCase().includes("english")
+      ) || data.subtitles?.[0];
 
     return {
-      hls_url: hlsData.hls_url,
-      subtitle: subtitle || null,
+      qualities,
+      hlsUrl,
+      subtitle,
     };
+  };
+
+  // ✅ Initialize ArtPlayer
+  const initArtPlayer = async (data) => {
+    const { qualities, hlsUrl, subtitle } = await prepareStreamData(data);
+    if (!hlsUrl) {
+      setStreamError("No playable source found");
+      return;
+    }
+
+    console.log(qualities, subtitle);
+
+    const defaultSrc = qualities?.[0]?.url || hlsUrl;
+
+    const art = new Artplayer({
+      container: containerRef.current,
+      url: defaultSrc.startsWith("http") ? defaultSrc : m3u8Proxy + defaultSrc,
+      title: data.title || "Now Playing",
+      autoplay: true,
+      setting: true,
+      fullscreen: true,
+      miniProgressBar: true,
+      theme: "var(--primary-color)",
+      autoSize: true,
+      autoMini: true,
+      lang: "en",
+      subtitle: subtitle
+        ? {
+            url: subtitle.file,
+            encoding: "utf-8",
+            type: "vtt",
+            style: { fontSize: "20px", color: "#fff" },
+          }
+        : null,
+      customType: {
+        m3u8: function (video, url) {
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            art.hls = hls;
+          } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = url;
+          } else {
+            art.notice.show = "Unsupported format or browser";
+          }
+        },
+      },
+    });
+
+    // ✅ Add quality switch
+    if (qualities?.length > 1) {
+      art.setting.add({
+        name: "Quality",
+        html: qualities
+          .map((q, i) => `<option value="${i}">${q.quality}</option>`)
+          .join(""),
+        onChange(option) {
+          const selected = qualities[option.index];
+          if (selected?.url) art.switchQuality(selected.url, selected.quality);
+        },
+      });
+    }
+
+    artRef.current = art;
   };
 
   useEffect(() => {
@@ -109,74 +180,22 @@ const MoviePlayer = () => {
   useEffect(() => {
     if (!videoData) return;
 
-    requestAnimationFrame(async () => {
-      if (!containerRef.current) return;
-
-      const selected = selectBestStreamAndSubtitles(videoData.results);
-      if (!selected) return;
-
-      const cleanUrl = selected.hls_url.includes("m3u8-proxy?url=")
-        ? decodeURIComponent(selected.hls_url.split("url=")[1])
-        : selected.hls_url;
-
-      const proxyUrl = `${m3u8Proxy}${cleanUrl}`;
-      const qualities = await extractHLSQualities(proxyUrl);
-      console.log(qualities);
-      const sortedQualities = qualities.map((q, i) => ({
-        html: q.quality,
-        url: q.url,
-        default: i === 0,
-      }));
-
+    (async () => {
       if (artRef.current) {
         artRef.current.destroy();
         artRef.current = null;
       }
-
-      artRef.current = new Artplayer({
-        container: containerRef.current,
-        url: "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=https://cdn.niggaflix.xyz/tv/_vHAvARg-LZuSsTcCbDPpUqugVmicKlHJbQBA4MLpmg/index.m3u8",
-        type: "hls",
-        autoplay: true,
-        autoSize: true,
-        setting: true,
-        screenshot: true,
-        fullscreen: true,
-        playbackRate: true,
-        theme: "var(--primary-color)",
-        subtitleOffset: true,
-        quality: sortedQualities,
-        customType: {
-          hls: (video, url) => {
-            const realUrl = url.includes("m3u8-proxy?url=")
-              ? decodeURIComponent(url.split("url=")[1])
-              : url;
-
-            const streamUrl = `https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=https://cdn.niggaflix.xyz/tv/_vHAvARg-LZuSsTcCbDPpUqugVmicKlHJbQBA4MLpmg/index.m3u8`;
-            if (Hls.isSupported()) {
-              const hls = new Hls();
-              hls.loadSource(streamUrl);
-              hls.attachMedia(video);
-            } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-              video.src = streamUrl;
-            }
-          },
-        },
-      });
-
-      if (selected.subtitle) {
-        artRef.current.subtitle.switch(selected.subtitle);
-      }
-    });
+      await initArtPlayer(videoData);
+    })();
 
     return () => {
       artRef.current?.destroy();
       artRef.current = null;
     };
-  }, [videoData, watchId, season, episode]);
+  }, [videoData]);
 
   if (loading) {
-    return <Loading bg="var(--primary-background-color)" height="100%" />;
+    return <Loading bg="var(--linear-gradient)" height="100%" />;
   }
 
   if (streamError) {

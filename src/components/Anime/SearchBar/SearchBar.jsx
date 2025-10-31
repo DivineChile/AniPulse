@@ -242,7 +242,7 @@ const SearchBar = ({ above, below, displayProp }) => {
             </Box>
           )}
 
-          {movieResults.length > 0 && (
+          {/* {movieResults.length > 0 && (
             <Box>
               <Heading fontSize="16px" mb="10px" color="var(--text-color)">
                 Movies & TV Shows
@@ -304,7 +304,7 @@ const SearchBar = ({ above, below, displayProp }) => {
                 </ChakraLink>
               ))}
             </Box>
-          )}
+          )} */}
         </Box>
       )}
     </Box>
