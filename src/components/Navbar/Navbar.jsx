@@ -178,7 +178,8 @@ const Navbar = () => {
 
             {NavList.map((item, key) => {
               const isActive =
-                location === item.to || location.startsWith(`${item.to}/`);
+                location === item.to ||
+                location.includes(`${item.label.toLowerCase()}`);
 
               return (
                 <ListItem

@@ -304,7 +304,7 @@ const View = () => {
                   </Box>
                 </GridItem>
                 {/* Anime Details */}
-                <GridItem colSpan={{ base: 7, md: 3, lg: 3, "2xl": 2 }}>
+                <GridItem colSpan={{ base: 7, md: 3, lg: 2, "2xl": 2 }}>
                   <Box display="flex" flexDir="column" gap="9px 0">
                     <Text
                       as="h3"
@@ -506,7 +506,7 @@ const View = () => {
                 </GridItem>
                 {/* Episodes List */}
                 <GridItem
-                  colSpan={{ base: 7, md: 4, lg: 4, "2xl": 5 }}
+                  colSpan={{ base: 7, md: 4, lg: 5, "2xl": 5 }}
                   mt={{ base: "20px", md: 0 }}
                   id="episodes"
                 >
