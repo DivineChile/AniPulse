@@ -6,6 +6,9 @@ import {
   GridItem,
   Heading,
   Link as ChakraLink,
+  Flex,
+  TagRoot,
+  TagLabel,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
@@ -14,6 +17,17 @@ import Error from "../../ErrorPage/Error";
 
 import EpisodeList from "../EpisodeList/EpisodeList";
 import Loading from "../../ErrorPage/Loading";
+import {
+  Building2,
+  Calendar,
+  CalendarDays,
+  CheckCircle2,
+  Layers,
+  ListVideo,
+  Loader,
+  Star,
+  Tag,
+} from "lucide-react";
 
 const View = () => {
   const { id } = useParams();
@@ -331,17 +345,21 @@ const View = () => {
                     </Text>
                     {/* Countdown timer */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontFamily="var(--font-family)"
-                        fontWeight="300"
-                        lineHeight="24px"
-                        transition="background ease 0.25s"
-                      >
-                        Premiered:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        <CalendarDays size={20} />
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Premiered:{"  "}
+                        </Text>
+                      </Flex>
                       <Text
                         color="var(--text-color)"
                         as="span"
@@ -357,16 +375,21 @@ const View = () => {
                     </Box>
                     {/* Anime Author */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontFamily="var(--font-family)"
-                        fontWeight="300"
-                        lineHeight="24px"
-                      >
-                        Studio:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        <Building2 size={15} />
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Studio:{"  "}
+                        </Text>
+                      </Flex>
                       <Text
                         color="var(--secondary-color)"
                         as="span"
@@ -376,21 +399,27 @@ const View = () => {
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
+                        {console.log(animeData.animeInfo.Studios)}
                         {animeData.animeInfo.Studios || "Unknown"}
                       </Text>
                     </Box>
                     {/* Anime Season */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--font-family)"
-                        lineHeight="24px"
-                      >
-                        Season:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        <Layers size={15} />
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Season:{"  "}
+                        </Text>
+                      </Flex>
                       <Text
                         color="var(--secondary-color)"
                         as="span"
@@ -407,16 +436,21 @@ const View = () => {
                     </Box>
                     {/* Release Year */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--font-family)"
-                        lineHeight="24px"
-                      >
-                        Year:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        <Calendar size={15} />
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Release Year:{"  "}
+                        </Text>
+                      </Flex>
                       <Text
                         color="var(--text-color)"
                         as="span"
@@ -432,16 +466,27 @@ const View = () => {
                     </Box>
                     {/* Status */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--font-family)"
-                        lineHeight="24px"
-                      >
-                        Status:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        {animeData.animeInfo.Status.toLowerCase().includes(
+                          "currently"
+                        ) ? (
+                          <Loader size={15} />
+                        ) : (
+                          <CheckCircle2 size={15} />
+                        )}
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Status:{"  "}
+                        </Text>
+                      </Flex>
                       <Text
                         color="var(--secondary-color)"
                         as="span"
@@ -458,49 +503,54 @@ const View = () => {
                     </Box>
                     {/* Genres */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--font-family)"
-                        lineHeight="24px"
-                      >
-                        Genres:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        <Tag size={15} />
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Genres:{"  "}
+                        </Text>
+                      </Flex>
                       {/* Genre */}
-                      <Box display="flex" gap="2px" flexWrap="wrap">
+                      <Box display="flex" gap="5px" flexWrap="wrap">
                         {animeGenres?.map((genre, index) => {
                           return (
-                            <Text
-                              color="var(--text-color)"
-                              as="span"
-                              fontSize="15px"
-                              fontWeight="300"
-                              lineHeight="24px"
-                              fontFamily="var(--body-font)"
-                              transition="background ease 0.25s"
-                              key={index}
+                            <TagRoot
+                              variant="subtle"
+                              bg="var(--primary-background-color)"
+                              color="var(--secondary-color)"
+                              key={genre}
                             >
-                              {`${genre}${animeGenres.length > 1 ? "," : ""}`}
-                            </Text>
+                              <TagLabel>{genre}</TagLabel>
+                            </TagRoot>
                           );
                         })}
                       </Box>
                     </Box>
                     {/* Views */}
                     <Box display="flex" gap="0 10px">
-                      <Text
-                        as="p"
-                        color="var(--text-color)"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--font-family)"
-                        lineHeight="24px"
-                        transition="background ease 0.25s"
-                      >
-                        Score:{"  "}
-                      </Text>
+                      <Flex gap="5px" alignItems="center">
+                        <Star size={15} />
+
+                        <Text
+                          as="p"
+                          color="var(--text-color)"
+                          fontSize="15px"
+                          fontFamily="var(--font-family)"
+                          fontWeight="300"
+                          lineHeight="24px"
+                          transition="background ease 0.25s"
+                        >
+                          Rating:{"  "}
+                        </Text>
+                      </Flex>
                       <Text
                         color="var(--text-color)"
                         as="span"
@@ -523,16 +573,19 @@ const View = () => {
                   id="episodes"
                 >
                   <Box>
-                    <Heading
-                      color="var(--text-color)"
-                      fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
-                      fontWeight="600"
-                      fontFamily="var(--font-family)"
-                      lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
-                      letterSpacing="1.5px"
-                    >
-                      Episode List
-                    </Heading>
+                    <Flex gap="10px" alignItems="center">
+                      <ListVideo size={35} />
+                      <Heading
+                        color="var(--text-color)"
+                        fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
+                        fontWeight="600"
+                        fontFamily="var(--font-family)"
+                        lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
+                        letterSpacing="1.5px"
+                      >
+                        Episode List
+                      </Heading>
+                    </Flex>
                     <Box mt="20px" pos="relative">
                       {episodes.length !== 0 && (
                         <EpisodeList

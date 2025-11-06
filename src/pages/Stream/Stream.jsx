@@ -386,7 +386,6 @@ const Stream = () => {
               </Breadcrumb.Item>
               <Breadcrumb.Separator />
               <Breadcrumb.Item
-                isCurrentPage
                 fontSize={{ base: "15.13px", lg: "18.75px" }}
                 lineHeight={{ base: "24px", lg: "30px" }}
                 letterSpacing="0.5px"
@@ -398,8 +397,13 @@ const Stream = () => {
 
               <Breadcrumb.Separator />
               <Breadcrumb.Item>
-                <Breadcrumb.CurrentLink>
-                  $
+                <Breadcrumb.CurrentLink
+                  fontSize={{ base: "15.13px", lg: "18.75px" }}
+                  lineHeight={{ base: "24px", lg: "30px" }}
+                  letterSpacing="0.5px"
+                  color="var(--link-color)"
+                  _hover={{ color: "var(--link-hover-color)" }}
+                >
                   {contentType === "anime"
                     ? dubStatus
                       ? `${animeTitle} ${currentEpisode} (Dub)`

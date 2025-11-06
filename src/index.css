@@ -81,7 +81,7 @@ Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
 }
 
 .fade-background {
-  background-color: rgba(0, 0, 0, 1);
+  background-color: rgba(0, 0, 0, 0.829);
   animation: fadeIn 3s ease-in-out forwards;
   /* background: linear-gradient(to bottom, #8E44AD, #3498DB); */
 }

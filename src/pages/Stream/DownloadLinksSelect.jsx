@@ -70,16 +70,15 @@ const DownloadLinksSelect = ({
     }
   }, [sessionId, episodeSession, nextSessionEpisode]);
 
-  const handleSelectChange = (event) => {
-    setSelectedLink(event.target.value);
-    console.log("event triggered", event.target.value);
+  const handleChange = (value) => {
+    window.open(value, "_blank"); // open in new tab
   };
 
   const links = createListCollection({
     items: downloadLinks,
+    itemToString: (item) => item.quality, // text shown in the select
+    itemToValue: (item) => item.direct_url, // actual selected value
   });
-
-  console.log(selectedLink);
 
   return (
     <Box display="flex" flexDir="column" gap="10px">
@@ -87,32 +86,31 @@ const DownloadLinksSelect = ({
         <Select.Root
           collection={links}
           size="md"
-          width={{ base: "300px", lg: "200px" }}
-          onChange={handleSelectChange}
-          value={selectedLink}
+          width={{ base: "300px", lg: "250px" }}
           isDisabled={loading || downloadLinks.length === 0}
+          onValueChange={(details) => handleChange(details.value)}
         >
           <Select.HiddenSelect />
+
+          <Select.Label>Select Download link</Select.Label>
+
           <Select.Control>
             <Select.Trigger>
               <Select.ValueText
-                placeholder={loading ? "Loading Download Links..." : "Download"}
+                placeholder={loading ? "Loading..." : "Select Quality"}
               />
             </Select.Trigger>
             <Select.IndicatorGroup>
               <Select.Indicator />
             </Select.IndicatorGroup>
           </Select.Control>
+
           <Portal>
             <Select.Positioner>
               <Select.Content>
-                {links.items.map((link) => (
-                  <Select.Item
-                    item={link}
-                    key={link.direct_url}
-                    value={link.direct_url}
-                  >
-                    {link.quality}
+                {links.items.map((item) => (
+                  <Select.Item key={item.direct_url} item={item}>
+                    {item.quality}
                     <Select.ItemIndicator />
                   </Select.Item>
                 ))}
@@ -120,26 +118,6 @@ const DownloadLinksSelect = ({
             </Select.Positioner>
           </Portal>
         </Select.Root>
-
-        {selectedLink && (
-          <Link
-            className="downloadBtn"
-            border="2px solid var(--accent-color)"
-            background="var(--primary-background-color)"
-            color="var(--text-color)"
-            fontWeight="400"
-            px="20px"
-            href={selectedLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            _hover={{
-              background: "var(--accent-color)",
-              color: "var(--link-hover-color)",
-            }}
-          >
-            Download
-          </Link>
-        )}
       </Box>
 
       {err && (
