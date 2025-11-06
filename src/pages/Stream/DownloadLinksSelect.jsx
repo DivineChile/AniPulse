@@ -92,12 +92,10 @@ const DownloadLinksSelect = ({
         >
           <Select.HiddenSelect />
 
-          <Select.Label>Select Download link</Select.Label>
-
           <Select.Control>
             <Select.Trigger>
               <Select.ValueText
-                placeholder={loading ? "Loading..." : "Select Quality"}
+                placeholder={loading ? "Loading links..." : "Download"}
               />
             </Select.Trigger>
             <Select.IndicatorGroup>
