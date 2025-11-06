@@ -2,8 +2,6 @@ import {
   Box,
   Text,
   Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Grid,
   GridItem,
   Heading,
@@ -140,30 +138,44 @@ const View = () => {
             py="20px"
           >
             {/* BreadCrumb Links */}
-            <Breadcrumb mb="20px">
-              <BreadcrumbItem
-                fontSize={{ base: "15.13px", lg: "18.75px" }}
-                lineHeight={{ base: "24px", lg: "30px" }}
-                letterSpacing="0.5px"
-                color="var(--text-color)"
-                _hover={{ color: "var(--link-hover-color)" }}
-              >
-                <BreadcrumbLink as={ReactRouterLink} to="/" textDecor="none">
-                  Home
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-
-              <BreadcrumbItem
-                isCurrentPage
-                fontSize={{ base: "15.13px", lg: "18.75px" }}
-                lineHeight={{ base: "24px", lg: "30px" }}
-                letterSpacing="0.5px"
-                color="var(--link-color)"
-                _hover={{ color: "var(--link-hover-color)" }}
-              >
-                <BreadcrumbLink>Anime / {animeData?.title}</BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
+            <Breadcrumb.Root mb="20px">
+              <Breadcrumb.List>
+                <Breadcrumb.Item
+                  fontSize={{ base: "15.13px", lg: "18.75px" }}
+                  lineHeight={{ base: "24px", lg: "30px" }}
+                  letterSpacing="0.5px"
+                  color="var(--text-color)"
+                  _hover={{ color: "var(--link-hover-color)" }}
+                >
+                  <Breadcrumb.Link as={ReactRouterLink} to="/" textDecor="none">
+                    Home
+                  </Breadcrumb.Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Separator />
+                <Breadcrumb.Item
+                  isCurrentPage
+                  fontSize={{ base: "15.13px", lg: "18.75px" }}
+                  lineHeight={{ base: "24px", lg: "30px" }}
+                  letterSpacing="0.5px"
+                  color="var(--link-color)"
+                  _hover={{ color: "var(--link-hover-color)" }}
+                >
+                  <Breadcrumb.Link>Anime</Breadcrumb.Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Separator />
+                <Breadcrumb.Item>
+                  <Breadcrumb.CurrentLink
+                    fontSize={{ base: "15.13px", lg: "18.75px" }}
+                    lineHeight={{ base: "24px", lg: "30px" }}
+                    letterSpacing="0.5px"
+                    color="var(--link-color)"
+                    _hover={{ color: "var(--link-hover-color)" }}
+                  >
+                    {animeData?.title}
+                  </Breadcrumb.CurrentLink>
+                </Breadcrumb.Item>
+              </Breadcrumb.List>
+            </Breadcrumb.Root>
 
             {/* Anime Details */}
             <Box my="20px">
@@ -232,7 +244,7 @@ const View = () => {
                         mb="8px"
                         color="var(--text-color)"
                         fontSize="24.02px"
-                        fontWeight="300"
+                        fontWeight="400"
                         fontFamily="var(--font-family)"
                         lineHeight="27.5px"
                         letterSpacing="1.5px"
@@ -241,7 +253,7 @@ const View = () => {
                       </Text>
                       <Text
                         as="p"
-                        color="var(--text-color)"
+                        color="var(--text-secondary)"
                         fontSize="15.38px"
                         fontWeight="300"
                         fontFamily="var(--body-font)"
@@ -285,7 +297,7 @@ const View = () => {
                           color: "var(--link-hover-color)",
                           textDecoration: "none",
                           background: "var(--accent-color)",
-                          transform: "scale(1.05)",
+                          transform: "scale(1.02)",
                           border: "none",
                         }}
                         display="flex"

@@ -1,19 +1,20 @@
 import { Box, Flex, HStack, Heading, Text, VStack } from "@chakra-ui/react";
-import Navbar from "../../Navbar/Navbar";
 import { Link } from "react-router-dom";
-import "./Hero.css";
 import { useEffect, useState } from "react";
-import Loading from "../../ErrorPage/Loading";
-import Error from "../../ErrorPage/Error";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
 import { Navigation, FreeMode } from "swiper/modules";
+
+//import components
+import Loading from "../../ErrorPage/Loading";
+import Error from "../../ErrorPage/Error";
+import Navbar from "../../Navbar/Navbar";
 import Prev from "../HeroSliderButtons/Prev";
 import Next from "../HeroSliderButtons/Next";
+import "./Hero.css";
 
 const Hero = () => {
   const [state, setState] = useState({
@@ -121,7 +122,7 @@ const Hero = () => {
             {animeInfo?.map((anime, index) => {
               const animeInfo = anime.animeInfo;
               const animeStatus = animeInfo.Status.split("-").join(" ");
-              const animePremiered = animeInfo.Premiered.split("-").join(" ");
+              const animePremiered = animeInfo.Premiered.split("-")[1];
 
               return (
                 <SwiperSlide key={index}>
@@ -130,7 +131,7 @@ const Hero = () => {
                     backgroundPosition="center"
                     backgroundSize="cover"
                     backgroundBlendMode="overlay"
-                    backgroundColor="rgba(0,0,0,0.55)"
+                    backgroundColor="rgba(0, 0, 0, 0.8)"
                     backgroundRepeat="no-repeat"
                     h="100%"
                     w="100%"
@@ -153,10 +154,10 @@ const Hero = () => {
                       >
                         <Heading
                           color="var(--text-color)"
-                          textTransform="uppercase"
+                          textTransform="capitalize"
                           fontWeight={{ base: "800", md: "800", lg: "800" }}
                           fontSize={{
-                            base: "45px",
+                            base: "50px",
                             sm: "50px",
                             md: "65px",
                             lg: "67px",
@@ -171,7 +172,7 @@ const Hero = () => {
                           letterSpacing="1.5px"
                         >
                           {anime.title?.length > 20
-                            ? `${anime.title.slice(0, 20)}...`
+                            ? `${anime.title.slice(0, 22)}...`
                             : anime.title}
                         </Heading>
                         <Heading

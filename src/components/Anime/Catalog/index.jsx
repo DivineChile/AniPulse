@@ -1,6 +1,7 @@
 import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
 import TopAnime from "../TopAnime/TopAnime";
 import { useEffect, useState } from "react";
+import { CalendarClock, CheckCircle2, Crown } from "lucide-react";
 
 const Catalog = () => {
   const [topLoading, setTopLoading] = useState(false);
@@ -91,6 +92,7 @@ const Catalog = () => {
             <TopAnime
               data={topRatedAnime}
               heading="Top Rated Anime"
+              icon={<Crown size={30} color="var(--primary-color)" />}
               numbers={true}
               loading={topLoading}
               error={topError}
@@ -100,6 +102,7 @@ const Catalog = () => {
             <TopAnime
               data={newAnime}
               heading="Upcoming"
+              icon={<CalendarClock size={30} color="var(--primary-color)" />}
               numbers={false}
               loading={newLoading}
               error={newError}
@@ -109,6 +112,7 @@ const Catalog = () => {
             <TopAnime
               data={recentlyCompletedAnime}
               heading="Recently Completed"
+              icon={<CheckCircle2 size={30} color="var(--primary-color)" />}
               numbers={false}
               loading={recentLoading}
               error={recentError}

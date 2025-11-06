@@ -2,15 +2,13 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControl,
+  Field,
   Heading,
   Image,
   Input,
-  InputGroup,
-  InputRightAddon,
+  Group,
   Text,
-  FormErrorMessage,
-  ButtonSpinner,
+  Spinner,
 } from "@chakra-ui/react";
 import { Link, Form, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -22,7 +20,6 @@ import {
   signInWithRedirect,
 } from "firebase/auth";
 import { auth } from "../../firebase";
-import { useToast } from "@chakra-ui/react";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
@@ -41,7 +38,7 @@ const Login = () => {
   const [signInWithEmail, setSignInWithEmail] = useState(false);
   const [type, setType] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
-  const toast = useToast();
+  // const toast = useToast();
   const navigate = useNavigate();
 
   const toastStyles = {
@@ -74,93 +71,93 @@ const Login = () => {
     setFormData((prevData) => ({ ...prevData, [name]: newValue }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
 
-    // Basic form validation
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    let isValid = true;
+  //   // Basic form validation
+  //   const emailRegex = /^\S+@\S+\.\S+$/;
+  //   let isValid = true;
 
-    if (!formData.email || !emailRegex.test(formData.email)) {
-      setErrors((prevErrors) => ({ ...prevErrors, email: "Invalid email" }));
-      isValid = false;
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
-    }
+  //   if (!formData.email || !emailRegex.test(formData.email)) {
+  //     setErrors((prevErrors) => ({ ...prevErrors, email: "Invalid email" }));
+  //     isValid = false;
+  //   } else {
+  //     setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+  //   }
 
-    if (!formData.password || formData.password.length < 6) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: "Password must be at least 6 characters",
-      }));
-      isValid = false;
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
-    }
+  //   if (!formData.password || formData.password.length < 6) {
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       password: "Password must be at least 6 characters",
+  //     }));
+  //     isValid = false;
+  //   } else {
+  //     setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+  //   }
 
-    // If the form is valid, Submit Form
-    if (isValid) {
-      setLoginLoading(true);
-      signInWithEmailAndPassword(auth, formData.email, formData.password)
-        .then((userDetails) => {
-          //Signed Up Succesfully
-          setLoginLoading(false);
-          toast({
-            title: "Login Successful",
-            description: "You have successfully logged in.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-            containerStyle: toastStyles,
-          });
+  //   // If the form is valid, Submit Form
+  //   if (isValid) {
+  //     setLoginLoading(true);
+  //     signInWithEmailAndPassword(auth, formData.email, formData.password)
+  //       .then((userDetails) => {
+  //         //Signed Up Succesfully
+  //         setLoginLoading(false);
+  //         toast({
+  //           title: "Login Successful",
+  //           description: "You have successfully logged in.",
+  //           status: "success",
+  //           duration: 3000,
+  //           isClosable: true,
+  //           containerStyle: toastStyles,
+  //         });
 
-          setFormData({
-            email: "",
-            password: "",
-            recieveEmails: false,
-          });
+  //         setFormData({
+  //           email: "",
+  //           password: "",
+  //           recieveEmails: false,
+  //         });
 
-          const user = userDetails.user;
-          console.log(user);
-          if (user) {
-            navigate("/");
-          }
-        })
-        .catch((error) => {
-          if (error.code == "auth/network-request-failed") {
-            setLoginLoading(false);
-            toast({
-              title: "Sign Up Error",
-              description: "Check your network and try again.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          } else if (error.code == "auth/wrong-password") {
-            setLoginLoading(false);
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              password: "Password is incorrect",
-            }));
-          } else if (error.code == "auth/user-not-found") {
-            setLoginLoading(false);
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              email: "There is no user with the provided email.",
-            }));
-          } else {
-            setLoginLoading(false);
-            toast({
-              title: "Login Error",
-              description: "An error occurred during login.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-        });
-    }
-  };
+  //         const user = userDetails.user;
+  //         console.log(user);
+  //         if (user) {
+  //           navigate("/");
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         if (error.code == "auth/network-request-failed") {
+  //           setLoginLoading(false);
+  //           toast({
+  //             title: "Sign Up Error",
+  //             description: "Check your network and try again.",
+  //             status: "error",
+  //             duration: 3000,
+  //             isClosable: true,
+  //           });
+  //         } else if (error.code == "auth/wrong-password") {
+  //           setLoginLoading(false);
+  //           setErrors((prevErrors) => ({
+  //             ...prevErrors,
+  //             password: "Password is incorrect",
+  //           }));
+  //         } else if (error.code == "auth/user-not-found") {
+  //           setLoginLoading(false);
+  //           setErrors((prevErrors) => ({
+  //             ...prevErrors,
+  //             email: "There is no user with the provided email.",
+  //           }));
+  //         } else {
+  //           setLoginLoading(false);
+  //           toast({
+  //             title: "Login Error",
+  //             description: "An error occurred during login.",
+  //             status: "error",
+  //             duration: 3000,
+  //             isClosable: true,
+  //           });
+  //         }
+  //       });
+  //   }
+  // };
 
   const handleEmailSignIn = () => {
     setSignInWithProviders(false);
@@ -314,7 +311,7 @@ const Login = () => {
           >
             {SignInWithProviders && (
               <>
-                <FormControl mb="20px">
+                <Field.Root mb="20px">
                   <Box
                     type="button"
                     value="Enter"
@@ -353,8 +350,8 @@ const Login = () => {
                       Continue With Google
                     </Text>
                   </Box>
-                </FormControl>
-                <FormControl mb="20px">
+                </Field.Root>
+                <Field.Root mb="20px">
                   <Box
                     type="button"
                     value="Enter"
@@ -393,8 +390,8 @@ const Login = () => {
                       Continue With Facebook
                     </Text>
                   </Box>
-                </FormControl>
-                <FormControl mb="20px">
+                </Field.Root>
+                <Field.Root mb="20px">
                   <Box
                     type="button"
                     value="Enter"
@@ -433,13 +430,13 @@ const Login = () => {
                       Continue With email
                     </Text>
                   </Box>
-                </FormControl>
+                </Field.Root>
               </>
             )}
 
             {signInWithEmail && (
               <>
-                <FormControl mb="20px" isInvalid={Boolean(errors.email)}>
+                <Field.Root mb="20px" isInvalid={Boolean(errors.email)}>
                   <Input
                     type="email"
                     placeholder="username or email address"
@@ -465,9 +462,9 @@ const Login = () => {
                   ) : (
                     <></>
                   )}
-                </FormControl>
-                <FormControl mb="20px" isInvalid={Boolean(errors.password)}>
-                  <InputGroup>
+                </Field.Root>
+                <Field.Root mb="20px" isInvalid={Boolean(errors.password)}>
+                  <Group>
                     <Input
                       type={type ? "text" : "password"}
                       placeholder="enter password"
@@ -489,7 +486,7 @@ const Login = () => {
                         borderColor: "#ffd700",
                       }}
                     />
-                    <InputRightAddon
+                    <Button
                       h="56px"
                       bg="none"
                       borderTop={errors.password ? "none" : "1px solid #b4b4b4"}
@@ -511,14 +508,14 @@ const Login = () => {
                         cursor="pointer"
                         onClick={handleInputType}
                       />
-                    </InputRightAddon>
-                  </InputGroup>
+                    </Button>
+                  </Group>
                   {errors.password ? (
                     <FormErrorMessage>{errors.password}</FormErrorMessage>
                   ) : (
                     <></>
                   )}
-                </FormControl>
+                </Field.Root>
               </>
             )}
 
@@ -544,7 +541,7 @@ const Login = () => {
                   _hover={{ background: "#ffd700" }}
                   pointerEvents={loginLoading ? "none" : "visible"}
                 >
-                  {loginLoading ? <ButtonSpinner color="#fff" /> : "Log in"}
+                  {loginLoading ? <Spinner color="#fff" /> : "Log in"}
                 </Button>
               </>
             )}
@@ -556,9 +553,9 @@ const Login = () => {
             </Box>
 
             <Box display="flex" gap="0 20px" justifyContent="center" mb="20px">
-              <FormControl w="fit-content">
+              <Field.Root w="fit-content">
                 <Checkbox name="recieveEmails" />
-              </FormControl>
+              </Field.Root>
               <Text
                 as="span"
                 fontSize="15.38px"

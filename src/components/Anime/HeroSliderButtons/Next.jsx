@@ -1,13 +1,12 @@
-import { ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronRight } from "lucide-react";
 import { useSwiper } from "swiper/react";
 
 const Next = () => {
   const swiper = useSwiper();
   return (
-    <ChevronRightIcon
+    <ChevronRight
       color="var(--text-color)"
-      h="60px"
-      w="60px"
+      size={60}
       opacity="0.2"
       _hover={{ opacity: "1" }}
       cursor="pointer"

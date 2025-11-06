@@ -15,6 +15,7 @@ import { Link as ReactRouterLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import Error from "../ErrorPage/Error";
+import { Info } from "lucide-react";
 
 const Recents = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -153,15 +154,7 @@ const Recents = () => {
                         alignItems="center"
                         gap="8px"
                       >
-                        <Icon
-                          as={BsInfoCircle}
-                          color="var(--link-hover-color)"
-                          transition="all ease 0.25s"
-                          className="playIcon"
-                          h={{ base: "20px", "2xl": "40px" }}
-                          w={{ base: "20px", "2xl": "40px" }}
-                        />
-                        View Anime
+                        <Info size={40} color="var(--link-hover-color)" />
                       </ChakraLink>
                     </Box>
                   </Box>
@@ -285,6 +278,8 @@ const Recents = () => {
               lg: "19px",
               "2xl": "22.96px",
             }}
+            textAlign="center"
+            display="inline-block"
             border="1px solid var(--secondary-color)"
             borderRadius="5px"
             padding="5px 15px"

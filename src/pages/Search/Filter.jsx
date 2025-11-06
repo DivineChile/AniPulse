@@ -6,12 +6,11 @@ import {
   Button,
   Link as ChakraLink,
   Flex,
-  FormControl,
+  Field,
   Input,
-  InputGroup,
-  InputRightAddon,
+  Group,
   Heading,
-  ButtonSpinner,
+  Spinner,
   Icon,
   Text,
   Select,
@@ -311,8 +310,8 @@ const Filter = () => {
                   w={{ base: "100%", md: "fit-content" }}
                   onBlur={handleSearchInputBlur}
                 >
-                  <FormControl>
-                    <InputGroup>
+                  <Field.Root>
+                    <Group>
                       <Input
                         borderRadius="5px"
                         background="#111111"
@@ -335,7 +334,7 @@ const Filter = () => {
                         w="100%"
                       />
 
-                      <InputRightAddon
+                      <Button
                         cursor="pointer"
                         borderRadius="none"
                         background="#111111"
@@ -354,9 +353,9 @@ const Filter = () => {
                         ) : (
                           <></>
                         )}
-                      </InputRightAddon>
-                    </InputGroup>
-                  </FormControl>
+                      </Button>
+                    </Group>
+                  </Field.Root>
                 </Box>
               </Flex>
             </Box>
@@ -447,7 +446,7 @@ const Filter = () => {
                   opacity={isLoading === true ? "0.5" : 1}
                 >
                   {isLoading === true ? (
-                    <ButtonSpinner color="var(--link-hover-color)" />
+                    <Spinner color="var(--link-hover-color)" />
                   ) : (
                     "Filter Now"
                   )}

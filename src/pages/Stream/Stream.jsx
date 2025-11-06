@@ -1,18 +1,9 @@
-import {
-  Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Flex,
-  Grid,
-  GridItem,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Breadcrumb, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { ChevronDown } from "lucide-react";
 
 import "./style.css";
 import Loading from "../../components/ErrorPage/Loading";
@@ -373,47 +364,53 @@ const Stream = () => {
           py="20px"
         >
           {/* BreadCrumb Links */}
-          <Breadcrumb mb="20px">
-            <BreadcrumbItem
-              fontSize={{ base: "15.13px", lg: "18.75px" }}
-              lineHeight={{ base: "24px", lg: "30px" }}
-              letterSpacing="0.5px"
-              color="var(--text-color)"
-              _hover={{ color: "var(--link-hover-color)" }}
-            >
-              <BreadcrumbLink
-                as={Link}
-                to={contentType === "anime" ? `/` : "/movies"}
+          <Breadcrumb.Root mb="20px">
+            <Breadcrumb.List>
+              <Breadcrumb.Item
+                fontSize={{ base: "15.13px", lg: "18.75px" }}
+                lineHeight={{ base: "24px", lg: "30px" }}
+                letterSpacing="0.5px"
+                color="var(--text-color)"
+                _hover={{ color: "var(--link-hover-color)" }}
               >
-                {`${
-                  contentType === "anime"
+                <Breadcrumb.Link
+                  as={Link}
+                  to={contentType === "anime" ? `/` : "/movies"}
+                >
+                  {contentType === "anime"
                     ? "Anime"
                     : contentType === "movie"
                     ? "Movies"
-                    : "Movies"
-                }`}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+                    : "Movies"}
+                </Breadcrumb.Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Separator />
+              <Breadcrumb.Item
+                isCurrentPage
+                fontSize={{ base: "15.13px", lg: "18.75px" }}
+                lineHeight={{ base: "24px", lg: "30px" }}
+                letterSpacing="0.5px"
+                color="var(--link-color)"
+                _hover={{ color: "var(--link-hover-color)" }}
+              >
+                <Breadcrumb.Link>Stream</Breadcrumb.Link>
+              </Breadcrumb.Item>
 
-            <BreadcrumbItem
-              isCurrentPage
-              fontSize={{ base: "15.13px", lg: "18.75px" }}
-              lineHeight={{ base: "24px", lg: "30px" }}
-              letterSpacing="0.5px"
-              color="var(--link-color)"
-              _hover={{ color: "var(--link-hover-color)" }}
-            >
-              <BreadcrumbLink>{`Stream / ${
-                contentType === "anime"
-                  ? dubStatus
-                    ? `${animeTitle} ${currentEpisode} (Dub)`
-                    : `${animeTitle} ${currentEpisode}`
-                  : contentType === "movie"
-                  ? animeTitle
-                  : `${animeTitle} Season ${season} ${currentEpisode}`
-              }`}</BreadcrumbLink>
-            </BreadcrumbItem>
-          </Breadcrumb>
+              <Breadcrumb.Separator />
+              <Breadcrumb.Item>
+                <Breadcrumb.CurrentLink>
+                  $
+                  {contentType === "anime"
+                    ? dubStatus
+                      ? `${animeTitle} ${currentEpisode} (Dub)`
+                      : `${animeTitle} ${currentEpisode}`
+                    : contentType === "movie"
+                    ? animeTitle
+                    : `${animeTitle} Season ${season} ${currentEpisode}`}
+                </Breadcrumb.CurrentLink>
+              </Breadcrumb.Item>
+            </Breadcrumb.List>
+          </Breadcrumb.Root>
 
           {/* Anime Stream */}
           <Box>
@@ -491,7 +488,7 @@ const Stream = () => {
                             ? "Movie"
                             : `Season ${season}`}
                         </Text>
-                        <ChevronDownIcon
+                        <ChevronDown
                           h="18px"
                           w="18px"
                           color="var(--text-color)"

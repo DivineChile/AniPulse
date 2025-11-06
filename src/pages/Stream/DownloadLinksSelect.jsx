@@ -1,5 +1,16 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { Select, Box, Link, Text, Button, HStack } from "@chakra-ui/react";
+import {
+  Select,
+  Portal,
+  createListCollection,
+  Box,
+  Link,
+  Text,
+  Button,
+  HStack,
+} from "@chakra-ui/react";
 
 const downloadLinksCache = new Map();
 
@@ -61,35 +72,54 @@ const DownloadLinksSelect = ({
 
   const handleSelectChange = (event) => {
     setSelectedLink(event.target.value);
+    console.log("event triggered", event.target.value);
   };
+
+  const links = createListCollection({
+    items: downloadLinks,
+  });
+
+  console.log(selectedLink);
 
   return (
     <Box display="flex" flexDir="column" gap="10px">
       <Box display="flex" gap="10px" flexDir={{ base: "column", sm: "row" }}>
-        <Select
-          id="download-links"
+        <Select.Root
+          collection={links}
+          size="md"
+          width={{ base: "300px", lg: "200px" }}
           onChange={handleSelectChange}
           value={selectedLink}
           isDisabled={loading || downloadLinks.length === 0}
-          color="var(--text-color)"
-          background="var(--primary-background-color)"
         >
-          <option value="" style={{ textAlign: "center" }}>
-            {loading ? "Loading Download Links..." : "Download"}
-          </option>
-          {downloadLinks.map((link, index) => (
-            <option
-              key={index}
-              value={link.direct_url}
-              style={{
-                color: "var(--text-color)",
-                background: "var(--primary-background-color)",
-              }}
-            >
-              {link.quality}
-            </option>
-          ))}
-        </Select>
+          <Select.HiddenSelect />
+          <Select.Control>
+            <Select.Trigger>
+              <Select.ValueText
+                placeholder={loading ? "Loading Download Links..." : "Download"}
+              />
+            </Select.Trigger>
+            <Select.IndicatorGroup>
+              <Select.Indicator />
+            </Select.IndicatorGroup>
+          </Select.Control>
+          <Portal>
+            <Select.Positioner>
+              <Select.Content>
+                {links.items.map((link) => (
+                  <Select.Item
+                    item={link}
+                    key={link.direct_url}
+                    value={link.direct_url}
+                  >
+                    {link.quality}
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Positioner>
+          </Portal>
+        </Select.Root>
 
         {selectedLink && (
           <Link

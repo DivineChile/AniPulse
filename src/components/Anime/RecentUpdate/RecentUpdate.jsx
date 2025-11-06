@@ -1,6 +1,7 @@
-import { Box, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
 import RecentSub from "../../RecentList/RecentSub";
+import { Clock } from "lucide-react";
 
 const RecentUpdate = () => {
   const getCurrentDate = () => {
@@ -57,19 +58,22 @@ const RecentUpdate = () => {
           my="20px"
           pos="relative"
         >
-          <Heading
-            as="h2"
-            fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
-            fontWeight="600"
-            lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
-            letterSpacing="1.5px"
-            color="var(--text-color)"
-            m="0"
-            textTransform="uppercase"
-            fontFamily="var(--font-family)"
-          >
-            Recently Updated
-          </Heading>
+          <Flex alignItems="center" justifyContent="center" gap="10px">
+            <Clock size={30} color="var(--primary-color)" />
+            <Heading
+              as="h2"
+              fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
+              fontWeight="500"
+              lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
+              letterSpacing="1.5px"
+              color="var(--text-color)"
+              m="0"
+              textTransform="capitalize"
+              fontFamily="var(--font-family)"
+            >
+              Recently Added
+            </Heading>
+          </Flex>
           <Text
             as="p"
             fontSize={{ base: "16px", "2xl": "20px" }}
@@ -77,9 +81,9 @@ const RecentUpdate = () => {
             letterSpacing="1.5px"
             color="var(--text-color)"
             m="0"
-            textTransform="uppercase"
+            textTransform="capitalize"
           >
-            {`${fullDayName} ${newFullDate}`}
+            {`${fullDayName}, ${newFullDate}`}
           </Text>
         </Box>
         {/* Recent Animes Released */}

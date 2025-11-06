@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 
 import { BsInfoCircle } from "react-icons/bs";
 import Loading from "../../ErrorPage/Loading";
+import { Flame, Info } from "lucide-react";
 
 const PopularList = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,12 +61,18 @@ const PopularList = () => {
         }}
         margin="auto"
       >
-        <Box>
+        <Box
+          display="flex"
+          gap="10px"
+          alignItems="center"
+          justifyContent={{ base: "center", md: "initial" }}
+        >
+          <Flame size={30} color="var(--primary-color)" />
           <Heading
-            textTransform="uppercase"
+            textTransform="capitalize"
             color="var(--text-color)"
             fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
-            fontWeight="600"
+            fontWeight="500"
             lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
             letterSpacing="1.5px"
             fontFamily="var(--font-family)"
@@ -180,15 +187,7 @@ const PopularList = () => {
                         alignItems="center"
                         gap="8px"
                       >
-                        <Icon
-                          as={BsInfoCircle}
-                          color="var(--link-hover-color)"
-                          transition="all ease 0.25s"
-                          className="playIcon"
-                          h={{ base: "20px", "2xl": "40px" }}
-                          w={{ base: "20px", "2xl": "40px" }}
-                        />
-                        View Anime
+                        <Info size={40} color="var(--link-hover-color)" />
                       </ChakraLink>
                     </Box>
                   </Box>
@@ -299,7 +298,7 @@ const PopularList = () => {
             })}
           </Grid>
 
-          {isLoading ? (
+          {/* {isLoading ? (
             <></>
           ) : error ? (
             <></>
@@ -315,12 +314,13 @@ const PopularList = () => {
                   lg: "19px",
                   "2xl": "22.96px",
                 }}
+                textAlign="center"
+                display="inline-block"
                 border="1px solid var(--secondary-color)"
                 borderRadius="5px"
                 padding="5px 15px"
                 transition="all ease 0.25s"
                 width={{ base: "100%", md: "fit-content" }}
-                textAlign={{ base: "center" }}
                 _hover={{
                   textDecor: "none",
                   color: "var(--link-hover-color)",
@@ -333,7 +333,7 @@ const PopularList = () => {
                 View More
               </ChakraLink>
             </Box>
-          )}
+          )} */}
         </Box>
       </Box>
     </Box>

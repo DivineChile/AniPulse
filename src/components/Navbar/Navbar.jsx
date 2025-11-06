@@ -1,21 +1,11 @@
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import {
-  Avatar,
-  Box,
-  Button,
-  Heading,
-  List,
-  ListItem,
-  Text,
-  useToast,
-  Image,
-} from "@chakra-ui/react";
+import { Box, Heading, List, Text, Image, Flex } from "@chakra-ui/react";
 import { NavList } from "./utils/NavUtil";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import SearchBar from "../Anime/SearchBar/SearchBar";
-import { CloseIcon } from "@chakra-ui/icons";
+import { X, TvMinimalPlay } from "lucide-react";
 import navIcon from "../../assets/navIcon.png";
 import { useState, useEffect } from "react";
 import { auth } from "../../firebase";
@@ -26,7 +16,7 @@ const Navbar = () => {
   const [profileDialogState, setProfileDialogState] = useState(false);
   const location = useLocation().pathname;
   const navigate = useNavigate();
-  const toast = useToast();
+  // const toast = useToast();
   let userName = "";
 
   const toastStyles = {
@@ -50,34 +40,34 @@ const Navbar = () => {
     };
   }, []);
 
-  const userSignedOut = () => {
-    signOut(auth)
-      .then(() => {
-        toast({
-          title: "Sign Out Successful",
-          description: "You have successfully signed out.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-          containerStyle: toastStyles,
-        });
-        setProfileDialogState(false);
-        navigate("/");
-      })
-      .catch(() => {
-        toast({
-          title: "Sign Out Error",
-          description: "An error occured during sign out",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-          style: {
-            background: "var(--accent-color)",
-            color: "#fff",
-          },
-        });
-      });
-  };
+  // const userSignedOut = () => {
+  //   signOut(auth)
+  //     .then(() => {
+  //       toast({
+  //         title: "Sign Out Successful",
+  //         description: "You have successfully signed out.",
+  //         status: "success",
+  //         duration: 3000,
+  //         isClosable: true,
+  //         containerStyle: toastStyles,
+  //       });
+  //       setProfileDialogState(false);
+  //       navigate("/");
+  //     })
+  //     .catch(() => {
+  //       toast({
+  //         title: "Sign Out Error",
+  //         description: "An error occured during sign out",
+  //         status: "error",
+  //         duration: 3000,
+  //         isClosable: true,
+  //         style: {
+  //           background: "var(--accent-color)",
+  //           color: "#fff",
+  //         },
+  //       });
+  //     });
+  // };
 
   const openNavbar = () => {
     setIsOpen(!isOpen);
@@ -86,16 +76,13 @@ const Navbar = () => {
   if (authUser != null && authUser.displayName == null) {
     userName = authUser.email?.split("@")[0];
   }
-
   return (
-    // Navbar
     <Box
       className="navbar"
       background="var(--primary-background-color)"
       width={{ base: isOpen ? "100%" : "initial" }}
       py={{ base: "15px", lg: "20px" }}
       boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
-      // border="1px solid red"
       position={{ base: isOpen ? "fixed" : "relative" }}
       top={{ base: isOpen ? "0" : "initial" }}
       zIndex="9999"
@@ -112,34 +99,47 @@ const Navbar = () => {
         alignItems="center"
         justifyContent="space-between"
       >
+        {/* Logo */}
         <Box>
           <Heading m="0">
-            <Link to="/" className="logo">
-              <Text
-                as="span"
-                color="var(--secondary-color)"
-                _hover={{
-                  color: "var(--primary-color)",
-                }}
-                transition="all ease 0.25s"
-              >
-                Ani
-              </Text>
-              <Text
-                className="logo_tag"
-                as="span"
+            <Link
+              to="/"
+              className="logo"
+              style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            >
+              <TvMinimalPlay
+                className="logo_icon"
+                size={30}
                 color="var(--primary-color)"
-                _hover={{ color: "var(--secondary-color)" }}
-                transition="all ease 0.25s"
-              >
-                Pulse
-              </Text>
+              />
+              <Flex gap="0">
+                <Text
+                  as="span"
+                  color="var(--secondary-color)"
+                  _hover={{
+                    color: "var(--primary-color)",
+                  }}
+                  transition="all ease 0.25s"
+                >
+                  Ani
+                </Text>
+                <Text
+                  className="logo_tag"
+                  as="span"
+                  color="var(--primary-color)"
+                  _hover={{ color: "var(--secondary-color)" }}
+                  transition="all ease 0.25s"
+                >
+                  Pulse
+                </Text>
+              </Flex>
             </Link>
           </Heading>
         </Box>
 
+        {/* links */}
         <Box display="flex" alignItems="center" gap="0 20px">
-          <List
+          <List.Root
             display={isOpen ? { base: "flex" } : { base: "flex", lg: "block" }}
             overflowY={
               isOpen
@@ -182,7 +182,7 @@ const Navbar = () => {
                 location.includes(`${item.label.toLowerCase()}`);
 
               return (
-                <ListItem
+                <List.Item
                   className={`nav-item${isActive ? " active" : ""}`}
                   textAlign="center"
                   mx={{ base: "5px", md: "10px" }}
@@ -195,7 +195,7 @@ const Navbar = () => {
                   }
                 >
                   <Link to={item.to}>{item.label}</Link>
-                </ListItem>
+                </List.Item>
               );
             })}
             {/* {authUser != null ? (
@@ -271,7 +271,7 @@ const Navbar = () => {
                 </Box>
               )}
             </Box> */}
-          </List>
+          </List.Root>
 
           <SearchBar below="lg" />
           {isOpen ? (
@@ -291,7 +291,7 @@ const Navbar = () => {
               onClick={openNavbar}
               hideFrom="lg"
             >
-              <CloseIcon h="15px" w="19.5px" color="var(--text-color)" />
+              <X h="15px" w="19.5px" color="var(--text-color)" />
             </Box>
           ) : (
             <Box

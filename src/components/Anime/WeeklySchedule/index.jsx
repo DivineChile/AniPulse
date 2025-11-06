@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   VStack,
   Text,
   Box,
@@ -102,9 +98,9 @@ const WeeklySchedule = () => {
             fetchAnimeSchedule(dates[index]?.date);
           }}
         >
-          <TabList display="flex" justifyContent="space-evenly" bg="#000">
+          <Tabs.List display="flex" justifyContent="space-evenly" bg="#000">
             {dates.map((date, index) => (
-              <Tab
+              <Tabs.Trigger
                 key={index}
                 py="20px"
                 _selected={{ color: "var(--accent-color)" }}
@@ -117,10 +113,10 @@ const WeeklySchedule = () => {
                     {date.day}
                   </Text>
                 </VStack>
-              </Tab>
+              </Tabs.Trigger>
             ))}
-          </TabList>
-          <TabPanels bg="grey">
+          </Tabs.List>
+          <Tabs.Content bg="grey">
             <Box
               display="flex"
               justifyContent="space-between"
@@ -150,7 +146,7 @@ const WeeklySchedule = () => {
               </Heading>
             </Box>
             {dates.map((date, index) => (
-              <TabPanel key={index} p={4}>
+              <Tabs.Content key={index} p={4}>
                 {loading && selectedTab === index && <Spinner />}
                 {error && selectedTab === index && (
                   <Text color="red.500">{error}</Text>
@@ -179,9 +175,9 @@ const WeeklySchedule = () => {
                     </Text>
                   </Box>
                 ))}
-              </TabPanel>
+              </Tabs.Content>
             ))}
-          </TabPanels>
+          </Tabs.Content>
         </Tabs>
       </Box>
     </Box>

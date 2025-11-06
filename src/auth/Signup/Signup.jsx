@@ -2,16 +2,13 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControl,
+  Field,
   Heading,
   Image,
   Input,
-  InputGroup,
-  InputRightAddon,
+  Group,
   Text,
-  FormErrorMessage,
-  useToast,
-  ButtonSpinner,
+  Spinner,
 } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -48,7 +45,7 @@ const Signup = () => {
   const [type, setType] = useState(false);
   const [confirmType, setConfirmType] = useState(false);
   const [signupLoading, setSignupLoading] = useState(false);
-  const toast = useToast();
+  // const toast = useToast();
 
   const toastStyles = {
     background: "var(--accent-color)",
@@ -73,101 +70,101 @@ const Signup = () => {
     setFormData((prevData) => ({ ...prevData, [name]: newValue }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
 
-    // Basic form validation
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    let isValid = true;
+  //   // Basic form validation
+  //   const emailRegex = /^\S+@\S+\.\S+$/;
+  //   let isValid = true;
 
-    if (!formData.email || !emailRegex.test(formData.email)) {
-      setErrors((prevErrors) => ({ ...prevErrors, email: "Invalid email" }));
-      isValid = false;
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
-    }
+  //   if (!formData.email || !emailRegex.test(formData.email)) {
+  //     setErrors((prevErrors) => ({ ...prevErrors, email: "Invalid email" }));
+  //     isValid = false;
+  //   } else {
+  //     setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+  //   }
 
-    if (!formData.password || formData.password.length < 6) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: "Password must be at least 6 characters",
-      }));
-      isValid = false;
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
-    }
+  //   if (!formData.password || formData.password.length < 6) {
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       password: "Password must be at least 6 characters",
+  //     }));
+  //     isValid = false;
+  //   } else {
+  //     setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+  //   }
 
-    if (
-      !formData.confirmPassword ||
-      formData.password !== formData.confirmPassword
-    ) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        confirmPassword: "Passwords do not match",
-      }));
-      isValid = false;
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, confirmPassword: "" }));
-    }
+  //   if (
+  //     !formData.confirmPassword ||
+  //     formData.password !== formData.confirmPassword
+  //   ) {
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       confirmPassword: "Passwords do not match",
+  //     }));
+  //     isValid = false;
+  //   } else {
+  //     setErrors((prevErrors) => ({ ...prevErrors, confirmPassword: "" }));
+  //   }
 
-    // If the form is valid, Submit Form
-    if (isValid) {
-      setSignupLoading(true);
-      createUserWithEmailAndPassword(auth, formData.email, formData.password)
-        .then((userDetails) => {
-          const user = userDetails.user;
-          //Signed Up Succesfully ans sent email Verification successfully
-          setSignupLoading(false);
-          sendEmailVerification(user);
-          toast({
-            title: "Sign Up Successful",
-            description:
-              "Sign up successful. Please check your email for verification.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-            containerStyle: toastStyles,
-          });
+  //   // If the form is valid, Submit Form
+  //   if (isValid) {
+  //     setSignupLoading(true);
+  //     createUserWithEmailAndPassword(auth, formData.email, formData.password)
+  //       .then((userDetails) => {
+  //         const user = userDetails.user;
+  //         //Signed Up Succesfully ans sent email Verification successfully
+  //         setSignupLoading(false);
+  //         sendEmailVerification(user);
+  //         toast({
+  //           title: "Sign Up Successful",
+  //           description:
+  //             "Sign up successful. Please check your email for verification.",
+  //           status: "success",
+  //           duration: 3000,
+  //           isClosable: true,
+  //           containerStyle: toastStyles,
+  //         });
 
-          setFormData({
-            email: "",
-            password: "",
-            confirmPassword: "",
-            recieveEmails: false,
-          });
-          console.log("User signed Up Successfully");
-          console.log(user);
-        })
-        .catch((error) => {
-          if (error.code == "auth/network-request-failed") {
-            setSignupLoading(false);
-            toast({
-              title: "Sign Up Error",
-              description: "Check your network and try again.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          } else if (error.code == "auth/email-already-in-use") {
-            setSignupLoading(false);
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              email: "The provided email is already in use.",
-            }));
-          } else {
-            setSignupLoading(false);
-            toast({
-              title: "Sign Up Error",
-              description: "An error occurred during sign up.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-          console.log(`User sign up was unsuccessful: ${error.message}`);
-        });
-    }
-  };
+  //         setFormData({
+  //           email: "",
+  //           password: "",
+  //           confirmPassword: "",
+  //           recieveEmails: false,
+  //         });
+  //         console.log("User signed Up Successfully");
+  //         console.log(user);
+  //       })
+  //       .catch((error) => {
+  //         if (error.code == "auth/network-request-failed") {
+  //           setSignupLoading(false);
+  //           toast({
+  //             title: "Sign Up Error",
+  //             description: "Check your network and try again.",
+  //             status: "error",
+  //             duration: 3000,
+  //             isClosable: true,
+  //           });
+  //         } else if (error.code == "auth/email-already-in-use") {
+  //           setSignupLoading(false);
+  //           setErrors((prevErrors) => ({
+  //             ...prevErrors,
+  //             email: "The provided email is already in use.",
+  //           }));
+  //         } else {
+  //           setSignupLoading(false);
+  //           toast({
+  //             title: "Sign Up Error",
+  //             description: "An error occurred during sign up.",
+  //             status: "error",
+  //             duration: 3000,
+  //             isClosable: true,
+  //           });
+  //         }
+  //         console.log(`User sign up was unsuccessful: ${error.message}`);
+  //       });
+  //   }
+  // };
 
   return (
     <Box>
@@ -216,7 +213,7 @@ const Signup = () => {
             noValidate
             autoComplete="off"
           >
-            <FormControl mb="20px" isInvalid={Boolean(errors.email)}>
+            <Field.Root mb="20px" isInvalid={Boolean(errors.email)}>
               <Input
                 type="email"
                 placeholder="username or email address"
@@ -242,9 +239,9 @@ const Signup = () => {
               ) : (
                 <></>
               )}
-            </FormControl>
-            <FormControl mb="20px" isInvalid={Boolean(errors.password)}>
-              <InputGroup>
+            </Field.Root>
+            <Field.Root mb="20px" isInvalid={Boolean(errors.password)}>
+              <Group>
                 <Input
                   type={type ? "text" : "password"}
                   placeholder="enter password"
@@ -266,7 +263,7 @@ const Signup = () => {
                     borderColor: "#ffd700",
                   }}
                 />
-                <InputRightAddon
+                <Button
                   h="56px"
                   bg="none"
                   borderTop={errors.password ? "none" : "1px solid #b4b4b4"}
@@ -284,16 +281,16 @@ const Signup = () => {
                     cursor="pointer"
                     onClick={handleInputType}
                   />
-                </InputRightAddon>
-              </InputGroup>
+                </Button>
+              </Group>
               {errors.password ? (
                 <FormErrorMessage>{errors.password}</FormErrorMessage>
               ) : (
                 <></>
               )}
-            </FormControl>
-            <FormControl mb="20px" isInvalid={Boolean(errors.confirmPassword)}>
-              <InputGroup>
+            </Field.Root>
+            <Field.Root mb="20px" isInvalid={Boolean(errors.confirmPassword)}>
+              <Group>
                 <Input
                   type={confirmType ? "text" : "password"}
                   placeholder="confirm password"
@@ -315,7 +312,7 @@ const Signup = () => {
                     borderColor: "#ffd700",
                   }}
                 />
-                <InputRightAddon
+                <Button
                   h="56px"
                   bg="none"
                   borderTop={errors.password ? "none" : "1px solid #b4b4b4"}
@@ -333,23 +330,23 @@ const Signup = () => {
                     cursor="pointer"
                     onClick={handleConfirmInputType}
                   />
-                </InputRightAddon>
-              </InputGroup>
+                </Button>
+              </Group>
               {errors.confirmPassword ? (
                 <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
               ) : (
                 <></>
               )}
-            </FormControl>
+            </Field.Root>
 
             <Box display="flex" gap="0 20px" justifyContent="center" mb="20px">
-              <FormControl w="fit-content">
+              <Field.Root w="fit-content">
                 <Checkbox
                   name="recieveEmails"
                   isChecked={formData.recieveEmails}
                   onChange={handleChange}
                 />
-              </FormControl>
+              </Field.Root>
               <Text
                 as="span"
                 fontSize="15.38px"

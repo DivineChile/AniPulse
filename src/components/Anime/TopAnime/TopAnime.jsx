@@ -13,23 +13,26 @@ import {
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../../ErrorPage/Error";
 
-const TopAnime = ({ data, numbers, heading, loading, error }) => {
+const TopAnime = ({ data, numbers, heading, loading, error, icon }) => {
   // Display up to 6 anime items
   const truncatedResults = data?.length > 6 ? data.slice(0, 6) : data;
 
   if (loading) {
     return (
       <VStack alignItems="start" gap="20px">
-        <Heading
-          fontFamily="var(--font-family)"
-          fontWeight="400"
-          fontSize={{ base: "23.25px", md: "29.18px" }}
-          lineHeight={{ base: "26.4px", md: "33px" }}
-          letterSpacing="1.5px"
-          color="var(--text-color)"
-        >
-          {heading}
-        </Heading>
+        <Flex gap="10px" alignItems="center" justifyContent="center">
+          {icon}
+          <Heading
+            fontFamily="var(--font-family)"
+            fontWeight="400"
+            fontSize={{ base: "23.25px", md: "29.18px" }}
+            lineHeight={{ base: "26.4px", md: "33px" }}
+            letterSpacing="1.5px"
+            color="var(--text-color)"
+          >
+            {heading}
+          </Heading>
+        </Flex>
         {/* Skeleton placeholders */}
         <VStack spacing="20px" w="100%">
           {[...Array(6)].map((_, index) => (
@@ -66,16 +69,19 @@ const TopAnime = ({ data, numbers, heading, loading, error }) => {
 
   return (
     <VStack alignItems={{ base: "center", lg: "start" }} gap="20px" w="100%">
-      <Heading
-        fontFamily="var(--font-family)"
-        fontWeight="400"
-        fontSize={{ base: "23.25px", md: "29.18px" }}
-        lineHeight={{ base: "26.4px", md: "33px" }}
-        letterSpacing="1.5px"
-        color="var(--text-color)"
-      >
-        {heading}
-      </Heading>
+      <Flex gap="10px" alignItems="center" justifyContent="center">
+        {icon}
+        <Heading
+          fontFamily="var(--font-family)"
+          fontWeight="400"
+          fontSize={{ base: "23.25px", md: "29.18px" }}
+          lineHeight={{ base: "26.4px", md: "33px" }}
+          letterSpacing="1.5px"
+          color="var(--text-color)"
+        >
+          {heading}
+        </Heading>
+      </Flex>
       <Box display="flex" flexDirection="column" gap="20px" w="100%">
         {truncatedResults?.map((item, index) => {
           const animeId = item.id;

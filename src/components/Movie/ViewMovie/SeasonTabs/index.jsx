@@ -4,18 +4,10 @@ import { cacheFetch } from "../../../../utils/cacheFetch";
 import {
   Skeleton,
   Tabs,
-  Tab,
-  TabList,
   Button,
   Text,
   Box,
-  TabPanels,
-  TabPanel,
   Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   SimpleGrid,
   useBreakpointValue,
   Link as ChakraLink,
@@ -105,7 +97,7 @@ const SeasonTabs = ({ tvId }) => {
   }
 
   return (
-    <Tabs
+    <Tabs.Root
       variant="unstyled"
       colorScheme="purple"
       isLazy
@@ -115,7 +107,7 @@ const SeasonTabs = ({ tvId }) => {
       }}
       w="100%"
     >
-      <TabList
+      <Tabs.List
         mb={4}
         overflowX={{ base: "unset", lg: "auto" }}
         display={{ base: "flex", lg: "flex" }}
@@ -126,7 +118,7 @@ const SeasonTabs = ({ tvId }) => {
         }}
       >
         {seasons.map((season) => (
-          <Tab
+          <Tabs.Trigger
             key={season.id}
             color="whiteAlpha.800"
             _selected={{
@@ -139,17 +131,17 @@ const SeasonTabs = ({ tvId }) => {
             px={6}
           >
             S{season.season_number}
-          </Tab>
+          </Tabs.Trigger>
         ))}
-      </TabList>
-      <TabPanels>
+      </Tabs.List>
+      <Tabs.Content>
         {seasons.map((season) => {
           const episodes = episodesData[season.season_number];
           const showAll = expandedSeasons[season.season_number];
           const hasMoreThanFive = episodes?.length > 5;
           const displayedEpisodes = showAll ? episodes : episodes?.slice(0, 5);
           return (
-            <TabPanel
+            <Tabs.Content
               key={season.id}
               bg={"var(--primary-background-color)"}
               p={4}
@@ -191,9 +183,9 @@ const SeasonTabs = ({ tvId }) => {
                   ) : (
                     // ✅ Tablet/Desktop: Accordion view
                     <>
-                      <Accordion allowToggle>
+                      <Accordion.Root allowToggle>
                         {displayedEpisodes.map((episode) => (
-                          <AccordionItem
+                          <Accordion.Item
                             key={episode.id}
                             border="1px solid"
                             borderColor="gray.600"
@@ -215,7 +207,7 @@ const SeasonTabs = ({ tvId }) => {
                             mb={2}
                           >
                             <h2>
-                              <AccordionButton
+                              <Accordion.ItemTrigger
                                 _expanded={{ color: "var(--accent-color)" }}
                                 _hover={{ bg: "gray.700" }}
                                 color="var(--text-color)"
@@ -228,10 +220,10 @@ const SeasonTabs = ({ tvId }) => {
                                   Episode {episode.episode_number}:{" "}
                                   {episode.name}
                                 </Box>
-                                <AccordionIcon />
-                              </AccordionButton>
+                                <Accordion.ItemIndicator />
+                              </Accordion.ItemTrigger>
                             </h2>
-                            <AccordionPanel
+                            <Accordion.ItemContent
                               pb={4}
                               bg={
                                 episode.still_path
@@ -319,10 +311,10 @@ const SeasonTabs = ({ tvId }) => {
                               >
                                 Watch Episode
                               </ChakraLink>
-                            </AccordionPanel>
-                          </AccordionItem>
+                            </Accordion.ItemContent>
+                          </Accordion.Item>
                         ))}
-                      </Accordion>
+                      </Accordion.Root>
 
                       {hasMoreThanFive && (
                         <Box mt={4} textAlign="center">
@@ -359,11 +351,11 @@ const SeasonTabs = ({ tvId }) => {
                   ))}
                 </SimpleGrid>
               )}
-            </TabPanel>
+            </Tabs.Content>
           );
         })}
-      </TabPanels>
-    </Tabs>
+      </Tabs.Content>
+    </Tabs.Root>
   );
 };
 

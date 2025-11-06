@@ -1,11 +1,10 @@
 import {
   Box,
   Button,
-  FormControl,
+  Field,
   Heading,
   Input,
-  InputGroup,
-  InputRightAddon,
+  Group,
   Text,
 } from "@chakra-ui/react";
 import { Form, Link } from "react-router-dom";
@@ -103,8 +102,8 @@ const Footer = () => {
 
             <Box my="20px">
               <Form>
-                <FormControl>
-                  <InputGroup>
+                <Field.Root>
+                  <Group>
                     <Input
                       placeholder="info@example.com"
                       color="#fff"
@@ -120,11 +119,7 @@ const Footer = () => {
                       }}
                     />
 
-                    <InputRightAddon
-                      height="43px"
-                      background="none"
-                      w="141.38px"
-                    >
+                    <Button height="43px" background="none" w="141.38px">
                       <Button
                         type="submit"
                         w="100%"
@@ -143,9 +138,9 @@ const Footer = () => {
                       >
                         Subscribe
                       </Button>
-                    </InputRightAddon>
-                  </InputGroup>
-                </FormControl>
+                    </Button>
+                  </Group>
+                </Field.Root>
               </Form>
             </Box>
 

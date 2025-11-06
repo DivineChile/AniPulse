@@ -1,12 +1,13 @@
-import { SearchIcon } from "@chakra-ui/icons";
+import { Search } from "lucide-react";
 import {
   Box,
   Heading,
   Image,
   Input,
-  InputGroup,
-  InputLeftAddon,
+  Group,
+  Button,
   Spinner,
+  VStack,
   Text,
   Link as ChakraLink,
   Flex,
@@ -124,11 +125,12 @@ const SearchBar = ({ above, below, displayProp }) => {
       display={displayProp}
       pos="relative"
     >
-      <InputGroup
+      <Group
         h="40px"
         w={{ base: "100%", lg: "300px", xl: "350px", "2xl": "400px" }}
+        attached
       >
-        <InputLeftAddon
+        <Button
           background="none"
           color="var(--text-color)"
           borderRight="none"
@@ -136,21 +138,21 @@ const SearchBar = ({ above, below, displayProp }) => {
           cursor="pointer"
           onClick={() => query.trim() && navigate(`/search/keyword/${query}`)}
         >
-          <SearchIcon color="var(--link-hover-color)" />
-        </InputLeftAddon>
+          <Search color="var(--link-hover-color)" />
+        </Button>
         <Input
           borderLeft="none"
           placeholder="Search anime or movies"
           _placeholder={{ color: "var(--text-secondary)" }}
           color="var(--text-color)"
-          borderColor="#d4d4d4"
+          borderColor="var(--link-hover-color)"
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           onKeyDown={handleKeyPress}
         />
-      </InputGroup>
+      </Group>
 
       {showDropdown && (
         <Box
@@ -178,9 +180,10 @@ const SearchBar = ({ above, below, displayProp }) => {
           </Box>
 
           {loading && (
-            <Box display="flex" justifyContent="center">
+            <VStack>
               <Spinner color="var(--link-hover-color)" />
-            </Box>
+              <Text color="var(--link-hover-color)">Loading...</Text>
+            </VStack>
           )}
 
           {error && (
