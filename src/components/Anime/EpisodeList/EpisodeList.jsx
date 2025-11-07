@@ -1,96 +1,124 @@
-import { Link as ChakraLink, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Box, SimpleGrid, Tabs } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../../ErrorPage/Error";
 
-const EpisodeList = ({ items, itemId }) => {
-  const [showAll, setShowAll] = useState(false);
+// Utility to divide episodes into groups of 15
+const chunkEpisodes = (arr, size = 15) => {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+};
 
-  // Determine the number of episodes to display
-  const maxDisplayCount = 5;
-  const displayedEpisodes = showAll ? items : items?.slice(0, maxDisplayCount);
+const EpisodeList = ({ items, itemId }) => {
+  if (!items || items.length === 0) {
+    return <Error bg="none" msg="No Episodes found." pos="absolute" />;
+  }
+
+  const hasTabs = items.length > 15;
+  const episodeChunks = hasTabs ? chunkEpisodes(items, 15) : [items];
+
+  // -----------------------------
+  // ✅ LOAD DEFAULT TAB FROM LOCAL STORAGE
+  // -----------------------------
+  const [activeTab, setActiveTab] = useState(() => {
+    const saved = localStorage.getItem("episodeTabIndex");
+    return saved ? Number(saved) : 0;
+  });
+
+  // -----------------------------
+  // ✅ SAVE ACTIVE TAB WHEN CHANGED
+  // -----------------------------
+  const handleTabChange = (val) => {
+    setActiveTab(val.value);
+    localStorage.setItem("episodeTabIndex", val.value);
+  };
+
+  const renderEpisodes = (episodes, chunkIndex = 0) => (
+    <SimpleGrid columns={{ base: 3, md: 4, lg: 6 }} gap={2} mt={3}>
+      {episodes.map((ep, index) => {
+        const globalIndex = chunkIndex * 15 + index;
+
+        return (
+          <Box
+            key={globalIndex}
+            as={ReactRouterLink}
+            to={`/watch/${itemId[globalIndex]}`}
+            border="1px solid var(--text-color)"
+            borderRadius="6px"
+            p="6px"
+            fontSize="15px"
+            textAlign="center"
+            color="var(--text-color)"
+            _hover={{
+              bg: "var(--hover-bg)",
+              textDecor: "none",
+              color: "var(--link-hover-color)",
+              borderColor: "var(--link-hover-color)",
+            }}
+            transition="0.2s ease"
+          >
+            EP {globalIndex + 1}
+          </Box>
+        );
+      })}
+    </SimpleGrid>
+  );
 
   return (
     <>
-      {items.length === 0 && (
-        <Error bg="none" msg="No Episodes found." pos="absolute" />
-      )}
-      {displayedEpisodes.map((_, index) => (
-        <ChakraLink
-          as={ReactRouterLink}
-          to={`/watch/${itemId[index]}`}
-          _hover={{
-            textDecor: "none",
-            color: "var(--link-hover-color)",
-            borderBottomColor: "var(--link-hover-color)",
-          }}
-          color="var(--text-color)"
-          borderBottom="1px solid var(--text-color)"
-          w="100%"
-          display="block"
-          py="5px"
-          fontSize={{
-            base: "15.63px",
-            md: "17px",
-            lg: "19.38px",
-          }}
-          fontFamily="var(--body-font)"
-          fontWeight="300"
-          lineHeight={{
-            base: "17.6px",
-            md: "19px",
-            lg: "22px",
-          }}
-          letterSpacing="1.5px"
-          transition="all ease 0.25s"
-          mb="10px"
-          key={index}
-        >
-          {`Episode ${index + 1}`}
-          <Text
-            as="span"
-            display={{ base: "none", lg: "initial" }}
-            fontFamily="var(--body-font)"
-          >
-            {" "}
-            - {_.title}
-          </Text>
-        </ChakraLink>
-      ))}
+      {!hasTabs && renderEpisodes(items)}
 
-      {/* Show More / Show Less Link */}
-      {items?.length > maxDisplayCount && (
-        <ChakraLink
-          as="button"
-          onClick={() => setShowAll((prev) => !prev)}
-          _hover={{
-            textDecor: "none",
-            color: "var(--link-hover-color)",
-            borderBottomColor: "var(--link-hover-color)",
-          }}
-          color="var(--text-color)"
-          borderBottom="1px solid var(--text-color)"
-          w="100%"
-          display="block"
-          py="5px"
-          fontSize={{
-            base: "15.63px",
-            md: "17px",
-            lg: "19.38px",
-          }}
-          fontWeight="300"
-          lineHeight={{
-            base: "17.6px",
-            md: "19px",
-            lg: "22px",
-          }}
-          letterSpacing="1.5px"
-          transition="all ease 0.25s"
-          mb="10px"
-          textAlign="center"
+      {hasTabs && (
+        <Tabs.Root
+          variant="subtle"
+          fitted
+          lazyMount
+          unmountOnExit
+          value={activeTab}
+          onValueChange={handleTabChange}
         >
-          {showAll ? "Show Less" : "Show More"}
-        </ChakraLink>
+          <Tabs.List gap={2}>
+            {episodeChunks.map((chunk, index) => (
+              <Tabs.Trigger
+                key={index}
+                value={index}
+                cursor="pointer"
+                color="var(--link-color)"
+                bg={
+                  activeTab == index
+                    ? "var(--accent-color)"
+                    : "var(--primary-background-color)"
+                }
+              >
+                {index * 15 + 1} – {(index + 1) * 15}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+
+          <Box pos="relative" minH="240px" width="full">
+            {episodeChunks.map((chunk, index) => (
+              <Tabs.Content
+                key={index}
+                value={index}
+                position="absolute"
+                inset="0"
+                _open={{
+                  animationName: "fade-in, scale-in",
+                  animationDuration: "300ms",
+                }}
+                _closed={{
+                  animationName: "fade-out, scale-out",
+                  animationDuration: "120ms",
+                }}
+              >
+                {renderEpisodes(chunk, index)}
+              </Tabs.Content>
+            ))}
+          </Box>
+        </Tabs.Root>
       )}
     </>
   );

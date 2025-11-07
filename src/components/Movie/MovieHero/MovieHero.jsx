@@ -21,6 +21,7 @@ const MovieHero = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  // const newMovieAPI = "https://jumpfreedom.com/3/movie/popular";
 
   const fetchPopularMovies = async () => {
     setLoading(true);

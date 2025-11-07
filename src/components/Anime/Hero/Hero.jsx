@@ -29,13 +29,14 @@ const Hero = () => {
     try {
       // Fetch top airing anime IDs
       const topAiringResponse = await fetch(
-        `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/top-airing`
+        `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/top-ten`
       );
       const topAiringData = await topAiringResponse.json();
+
       const airingDataSliced =
-        topAiringData.results.data.length > 10
-          ? topAiringData.results.data.slice(0, 10)
-          : topAiringData.results.data;
+        topAiringData.results.today.length > 10
+          ? topAiringData.results.today.slice(0, 10)
+          : topAiringData.results.today;
 
       const animeIds = airingDataSliced.map((anime) => anime.id);
 
@@ -70,12 +71,12 @@ const Hero = () => {
     <Box w="100%" h="100vh">
       <Navbar />
 
-      {isLoading ? (
-        <Loading
-          height="100%"
-          bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
-        />
-      ) : error ? (
+      <Loading
+        height="100%"
+        bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
+        isLoading={isLoading}
+      />
+      {error ? (
         <Error msg={error} height="100%" bg="#191919" />
       ) : (
         <Box

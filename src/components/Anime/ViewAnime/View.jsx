@@ -114,9 +114,11 @@ const View = () => {
   return (
     <Box>
       <Navbar />
-      {isLoading && (
-        <Loading bg="var(--linear-gradient)" height="calc(100vh - 73px)" />
-      )}
+      <Loading
+        bg="var(--linear-gradient)"
+        height="calc(100vh - 73px)"
+        isLoading={isLoading}
+      />
 
       {error && (
         <Error
@@ -399,7 +401,6 @@ const View = () => {
                         lineHeight="24px"
                         transition="background ease 0.25s"
                       >
-                        {console.log(animeData.animeInfo.Studios)}
                         {animeData.animeInfo.Studios || "Unknown"}
                       </Text>
                     </Box>
