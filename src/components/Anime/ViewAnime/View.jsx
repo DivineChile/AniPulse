@@ -348,7 +348,7 @@ const View = () => {
                     {/* Countdown timer */}
                     <Box display="flex" gap="0 10px">
                       <Flex gap="5px" alignItems="center">
-                        <CalendarDays size={20} />
+                        <CalendarDays size={20} color="var(--text-color)" />
 
                         <Text
                           as="p"
@@ -378,7 +378,7 @@ const View = () => {
                     {/* Anime Author */}
                     <Box display="flex" gap="0 10px">
                       <Flex gap="5px" alignItems="center">
-                        <Building2 size={15} />
+                        <Building2 size={15} color="var(--text-color)" />
 
                         <Text
                           as="p"
@@ -407,7 +407,7 @@ const View = () => {
                     {/* Anime Season */}
                     <Box display="flex" gap="0 10px">
                       <Flex gap="5px" alignItems="center">
-                        <Layers size={15} />
+                        <Layers size={15} color="var(--text-color)" />
 
                         <Text
                           as="p"
@@ -438,7 +438,7 @@ const View = () => {
                     {/* Release Year */}
                     <Box display="flex" gap="0 10px">
                       <Flex gap="5px" alignItems="center">
-                        <Calendar size={15} />
+                        <Calendar size={15} color="var(--text-color)" />
 
                         <Text
                           as="p"
@@ -471,9 +471,9 @@ const View = () => {
                         {animeData.animeInfo.Status.toLowerCase().includes(
                           "currently"
                         ) ? (
-                          <Loader size={15} />
+                          <Loader size={15} color="var(--text-color)" />
                         ) : (
-                          <CheckCircle2 size={15} />
+                          <CheckCircle2 size={15} color="var(--text-color)" />
                         )}
 
                         <Text
@@ -505,7 +505,7 @@ const View = () => {
                     {/* Genres */}
                     <Box display="flex" gap="0 10px">
                       <Flex gap="5px" alignItems="center">
-                        <Tag size={15} />
+                        <Tag size={15} color="var(--text-color)" />
 
                         <Text
                           as="p"
@@ -538,7 +538,7 @@ const View = () => {
                     {/* Views */}
                     <Box display="flex" gap="0 10px">
                       <Flex gap="5px" alignItems="center">
-                        <Star size={15} />
+                        <Star size={15} color="(--text-color)" />
 
                         <Text
                           as="p"
@@ -575,7 +575,7 @@ const View = () => {
                 >
                   <Box>
                     <Flex gap="10px" alignItems="center">
-                      <ListVideo size={35} />
+                      <ListVideo size={35} color="var(--text-color)" />
                       <Heading
                         color="var(--text-color)"
                         fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}

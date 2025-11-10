@@ -16,22 +16,16 @@ const Home = () => {
       <Box>
         {/* Hero */}
         <Hero />
-
         {/* Recent Updates */}
         <RecentUpdate />
-
         {/* Upcoming Anime*/}
         <Upcoming />
-
         {/* Popular animes */}
         <PopularList />
-
         {/* <WeeklySchedule /> */}
         {/* <WeeklySchedule /> */}
-
         {/* Top Anime */}
         <Catalog />
-
         {/* Footer */}
         <Footer />
       </Box>

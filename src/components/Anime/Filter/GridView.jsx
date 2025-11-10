@@ -12,12 +12,12 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
-import { BsInfoCircle } from "react-icons/bs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MovieCard from "../../Movie/MovieCard";
 import "../../../index.css";
+import { Info } from "lucide-react";
 
 const GridView = ({ results = [], isLoading = false, error = null }) => {
   const navigate = useNavigate();
@@ -26,11 +26,6 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
   const displayedResults = showAll
     ? results
     : results?.slice(0, Math.min(8, results?.length));
-
-  const handleClick = (item) => {
-    const contentType = item.title ? "movie" : "tv";
-    navigate(`/view/${contentType}/${item.id}`);
-  };
 
   // 🔄 Loading State
   if (isLoading) {
@@ -60,7 +55,7 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
               <Skeleton h="20px" w="50px" />
               <Skeleton h="20px" w="50px" />
             </HStack>
-            <SkeletonText noOfLines={2} h={2} spacing={2} my="10px" />
+            <SkeletonText noOfLines={2} spacing={2} my="10px" />
           </GridItem>
         ))}
       </Grid>
@@ -116,81 +111,72 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
             if (isAnime) {
               return (
                 <GridItem w="100%" key={index}>
-                  <Skeleton isLoaded={results} borderRadius="10px">
-                    <Box
-                      as={ReactRouterLink}
-                      to={route}
-                      pos="relative"
-                      className="episode-container"
-                      h={{
-                        base: "216px",
-                        sm: "290.23px",
-                        md: "350px",
-                        lg: "360px",
-                        "2xl": "408.19px",
-                      }}
-                      display="flex"
+                  <Box
+                    as={ReactRouterLink}
+                    to={route}
+                    pos="relative"
+                    className="episode-container"
+                    h={{
+                      base: "216px",
+                      sm: "290.23px",
+                      md: "350px",
+                      lg: "360px",
+                      "2xl": "408.19px",
+                    }}
+                    display="flex"
+                    borderRadius="10px"
+                    overflow="hidden"
+                    transition="opacity 0.5s"
+                  >
+                    {/* Thumbnail */}
+                    <Image
+                      src={resultImg}
+                      w="100%"
+                      h="100%"
+                      bg="var(--card-background-color)"
                       borderRadius="10px"
-                      overflow="hidden"
-                      transition="opacity 0.5s"
-                    >
-                      {/* Thumbnail */}
-                      <Image
-                        src={resultImg}
-                        w="100%"
-                        h="100%"
-                        bg="var(--card-background-color)"
-                        borderRadius="10px"
-                        className="thumbnail"
-                        transition="transform 0.7s ease-in-out"
-                      />
+                      className="thumbnail"
+                      transition="transform 0.7s ease-in-out"
+                    />
 
-                      {/* Overlay */}
-                      <Box
-                        className="overlay"
-                        pos="absolute"
-                        top="0"
-                        left="0"
-                        w="100%"
-                        h="0"
-                        opacity="0"
+                    {/* Overlay */}
+                    <Box
+                      className="overlay"
+                      pos="absolute"
+                      top="0"
+                      left="0"
+                      w="100%"
+                      h="0"
+                      opacity="0"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      textAlign="center"
+                      background="rgba(0, 0, 0, 0.85)!important"
+                      borderRadius="10px"
+                      transition="height 0.5s ease, opacity 0.5s ease"
+                    >
+                      <ChakraLink
+                        as={ReactRouterLink}
+                        to={route}
                         display="flex"
                         alignItems="center"
-                        justifyContent="center"
-                        textAlign="center"
-                        background="rgba(0, 0, 0, 0.85)!important"
-                        borderRadius="10px"
-                        transition="height 0.5s ease, opacity 0.5s ease"
+                        gap="5px"
+                        className="viewAnimeBtn"
+                        color="var(--link-hover-color)"
+                        fontSize="22.88px"
+                        lineHeight="36px"
+                        letterSpacing="0.5px"
+                        fontWeight="500"
+                        _hover={{
+                          color: "var(--link-hover-color)",
+                          transition: "all ease 0.25s",
+                        }}
                       >
-                        <ChakraLink
-                          as={ReactRouterLink}
-                          to={route}
-                          display="flex"
-                          alignItems="center"
-                          gap="5px"
-                          className="viewAnimeBtn"
-                          color="var(--link-hover-color)"
-                          fontSize="22.88px"
-                          lineHeight="36px"
-                          letterSpacing="0.5px"
-                          fontWeight="500"
-                          _hover={{
-                            color: "var(--link-hover-color)",
-                            transition: "all ease 0.25s",
-                          }}
-                        >
-                          <Icon
-                            as={BsInfoCircle}
-                            className="viewIcon"
-                            color="var(--link-hover-color)"
-                            _hover={{ color: "var(--link-hover-color)" }}
-                            transition="all ease 0.25s"
-                          />
-                          View Anime
-                        </ChakraLink>
-                      </Box>
+                        <Info size={40} color="var(--link-hover-color)" />
+                      </ChakraLink>
                     </Box>
-                  </Skeleton>
+                  </Box>
 
                   {/* Meta Info */}
                   <Box
@@ -255,6 +241,9 @@ const GridView = ({ results = [], isLoading = false, error = null }) => {
           fontSize={{ base: "15px", md: "17px", lg: "19px", "2xl": "22.96px" }}
           border="1px solid var(--secondary-color)"
           borderRadius="5px"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
           padding="5px 15px"
           width={{ base: "100%", md: "fit-content" }}
           transition="all ease 0.25s"

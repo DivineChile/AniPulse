@@ -3,8 +3,8 @@ import { Box, SimpleGrid, Tabs } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Error from "../../ErrorPage/Error";
 
-// Utility to divide episodes into groups of 15
-const chunkEpisodes = (arr, size = 15) => {
+// Utility to divide episodes into groups of 30
+const chunkEpisodes = (arr, size = 30) => {
   const chunks = [];
   for (let i = 0; i < arr.length; i += size) {
     chunks.push(arr.slice(i, i + size));
@@ -17,8 +17,8 @@ const EpisodeList = ({ items, itemId }) => {
     return <Error bg="none" msg="No Episodes found." pos="absolute" />;
   }
 
-  const hasTabs = items.length > 15;
-  const episodeChunks = hasTabs ? chunkEpisodes(items, 15) : [items];
+  const hasTabs = items.length > 30;
+  const episodeChunks = hasTabs ? chunkEpisodes(items, 30) : [items];
 
   // -----------------------------
   // ✅ LOAD DEFAULT TAB FROM LOCAL STORAGE
@@ -39,7 +39,7 @@ const EpisodeList = ({ items, itemId }) => {
   const renderEpisodes = (episodes, chunkIndex = 0) => (
     <SimpleGrid columns={{ base: 3, md: 4, lg: 6 }} gap={2} mt={3}>
       {episodes.map((ep, index) => {
-        const globalIndex = chunkIndex * 15 + index;
+        const globalIndex = chunkIndex * 30 + index;
 
         return (
           <Box
@@ -74,13 +74,13 @@ const EpisodeList = ({ items, itemId }) => {
       {hasTabs && (
         <Tabs.Root
           variant="subtle"
-          fitted
+          // fitted
           lazyMount
           unmountOnExit
           value={activeTab}
           onValueChange={handleTabChange}
         >
-          <Tabs.List gap={2}>
+          <Tabs.List gap={3} flexWrap="wrap">
             {episodeChunks.map((chunk, index) => (
               <Tabs.Trigger
                 key={index}
@@ -92,13 +92,18 @@ const EpisodeList = ({ items, itemId }) => {
                     ? "var(--accent-color)"
                     : "var(--primary-background-color)"
                 }
+                w="120px"
+                m="0 auto"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
               >
-                {index * 15 + 1} – {(index + 1) * 15}
+                {index * 30 + 1} – {(index + 1) * 30}
               </Tabs.Trigger>
             ))}
           </Tabs.List>
 
-          <Box pos="relative" minH="240px" width="full">
+          <Box pos="relative" minH="250px" width="full">
             {episodeChunks.map((chunk, index) => (
               <Tabs.Content
                 key={index}

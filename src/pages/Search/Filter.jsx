@@ -1,8 +1,6 @@
 import {
   Box,
   Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   Link as ChakraLink,
   Flex,
@@ -13,7 +11,7 @@ import {
   Spinner,
   Icon,
   Text,
-  Select,
+  NativeSelect,
 } from "@chakra-ui/react";
 import {
   Link as ReactRouterLink,
@@ -31,6 +29,8 @@ import "./style.css";
 import GridView from "../../components/Anime/Filter/GridView";
 import { BsGrid, BsListUl, BsX } from "react-icons/bs";
 import ListView from "../../components/Anime/Filter/ListView";
+import { BeatLoader } from "react-spinners";
+import { X } from "lucide-react";
 
 const Filter = () => {
   const { searchQuery } = useParams();
@@ -49,7 +49,6 @@ const Filter = () => {
   const [gridView, setGridView] = useState(true);
   const [showClear, setShowClear] = useState(true);
 
-  const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
@@ -108,7 +107,7 @@ const Filter = () => {
 
   useEffect(() => {
     requestAnime();
-    requestMovie();
+    // requestMovie();
     setNewQueryValue(searchQuery);
     document.title = `${searchQuery} - AniPulse`;
   }, [searchQuery]);
@@ -199,30 +198,48 @@ const Filter = () => {
           py="20px"
         >
           {/* BreadCrumb Links */}
-          <Breadcrumb mb="20px">
-            <BreadcrumbItem
-              fontSize={{ base: "15.13px", lg: "18.75px" }}
-              lineHeight={{ base: "24px", lg: "30px" }}
-              letterSpacing="0.5px"
-              color="var(--text-color)"
-              _hover={{ color: "var(--link-hover-color)", textDecor: "none" }}
-            >
-              <BreadcrumbLink as={ReactRouterLink} to="/" textDecor="none">
-                Home
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+          <Breadcrumb.Root mb="20px">
+            <Breadcrumb.List>
+              <Breadcrumb.Item
+                fontSize={{ base: "15.13px", lg: "18.75px" }}
+                lineHeight={{ base: "24px", lg: "30px" }}
+                letterSpacing="0.5px"
+                color="var(--text-color)"
+                _hover={{ color: "var(--link-hover-color)", textDecor: "none" }}
+              >
+                <Breadcrumb.Link as={ReactRouterLink} to="/" textDecor="none">
+                  Home
+                </Breadcrumb.Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Separator />
 
-            <BreadcrumbItem
-              isCurrentPage
-              fontSize={{ base: "15.13px", lg: "18.75px" }}
-              lineHeight={{ base: "24px", lg: "30px" }}
-              letterSpacing="0.5px"
-              color="var(--link-color)"
-              _hover={{ color: "var(--link-hover-color)" }}
-            >
-              <BreadcrumbLink>Search / {searchQuery}</BreadcrumbLink>
-            </BreadcrumbItem>
-          </Breadcrumb>
+              <Breadcrumb.Item
+                isCurrentPage
+                fontSize={{ base: "15.13px", lg: "18.75px" }}
+                lineHeight={{ base: "24px", lg: "30px" }}
+                letterSpacing="0.5px"
+                color="var(--link-color)"
+                _hover={{ color: "var(--link-hover-color)" }}
+              >
+                <Breadcrumb.Link>Search</Breadcrumb.Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Separator />
+
+              <Breadcrumb.Item
+                isCurrentPage
+                fontSize={{ base: "15.13px", lg: "18.75px" }}
+                lineHeight={{ base: "24px", lg: "30px" }}
+                letterSpacing="0.5px"
+              >
+                <Breadcrumb.CurrentLink
+                  color="var(--link-color)"
+                  _hover={{ color: "var(--link-hover-color)" }}
+                >
+                  {searchQuery}
+                </Breadcrumb.CurrentLink>
+              </Breadcrumb.Item>
+            </Breadcrumb.List>
+          </Breadcrumb.Root>
 
           {/* Filter Area */}
           <Box
@@ -294,14 +311,14 @@ const Filter = () => {
                     <Text
                       color="#fff"
                       fontWeight="400"
-                      textTransform="uppercase"
+                      textTransform="capitalize"
                       fontSize={{ base: "16px", md: "20px" }}
                       lineHeight={{ base: "17.6px", md: "44px" }}
                       letterSpacing="1.5px"
                     >
                       {`Showing 1 - ${
-                        isNaN(animePerPage) ? "0" : animePerPage
-                      } of ${totalPages} Results`}
+                        isNaN(animePerPage) ? "0" : `${animePerPage} Results`
+                      } of ${totalPages} Pages`}
                     </Text>
                   </Box>
                 </Box>
@@ -311,7 +328,7 @@ const Filter = () => {
                   onBlur={handleSearchInputBlur}
                 >
                   <Field.Root>
-                    <Group>
+                    <Group attached w="100%">
                       <Input
                         borderRadius="5px"
                         background="#111111"
@@ -343,16 +360,7 @@ const Filter = () => {
                         borderBottomRightRadius="5px"
                         onClick={clearQuery}
                       >
-                        {showClear ? (
-                          <Icon
-                            as={BsX}
-                            color="#b4b4b4"
-                            height="20px"
-                            w="20px"
-                          />
-                        ) : (
-                          <></>
-                        )}
+                        {showClear ? <X color="#b4b4b4" size={8} /> : <></>}
                       </Button>
                     </Group>
                   </Field.Root>
@@ -397,7 +405,7 @@ const Filter = () => {
                 })}
                 {filterTypes.map((item, index) => {
                   return (
-                    <Select
+                    <NativeSelect.Root
                       h="38px"
                       borderRadius="5px"
                       background="#111111"
@@ -414,8 +422,11 @@ const Filter = () => {
                       }}
                       key={index}
                     >
-                      <option>{item.desc}</option>
-                    </Select>
+                      <NativeSelect.Field>
+                        <option>{item.desc}</option>
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
                   );
                 })}
               </Box>
@@ -446,7 +457,11 @@ const Filter = () => {
                   opacity={isLoading === true ? "0.5" : 1}
                 >
                   {isLoading === true ? (
-                    <Spinner color="var(--link-hover-color)" />
+                    <BeatLoader
+                      color="var(--link-hover-color)"
+                      size={8}
+                      speedMultiplier={1}
+                    />
                   ) : (
                     "Filter Now"
                   )}
@@ -459,7 +474,7 @@ const Filter = () => {
               <Heading
                 as="h1"
                 color="#fff"
-                textTransform="uppercase"
+                textTransform="capitalize"
                 fontSize={{ base: "24.83px", lg: "27.28px" }}
                 lineHeight={{ base: "30px", lg: "34px" }}
                 letterSpacing="1.5px"

@@ -32,7 +32,7 @@ const ListView = ({
   const renderSkeleton = () =>
     Array.from({ length: 8 }).map((_, index) => (
       <GridItem key={index}>
-        <Skeleton bg="#191919" borderRadius="10px" height="120px">
+        <Skeleton bg="#191919" borderRadius="10px" height="91px">
           <Skeleton
             w={{ base: "54.94px", lg: "69px" }}
             borderTopLeftRadius="10px"
@@ -107,13 +107,15 @@ const ListView = ({
             transform: "scale(1.05)",
           }}
           transition={"all 0.2s ease-in-out"}
-          padding="10px"
+          // padding="10px"
         >
           <Image
             src={resultImg}
             bg="#191919"
             w={{ base: "64px", lg: "70px" }}
-            borderRadius="10px"
+            borderTopLeftRadius="10px"
+            borderBottomLeftRadius="10px"
+            h="100%"
           />
           <VStack justifyContent="start" alignItems="start" w="80%" py="10px">
             <Heading
@@ -128,8 +130,8 @@ const ListView = ({
               fontWeight="500"
               fontFamily="var(--font-family)"
             >
-              {resultTitle?.length > 30
-                ? `${resultTitle.slice(0, 30)}...`
+              {resultTitle?.length > 21
+                ? `${resultTitle.slice(0, 20)}...`
                 : resultTitle}
             </Heading>
             {media_type_exist && <StarRating rating={result.vote_average} />}
@@ -243,6 +245,9 @@ const ListView = ({
           border="1px solid var(--secondary-color)"
           borderRadius="5px"
           padding="5px 15px"
+          display="flex"
+          alignItems="center"
+          justifyContent="start"
           transition="all ease 0.25s"
           width={{ base: "100%", md: "fit-content" }}
           _hover={{
