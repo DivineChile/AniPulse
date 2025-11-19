@@ -1,4 +1,12 @@
-import { Box, Flex, HStack, Heading, Text, VStack } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -7,6 +15,7 @@ import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
 import { Navigation, FreeMode } from "swiper/modules";
+import { cacheFetch } from "../../../utils/cacheFetch";
 
 //import components
 import Loading from "../../ErrorPage/Loading";
@@ -27,37 +36,28 @@ const Hero = () => {
 
   const fetchAnimeData = async () => {
     try {
-      // Fetch top airing anime IDs
-      const topAiringResponse = await fetch(
-        `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/top-ten`
+      // Fetch top airing anime with cacheFetch
+      const homeData = await cacheFetch(
+        "homeData",
+        `${apiBase}api/`,
+        10 * 60 * 1000 // cache for 10 minutes
       );
-      const topAiringData = await topAiringResponse.json();
 
-      const airingDataSliced =
-        topAiringData.results.today.length > 10
-          ? topAiringData.results.today.slice(0, 10)
-          : topAiringData.results.today;
+      // Slice to max 10 if more than 10
+      const spotlightData = homeData?.results.spotlights;
 
-      const animeIds = airingDataSliced.map((anime) => anime.id);
-
-      // Fetch all anime details in parallel
-      const animeDetailsPromises = animeIds.map((id) =>
-        fetch(
-          `https://cors-anywhere-aifwkw.fly.dev/${apiBase}api/info?id=${id}`
-        ).then((res) => {
-          if (!res.ok)
-            throw new Error(`Failed to fetch details for anime ID ${id}`);
-          return res.json();
-        })
-      );
-      const animeDetails = await Promise.all(animeDetailsPromises);
-
-      // Extract anime info and update state
-      const animeInfo = animeDetails?.map((detail) => detail?.results.data);
-      const filtered = animeInfo.filter((anime) => anime); // Remove any undefined entries
-      setState({ isLoading: false, error: null, animeInfo: filtered });
+      // Use the data directly instead of fetching animeInfo by ID
+      setState({
+        isLoading: false,
+        error: null,
+        animeInfo: spotlightData || [],
+      });
     } catch (err) {
-      setState({ isLoading: false, error: err.message, animeInfo: [] });
+      setState({
+        isLoading: false,
+        error: err.message,
+        animeInfo: [],
+      });
     }
   };
 
@@ -86,13 +86,14 @@ const Hero = () => {
             md: "calc(100vh - 73px)",
             lg: "calc(100vh - 84px)",
           }}
+          top={{ base: "70px", md: "73px", lg: "84px" }}
           pos="relative"
         >
           <Swiper
             modules={[Navigation, FreeMode]}
             autoplay={{ delay: 5000, disableOnInteraction: false }}
             loop
-            effect="fade"
+            effect="slide"
             style={{ height: "100%", position: "relative" }}
           >
             <Box
@@ -121,9 +122,20 @@ const Hero = () => {
             </Box>
 
             {animeInfo?.map((anime, index) => {
-              const animeInfo = anime.animeInfo;
-              const animeStatus = animeInfo.Status.split("-").join(" ");
-              const animePremiered = animeInfo.Premiered.split("-")[1];
+              const tvInfo = anime.tvInfo;
+
+              // Flatten episodeInfo into main array
+              const badgeArray = Object.entries(tvInfo).flatMap(
+                ([key, value]) => {
+                  if (typeof value === "object" && value !== null) {
+                    return Object.entries(value).map(([subKey, subValue]) => ({
+                      key: `${key}.${subKey}`,
+                      value: subValue,
+                    }));
+                  }
+                  return { key, value };
+                }
+              );
 
               return (
                 <SwiperSlide key={index}>
@@ -158,15 +170,15 @@ const Hero = () => {
                           textTransform="capitalize"
                           fontWeight={{ base: "800", md: "800", lg: "800" }}
                           fontSize={{
-                            base: "50px",
-                            sm: "50px",
+                            base: "45px",
+                            sm: "45px",
                             md: "65px",
                             lg: "67px",
                             "2xl": "76.25px",
                           }}
                           fontFamily="var(--font-family)"
                           lineHeight={{
-                            base: "48px",
+                            base: "52px",
                             md: "68px",
                             "2xl": "88px",
                           }}
@@ -181,63 +193,46 @@ const Hero = () => {
                           textTransform="capitalize"
                           color="var(--text-color)"
                           fontSize={{
-                            base: "20.97px",
-                            md: "29px",
-                            "2xl": "37.97px",
+                            base: "18.97px",
+                            md: "27px",
+                            "2xl": "35.97px",
                           }}
+                          fontStyle="italic"
                           fontFamily="var(--font-family)"
                           lineHeight={{
-                            base: "33px",
-                            md: "35px",
-                            "2xl": "40px",
+                            base: "28px",
+                            md: "32px",
+                            "2xl": "36px",
                           }}
                           fontWeight="400"
                           mt={{ base: "10px", "2xl": "15px" }}
                         >
-                          Status:{" "}
                           <Text as="span" textTransform="capitalize">
-                            {animeStatus || "Unknown"}
+                            {anime.japanese_title.length > 30
+                              ? `${anime.japanese_title.slice(0, 30)}...`
+                              : anime.japanese_title}
                           </Text>
                         </Heading>
                         <HStack my="10px" gap="10px 10px" flexWrap="wrap">
-                          {animeInfo.Genres.map((genre, i) => (
-                            <Text
+                          {badgeArray.map((badge, i) => (
+                            <Badge
+                              size={{ base: "sm", md: "md", lg: "lg" }}
                               key={i}
-                              as="span"
-                              color={
-                                i === 0
-                                  ? "var(--text-color)"
-                                  : "var(--text-color)"
-                              }
-                              cursor="pointer"
-                              p="3px 10px"
-                              bg={
-                                i === 0
-                                  ? "var(--accent-color)"
-                                  : "var(--primary-background-color)"
-                              }
-                              _hover={{
-                                color: "var(--link-hover-color) !important",
-                                bgColor: "var(--accent-color)",
-                                fontWeight: "bold",
-                                border: "none",
-                              }}
-                              borderRadius="8px"
-                              border={
-                                i === 0
-                                  ? "none"
-                                  : "2px solid var(--secondary-color)"
-                              }
-                              fontSize={{ base: "14.63px", md: "16.63px" }}
-                              fontFamily="var(--font-family)"
-                              lineHeight="24px"
-                              transition="all 0.25s ease"
+                              colorPalette="teal"
+                              variant="surface"
+                              bg="var(--primary-background-color)"
                             >
-                              {genre}
-                            </Text>
+                              {`${
+                                badge.key.includes("sub")
+                                  ? "SUB"
+                                  : badge.key.includes("dub")
+                                  ? "DUB"
+                                  : ""
+                              } ${badge.value}`}
+                            </Badge>
                           ))}
                         </HStack>
-                        <Heading
+                        {/* <Heading
                           as="h4"
                           textTransform="capitalize"
                           color="var(--text-color)"
@@ -255,7 +250,7 @@ const Hero = () => {
                           fontWeight="400"
                         >
                           Release year: {animePremiered}
-                        </Heading>
+                        </Heading> */}
                         <Text
                           as="p"
                           fontSize={{
@@ -272,9 +267,9 @@ const Hero = () => {
                           color="var(--text-color)"
                           my="10px"
                         >
-                          {animeInfo.Overview?.length > 200
-                            ? `${animeInfo.Overview.slice(0, 200)}...`
-                            : animeInfo.Overview}
+                          {anime.description?.length > 200
+                            ? `${anime.description.slice(0, 200)}...`
+                            : anime.description}
                         </Text>
                         <Box width="100%" my={{ base: "15px", md: "10px" }}>
                           <Link

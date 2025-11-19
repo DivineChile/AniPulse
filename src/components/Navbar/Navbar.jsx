@@ -14,6 +14,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [authUser, setAuthUser] = useState(null);
   const [profileDialogState, setProfileDialogState] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation().pathname;
   const navigate = useNavigate();
   // const toast = useToast();
@@ -76,16 +77,34 @@ const Navbar = () => {
   if (authUser != null && authUser.displayName == null) {
     userName = authUser.email?.split("@")[0];
   }
+
+  //Navbar sticky feature
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <Box
-      className="navbar"
-      background="var(--primary-background-color)"
-      width={{ base: isOpen ? "100%" : "initial" }}
-      py={{ base: "15px", lg: "20px" }}
-      boxShadow="0 0 10px 0 rgba(0,0,0,0.3)"
-      position={{ base: isOpen ? "fixed" : "relative" }}
-      top={{ base: isOpen ? "0" : "initial" }}
+      position="fixed"
+      top="0"
+      left="0"
+      w="100%"
       zIndex="9999"
+      py={{ base: "15px", lg: "20px" }}
+      transition="all 0.25s ease"
+      backdropFilter={scrolled ? "blur(12px)" : "blur(0px)"}
+      backgroundColor={
+        scrolled
+          ? "rgba(11,15,20,0.95)" // blurred-dark-glass
+          : "var(--primary-background-color)"
+      }
+      boxShadow={scrolled ? "0 2px 12px rgba(0,0,0,0.35)" : "none"}
+      borderBottom={scrolled ? "1px solid rgba(255,255,255,0.06)" : "none"}
     >
       <Box
         maxW={{
@@ -150,24 +169,27 @@ const Navbar = () => {
             flexDir={{ base: "column", lg: "row" }}
             alignItems={{ base: "flex-start", lg: "center" }}
             justifyContent={{ base: "flex-start", lg: "center" }}
-            boxShadow={{
-              base: "0 4px 10px 0 rgba(0,0,0,0.25)",
-              lg: "none",
-            }}
-            backgroundColor="var(--primary-background-color)"
+            backdropBlur={scrolled ? "12px" : "0px"}
+            backgroundColor={
+              scrolled
+                ? "rgba(11,15,20,0.95)" // blurred-dark-glass
+                : "var(--primary-background-color)"
+            }
+            boxShadow={scrolled ? "0 2px 12px rgba(0,0,0,0.35)" : "none"}
             transition="all ease 0.3s"
             width={{ base: "100%", lg: "fit-content" }}
             flexWrap="wrap"
             pos={{ base: "absolute", lg: "initial" }}
             left="0"
-            top={{ base: "70px", md: "73px", lg: "none" }}
+            top={{ base: "70px", sm: "71px", md: "71px", lg: "none" }}
             p={isOpen ? { base: "20px", lg: "0" } : { base: "0 20px", lg: "0" }}
             gap={{ base: "10px 0", lg: "0" }}
             h={
               isOpen
                 ? {
                     base: "calc(100dvh - 70px)",
-                    md: "calc(100dvh - 73px)",
+                    sm: "calc(100dvh - 71px)",
+                    md: "calc(100dvh - 71px)",
                     lg: "initial",
                   }
                 : { base: "0", lg: "initial" }
@@ -194,7 +216,16 @@ const Navbar = () => {
                       : { base: "none", lg: "inline-block" }
                   }
                 >
-                  <Link to={item.to}>{item.label}</Link>
+                  <Link
+                    to={item.to}
+                    style={{
+                      color: isActive
+                        ? "var(--link-hover-color)"
+                        : "var(--text-color)",
+                    }}
+                  >
+                    {item.label}
+                  </Link>
                 </List.Item>
               );
             })}

@@ -12,6 +12,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink } from "react-router-dom";
+import { CalendarClock } from "lucide-react";
 
 const WeeklySchedule = () => {
   const [dates, setDates] = useState([]);
@@ -82,15 +83,26 @@ const WeeklySchedule = () => {
         maxW={{ base: "85%", sm: "95%", xl: "85%", "2xl": "container.xl" }}
         margin="auto"
       >
-        <Heading
-          fontSize="38px"
-          fontWeight="700"
-          color="var(--text-color)"
-          textTransform="capitalize"
-          mb="20px"
+        <Box
+          display="flex"
+          gap="10px"
+          alignItems="center"
+          justifyContent={{ base: "center", md: "initial" }}
         >
-          Weekly Schedule
-        </Heading>
+          <CalendarClock size={30} color="var(--primary-color)" />
+          <Heading
+            textTransform="capitalize"
+            color="var(--text-color)"
+            fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
+            fontWeight="500"
+            lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
+            letterSpacing="1.5px"
+            fontFamily="var(--font-family)"
+            textAlign={{ base: "center", md: "start" }}
+          >
+            Weekly Schedule
+          </Heading>
+        </Box>
 
         <Tabs.Root
           isLazy
@@ -104,22 +116,32 @@ const WeeklySchedule = () => {
         >
           <Tabs.List
             display="flex"
-            justifyContent="space-evenly"
+            justifyContent="center"
             bg="#000"
             py={8}
+            // overflowX="scroll"
+            // gap={8}
           >
             {dates.map((date, index) => (
               <Tabs.Trigger
                 key={index}
                 value={index}
                 py="20px"
+                px="120px"
                 _selected={{ color: "var(--primary-color)" }}
+                // w="1300px"
               >
                 <VStack>
-                  <Text fontSize="17px" color="var(--text-color)">
+                  <Text
+                    fontSize={{ base: "13px", md: "15px", lg: "17px" }}
+                    color="var(--text-color)"
+                  >
                     {date.displayDate}
                   </Text>
-                  <Text fontSize="28px" fontWeight="bold">
+                  <Text
+                    fontSize={{ base: "20px", md: "24px", lg: "28px" }}
+                    fontWeight="bold"
+                  >
                     {date.day}
                   </Text>
                 </VStack>

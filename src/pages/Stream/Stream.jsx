@@ -50,6 +50,7 @@ const Stream = () => {
 
   //Base URLS
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
+  const main_api = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const streamProxy =
     "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";

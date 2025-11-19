@@ -17,13 +17,13 @@
 }
 
 .navbar ul li.active a {
-  color: var(--link-hover-color);
+  color: var(--link-hover-color) !important;
 }
 
 .navbar ul li::after {
   content: "";
   display: block;
-  height: 2.5px;
+  height: 2px;
   width: 0;
   visibility: hidden;
   transition: width 0.4s ease-in-out, visibility 0.4s ease-in-out;

@@ -6,6 +6,11 @@ import {
   VStack,
   Flex,
   Spacer,
+  Card,
+  LinkBox,
+  LinkOverlay,
+  Badge,
+  HStack,
   Box,
   Skeleton,
   SkeletonText,
@@ -90,155 +95,72 @@ const TopAnime = ({ data, numbers, heading, loading, error, icon }) => {
           const type = item.tvInfo.showType;
 
           return (
-            <Box key={animeId || index} w="100%">
-              <ChakraLink
-                as={ReactRouterLink}
-                bg="var(--card-background-color)"
-                w="100%"
-                borderRadius="10px"
-                display="flex"
-                gap="20px"
-                _hover={{
-                  transform: "scale(1.05)",
-                }}
-                transition={"all 0.2s ease-in-out"}
-                padding="10px"
-                textDecor="none!important"
-                to={`/anime/${animeId}`}
-                className="listItem"
-              >
-                <Box display="flex">
-                  {numbers && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      w={{ base: "80px", sm: "85px", md: "110px" }}
-                    >
-                      <Heading
-                        fontFamily="var(--font-family)"
-                        fontWeight="400"
-                        lineHeight={{ base: "69px", md: "90px" }}
-                        fontSize={{ base: "46px", md: "60px" }}
-                        letterSpacing="1.5px"
-                        className="topNumber"
-                        id={`top${index + 1}`}
+            <LinkBox
+              key={animeId}
+              _hover={{
+                transform: "scale(1.02)",
+              }}
+              transition={"all 0.2s ease-in-out"}
+            >
+              <Card.Root flexDirection="row" overflow="hidden">
+                <Image
+                  objectFit="cover"
+                  src={poster}
+                  bg="var(--primary-background-color)"
+                  w={{ base: "60.94px", md: "75px", lg: "85px" }}
+                  alt={animeId}
+                />
+                <Box>
+                  <Card.Body w="100%">
+                    <LinkOverlay asChild>
+                      <ReactRouterLink to={`/anime/${animeId}`}>
+                        <Card.Title
+                          mb="2"
+                          fontSize={{
+                            base: "12.81px",
+                            sm: "13px",
+                            md: "14.77px",
+                            lg: "16.63px",
+                          }}
+                          lineHeight={{ base: "18px", md: "22.5px" }}
+                          letterSpacing="0.5px"
+                          fontFamily="var(--font-family)"
+                        >
+                          {title?.length > 30
+                            ? `${title.slice(0, 23)}...`
+                            : title}
+                        </Card.Title>
+                      </ReactRouterLink>
+                    </LinkOverlay>
+                    <Flex alignItems="center" w="100%" gap={3}>
+                      {item?.tvInfo.sub && (
+                        <HStack>
+                          {item?.tvInfo.sub && (
+                            <Badge variant="surface" size={{ base: "sm" }}>
+                              SUB {item?.tvInfo.sub}
+                            </Badge>
+                          )}
+                          {item?.tvInfo.dub && (
+                            <Badge variant="surface" size={{ base: "sm" }}>
+                              DUB {item?.tvInfo.dub}
+                            </Badge>
+                          )}
+                        </HStack>
+                      )}
+                      <Text
+                        fontSize={{
+                          base: "12.81px",
+                          sm: "13px",
+                        }}
+                        lineHeight={{ base: "18px", md: "22.5px" }}
                       >
-                        {index + 1}
-                      </Heading>
-                    </Box>
-                  )}
-                  <Image
-                    src={poster}
-                    bg="#191919"
-                    w={{ base: "60.94px", lg: "69px" }}
-                    borderRadius="10px"
-                  />
+                        {type}
+                      </Text>
+                    </Flex>
+                  </Card.Body>
                 </Box>
-                <VStack
-                  justifyContent="center"
-                  alignItems="start"
-                  w="80%"
-                  py="10px"
-                >
-                  <Heading
-                    as="h3"
-                    textDecor="none"
-                    className="listItemHead"
-                    fontSize={{
-                      base: "12.81px",
-                      sm: "13px",
-                      md: "14.77px",
-                      lg: "16.63px",
-                    }}
-                    color="var(--text-color)"
-                    fontFamily="var(--font-family)"
-                    fontWeight="400"
-                    _hover={{
-                      color: "var(--link-hover-color)",
-                    }}
-                    transition="all ease 0.25s"
-                    lineHeight={{ base: "18px", md: "22.5px" }}
-                    letterSpacing="0.5px"
-                  >
-                    {title?.length > 30 ? `${title.slice(0, 23)}...` : title}
-                  </Heading>
-                  <Flex
-                    justifyContent="space-between"
-                    mt="5px"
-                    mb="10px"
-                    w="100%"
-                  >
-                    <Box display="flex" alignItems="center" gap="10px">
-                      <Text
-                        as="span"
-                        color="var(--text-color)"
-                        cursor="pointer"
-                        p="3px 10px"
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--text-color)",
-                          bgColor: "var(--accent-color)",
-                          border: "1px solid var(--accent-color)",
-                          textDecor: "none",
-                        }}
-                        borderRadius="6px"
-                        border="1px solid var(--text-color)"
-                        fontSize={{ base: "11.06", md: "11.63px" }}
-                        lineHeight="18px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
-                      >
-                        {item?.tvInfo.sub
-                          ? `SUB ${item.tvInfo.sub}`
-                          : "SUB N/A"}
-                      </Text>
-                      <Text
-                        as="span"
-                        color="var(--text-color)"
-                        cursor="pointer"
-                        p="3px 10px"
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--text-color)",
-                          bgColor: "var(--accent-color)",
-                          border: "1px solid var(--accent-color)",
-                        }}
-                        borderRadius="6px"
-                        border="1px solid var(--text-color)"
-                        fontSize={{ base: "11.06", md: "11.63px" }}
-                        lineHeight="18px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
-                      >
-                        {item.tvInfo?.dub
-                          ? `DUB ${item.tvInfo.dub}`
-                          : "DUB N/A"}
-                      </Text>
-                    </Box>
-                    <Spacer />
-                    <Box display="flex" alignItems="baseline">
-                      <Text
-                        as="span"
-                        color="var(--text-secondary)"
-                        cursor="pointer"
-                        p="3px 10px"
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--text-color)",
-                        }}
-                        fontSize={{ base: "11.63px" }}
-                        lineHeight="24px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
-                      >
-                        {type && type !== "" ? type : "NIL"}
-                      </Text>
-                    </Box>
-                  </Flex>
-                </VStack>
-              </ChakraLink>
-            </Box>
+              </Card.Root>
+            </LinkBox>
           );
         })}
       </Box>

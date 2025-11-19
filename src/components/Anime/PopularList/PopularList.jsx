@@ -3,11 +3,7 @@ import {
   Heading,
   Grid,
   GridItem,
-  Image,
-  Text,
   Link as ChakraLink,
-  Flex,
-  Icon,
   Skeleton,
   SkeletonText,
   HStack,
@@ -20,13 +16,14 @@ import { useEffect, useState } from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import Loading from "../../ErrorPage/Loading";
 import { Flame, Info } from "lucide-react";
+import { cacheFetch } from "../../../utils/cacheFetch";
+import AnimeCard from "../AnimeCard/AnimeCard";
 
 const PopularList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [results, setResults] = useState([]);
 
-  const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
@@ -34,9 +31,12 @@ const PopularList = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${proxy}${backup_api}/api/most-popular`);
-      const data = await response.json();
-      setResults(data.results.data);
+      const data = await cacheFetch(
+        "homeData", // key used for home page data in localStorage
+        `${proxy}${backup_api}api`, // fallback API endpoint
+        10 * 60 * 1000 // cache duration (10 minutes)
+      );
+      setResults(data.results.mostPopular || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -119,182 +119,7 @@ const PopularList = () => {
               ))}
             {error && <Error msg={error} pos="absolute" />}
             {truncatedResults?.map((item, index) => {
-              const nameLength =
-                item.title.length > 30
-                  ? `${item.title.slice(0, 26)}...`
-                  : item.title;
-              return (
-                <GridItem w={{ base: "100%" }} key={item.id}>
-                  <Box
-                    as={ReactRouterLink}
-                    to={`/anime/${item.id}`}
-                    pos="relative"
-                    overflow="hidden!important"
-                    className={`episode-container`}
-                    h={{
-                      base: "216px",
-                      sm: "290.23px",
-                      md: "350px",
-                      lg: "360px",
-                      "2xl": "408.19px",
-                    }}
-                    display="flex"
-                    borderRadius="10px"
-                    transition="opacity 0.5s"
-                  >
-                    {/* Anime Img */}
-                    <Image
-                      src={item.poster}
-                      w="100%"
-                      bg="var(--card-background-color)"
-                      borderRadius="10px"
-                      transition="transform 0.7s ease-in-out"
-                      h="100%"
-                      className="thumbnail"
-                    />
-
-                    {/* Overlay */}
-                    <Box
-                      className="overlay"
-                      pos="absolute"
-                      top="0"
-                      left="0"
-                      textAlign="center"
-                      background="rgba(0, 0, 0, 0.85)!important"
-                      transition="height 0.5s ease, opacity 0.5s ease"
-                      h="0"
-                      w="100%"
-                      borderRadius="10px"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      opacity="0"
-                    >
-                      <ChakraLink
-                        as={ReactRouterLink}
-                        to={`/anime/${item.id}`}
-                        color="var(--link-hover-color)"
-                        _hover={{
-                          color: "var(--link-hover-color)",
-                          transition: "all ease 0.25s",
-                        }}
-                        fontSize={{ base: "15px", sm: "18.88px" }}
-                        lineHeight="36px"
-                        letterSpacing="0.5px"
-                        fontWeight="500"
-                        className="playNowBtn"
-                        display="flex"
-                        alignItems="center"
-                        gap="8px"
-                      >
-                        <Info size={40} color="var(--link-hover-color)" />
-                      </ChakraLink>
-                    </Box>
-                  </Box>
-                  <Box
-                    display="flex"
-                    flexDir="column"
-                    alignItems={{ base: "flex-start" }}
-                    mt="10px"
-                  >
-                    <Flex gap="10px" mt="5px" mb="10px">
-                      <Text
-                        as="span"
-                        color="var(--text-color)"
-                        cursor="pointer"
-                        p={{ base: "0px 6px", lg: "3px 10px" }}
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--text-color)",
-                          bgColor: "var(--accent-color)",
-                          borderColor: "var(--accent-color)",
-                          fontWeight: "bold",
-                        }}
-                        borderRadius="8px"
-                        border={{
-                          base: "1px solid var(--text-color)",
-                          md: "2px solid var(--text-color)",
-                        }}
-                        fontSize={{ base: "12.63px", md: "14.63px" }}
-                        lineHeight="24px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
-                      >
-                        SUB {item.tvInfo.sub || "N/A"}
-                      </Text>
-                      <Text
-                        as="span"
-                        color="var(--text-color)"
-                        cursor="pointer"
-                        p={{ base: "0px 6px", lg: "3px 10px" }}
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--text-color)",
-                          bgColor: "var(--accent-color)",
-                          borderColor: "var(--accent-color)",
-                          fontWeight: "bold",
-                        }}
-                        borderRadius="8px"
-                        border={{
-                          base: "1px solid var(--text-color)",
-                          md: "2px solid var(--text-color)",
-                        }}
-                        fontSize={{ base: "12.63px", md: "14.63px" }}
-                        lineHeight="24px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
-                      >
-                        DUB {item.tvInfo.dub || "N/A"}
-                      </Text>
-                      <Text
-                        as="span"
-                        color="var(--text-secondary)"
-                        hideBelow="sm"
-                        cursor="pointer"
-                        p={{ base: "0px 6px", lg: "3px 10px" }}
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--text-color)",
-                        }}
-                        fontSize={{ base: "12.63px", md: "14.63px" }}
-                        lineHeight="24px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
-                      >
-                        {item.tvInfo.showType || "N/A"}
-                      </Text>
-                    </Flex>
-                    <ChakraLink
-                      as={ReactRouterLink}
-                      _hover={{ textDecor: "none" }}
-                      to={`/anime/${item.id}`}
-                    >
-                      {/* Anime Name */}
-                      <Text
-                        as="p"
-                        fontSize={{
-                          base: "17px",
-                          sm: "19px",
-                          lg: "20px",
-                          "2xl": "22.88px",
-                        }}
-                        lineHeight="26px"
-                        letterSpacing="0.5px"
-                        fontWeight="500"
-                        textAlign={{ base: "start" }}
-                        color="var(--text-color)"
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--link-hover-color)",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {nameLength}
-                      </Text>
-                    </ChakraLink>
-                  </Box>
-                </GridItem>
-              );
+              return <AnimeCard key={item.id} anime={item} />;
             })}
           </Grid>
 

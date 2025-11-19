@@ -2,71 +2,40 @@ import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
 import TopAnime from "../TopAnime/TopAnime";
 import { useEffect, useState } from "react";
 import { CalendarClock, CheckCircle2, Crown } from "lucide-react";
+import { cacheFetch } from "../../../utils/cacheFetch";
 
 const Catalog = () => {
-  const [topLoading, setTopLoading] = useState(false);
-  const [topError, setTopError] = useState(null);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+  const [catalogError, setCatalogError] = useState(null);
   const [topRatedAnime, setTopRatedAnime] = useState([]);
-  const [newLoading, setNewLoading] = useState(false);
-  const [newError, setNewError] = useState(null);
   const [newAnime, setNewAnime] = useState([]);
-  const [recentLoading, setRecentLoading] = useState(false);
-  const [recentError, setRecentError] = useState(null);
   const [recentlyCompletedAnime, setRecentlyCompletedAnime] = useState([]);
 
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
-  const fetchTopRatedAnime = async () => {
-    setTopLoading(true);
-    setTopError(null);
+  const fetchCatalogAnimes = async () => {
+    setCatalogLoading(true);
+    setCatalogError(null);
 
     try {
-      const response = await fetch(`${proxy}${backup_api}/api/most-popular`);
-      const data = await response.json();
-      setTopRatedAnime(data.results.data);
-      console.log(topRatedAnime);
+      const data = await cacheFetch(
+        "homeData", // key used for home page data in localStorage
+        `${proxy}${backup_api}api`, // fallback API endpoint
+        10 * 60 * 1000 // cache duration (10 minutes)
+      );
+      setTopRatedAnime(data.results.mostPopular || []);
+      setRecentlyCompletedAnime(data.results.latestCompleted || []);
+      setNewAnime(data.results.topUpcoming || []);
     } catch (err) {
-      setTopError("Failed to load data. Please try again.");
+      setCatalogError("Failed to load data. Please try again.");
     } finally {
-      setTopLoading(false);
-    }
-  };
-
-  const fetchNewAnime = async () => {
-    setNewLoading(true);
-    setNewError(null);
-
-    try {
-      const response = await fetch(`${proxy}${backup_api}/api/top-upcoming`);
-      const data = await response.json();
-      setNewAnime(data.results.data);
-    } catch (err) {
-      setNewError("Failed to load data. Please try again.");
-    } finally {
-      setNewLoading(false);
-    }
-  };
-
-  const fetchRecentlyCompletedAnime = async () => {
-    setRecentLoading(true);
-    setRecentError(null);
-
-    try {
-      const response = await fetch(`${proxy}${backup_api}/api/completed`);
-      const data = await response.json();
-      setRecentlyCompletedAnime(data.results.data);
-    } catch (err) {
-      setRecentError("Failed to load data. Please try again.");
-    } finally {
-      setRecentLoading(false);
+      setCatalogLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTopRatedAnime();
-    fetchNewAnime();
-    fetchRecentlyCompletedAnime();
+    fetchCatalogAnimes();
   }, []);
 
   return (
@@ -94,8 +63,8 @@ const Catalog = () => {
               heading="Top Rated Anime"
               icon={<Crown size={30} color="var(--primary-color)" />}
               numbers={true}
-              loading={topLoading}
-              error={topError}
+              loading={catalogLoading}
+              error={catalogError}
             />
           </GridItem>
           <GridItem display="flex" justifyContent="center">
@@ -104,8 +73,8 @@ const Catalog = () => {
               heading="Upcoming"
               icon={<CalendarClock size={30} color="var(--primary-color)" />}
               numbers={false}
-              loading={newLoading}
-              error={newError}
+              loading={catalogLoading}
+              error={catalogError}
             />
           </GridItem>
           <GridItem display="flex" justifyContent="center">
@@ -114,8 +83,8 @@ const Catalog = () => {
               heading="Recently Completed"
               icon={<CheckCircle2 size={30} color="var(--primary-color)" />}
               numbers={false}
-              loading={recentLoading}
-              error={recentError}
+              loading={catalogLoading}
+              error={catalogError}
             />
           </GridItem>
         </Grid>

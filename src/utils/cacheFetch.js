@@ -16,8 +16,9 @@ export const cacheFetch = async (
   const cachedTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
 
   if (cachedData && cachedTimestamp) {
-    const age = Date.now() - Number(cachedTimestamp);
-    if (age < cacheDuration) {
+    const age = Date.now() - cachedTimestamp;
+
+    if (age < cacheDuration == false) {
       return JSON.parse(cachedData);
     }
   }
