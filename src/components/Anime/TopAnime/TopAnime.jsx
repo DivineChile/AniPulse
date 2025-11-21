@@ -5,7 +5,6 @@ import {
   Text,
   VStack,
   Flex,
-  Spacer,
   Card,
   LinkBox,
   LinkOverlay,
@@ -74,19 +73,6 @@ const TopAnime = ({ data, numbers, heading, loading, error, icon }) => {
 
   return (
     <VStack alignItems={{ base: "center", lg: "start" }} gap="20px" w="100%">
-      <Flex gap="10px" alignItems="center" justifyContent="center">
-        {icon}
-        <Heading
-          fontFamily="var(--font-family)"
-          fontWeight="400"
-          fontSize={{ base: "23.25px", md: "29.18px" }}
-          lineHeight={{ base: "26.4px", md: "33px" }}
-          letterSpacing="1.5px"
-          color="var(--text-color)"
-        >
-          {heading}
-        </Heading>
-      </Flex>
       <Box display="flex" flexDirection="column" gap="20px" w="100%">
         {truncatedResults?.map((item, index) => {
           const animeId = item.id;
@@ -98,7 +84,7 @@ const TopAnime = ({ data, numbers, heading, loading, error, icon }) => {
             <LinkBox
               key={animeId}
               _hover={{
-                transform: "scale(1.02)",
+                transform: "scale(1.01)",
               }}
               transition={"all 0.2s ease-in-out"}
             >
@@ -106,7 +92,7 @@ const TopAnime = ({ data, numbers, heading, loading, error, icon }) => {
                 <Image
                   objectFit="cover"
                   src={poster}
-                  bg="var(--primary-background-color)"
+                  bg="var(--card-background-color)"
                   w={{ base: "60.94px", md: "75px", lg: "85px" }}
                   alt={animeId}
                 />

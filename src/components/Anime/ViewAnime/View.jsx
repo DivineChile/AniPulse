@@ -9,6 +9,8 @@ import {
   Flex,
   TagRoot,
   TagLabel,
+  Button,
+  Image,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams, Link as ReactRouterLink } from "react-router-dom";
@@ -27,7 +29,31 @@ import {
   Loader,
   Star,
   Tag,
+  TagIcon,
 } from "lucide-react";
+import { cacheFetch } from "../../../utils/cacheFetch";
+
+/* Small reusable card */
+const DetailCard = ({ icon, label, value }) => (
+  <Box
+    bg="rgba(255,255,255,0.05)"
+    border="1px solid rgba(255,255,255,0.1)"
+    p="20px"
+    borderRadius="12px"
+    color="var(--text-color)"
+  >
+    <Flex align="center" gap="10px" mb="5px">
+      {icon}
+      <Text fontSize="16px" fontWeight="600">
+        {label}
+      </Text>
+    </Flex>
+
+    <Text fontSize="14px" color="var(--text-secondary)">
+      {value || "Unknown"}
+    </Text>
+  </Box>
+);
 
 const View = () => {
   const { id } = useParams();
@@ -42,13 +68,10 @@ const View = () => {
   const [episodes, setEpisodes] = useState([]);
   const [episodeCount, setEpisodeCount] = useState(0);
 
-  const [animeInfo, setAnimeInfo] = useState([]);
-  const [infoLoading, setInfoLoading] = useState(true);
-  const [infoError, setInfoError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const api = "https://consumet-api-puce.vercel.app/";
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
+  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
   const fetchAnimeData = async () => {
@@ -56,19 +79,28 @@ const View = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${proxy}${backup_api}/api/info?id=${id}`);
-      const data = await response.json();
+      // Unique cache key per anime
+      const cacheKey = `animeInfo_${id}`;
 
-      // Set anime information
-      setAnimeData(data.results.data);
+      // Fetch + cache for 10 minutes
+      const data = await cacheFetch(
+        cacheKey,
+        `${proxy}${kenjitsu_api}/api/hianime/anime/${id}`,
+        10 * 60 * 1000 // 10 minutes
+      );
 
-      setAnimeTitle(data.results.data.title);
+      const anime = data.data;
 
-      setAnimeGenres(data.results.data.animeInfo.Genres);
-      setAnimeStudios(data.results.data.animeInfo.Studios);
+      // Update state
+      setAnimeData(anime);
+      setAnimeTitle(anime.name);
+      setAnimeGenres(anime.genres);
+      setAnimeStudios(anime.studios);
+      setEpisodes(data.providerEpisodes);
+      setEpisodeCount(anime.totalEpisodes);
 
-      // Set document title
-      document.title = `${data.results.data.title} - AniPulse`;
+      // Update document title
+      document.title = `${anime.name} - AniPulse`;
     } catch (err) {
       setError("Failed to load anime data. Please try again.");
       console.error("Error fetching anime data:", err);
@@ -77,48 +109,19 @@ const View = () => {
     }
   };
 
-  const fetchAnimeEpisodes = async () => {
-    setInfoLoading(true);
-
-    try {
-      const response = await fetch(`${proxy}${backup_api}/api/episodes/${id}`);
-      const data = await response.json();
-
-      setEpisodes(data.results.episodes);
-      setEpisodeCount(data.results.totalEpisodes);
-
-      // console.log(response2);
-    } catch (err) {
-      setInfoError(err);
-    } finally {
-      setInfoLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchAnimeData();
-    fetchAnimeEpisodes();
   }, []);
 
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
-  const animeInfoAired = animeData.animeInfo
-    ? animeData.animeInfo.Aired?.split("-").join(" ")
-    : "";
-  const animeInfoSeason = animeData.animeInfo
-    ? animeData.animeInfo.Premiered?.split("-").join(" ")
-    : "";
-  const animeInfoStatus = animeData.animeInfo
-    ? animeData.animeInfo.Status?.split("-").join(" ")
-    : "";
+  const animeInfoAired = animeData.releaseDate ? animeData.releaseDate : "";
+  const animeInfoSeason = animeData.type ? animeData.type : "";
+  const animeInfoStatus = animeData.status ? animeData.status : "";
 
   return (
     <Box>
       <Navbar />
-      <Loading
-        bg="var(--linear-gradient)"
-        height="calc(100vh - 73px)"
-        isLoading={isLoading}
-      />
+      <Loading bg="var(--linear-gradient)" isLoading={isLoading} fullscreen />
 
       {error && (
         <Error
@@ -129,20 +132,124 @@ const View = () => {
       )}
 
       {!isLoading && !error && (
-        <Box
-          bg={
-            animeData.poster
-              ? `url(${animeData.poster})`
-              : "var(--primary-background-color)"
-          }
-          bgRepeat="no-repeat"
-          bgSize="cover"
-          bgPos="center"
-          bgAttachment="fixed"
-          bgBlendMode="overlay"
-          bgColor="rgba(0,0,0,1)"
-          className="fade-background"
-        >
+        <Box bg="var(--primary-background-color)">
+          {/* ================= HERO SECTION ================= */}
+          <Box
+            h={{ base: "auto", md: "550px" }}
+            pos="relative"
+            overflow="hidden"
+            pb={{ base: "30px", md: "30px" }}
+            pt={{ base: "60px", md: "0" }}
+          >
+            {/* Background */}
+            <Box
+              pos="absolute"
+              inset="0"
+              bgImage={`url(${animeData.posterImage})`}
+              bgSize="cover"
+              bgPos="center"
+              filter={{
+                base: "blur(10px) brightness(0.3)",
+                md: "blur(10px) brightness(0.3)",
+              }}
+              transform={{ base: "scale(1.1)", md: "scale(1)" }}
+            ></Box>
+
+            {/* Foreground content */}
+            <Flex
+              maxW={{
+                base: "90%",
+                sm: "95%",
+                xl: "85%",
+                "2xl": "container.xl",
+              }}
+              m="auto"
+              direction={{ base: "column", md: "row" }}
+              pos="relative"
+              zIndex="2"
+              h={{ base: "auto", md: "full" }}
+              px={{ base: "0", md: "50px" }}
+              pt={{ base: "40px", md: "0" }}
+              gap={{ base: "25px", md: "30px" }}
+              alignItems="end"
+            >
+              {/* Poster */}
+              <Image
+                src={animeData.posterImage}
+                alt={animeData.name}
+                w={{ base: "180px", md: "250px" }}
+                h={{ base: "270px", md: "350px" }}
+                borderRadius="12px"
+                objectFit="cover"
+                shadow="xl"
+                mx={{ base: "auto", md: "0" }}
+              />
+
+              {/* Title + Info */}
+              <Box
+                color="white"
+                maxW="650px"
+                textAlign={{ base: "center", md: "left" }}
+                mx={{ base: "auto", md: "0" }}
+              >
+                <Heading
+                  fontSize={{ base: "28px", md: "48px" }}
+                  lineHeight="1.15"
+                  color="var(--text-color)"
+                  mb="10px"
+                >
+                  {animeData.name.length > 30
+                    ? `${animeData.name.slice(0, 27)}...`
+                    : animeData.name}
+                </Heading>
+                <Heading
+                  fontSize={{ base: "18px", md: "22px" }}
+                  fontWeight="400"
+                  color="var(--text-secondary)"
+                  mb="15px"
+                  fontStyle="italic"
+                >
+                  {animeData.romaji.length > 40
+                    ? `${animeData.romaji.slice(0, 37)}...`
+                    : animeData.romaji}
+                </Heading>
+
+                <Flex
+                  justify={{ base: "center", md: "flex-start" }}
+                  gap="12px"
+                  wrap="wrap"
+                  fontSize={{ base: "14px", md: "15px" }}
+                  opacity={0.9}
+                >
+                  <Text>{animeInfoSeason}</Text>
+                  <Text>•</Text>
+                  <Text>{animeInfoAired}</Text>
+                  <Text>•</Text>
+                  <Text>{episodeCount} Episodes</Text>
+                </Flex>
+
+                <Button
+                  as={ReactRouterLink}
+                  to="#episodes"
+                  mt="25px"
+                  bg="var(--accent-color)"
+                  _hover={{
+                    bg: "var(--link-hover-color)",
+                    color: "var(--accent-color)",
+                  }}
+                  w={{ base: "100%", md: "200px" }}
+                  h="50px"
+                  fontSize="18px"
+                  borderRadius="8px"
+                  color="var(--link-color)"
+                >
+                  Watch Now
+                </Button>
+              </Box>
+            </Flex>
+          </Box>
+
+          {/* ================= CONTENT SECTION ================= */}
           <Box
             maxW={{
               base: "90%",
@@ -150,456 +257,147 @@ const View = () => {
               xl: "85%",
               "2xl": "container.xl",
             }}
-            margin="auto"
-            py="20px"
+            mx="auto"
+            px={{ base: "0px", md: "40px" }}
+            py="40px"
           >
-            {/* BreadCrumb Links */}
-            <Breadcrumb.Root mb="20px">
-              <Breadcrumb.List>
-                <Breadcrumb.Item
-                  fontSize={{ base: "15.13px", lg: "18.75px" }}
-                  lineHeight={{ base: "24px", lg: "30px" }}
-                  letterSpacing="0.5px"
-                  color="var(--text-color)"
-                  _hover={{ color: "var(--link-hover-color)" }}
+            <Grid templateColumns={{ base: "1fr", lg: "2fr 1.2fr" }} gap="40px">
+              {/* LEFT SIDE — SUMMARY + DETAILS */}
+              <GridItem>
+                {/* Summary Card */}
+                <Box
+                  bg="rgba(255,255,255,0.05)"
+                  border="1px solid rgba(255,255,255,0.1)"
+                  backdropFilter="blur(8px)"
+                  borderRadius="15px"
+                  p="25px"
                 >
-                  <Breadcrumb.Link as={ReactRouterLink} to="/" textDecor="none">
-                    Home
-                  </Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item
-                  isCurrentPage
-                  fontSize={{ base: "15.13px", lg: "18.75px" }}
-                  lineHeight={{ base: "24px", lg: "30px" }}
-                  letterSpacing="0.5px"
-                  color="var(--link-color)"
-                  _hover={{ color: "var(--link-hover-color)" }}
-                >
-                  <Breadcrumb.Link>Anime</Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                  <Breadcrumb.CurrentLink
-                    fontSize={{ base: "15.13px", lg: "18.75px" }}
-                    lineHeight={{ base: "24px", lg: "30px" }}
-                    letterSpacing="0.5px"
-                    color="var(--link-color)"
-                    _hover={{ color: "var(--link-hover-color)" }}
-                  >
-                    {animeData?.title}
-                  </Breadcrumb.CurrentLink>
-                </Breadcrumb.Item>
-              </Breadcrumb.List>
-            </Breadcrumb.Root>
+                  <Heading fontSize="26px" mb="12px" color="var(--text-color)">
+                    Plot Summary
+                  </Heading>
 
-            {/* Anime Details */}
-            <Box my="20px">
-              {/*  */}
-              <Grid gridTemplateColumns="repeat(7, 1fr)" gap="20px">
-                <GridItem
-                  colSpan={{ base: 7, "2xl": 5 }}
-                  display="flex"
-                  flexDir={{ base: "column", md: "row" }}
-                  gap={{ base: "20px 0", md: "0 20px" }}
-                  alignItems={{ base: "start", md: "center", "2xl": "start" }}
-                  mb="20px"
-                  justifyContent={{ base: "initial", md: "space-between" }}
-                >
-                  {/* Anime Image */}
-                  <Box
-                    w={{ base: "100%", md: "30%" }}
-                    bg={
-                      animeData.poster
-                        ? `url(${animeData.poster})`
-                        : "rgba(25, 27, 40, 0.7)"
-                    }
-                    bgSize="cover"
-                    bgPos="center"
-                    bgRepeat="no-repeat"
-                    h={{ base: "217.64px", sm: "300px", md: "377.5px" }}
-                    transition="background ease 0.25s"
-                    borderRadius="10px"
-                  ></Box>
-                  {/* Anime Desc */}
-                  <Box
-                    w={{ base: "100%", md: "70%" }}
-                    mb={{ base: "20px", md: "0" }}
+                  <Text
+                    color="var(--text-secondary)"
+                    fontSize="15px"
+                    lineHeight="26px"
                   >
-                    {/* Anime Name */}
-                    <Heading
-                      as="h2"
-                      fontSize={{ base: "35px", md: "40px" }}
-                      fontWeight={{ base: "500", md: "700" }}
-                      fontFamily="var(--font-family)"
-                      color="var(--text-color)"
-                      letterSpacing="1.5px"
-                      lineHeight={{ base: "38.5px", md: "43.5px" }}
-                      transition="background ease 0.25s"
-                    >
-                      {animeData.title
-                        ? animeData.title !== ""
-                          ? animeData.title
-                          : "NIL"
-                        : "NIL"}
-                    </Heading>
-                    <Text
-                      as="h3"
-                      fontSize="24.02px"
-                      fontWeight="300"
-                      lineHeight="37.5px"
-                      color="var(--text-secondary)"
-                      transition="background ease 0.25s"
-                    >
-                      Episodes: {episodeCount}
-                    </Text>
-                    {/* Anime Summary */}
-                    <Box mt="20px">
+                    {isExpanded
+                      ? animeData.synopsis
+                      : animeData.synopsis?.slice(0, 300) + "..."}
+                    {animeData.synopsis?.length > 300 && (
                       <Text
-                        as="h4"
-                        mb="8px"
-                        color="var(--text-color)"
-                        fontSize="24.02px"
-                        fontWeight="400"
-                        fontFamily="var(--font-family)"
-                        lineHeight="27.5px"
-                        letterSpacing="1.5px"
-                      >
-                        Plot Summary
-                      </Text>
-                      <Text
-                        as="p"
-                        color="var(--text-secondary)"
-                        fontSize="15.38px"
-                        fontWeight="300"
-                        fontFamily="var(--body-font)"
-                        lineHeight="24px"
-                        letterSpacing="0.5px"
-                        transition="background ease 0.25s"
-                      >
-                        {animeData?.animeInfo.Overview
-                          ? isExpanded
-                            ? animeData.animeInfo.Overview
-                            : animeData.animeInfo.Overview.length > 250
-                            ? `${animeData.animeInfo.Overview.slice(0, 250)}...`
-                            : animeData.animeInfo.Overview
-                          : "NIL"}
-                        {animeData.animeInfo.Overview &&
-                          animeData.animeInfo.Overview.length > 250 && (
-                            <Text
-                              as="span"
-                              color="var(--link-color)"
-                              _hover={{ color: "var(--link-hover-color)" }}
-                              cursor="pointer"
-                              fontWeight="500"
-                              ml="5px"
-                              onClick={() => setIsExpanded((prev) => !prev)}
-                            >
-                              {isExpanded ? "Show Less" : "Show More"}
-                            </Text>
-                          )}
-                      </Text>
-                    </Box>
-                    <Box w="100%" h="47px">
-                      <ChakraLink
-                        href="#episodes"
-                        w="100%"
-                        h="47px!important"
+                        as="span"
                         color="var(--link-color)"
-                        border="1px solid var(--secondary-color)"
-                        borderRadius="10px"
-                        transition="all ease 0.25s"
-                        _hover={{
-                          color: "var(--link-hover-color)",
-                          textDecoration: "none",
-                          background: "var(--accent-color)",
-                          transform: "scale(1.02)",
-                          border: "none",
-                        }}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        mt="20px"
-                        fontSize="19.77px"
-                        fontWeight="500"
-                        lineHeight="33px"
-                        letterSpacing="0.5px"
-                        textTransform="uppercase"
+                        ml="8px"
+                        cursor="pointer"
+                        onClick={() => setIsExpanded(!isExpanded)}
                       >
-                        Watch Now
-                      </ChakraLink>
-                    </Box>
-                  </Box>
-                </GridItem>
-                {/* Anime Details */}
-                <GridItem colSpan={{ base: 7, md: 3, lg: 2, "2xl": 2 }}>
-                  <Box display="flex" flexDir="column" gap="9px 0">
-                    <Text
-                      as="h3"
-                      color="var(--text-color)"
-                      fontSize="24.61px"
-                      fontWeight="600"
-                      lineHeight="27.5px"
-                      letterSpacing="1.5px"
-                      mb="10px"
-                    >
-                      Anime Details
-                    </Text>
-                    {/* Countdown timer */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        <CalendarDays size={20} color="var(--text-color)" />
-
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Premiered:{"  "}
-                        </Text>
-                      </Flex>
-                      <Text
-                        color="var(--text-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--body-font)"
-                        lineHeight="24px"
-                      >
-                        {animeData.animeInfo.Aired
-                          ? animeInfoAired
-                          : "Loading..."}
+                        {isExpanded ? "Show Less" : "Read More"}
                       </Text>
-                    </Box>
-                    {/* Anime Author */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        <Building2 size={15} color="var(--text-color)" />
+                    )}
+                  </Text>
+                </Box>
 
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Studio:{"  "}
-                        </Text>
-                      </Flex>
-                      <Text
-                        color="var(--secondary-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontFamily="var(--body-font)"
-                        fontWeight="300"
-                        lineHeight="24px"
-                        transition="background ease 0.25s"
-                      >
-                        {animeData.animeInfo.Studios || "Unknown"}
-                      </Text>
-                    </Box>
-                    {/* Anime Season */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        <Layers size={15} color="var(--text-color)" />
-
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Season:{"  "}
-                        </Text>
-                      </Flex>
-                      <Text
-                        color="var(--secondary-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        lineHeight="24px"
-                        fontFamily="var(--body-font)"
-                        transition="background ease 0.25s"
-                      >
-                        {animeData.animeInfo.Premiered
-                          ? animeInfoSeason
-                          : "Loading..."}
-                      </Text>
-                    </Box>
-                    {/* Release Year */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        <Calendar size={15} color="var(--text-color)" />
-
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Release Year:{"  "}
-                        </Text>
-                      </Flex>
-                      <Text
-                        color="var(--text-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        transition="background ease 0.25s"
-                        lineHeight="24px"
-                      >
-                        {animeData.animeInfo.Premiered
-                          ? animeData.animeInfo.Premiered.split("-")[1]
-                          : "Loading..."}
-                      </Text>
-                    </Box>
-                    {/* Status */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        {animeData.animeInfo.Status.toLowerCase().includes(
-                          "currently"
-                        ) ? (
-                          <Loader size={15} color="var(--text-color)" />
-                        ) : (
-                          <CheckCircle2 size={15} color="var(--text-color)" />
-                        )}
-
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Status:{"  "}
-                        </Text>
-                      </Flex>
-                      <Text
-                        color="var(--secondary-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--body-font)"
-                        lineHeight="24px"
-                        transition="background ease 0.25s"
-                      >
-                        {animeData.animeInfo.Status
-                          ? animeInfoStatus
-                          : "Loading..."}
-                      </Text>
-                    </Box>
-                    {/* Genres */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        <Tag size={15} color="var(--text-color)" />
-
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Genres:{"  "}
-                        </Text>
-                      </Flex>
-                      {/* Genre */}
-                      <Box display="flex" gap="5px" flexWrap="wrap">
-                        {animeGenres?.map((genre, index) => {
-                          return (
-                            <TagRoot
-                              variant="subtle"
-                              bg="var(--primary-background-color)"
-                              color="var(--secondary-color)"
-                              key={genre}
-                            >
-                              <TagLabel>{genre}</TagLabel>
-                            </TagRoot>
-                          );
-                        })}
-                      </Box>
-                    </Box>
-                    {/* Views */}
-                    <Box display="flex" gap="0 10px">
-                      <Flex gap="5px" alignItems="center">
-                        <Star size={15} color="(--text-color)" />
-
-                        <Text
-                          as="p"
-                          color="var(--text-color)"
-                          fontSize="15px"
-                          fontFamily="var(--font-family)"
-                          fontWeight="300"
-                          lineHeight="24px"
-                          transition="background ease 0.25s"
-                        >
-                          Rating:{"  "}
-                        </Text>
-                      </Flex>
-                      <Text
-                        color="var(--text-color)"
-                        as="span"
-                        fontSize="15px"
-                        fontWeight="300"
-                        fontFamily="var(--body-font)"
-                        lineHeight="24px"
-                      >
-                        {animeData.animeInfo["MAL Score"]
-                          ? animeData.animeInfo["MAL Score"]
-                          : "Loading..."}
-                      </Text>
-                    </Box>
-                  </Box>
-                </GridItem>
-                {/* Episodes List */}
-                <GridItem
-                  colSpan={{ base: 7, md: 4, lg: 5, "2xl": 5 }}
-                  mt={{ base: "20px", md: 0 }}
-                  id="episodes"
+                {/* Details Grid */}
+                <Grid
+                  mt="30px"
+                  gap="20px"
+                  templateColumns={{ base: "1fr", md: "1fr 1fr" }}
                 >
+                  {/* CARD TEMPLATE */}
+                  <DetailCard
+                    icon={<CalendarDays size={20} />}
+                    label="Premiered"
+                    value={animeInfoAired}
+                  />
+
+                  <DetailCard
+                    icon={<Building2 size={20} />}
+                    label="Studio"
+                    value={animeData.studios}
+                  />
+
+                  <DetailCard
+                    icon={<Layers size={20} />}
+                    label="Type"
+                    value={animeInfoSeason}
+                  />
+
+                  <DetailCard
+                    icon={
+                      animeData.status?.toLowerCase()?.includes("currently") ? (
+                        <Loader size={20} />
+                      ) : (
+                        <CheckCircle2 size={20} />
+                      )
+                    }
+                    label="Status"
+                    value={animeInfoStatus}
+                  />
+
+                  <DetailCard
+                    icon={<Star size={20} />}
+                    label="Score"
+                    value={animeData.score}
+                  />
+
                   <Box>
-                    <Flex gap="10px" alignItems="center">
-                      <ListVideo size={35} color="var(--text-color)" />
-                      <Heading
+                    <Flex align="center" gap="8px" mb="8px">
+                      <TagIcon size={20} color="var(--text-color)" />
+                      <Text
+                        fontSize="16px"
                         color="var(--text-color)"
-                        fontSize={{ base: "26.36px", md: "30px", lg: "37.5px" }}
                         fontWeight="600"
-                        fontFamily="var(--font-family)"
-                        lineHeight={{ base: "30.8px", md: "35px", lg: "44px" }}
-                        letterSpacing="1.5px"
                       >
-                        Episode List
-                      </Heading>
+                        Genres
+                      </Text>
                     </Flex>
-                    <Box mt="20px" pos="relative">
-                      {episodes.length !== 0 && (
-                        <EpisodeList
-                          items={episodes}
-                          itemId={episodes.map((episode) => episode.id)}
-                          aniId={id}
-                        />
-                      )}
-                    </Box>
+
+                    <Flex wrap="wrap" gap="8px">
+                      {animeGenres?.map((g) => (
+                        <TagRoot
+                          key={g}
+                          variant="subtle"
+                          bg="var(--accent-color)"
+                          color="white"
+                          borderRadius="full"
+                          px="10px"
+                          py="5px"
+                          fontSize="13px"
+                        >
+                          <TagLabel>{g}</TagLabel>
+                        </TagRoot>
+                      ))}
+                    </Flex>
                   </Box>
-                </GridItem>
-              </Grid>
-            </Box>
+                </Grid>
+              </GridItem>
+
+              {/* RIGHT SIDE — EPISODE LIST */}
+              <GridItem id="episodes">
+                <Box>
+                  <Flex align="center" gap="12px" mb="20px">
+                    <ListVideo size={30} color="var(--text-color)" />
+                    <Heading fontSize="30px" color="var(--text-color)">
+                      Episode List
+                    </Heading>
+                  </Flex>
+
+                  <Box
+                    bg="rgba(255,255,255,0.05)"
+                    border="1px solid rgba(255,255,255,0.1)"
+                    backdropFilter="blur(6px)"
+                    borderRadius="12px"
+                    p="20px"
+                  >
+                    <EpisodeList
+                      items={episodes}
+                      itemId={episodes.map((episode) => episode.episodeId)}
+                    />
+                  </Box>
+                </Box>
+              </GridItem>
+            </Grid>
           </Box>
         </Box>
       )}

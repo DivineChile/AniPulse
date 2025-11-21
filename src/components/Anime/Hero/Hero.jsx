@@ -72,9 +72,9 @@ const Hero = () => {
       <Navbar />
 
       <Loading
-        height="100%"
         bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
         isLoading={isLoading}
+        fullscreen
       />
       {error ? (
         <Error msg={error} height="100%" bg="#191919" />
@@ -232,25 +232,7 @@ const Hero = () => {
                             </Badge>
                           ))}
                         </HStack>
-                        {/* <Heading
-                          as="h4"
-                          textTransform="capitalize"
-                          color="var(--text-color)"
-                          fontSize={{
-                            base: "19.38px",
-                            md: "24px",
-                            "2xl": "28.95px",
-                          }}
-                          fontFamily="var(--font-family)"
-                          lineHeight={{
-                            base: "30px",
-                            md: "35px",
-                            "2xl": "40px",
-                          }}
-                          fontWeight="400"
-                        >
-                          Release year: {animePremiered}
-                        </Heading> */}
+
                         <Text
                           as="p"
                           fontSize={{

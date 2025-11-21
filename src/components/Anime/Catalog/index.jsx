@@ -1,4 +1,4 @@
-import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Flex, Heading, Tabs } from "@chakra-ui/react";
 import TopAnime from "../TopAnime/TopAnime";
 import { useEffect, useState } from "react";
 import { CalendarClock, CheckCircle2, Crown } from "lucide-react";
@@ -14,6 +14,22 @@ const Catalog = () => {
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
+  // -----------------------------
+  // ✅ LOAD DEFAULT TAB FROM LOCAL STORAGE
+  // -----------------------------
+  const [activeTab, setActiveTab] = useState(() => {
+    const saved = localStorage.getItem("episodeTabIndex");
+    return saved ? Number(saved) : 0;
+  });
+
+  // -----------------------------
+  // ✅ SAVE ACTIVE TAB WHEN CHANGED
+  // -----------------------------
+  const handleTabChange = (val) => {
+    setActiveTab(val.value);
+    localStorage.setItem("episodeTabIndex", val.value);
+  };
+
   const fetchCatalogAnimes = async () => {
     setCatalogLoading(true);
     setCatalogError(null);
@@ -24,7 +40,7 @@ const Catalog = () => {
         `${proxy}${backup_api}api`, // fallback API endpoint
         10 * 60 * 1000 // cache duration (10 minutes)
       );
-      setTopRatedAnime(data.results.mostPopular || []);
+      setTopRatedAnime(data.results.topAiring || []);
       setRecentlyCompletedAnime(data.results.latestCompleted || []);
       setNewAnime(data.results.topUpcoming || []);
     } catch (err) {
@@ -38,6 +54,30 @@ const Catalog = () => {
     fetchCatalogAnimes();
   }, []);
 
+  const TabsData = [
+    {
+      id: 0,
+      title: "Top Airing",
+      icon: <Crown size={20} color="var(--primary-color)" />,
+      data: topRatedAnime,
+      isRanked: true,
+    },
+    {
+      id: 1,
+      title: "Upcoming",
+      icon: <CalendarClock size={20} color="var(--primary-color)" />,
+      data: newAnime,
+      isRanked: false,
+    },
+    {
+      id: 2,
+      title: "Recently Completed",
+      icon: <CheckCircle2 size={20} color="var(--primary-color)" />,
+      data: recentlyCompletedAnime,
+      isRanked: false,
+    },
+  ];
+
   return (
     <Box bg="var(--primary-background-color)" pb="80px">
       <Box
@@ -49,45 +89,73 @@ const Catalog = () => {
         }}
         margin="auto"
       >
-        <Grid
-          gridTemplateColumns={{
-            base: "100%",
-            md: "repeat(2, 1fr)",
-            lg: "repeat(3, 1fr)",
-          }}
-          gap={{ base: "20px 0", sm: "20px", md: "25px 25px" }}
+        <Tabs.Root
+          lazyMount
+          unmountOnExit
+          value={activeTab}
+          onValueChange={handleTabChange}
+          variant="enclosed"
+          w="100%"
+          bg="rgba(0, 0, 0, 1)"
+          rounded="md"
+          p={{ base: 3, md: 4 }}
         >
-          <GridItem display="flex" justifyContent="center">
-            <TopAnime
-              data={topRatedAnime}
-              heading="Top Rated Anime"
-              icon={<Crown size={30} color="var(--primary-color)" />}
-              numbers={true}
-              loading={catalogLoading}
-              error={catalogError}
-            />
-          </GridItem>
-          <GridItem display="flex" justifyContent="center">
-            <TopAnime
-              data={newAnime}
-              heading="Upcoming"
-              icon={<CalendarClock size={30} color="var(--primary-color)" />}
-              numbers={false}
-              loading={catalogLoading}
-              error={catalogError}
-            />
-          </GridItem>
-          <GridItem display="flex" justifyContent="center">
-            <TopAnime
-              data={recentlyCompletedAnime}
-              heading="Recently Completed"
-              icon={<CheckCircle2 size={30} color="var(--primary-color)" />}
-              numbers={false}
-              loading={catalogLoading}
-              error={catalogError}
-            />
-          </GridItem>
-        </Grid>
+          <Tabs.List gap={3} flexWrap="wrap" w="full" p={2} mb={2}>
+            {TabsData.map((data, i) => (
+              <Tabs.Trigger key={i} value={i}>
+                <Flex gap="10px" alignItems="center" justifyContent="center">
+                  {data.icon}
+                  <Heading
+                    fontFamily="var(--font-family)"
+                    fontWeight={{ base: "300", md: "400" }}
+                    fontSize={{ base: "17.25px", lg: "19.18px" }}
+                    lineHeight={{ base: "25.4px", md: "27px" }}
+                    letterSpacing="1.5px"
+                    color="var(--text-color)"
+                  >
+                    {data.title}
+                  </Heading>
+                </Flex>
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+
+          <Tabs.ContentGroup
+            borderTop="1px solid var(--text-secondary)"
+            p={{ base: 1, md: 2 }}
+          >
+            {TabsData.map((data, i) => (
+              <Tabs.Content
+                key={i}
+                value={i}
+                inset="0"
+                _open={{
+                  animationName: "fade-in, scale-in",
+                  animationDuration: "300ms",
+                }}
+                _closed={{
+                  animationName: "fade-out, scale-out",
+                  animationDuration: "120ms",
+                }}
+              >
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  w={{ base: "100%", md: "100%", lg: "40%" }}
+                >
+                  <TopAnime
+                    data={data.data}
+                    heading={data.title}
+                    icon={data.icon}
+                    numbers={data.isRanked}
+                    loading={catalogLoading}
+                    error={catalogError}
+                  />
+                </Box>
+              </Tabs.Content>
+            ))}
+          </Tabs.ContentGroup>
+        </Tabs.Root>
       </Box>
     </Box>
   );

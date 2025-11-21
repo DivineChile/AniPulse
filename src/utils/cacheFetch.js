@@ -16,21 +16,25 @@ export const cacheFetch = async (
   const cachedTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
 
   if (cachedData && cachedTimestamp) {
-    const age = Date.now() - cachedTimestamp;
+    const age = Date.now() - Number(cachedTimestamp);
 
-    if (age < cacheDuration == false) {
+    // If cache is still valid → return it
+    if (age < cacheDuration) {
       return JSON.parse(cachedData);
     }
   }
 
+  // Cache expired → fetch new data
   const response = await fetch(url, options);
-
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   const data = await response.json();
+
+  // Store updated cache
   localStorage.setItem(cacheKey, JSON.stringify(data));
   localStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+
   return data;
 };
