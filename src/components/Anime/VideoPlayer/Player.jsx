@@ -7,6 +7,7 @@ import Error from "../../ErrorPage/Error";
 import { Box } from "@chakra-ui/react";
 import "./style.css";
 import { PlayerContext } from "../../../contexts/PlayerContext";
+import { cacheFetch } from "../../../utils/cacheFetch";
 
 // Function to extract stream qualities
 const extractHLSQualities = async (m3u8Url) => {
@@ -59,6 +60,8 @@ const Player = ({ dub, sub }) => {
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const streamProxy =
     "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
+  const main_api = "https://anime-api-production-bc3d.up.railway.app";
+  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app";
 
   const [loading, setLoading] = useState(true);
   const [streamError, setStreamError] = useState(null);
@@ -76,18 +79,22 @@ const Player = ({ dub, sub }) => {
       setStreamError(null);
       setVideoData(null);
 
-      const response = await fetch(
-        `${proxy}https://anime-api-production-bc3d.up.railway.app/api/stream?id=${watchId}${queryParams}&server=hd-2&type=${category}`
+      //unique cache key for each streamInfo
+      const cacheKey = `videoData_${watchId}${queryParams}_${category}`;
+
+      const data = await cacheFetch(
+        cacheKey,
+        `${proxy}${kenjitsu_api}/api/hianime/sources/${watchId}${queryParams}?version=${category}&server=hd-2`,
+        10 * 60 * 1000
       );
 
-      if (!response.ok) throw new Error("Failed to fetch video data.");
+      if (!data) throw new Error("Failed to fetch video data.");
 
-      const data = await response.json();
-      if (!data.success || !data.results?.streamingLink?.link?.file.length) {
+      if (!data.data || !data.data?.sources?.map((source) => source.isM3u8)) {
         console.error("No sources available");
       }
 
-      setVideoData(data.results);
+      setVideoData(data.data);
     } catch (err) {
       setStreamError(err.message || "An unexpected error occurred.");
     } finally {
@@ -114,13 +121,16 @@ const Player = ({ dub, sub }) => {
       artRef.current = null;
     }
 
-    const stream = videoData.streamingLink;
-    const defaultSource = stream?.link.file;
-    const subtitles = stream?.tracks?.map((track) => ({
-      url: track.file,
+    const stream = videoData.sources
+      .map((source) => (source.isM3u8 ? source : null))
+      .filter((source) => source)[0];
+
+    const defaultSource = stream?.url;
+    const subtitles = videoData?.subtitles?.map((track) => ({
+      url: track.url,
       type: "vtt",
-      label: track.label,
-      default: track.label === "English",
+      label: track.lang,
+      default: track.default === true,
     }));
 
     const validSubtitles = subtitles?.filter((sub) =>

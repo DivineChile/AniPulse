@@ -1,9 +1,30 @@
-import { Box, Breadcrumb, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import {
+  Box,
+  Breadcrumb,
+  Button,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
+  IconButton,
+  Stack,
+  Text,
+  useBreakpointValue,
+  VStack,
+} from "@chakra-ui/react";
+import { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Heading1,
+  ListVideo,
+  Play,
+  Tv,
+} from "lucide-react";
 
 import "./style.css";
 import Loading from "../../components/ErrorPage/Loading";
@@ -11,6 +32,8 @@ import Player from "../../components/Anime/VideoPlayer/Player";
 import { PlayerContext } from "../../contexts/PlayerContext";
 import DownloadLinksSelect from "./DownloadLinksSelect";
 import MoviePlayer from "../../components/Anime/VideoPlayer/MoviePlayer";
+import { cacheFetch } from "../../utils/cacheFetch";
+import EpisodeList from "../../components/Anime/EpisodeList/EpisodeList";
 
 const Stream = () => {
   const { watchId } = useParams();
@@ -18,7 +41,9 @@ const Stream = () => {
   const searchParams = new URLSearchParams(location.search);
   const season = searchParams.get("season");
   const episode = searchParams.get("episode");
-  const activeEpId = searchParams.get("ep"); // e.g., "138379"
+  const activeEpId =
+    location.pathname.includes("episode") &&
+    location.pathname.split("-")[location.pathname.split("-").length - 1]; // e.g., "138379"
   const [contentType, setContentType] = useState(null);
   const [epLoading, setEpLoading] = useState(true);
   const [epError, setEpError] = useState(null);
@@ -30,7 +55,7 @@ const Stream = () => {
   const [animeRating, setAnimeRating] = useState("");
   const [animeTitle, setAnimeTitle] = useState("");
   const [dubStatus, setDubStatus] = useState(null);
-  const [isDub, setIsDub] = useState({});
+  const [isDub, setIsDub] = useState(null);
   const [subStatus, setSubStatus] = useState(null);
 
   const [activeLink, setActiveLink] = useState(null);
@@ -50,7 +75,7 @@ const Stream = () => {
 
   //Base URLS
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
-  const main_api = "https://kenjitsu-api-production.up.railway.app/";
+  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const streamProxy =
     "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
@@ -59,20 +84,6 @@ const Stream = () => {
   const TMDB_API = "https://api.themoviedb.org/3";
   const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY;
   const fullPath = `${watchId}${location.search}`;
-
-  const handleClick = (index) => {
-    setActiveLink(index); // Update the active link index;
-    setActiveDubLink(null);
-    setSubStatus(true);
-    setDubStatus(false);
-  };
-
-  const handleDubClick = (index) => {
-    setActiveDubLink(index);
-    setActiveLink(null);
-    setDubStatus(true);
-    setSubStatus(false);
-  };
 
   // Determine content type
   useEffect(() => {
@@ -93,16 +104,26 @@ const Stream = () => {
       setLoading(true);
       setError(null);
 
-      try {
-        const response = await fetch(
-          `${proxy}${backup_api}/api/info?id=${watchId}`
-        );
-        const data = await response.json();
+      const animeArr = watchId.split("-");
+      const animeName = animeArr.splice(0, animeArr.length - 2).join("-");
+      const cacheKey = `animeInfo_${animeName}`;
 
-        setAnimeData(data.results.data);
-        setAnimeTitle(data.results.data.title);
-        setAnimeRating(data.results.data.animeInfo["MAL Score"]);
-        setIsDub(data.results.data.animeInfo.tvInfo.dub);
+      try {
+        const data = await cacheFetch(
+          cacheKey,
+          `${proxy}${kenjitsu_api}/api/hianime/anime/${animeName}`,
+          10 * 60 * 1000
+        );
+
+        console.log("[🔍] Fetching anime data for ID:", animeName);
+        console.log(data);
+
+        setAnimeData(data.data);
+        setAnimeTitle(data.data.name);
+        setAnimeRating(data.data.score);
+        setIsDub(data.data.episodes.dub);
+        setDubStatus(data.data.episodes?.dub);
+        setEpisodes(data.providerEpisodes || []);
       } catch (error) {
         setError("Failed to load data. Please try again.");
       } finally {
@@ -110,26 +131,7 @@ const Stream = () => {
       }
     };
 
-    //Fetch anime episodes
-    const fetchEpisodes = async () => {
-      setEpLoading(true);
-      setEpError(null);
-      try {
-        const response = await fetch(
-          `${proxy}${backup_api}/api/episodes/${watchId}`
-        );
-        const data = await response.json();
-
-        setEpisodes(data.results.episodes || []);
-      } catch {
-        setEpError(true);
-      } finally {
-        setEpLoading(false);
-      }
-    };
-
     fetchAnimeData();
-    fetchEpisodes();
   }, [watchId, contentType]);
 
   // TMDb Logic (Movies & Series)
@@ -203,19 +205,16 @@ const Stream = () => {
     let title = "AniPulse";
     let episodeText = "";
 
-    const searchParams = new URLSearchParams(location.search);
-    const activeEpId = searchParams.get("ep");
-
     if (contentType === "series" && season && episode) {
       const current = episodes?.find((ep) => ep.number === parseInt(episode));
       title = `Watching ${animeTitle} S${season}E${episode} | AniPulse`;
       episodeText = `Episode ${episode} - ${current?.title || "Unknown"}`;
     } else if (contentType === "anime" && activeEpId) {
       const current = episodes?.find((ep) =>
-        ep.id.endsWith(`ep=${activeEpId}`)
+        ep.episodeId.endsWith(`${activeEpId}`)
       );
 
-      const currentEpNo = current?.episode_no ?? "??";
+      const currentEpNo = current?.episodeNumber ?? "??";
 
       title = `Watching ${animeTitle} Episode ${currentEpNo} | AniPulse`;
       episodeText = `Episode ${currentEpNo} - ${current?.title || "Unknown"}`;
@@ -350,413 +349,219 @@ const Stream = () => {
     fetchEpisodeSession();
   }, [sessionId, realEpNo, contentType]);
 
+  const isMobile = useBreakpointValue({ base: true, lg: false });
+
+  // UI state
+  const [activeServer, setActiveServer] = useState(0);
+  const [activeDubServer, setActiveDubServer] = useState(0);
+  const [showDub, setShowDub] = useState(dubStatus);
+
+  // Derived episode IDs array for EpisodeList prop
+  const episodeIds = useMemo(
+    () => episodes.map((e) => e.episodeId),
+    [episodes]
+  );
+
+  const crumbLabel = useMemo(() => {
+    if (contentType === "anime") {
+      if (showDub) return `${animeTitle} ${currentEpisode} (Dub)`;
+      else return `${animeTitle} ${currentEpisode}`;
+    } else if (contentType === "movie") return animeTitle;
+    else {
+      return `${animeTitle} ${season} ${currentEpisode}`;
+    }
+  }, [contentType, animeTitle, currentEpisode, showDub]);
+
   return (
     <Box>
       <Navbar />
-      <Box background="var(--primary-background-color)">
+      <Box bg="var(--primary-background-color)" minH="70vh" pb="40px">
         <Box
-          maxW={{
-            base: "90%",
-            sm: "95%",
-            xl: "85%",
-            "2xl": "container.xl",
-          }}
-          margin="auto"
-          py="20px"
+          maxW={{ base: "95%", md: "95%", xl: "85%", "2xl": "container.xl" }}
+          mx="auto"
+          pt={{ base: "90px", md: "100px" }}
+          pb={10}
         >
-          {/* BreadCrumb Links */}
-          <Breadcrumb.Root mb="20px">
+          {/* Breadcrumb */}
+          <Breadcrumb.Root mb={4}>
             <Breadcrumb.List>
-              <Breadcrumb.Item
-                fontSize={{ base: "15.13px", lg: "18.75px" }}
-                lineHeight={{ base: "24px", lg: "30px" }}
-                letterSpacing="0.5px"
-                color="var(--text-color)"
-                _hover={{ color: "var(--link-hover-color)" }}
-              >
+              <Breadcrumb.Item>
                 <Breadcrumb.Link
                   as={Link}
-                  to={contentType === "anime" ? `/` : "/movies"}
+                  to={contentType === "anime" ? "/" : "/movies"}
                 >
-                  {contentType === "anime"
-                    ? "Anime"
-                    : contentType === "movie"
-                    ? "Movies"
-                    : "Movies"}
+                  {contentType === "anime" ? "Anime" : "Movies"}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
               <Breadcrumb.Separator />
-              <Breadcrumb.Item
-                fontSize={{ base: "15.13px", lg: "18.75px" }}
-                lineHeight={{ base: "24px", lg: "30px" }}
-                letterSpacing="0.5px"
-                color="var(--link-color)"
-                _hover={{ color: "var(--link-hover-color)" }}
-              >
+
+              <Breadcrumb.Item>
                 <Breadcrumb.Link>Stream</Breadcrumb.Link>
               </Breadcrumb.Item>
-
               <Breadcrumb.Separator />
+
               <Breadcrumb.Item>
-                <Breadcrumb.CurrentLink
-                  fontSize={{ base: "15.13px", lg: "18.75px" }}
-                  lineHeight={{ base: "24px", lg: "30px" }}
-                  letterSpacing="0.5px"
-                  color="var(--link-color)"
-                  _hover={{ color: "var(--link-hover-color)" }}
-                >
-                  {contentType === "anime"
-                    ? dubStatus
-                      ? `${animeTitle} ${currentEpisode} (Dub)`
-                      : `${animeTitle} ${currentEpisode}`
-                    : contentType === "movie"
-                    ? animeTitle
-                    : `${animeTitle} Season ${season} ${currentEpisode}`}
-                </Breadcrumb.CurrentLink>
+                <Breadcrumb.CurrentLink>{crumbLabel}</Breadcrumb.CurrentLink>
               </Breadcrumb.Item>
             </Breadcrumb.List>
           </Breadcrumb.Root>
 
-          {/* Anime Stream */}
-          <Box>
-            <Box className="player-wrapper" width="100%" height="100%">
-              <Grid
-                gridTemplateColumns="repeat(6, 1fr)"
-                gap={{ base: "30px 0", xl: "30px 30px" }}
+          {/* Layout grid: player (main) + sidebar (episodes) */}
+          <Grid
+            templateColumns={{ base: "1fr", xl: "2fr 1fr" }}
+            gap={{ base: 6, xl: 8 }}
+            alignItems="start"
+          >
+            {/* PLAYER + ACTIONS (left/main column) */}
+            <GridItem>
+              <Box
+                bg="var(--primary-background-color)"
+                borderRadius="12px"
+                boxShadow="0 10px 30px rgba(0,0,0,0.5)"
+                overflow="hidden"
               >
-                {/* Anime Video */}
-
-                <GridItem
-                  colSpan={{ base: 6, xl: 4 }}
-                  h={{
-                    base: "250px",
-                    sm: "350px",
-                    md: "400px",
-                    xl: "450px!important",
-                    "2xl": "600px!important",
-                  }}
-                  boxShadow="0 0 20px 0 var(--card-background-color)"
-                  bg="var(--primary-background-color)"
-                  borderRadius="10px"
+                {/* Player container */}
+                <Box
                   pos="relative"
+                  w="100%"
+                  h={{ base: "220px", md: "420px", lg: "500px" }}
                 >
                   {contentType === "anime" ? (
-                    <Player dub={dubStatus} sub={subStatus} />
+                    <Player sub={!showDub} dub={showDub} />
                   ) : (
                     <MoviePlayer />
                   )}
-                </GridItem>
+                </Box>
 
-                <GridItem
-                  colSpan={{ base: 6, xl: 2 }}
-                  h={{
-                    base: "250px",
-                    sm: "300px",
-                    md: "350px",
-                    lg: "450px",
-                    "2xl": "600px",
-                  }}
-                  overflowY="scroll"
-                  boxShadow="0 0 10px 0 var(--card-background-color)"
-                  bg="var(--primary-background-color)"
-                  borderRadius="10px"
-                  width={{ base: "220px", md: "50%", lg: "100%" }}
-                  transition="all ease 0.25s"
+                {/* Below player: controls / meta */}
+                <Box
+                  p={4}
+                  borderTop="1px solid rgba(255,255,255,0.03)"
+                  // divideY="2px"
+                  gap={3}
+                  display="flex"
+                  flexDir={{ base: "column", md: "row" }}
+                  justifyContent={{ base: "center", md: "space-between" }}
+                  alignItems={{ base: "center", md: "center" }}
                 >
-                  <Box
-                    width="100%"
-                    bg="transparent"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="start"
+                  <Stack
+                    direction={{ base: "column" }}
+                    // justify="space-between"
+                    align={{ base: "center", md: "flex-start" }}
+                    gap={4}
+                    pb={2}
                   >
-                    {/* Season box */}
-                    <Box width="100%">
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        gap="0 10px"
-                        cursor="pointer"
-                        pos="relative"
-                        height="60px"
-                        ps="20px"
-                      >
-                        <Text
-                          color="var(--text-color)"
-                          fontSize="17.58px"
-                          lineHeight="24px"
-                        >
-                          {contentType === "anime"
-                            ? `Season`
-                            : contentType === "movie"
-                            ? "Movie"
-                            : `Season ${season}`}
-                        </Text>
-                        <ChevronDown
-                          h="18px"
-                          w="18px"
-                          color="var(--text-color)"
-                        />
-                      </Box>
-
-                      {/* Episodes List */}
-                      <Box
-                        display={{ base: "flex" }}
-                        flexDir={{ base: "column" }}
-                        pos="relative"
-                        alignItems="flex-start"
-                      >
-                        {(() => {
-                          if (epLoading)
-                            return <Loading bg="var(--linear-gradient)" />;
-                          if (epError) return <Error bg="none" msg={epError} />;
-
-                          if (!episodes || episodes.length === 0) {
-                            return (
-                              <Error bg="none" msg="No episodes available." />
-                            );
-                          }
-
-                          const renderLink = (to, label, isActive) => (
-                            <Link
-                              key={to}
-                              to={to}
-                              style={{
-                                textDecoration: "none",
-                                fontFamily: "var(--font-family)",
-                              }}
-                              className={
-                                isActive ? "episode active" : "episode"
-                              }
-                            >
-                              {label}
-                            </Link>
-                          );
-
-                          return (
-                            <>
-                              {contentType === "anime" &&
-                                episodes.map(
-                                  ({ episode_no: episode_no, id }) => {
-                                    const isActive = id.endsWith(
-                                      `ep=${activeEpId}`
-                                    );
-
-                                    return renderLink(
-                                      `/watch/${id}`,
-                                      `Episode ${episode_no}`,
-                                      isActive
-                                    );
-                                  }
-                                )}
-
-                              {contentType === "movie" &&
-                                episodes.map(({ title, episodeId }) => {
-                                  return renderLink(
-                                    `/watch/${episodeId}`,
-                                    animeTitle,
-                                    location.pathname === `/watch/${episodeId}`
-                                  );
-                                })}
-
-                              {contentType === "series" &&
-                                episodes.map(({ title, number, episodeId }) =>
-                                  renderLink(
-                                    `/watch/${watchId}?season=${season}&episode=${number}`,
-                                    `Episode ${number}`,
-                                    location.search ===
-                                      `?season=${season}&episode=${number}`
-                                  )
-                                )}
-                            </>
-                          );
-                        })()}
-                      </Box>
-                    </Box>
-                  </Box>
-                </GridItem>
-                {/* Anime Dets / Servers / Downlaod */}
-                <GridItem
-                  colSpan="6"
-                  boxShadow="0 0 10px 0 var(--card-background-color)"
-                  bg="var(--primary-background-color)"
-                  borderRadius="10px"
-                  transition="all ease 0.25s"
-                  p="20px"
-                  w="100%"
-                  display={{ base: "grid", xl: "flex" }}
-                  gridTemplateColumns="repeat(12, 1fr)"
-                  justifyContent={{ base: "initial", xl: "space-between" }}
-                  gap={{ base: "20px 0", md: "20px 20px", lg: "20px 40px" }}
-                >
-                  {/* Anime Details */}
-                  <GridItem
-                    colSpan={{ base: "12", lg: "6", xl: "3" }}
-                    width={{ base: "initial", xl: "30%" }}
-                    textAlign={{ base: "center", md: "start" }}
-                  >
-                    <Text
-                      color="var(--text-color)"
-                      fontSize="15.38px"
-                      lineHeight="24px"
-                      letterSpacing="0.5px"
-                      fontFamily="var(--body-font)"
+                    <VStack
+                      align="start"
+                      alignItems={{ base: "center", md: "start" }}
+                      spacing={1}
                     >
-                      You&apos;re watching{" "}
-                      <Text as="span" color="var(--link-color)">
+                      <Heading size="md" color="var(--text-color)">
+                        {animeTitle || "Unknown title"}
+                      </Heading>
+                      <Text color="var(--text-secondary)" fontSize="sm">
                         {contentType === "anime"
-                          ? `Episode ${realEpNo}`
-                          : contentType === "movie"
-                          ? animeTitle
-                          : `Season ${season} Episode ${episode}`}
+                          ? `${currentEpisode}`
+                          : "Now Playing"}
                       </Text>
-                    </Text>
-                    <Text
-                      fontSize="15.38px"
-                      lineHeight="24px"
-                      letterSpacing="0.5px"
-                      color="var(--text-color)"
-                      fontFamily="var(--body-font)"
-                    >
-                      If current servers dosen&apos;t work, please try other
-                      servers.
-                    </Text>
-                  </GridItem>
-                  {/* Anime Servers (DUB & SUB) */}
-                  <GridItem
-                    borderLeft={{ base: "none", md: "1px solid #616161" }}
-                    padding="0 20px"
-                    display="flex"
-                    flexDir="column"
-                    gap="15px 0"
-                    colSpan={{ base: "12", lg: "6", xl: "5" }}
-                    width={{ base: "initial", xl: "50%" }}
-                  >
-                    {/* Sub */}
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent={{ base: "center", md: "start" }}
-                      flexDir={{ base: "column", md: "row" }}
-                      gap={{ base: "10px 0", md: "0 10px" }}
-                    >
-                      <Text
-                        color={
-                          dubStatus ? "var(--text-color)" : "var(--link-color)"
-                        }
-                        letterSpacing="0.5px"
-                        lineHeight="24px"
-                        fontFamily="var(--body-font)"
-                      >
-                        SUB:
-                      </Text>
-                      <Flex
-                        gap={{ base: "10px", md: "10px" }}
-                        flexWrap="wrap"
-                        justifyContent={{ base: "center", md: "start" }}
-                      >
-                        {["Server 1", "Server 2", "Server 3", "Server 4"].map(
-                          (server, index) => (
-                            <Link
-                              key={index}
-                              className={
-                                activeLink === index
-                                  ? "server active"
-                                  : "server"
-                              }
-                              style={{ fontFamily: "var(--body-font)" }}
-                              onClick={() => handleClick(index)} // Set the active index on click
-                            >
-                              {server}
-                            </Link>
-                          )
-                        )}
-                      </Flex>
-                    </Box>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent={{ base: "center", md: "start" }}
-                      flexDir={{ base: "column", md: "row" }}
-                      gap={{ base: "10px 0", md: "0 10px" }}
-                    >
-                      <Text
-                        color={
-                          dubStatus ? "var(--link-color)" : "var(--text-color)"
-                        }
-                        letterSpacing="0.5px"
-                        lineHeight="24px"
-                        fontFamily="var(--body-font)"
-                      >
-                        DUB:
-                      </Text>
-                      <Flex
-                        gap={{ base: "10px", md: "10px" }}
-                        flexWrap="wrap"
-                        justifyContent={{ base: "center", md: "start" }}
-                      >
-                        {isDub ? (
-                          ["Server 1", "Server 2", "Server 3", "Server 4"].map(
-                            (server, index) => (
-                              <Link
-                                key={index}
-                                className={
-                                  activeDubLink === index
-                                    ? "server active"
-                                    : "server"
-                                }
-                                style={{ fontFamily: "var(--body-font)" }}
-                                onClick={() => handleDubClick(index)} // Set the active index on click
-                              >
-                                {server}
-                              </Link>
-                            )
-                          )
-                        ) : (
-                          <Text
-                            color="var(--text-color)"
-                            fontFamily="var(--body-font)"
-                          >
-                            N/A
-                          </Text>
-                        )}
-                      </Flex>
-                    </Box>
-                  </GridItem>
+                    </VStack>
 
-                  {/* Anime Download */}
-                  <GridItem
-                    display="flex"
-                    flexDir={{ base: "column", sm: "row", lg: "column" }}
-                    gap={{ base: "10px 0", sm: "0 10px", lg: "10px 0" }}
-                    alignItems={{ base: "center", lg: "start" }}
-                    justifyContent={{ base: "center", md: "start" }}
-                    colSpan={{ base: "12", lg: "12", xl: "3" }}
-                    mt={{ base: "20px", md: "0" }}
-                    width={{ base: "initial" }}
-                  >
-                    <DownloadLinksSelect
-                      episodeSession={sesssionEpisode}
-                      sessionId={sessionId}
-                      nextSessionEpisode={nextSessionEpisode}
+                    <HStack spacing={3}>
+                      {/* Sub / Dub toggle */}
+                      <HStack spacing={0}>
+                        <Button
+                          size="sm"
+                          variant={showDub ? "outline" : "solid"}
+                          onClick={() => setShowDub(false)}
+                          aria-pressed={!showDub}
+                        >
+                          SUB
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={showDub ? "solid" : "outline"}
+                          onClick={() => setShowDub(true)}
+                          aria-pressed={showDub}
+                          disa
+                          disabled={!dubStatus}
+                        >
+                          DUB
+                        </Button>
+                      </HStack>
+
+                      {/* Download / Rating */}
+                      <HStack spacing={2}>
+                        <Download size={16} />
+                        <Text fontSize="sm" color="var(--text-color)">
+                          {animeRating ? `${animeRating}/10` : "N/A"}
+                        </Text>
+                      </HStack>
+                    </HStack>
+                  </Stack>
+
+                  {/* Download selector + extra actions (compact) */}
+                  <DownloadLinksSelect
+                    episodeSession={sesssionEpisode}
+                    sessionId={sessionId}
+                    nextSessionEpisode={nextSessionEpisode}
+                  />
+                </Box>
+              </Box>
+            </GridItem>
+
+            {/* SIDEBAR: Episode list (right column on xl) */}
+            <GridItem>
+              <Box
+                bg="var(--primary-background-color)"
+                borderRadius="12px"
+                p={3}
+                h={{ base: "auto", xl: "auto" }}
+                boxShadow="0 6px 20px rgba(0,0,0,0.35)"
+              >
+                <HStack justify="space-between" mb={3}>
+                  <Heading size="sm" color="var(--text-color)">
+                    Episodes
+                  </Heading>
+                  <HStack>
+                    <Text fontSize="sm" color="var(--text-secondary)">
+                      {episodes.length} total
+                    </Text>
+                    <IconButton
+                      aria-label="collapse"
+                      icon={<ChevronDown />}
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {}}
                     />
+                  </HStack>
+                </HStack>
 
-                    <Text
-                      fontSize={{ base: "15.58px", "2xl": "24.41px" }}
-                      lineHeight={{ base: "28.8px", "2xl": "37.5px" }}
-                      letterSpacing="0.5px"
-                      color="var(--text-color)"
-                      textTransform="uppercase"
-                    >
-                      {" "}
-                      Rating: {animeRating ? `${animeRating} /10` : "N/A"}
+                {/* episode list area: scrollable on large screens, full width on mobile */}
+                <Box
+                  maxH={{ base: "auto", xl: "54vh" }}
+                  overflowY={{ base: "visible", xl: "auto" }}
+                  // pr={2}
+                >
+                  {loading ? (
+                    <Text color="var(--accent-color)">Loading...</Text>
+                  ) : error ? (
+                    <Error bg="none" msg={epError} />
+                  ) : episodes.length === 0 ? (
+                    <Text color="var(--text-secondary)">
+                      No episodes available
                     </Text>
-                  </GridItem>
-                </GridItem>
-              </Grid>
-            </Box>
-          </Box>
+                  ) : (
+                    <EpisodeList
+                      items={episodes}
+                      itemId={episodeIds}
+                      streaming={true}
+                      activeEP={activeEpId}
+                    />
+                  )}
+                </Box>
+              </Box>
+            </GridItem>
+          </Grid>
         </Box>
       </Box>
     </Box>

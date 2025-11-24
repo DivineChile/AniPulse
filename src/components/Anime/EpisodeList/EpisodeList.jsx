@@ -13,7 +13,7 @@ const chunkEpisodes = (arr, size = 30) => {
   return chunks;
 };
 
-const EpisodeList = ({ items, itemId }) => {
+const EpisodeList = ({ items, itemId, streaming, activeEP }) => {
   if (!items || items.length === 0) {
     return <Error bg="none" msg="No Episodes found." pos="relative" />;
   }
@@ -32,6 +32,7 @@ const EpisodeList = ({ items, itemId }) => {
 
   const renderEpisodeCard = (ep, index) => {
     const globalIndex = activePage * 30 + index;
+    const isActive = streaming && ep.episodeId.endsWith(`${activeEP}`);
     return (
       <Tooltip
         content={ep.title || `Episode ${globalIndex + 1}`}
@@ -45,10 +46,14 @@ const EpisodeList = ({ items, itemId }) => {
           to={`/watch/${itemId[globalIndex]}`}
           borderRadius="8px"
           p="6px"
-          bg="var(--primary-background-color)"
+          bg={
+            isActive
+              ? "var(--secondary-color)"
+              : "var(--primary-background-color)"
+          }
           border="1px solid var(--secondary-color)"
           textAlign="center"
-          color="var(--text-color)"
+          color={isActive ? "var(--accent-color)" : "var(--text-color)"}
           fontWeight="500"
           fontSize={{ base: "11px", sm: "12px", md: "13px" }}
           transition="all 0.25s ease"
@@ -59,9 +64,7 @@ const EpisodeList = ({ items, itemId }) => {
             borderColor: "var(--accent-color)",
           }}
         >
-          <Text fontSize={{ base: "12px", md: "14px" }} mb="4px">
-            EP {globalIndex + 1}
-          </Text>
+          <Text fontSize={{ base: "12px", md: "14px" }}>{globalIndex + 1}</Text>
         </Box>
       </Tooltip>
     );
@@ -70,7 +73,7 @@ const EpisodeList = ({ items, itemId }) => {
   return (
     <Box>
       {/* Episodes Grid */}
-      <SimpleGrid columns={{ base: 4, sm: 5, md: 6 }} gap={2}>
+      <SimpleGrid columns={{ base: 4, sm: 5, md: 6 }} gap={3}>
         {episodeChunks[activePage].map(renderEpisodeCard)}
       </SimpleGrid>
       {/* Pagination Controls */}
@@ -81,7 +84,10 @@ const EpisodeList = ({ items, itemId }) => {
             disabled={activePage === 0}
             bg="var(--primary-background-color)"
             color="var(--text-color)"
-            _hover={{ bg: "var(--link-hover-color)" }}
+            _hover={{
+              bg: "var(--link-hover-color)",
+              color: "var(--accent-color)",
+            }}
             size="sm"
           >
             Prev
@@ -94,7 +100,10 @@ const EpisodeList = ({ items, itemId }) => {
             disabled={activePage === episodeChunks.length - 1}
             bg="var(--primary-background-color)"
             color="var(--text-color)"
-            _hover={{ bg: "var(--link-hover-color)" }}
+            _hover={{
+              bg: "var(--link-hover-color)",
+              color: "var(--accent-color)",
+            }}
             size="sm"
           >
             Next

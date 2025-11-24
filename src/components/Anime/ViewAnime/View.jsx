@@ -230,7 +230,7 @@ const View = () => {
 
                 <Button
                   as={ReactRouterLink}
-                  to="#episodes"
+                  to={`/watch/${episodes[0].episodeId}`}
                   mt="25px"
                   bg="var(--accent-color)"
                   _hover={{

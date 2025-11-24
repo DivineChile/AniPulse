@@ -81,12 +81,18 @@ const DownloadLinksSelect = ({
   });
 
   return (
-    <Box display="flex" flexDir="column" gap="10px">
+    <Box
+      display="flex"
+      flexDir="column"
+      width={{ base: "100%", lg: "350px" }}
+      gap="10px"
+      pt={2}
+    >
       <Box display="flex" gap="10px" flexDir={{ base: "column", sm: "row" }}>
         <Select.Root
           collection={links}
           size="md"
-          width={{ base: "300px", lg: "250px" }}
+          width="100%"
           isDisabled={loading || downloadLinks.length === 0}
           onValueChange={(details) => handleChange(details.value)}
         >
