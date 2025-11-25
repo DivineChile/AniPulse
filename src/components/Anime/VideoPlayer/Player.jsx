@@ -211,6 +211,27 @@ const Player = ({ dub, sub }) => {
       artRef.current.on("quality", (quality) => {
         artRef.current.switchUrl(quality.url, true);
       });
+
+      artRef.current.on("fullscreen", () => {
+        const lockOrientation = async () => {
+          try {
+            if (screen.orientation && screen.orientation.lock) {
+              await screen.orientation.lock("landscape");
+              console.log("Orientation locked to landscape");
+            }
+          } catch (err) {
+            console.warn("Orientation lock failed:", err);
+          }
+        };
+
+        lockOrientation();
+      });
+
+      artRef.current.on("fullscreenCancel", () => {
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+      });
     };
 
     setupPlayer();

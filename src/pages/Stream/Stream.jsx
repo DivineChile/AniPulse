@@ -72,13 +72,12 @@ const Stream = () => {
   const [sesssionEpisode, setSessionEpisode] = useState("");
   const [nextSessionEpisode, setNextSessionEpisode] = useState("");
   const [sessionResult, setSessionResult] = useState({});
+  const [showDub, setShowDub] = useState(dubStatus);
 
   //Base URLS
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
   const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
-  const streamProxy =
-    "https://divinechile-deno-m3u8-p-11.deno.dev/m3u8-proxy?url=";
 
   const animePahe_api = "https://paheapi-production.up.railway.app/";
   const TMDB_API = "https://api.themoviedb.org/3";
@@ -345,13 +344,6 @@ const Stream = () => {
 
     fetchEpisodeSession();
   }, [sessionId, realEpNo, contentType]);
-
-  const isMobile = useBreakpointValue({ base: true, lg: false });
-
-  // UI state
-  const [activeServer, setActiveServer] = useState(0);
-  const [activeDubServer, setActiveDubServer] = useState(0);
-  const [showDub, setShowDub] = useState(dubStatus);
 
   // Derived episode IDs array for EpisodeList prop
   const episodeIds = useMemo(
