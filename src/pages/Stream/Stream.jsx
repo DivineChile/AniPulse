@@ -115,9 +115,6 @@ const Stream = () => {
           10 * 60 * 1000
         );
 
-        console.log("[🔍] Fetching anime data for ID:", animeName);
-        console.log(data);
-
         setAnimeData(data.data);
         setAnimeTitle(data.data.name);
         setAnimeRating(data.data.score);
