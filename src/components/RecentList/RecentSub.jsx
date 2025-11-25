@@ -85,7 +85,7 @@ const Recents = () => {
                   <Skeleton h="20px" w="50px" />
                   <Skeleton h="20px" w="50px" />
                 </HStack>
-                <SkeletonText noOfLines={2} spacing={2} my="10px" />
+                <SkeletonText noOfLines={2} spacing={1} my="10px" />
               </GridItem>
             ))
           : displayedAnime?.map((item, i) => {

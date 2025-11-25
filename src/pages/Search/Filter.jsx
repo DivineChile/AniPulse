@@ -50,6 +50,7 @@ const Filter = () => {
   const [showClear, setShowClear] = useState(true);
 
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
+  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
 
@@ -65,19 +66,21 @@ const Filter = () => {
     setError(false);
     try {
       const response = await fetch(
-        `${proxy}${backup_api}/api/search?keyword=${query}${filter}`
+        `${proxy}${kenjitsu_api}api/hianime/anime/search?q=${query}${filter}`
       );
       const data = await response.json();
-      setAnimeResults(data.results.data);
-      setCurrentPage(data.results.currentPage);
-      setTotalPages(data.results.totalPage);
-      setAnimePerPage(data.results.data.length); // set animePerPage here
-      setIsLoading(false);
-      setError(false);
+      console.log(data);
+      setAnimeResults(data.data);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.lastPage);
+      setAnimePerPage(data.data.length); // set animePerPage here
     } catch (error) {
       console.error("Error fetching anime:", error.message);
       setIsLoading(false);
       setError(true);
+    } finally {
+      setIsLoading(false);
+      setError(false);
     }
   };
 
@@ -121,23 +124,26 @@ const Filter = () => {
     setError(false);
     try {
       const response = await fetch(
-        `${proxy}${backup_api}/api/v2/hianime/search?q=${newQueryValue}`
+        `${proxy}${kenjitsu_api}api/hianime/anime/search?q=${newQueryValue}`
       );
       const data = await response.json();
-      setAnimeResults(data.data.animes);
-      setCurrentPage(data.data.currentPage);
-      setIsLoading(false);
-      setError(false);
+      setAnimeResults(data.data);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.lastPage);
+      setAnimePerPage(data.data.length);
     } catch (error) {
       console.error("Error fetching anime:", error.message);
       setIsLoading(false);
       setError(true);
+    } finally {
+      setIsLoading(false);
+      setError(false);
     }
   };
 
   const handleSearch = () => {
     handleNewRequestAnime();
-    requestMovie();
+    // requestMovie();
     navigate(`/search/keyword/${encodeURIComponent(newQueryValue)}`);
     document.title = `${newQueryValue} - AniPulse`;
   };

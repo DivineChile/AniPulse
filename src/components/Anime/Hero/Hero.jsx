@@ -26,46 +26,37 @@ import Next from "../HeroSliderButtons/Next";
 import "./Hero.css";
 
 const Hero = () => {
-  const [state, setState] = useState({
-    isLoading: true,
-    error: null,
-    animeInfo: [],
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [animeInfo, setAnimeInfo] = useState([]);
 
   const apiBase = "https://anime-api-production-bc3d.up.railway.app/";
+  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
   const fetchAnimeData = async () => {
     try {
       // Fetch top airing anime with cacheFetch
       const homeData = await cacheFetch(
         "homeData",
-        `${apiBase}api/`,
+        `${proxy}${apiBase}api/`,
         10 * 60 * 1000 // cache for 10 minutes
       );
 
-      // Slice to max 10 if more than 10
-      const spotlightData = homeData?.results.spotlights;
-
       // Use the data directly instead of fetching animeInfo by ID
-      setState({
-        isLoading: false,
-        error: null,
-        animeInfo: spotlightData || [],
-      });
+      setAnimeInfo(homeData?.results.spotlights);
     } catch (err) {
-      setState({
-        isLoading: false,
-        error: err.message,
-        animeInfo: [],
-      });
+      setIsLoading(false);
+      setError(err.message);
+      setAnimeInfo([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAnimeData();
   }, []);
-
-  const { isLoading, error, animeInfo } = state;
 
   return (
     <Box w="100%" h="100vh">
