@@ -23,7 +23,7 @@ const DownloadLinksSelect = ({
   const [selectedLink, setSelectedLink] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-  const animePahe_api = "https://paheapi-production.up.railway.app/";
+  const animePahe_api = "https://pahe-api.fly.dev/";
 
   const fetchDownloadLinks = async (key, isPrefetch = false) => {
     try {

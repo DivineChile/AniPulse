@@ -83,9 +83,8 @@ const Player = ({ dub, sub }) => {
       const cacheKey = `videoData_${watchId}${queryParams}_${category}`;
 
       const data = await cacheFetch(
-        cacheKey,
-        `${proxy}${kenjitsu_api}/api/hianime/sources/${watchId}${queryParams}?version=${category}&server=hd-2`,
-        10 * 60 * 1000
+        `api/hianime/sources/${watchId}${queryParams}?version=${category}&server=hd-2`,
+        { cacheKey }
       );
 
       if (!data) throw new Error("Failed to fetch video data.");

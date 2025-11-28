@@ -83,11 +83,7 @@ const View = () => {
       const cacheKey = `animeInfo_${id}`;
 
       // Fetch + cache for 10 minutes
-      const data = await cacheFetch(
-        cacheKey,
-        `${proxy}${kenjitsu_api}/api/hianime/anime/${id}`,
-        10 * 60 * 1000 // 10 minutes
-      );
+      const data = await cacheFetch(`api/hianime/anime/${id}`, { cacheKey });
 
       const anime = data.data;
 

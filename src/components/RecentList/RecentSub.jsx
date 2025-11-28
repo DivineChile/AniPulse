@@ -30,9 +30,9 @@ const Recents = () => {
     try {
       // Retrieve cached homeData or fetch from API if not present
       const data = await cacheFetch(
-        "homeData", // key used for home page data in localStorage
-        `${proxy}${backupApi}api`, // fallback API endpoint
-        10 * 60 * 1000 // cache duration (10 minutes)
+        "api/", // endpoint to fetch from backend
+        { cacheKey: "homeData" }, // options with cacheKey
+        true // isHome flag to use home API
       );
 
       // Assuming data.results.data contains recently updated anime

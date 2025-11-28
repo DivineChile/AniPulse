@@ -34,11 +34,9 @@ const Upcoming = () => {
         const cacheKey = `upcomingAnimes`;
 
         // Fetch + cache for 10 minutes
-        const data = await cacheFetch(
+        const data = await cacheFetch("api/jikan/anime/top/upcoming", {
           cacheKey,
-          `${proxy}${kenjitsu_api}api/jikan/anime/top/upcoming`,
-          10 * 60 * 1000 // 10 minutes
-        );
+        });
 
         const filtered = data.data.filter(
           (item) => item?.releaseDate !== "Unknown"

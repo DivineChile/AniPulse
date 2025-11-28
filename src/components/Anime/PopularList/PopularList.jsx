@@ -31,11 +31,7 @@ const PopularList = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await cacheFetch(
-        "homeData", // key used for home page data in localStorage
-        `${proxy}${backup_api}api`, // fallback API endpoint
-        10 * 60 * 1000 // cache duration (10 minutes)
-      );
+      const data = await cacheFetch("api", { cacheKey: "homeData" }, true);
       setResults(data.results.mostPopular || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");

@@ -37,11 +37,7 @@ const Hero = () => {
   const fetchAnimeData = async () => {
     try {
       // Fetch top airing anime with cacheFetch
-      const homeData = await cacheFetch(
-        "homeData",
-        `${proxy}${apiBase}api/`,
-        10 * 60 * 1000 // cache for 10 minutes
-      );
+      const homeData = await cacheFetch("api/", { cacheKey: "homeData" }, true);
 
       // Use the data directly instead of fetching animeInfo by ID
       setAnimeInfo(homeData?.results.spotlights);

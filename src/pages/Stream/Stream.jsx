@@ -79,7 +79,7 @@ const Stream = () => {
   const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
-  const animePahe_api = "https://paheapi-production.up.railway.app/";
+  const animePahe_api = "https://pahe-api.fly.dev/";
   const TMDB_API = "https://api.themoviedb.org/3";
   const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY;
   const fullPath = `${watchId}${location.search}`;
@@ -108,11 +108,9 @@ const Stream = () => {
       const cacheKey = `animeInfo_${animeName}`;
 
       try {
-        const data = await cacheFetch(
+        const data = await cacheFetch(`api/hianime/anime/${animeName}`, {
           cacheKey,
-          `${proxy}${kenjitsu_api}/api/hianime/anime/${animeName}`,
-          10 * 60 * 1000
-        );
+        });
 
         setAnimeData(data.data);
         setAnimeTitle(data.data.name);
@@ -406,7 +404,7 @@ const Stream = () => {
               <Box
                 bg="var(--primary-background-color)"
                 borderRadius="12px"
-                boxShadow="0 10px 30px rgba(0,0,0,0.5)"
+                boxShadow="0 0px 10px rgba(15, 133, 133, 0.35)"
                 overflow="hidden"
               >
                 {/* Player container */}
@@ -445,7 +443,11 @@ const Stream = () => {
                       alignItems={{ base: "center", md: "start" }}
                       spacing={1}
                     >
-                      <Heading size="md" color="var(--text-color)">
+                      <Heading
+                        size="md"
+                        color="var(--text-color)"
+                        textAlign={{ base: "center", md: "left" }}
+                      >
                         {animeTitle || "Unknown title"}
                       </Heading>
                       <Text color="var(--text-secondary)" fontSize="sm">
@@ -505,7 +507,7 @@ const Stream = () => {
                 borderRadius="12px"
                 p={3}
                 h={{ base: "auto", xl: "auto" }}
-                boxShadow="0 6px 20px rgba(0,0,0,0.35)"
+                boxShadow="0 0px 10px rgba(15, 133, 133, 0.35)"
               >
                 <HStack justify="space-between" mb={3}>
                   <Heading size="sm" color="var(--text-color)">
@@ -532,7 +534,9 @@ const Stream = () => {
                   // pr={2}
                 >
                   {loading ? (
-                    <Text color="var(--accent-color)">Loading...</Text>
+                    <Text color="var(--primary-color)" fontSize="20px">
+                      Loading...
+                    </Text>
                   ) : error ? (
                     <Error bg="none" msg={epError} />
                   ) : episodes.length === 0 ? (
