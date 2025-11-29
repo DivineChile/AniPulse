@@ -10,21 +10,24 @@ import {
   VStack,
   Text,
   Link as ChakraLink,
+  Dialog,
+  Portal,
   Flex,
+  Badge,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import "../../../index.css";
 import "./style.css";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { debounce } from "lodash";
 
-const SearchBar = ({ above, below, displayProp }) => {
+const SearchBar = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState("");
   const [animeResults, setAnimeResults] = useState([]);
   const [movieResults, setMovieResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
 
   const navigate = useNavigate();
 
@@ -84,7 +87,7 @@ const SearchBar = ({ above, below, displayProp }) => {
       try {
         const [anime, movies] = await Promise.all([
           fetchAnimeResults(value),
-          fetchMovieResults(value),
+          // fetchMovieResults(value),
         ]);
         setAnimeResults(anime);
         setMovieResults(movies);
@@ -109,208 +112,160 @@ const SearchBar = ({ above, below, displayProp }) => {
     }
   };
 
-  const handleInputFocus = () => setShowDropdown(true);
-  const handleInputBlur = () => setTimeout(() => setShowDropdown(false), 200);
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && query.trim()) {
       navigate(`/search/keyword/${query}`);
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      setQuery("");
+      setAnimeResults([]);
+    }
+  }, [isOpen]);
+
+  const isLarge = useBreakpointValue({ base: false, md: true });
+
   return (
-    <Box
-      hideBelow={below}
-      hideFrom={above}
-      width={{ base: "100%", lg: "300px", xl: "350px", "2xl": "400px" }}
-      display={displayProp}
-      pos="relative"
-    >
-      <Group
-        h="40px"
-        w={{ base: "100%", lg: "300px", xl: "350px", "2xl": "400px" }}
-        attached
-      >
-        <Button
-          background="none"
-          color="var(--text-color)"
-          borderRight="none"
-          borderColor="var(--link-hover-color)"
-          cursor="pointer"
-          onClick={() => query.trim() && navigate(`/search/keyword/${query}`)}
-        >
-          <Search color="var(--link-hover-color)" />
-        </Button>
-        <Input
-          borderLeft="none"
-          placeholder="Search anime or movies"
-          _placeholder={{ color: "var(--text-secondary)" }}
-          color="var(--text-color)"
-          borderColor="var(--link-hover-color)"
-          value={query}
-          onChange={handleInputChange}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          onKeyDown={handleKeyPress}
-        />
-      </Group>
-
-      {showDropdown && (
-        <Box
-          width={{ base: "100%", sm: "400px", md: "500px" }}
-          top="50px"
-          right="0"
-          bg="var(--primary-background-color)"
-          borderRadius="10px"
-          p="20px"
-          boxShadow="0 0 10px 0 rgba(0,0,0,0.6)"
-          position="absolute"
-          zIndex="999"
-        >
-          <Box borderBottom="1px solid #444444" mb="20px">
-            <Heading
-              as="h4"
+    <Dialog.Root open={isOpen} onOpenChange={onClose} unmountOnExit>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content
+            width={{ base: "90%", md: "600px" }}
+            borderRadius="lg"
+            p={4}
+          >
+            {/* SEARCH INPUT */}
+            <Input
+              placeholder="Search anime or movies"
+              _placeholder={{ color: "var(--text-secondary)" }}
               color="var(--text-color)"
-              fontSize="20px"
-              mb="5px"
-              fontWeight="400"
-              fontFamily="var(--font-family)"
-            >
-              Search Results
-            </Heading>
-          </Box>
+              borderColor="var(--link-hover-color)"
+              value={query}
+              onChange={handleInputChange}
+              // onKeyPress={handleKeyPress}
+            />
 
-          {loading && (
-            <VStack>
-              <Spinner color="var(--link-hover-color)" />
-              <Text color="var(--link-hover-color)">Loading...</Text>
-            </VStack>
-          )}
+            {/* RESULTS */}
+            <Box mt={4} maxH="300px" overflowY="auto">
+              {loading && query.trim() && (
+                <VStack>
+                  <Spinner color="var(--link-hover-color)" />
+                  <Text color="var(--link-hover-color)">Loading...</Text>
+                </VStack>
+              )}
 
-          {error && (
-            <Text
-              as="span"
-              color="var(--text-color)"
-              fontFamily="var(--body-font)"
-            >
-              {error}
-            </Text>
-          )}
-
-          {animeResults.length > 0 && (
-            <Box mb="20px">
-              <Heading fontSize="16px" mb="10px" color="var(--text-color)">
-                Anime
-              </Heading>
-              {animeResults.slice(0, 3).map((item) => (
-                <ChakraLink
-                  as={ReactRouterLink}
-                  key={item.id}
-                  _hover={{
-                    color: "var(--link-hover-color)",
-                    textDecoration: "none",
-                  }}
-                  to={`/anime/${item.id}`}
-                  display="flex"
-                  gap="15px"
-                  mb="10px"
-                  alignItems="center"
-                  transition="0.2s ease"
+              {error && (
+                <Text
+                  as="span"
+                  color="var(--text-color)"
+                  fontFamily="var(--body-font)"
                 >
-                  <Image
-                    h="60px"
-                    w="50px"
-                    borderRadius="6px"
-                    src={item.poster}
-                    alt={item.title}
-                  />
-                  <Box>
-                    <Heading
-                      fontSize="15px"
-                      color="var(--link-color)"
-                      _hover={{ color: "var(--link-hover-color)" }}
-                      transition="all ease 0.25s"
-                    >
-                      {item.title}
-                    </Heading>
-                    <Flex gap="5px" fontSize="12px" color="var(--text-color)">
-                      <Text>Sub: {item.tvInfo.sub || "N/A"}</Text>
-                      <Text>Dub: {item.tvInfo.dub || "N/A"}</Text>
-                    </Flex>
-                    <Text fontSize="12px" color="var(--text-secondary)">
-                      {item.tvInfo.showType}
-                    </Text>
-                  </Box>
-                </ChakraLink>
-              ))}
-            </Box>
-          )}
+                  {error}
+                </Text>
+              )}
 
-          {/* {movieResults.length > 0 && (
-            <Box>
-              <Heading fontSize="16px" mb="10px" color="var(--text-color)">
-                Movies & TV Shows
-              </Heading>
-              {movieResults.slice(0, 3).map((movie) => (
-                <ChakraLink
-                  as={ReactRouterLink}
-                  textDecor="none"
-                  key={movie.id}
-                  to={
-                    movie.media_type === "tv"
-                      ? `/movies/tv/${movie.id}`
-                      : `/movies/movie/${movie.id}`
-                  }
-                  display="flex"
-                  gap="15px"
-                  mb="10px"
-                  alignItems="center"
-                  _hover={{
-                    color: "var(--link-hover-color)",
-                    textDecoration: "none",
-                  }}
-                  transition="0.2s ease"
+              {!loading && !error && animeResults.length > 0 ? (
+                <VStack align="stretch" spacing={3}>
+                  {animeResults.slice(0, 10).map((item) => (
+                    <ChakraLink
+                      as={ReactRouterLink}
+                      key={item.id}
+                      _hover={{
+                        color: "var(--link-hover-color)",
+                        textDecoration: "none",
+                      }}
+                      to={`/anime/${item.id}`}
+                      display="flex"
+                      gap="15px"
+                      mb="10px"
+                      alignItems="center"
+                      transition="0.2s ease"
+                    >
+                      <Image
+                        h={{ base: "90px", md: "120px" }}
+                        w={{ base: "70px", md: "90px" }}
+                        borderRadius="5px"
+                        src={item.poster}
+                        bg="var(--primary-background-color)"
+                        alt={item.title}
+                      />
+                      <Box display="flex" flexDirection="column" gap="5px">
+                        <Heading
+                          fontSize={{ base: "14px", md: "16px" }}
+                          color="var(--link-color)"
+                          _hover={{ color: "var(--link-hover-color)" }}
+                          transition="all ease 0.25s"
+                          lineHeight="20px"
+                        >
+                          {isLarge
+                            ? item.title.length > 40
+                              ? item.title.slice(0, 40) + "..."
+                              : item.title
+                            : item.title.length > 30
+                            ? item.title.slice(0, 25) + "..."
+                            : item.title}
+                        </Heading>
+                        <Text
+                          fontSize={{ base: "12px", md: "13px" }}
+                          color="var(--text-secondary)"
+                          fontStyle="italic"
+                        >
+                          {isLarge
+                            ? item.title.length > 40
+                              ? item.title.slice(0, 30) + "..."
+                              : item.title
+                            : item.title.length > 30
+                            ? item.title.slice(0, 20) + "..."
+                            : item.title}
+                        </Text>
+                        <Flex
+                          gap="5px"
+                          fontSize="12px"
+                          color="var(--text-color)"
+                        >
+                          {item.tvInfo.sub && (
+                            <Badge variant="surface" size="xs">
+                              {`SUB: ${item.tvInfo.sub}`}
+                            </Badge>
+                          )}
+
+                          {item.tvInfo.dub && (
+                            <Badge variant="surface" size="xs">
+                              {`DUB: ${item.tvInfo.dub}`}
+                            </Badge>
+                          )}
+                          {item.tvInfo.showType && (
+                            <Badge variant="surface" size="xs">
+                              {item.tvInfo.showType}
+                            </Badge>
+                          )}
+                          {item.tvInfo.rating && (
+                            <Badge variant="surface" size="xs">
+                              {item.tvInfo.rating}
+                            </Badge>
+                          )}
+                        </Flex>
+                      </Box>
+                    </ChakraLink>
+                  ))}
+                </VStack>
+              ) : !loading && !error && animeResults.length < 1 ? (
+                <Text
+                  as="span"
+                  color="var(--text-color)"
+                  fontFamily="var(--body-font)"
                 >
-                  <Image
-                    h="60px"
-                    w="50px"
-                    borderRadius="6px"
-                    bg="#191919"
-                    src={
-                      movie.poster_path
-                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                        : "/placeholder.png"
-                    }
-                    alt={movie.title ? movie.title : movie.name}
-                  />
-                  <Box>
-                    <Heading
-                      fontSize="15px"
-                      color="var(--link-color)"
-                      _hover={{ color: "var(--link-hover-color)" }}
-                      transition="all ease 0.25s"
-                    >
-                      {movie.title ? movie.title : movie.name}
-                    </Heading>
-                    <Text fontSize="12px" color="var(--text-color)">
-                      {movie.release_date
-                        ? movie.release_date
-                        : movie.first_air_date}
-                    </Text>
-                    <Text
-                      fontSize="12px"
-                      color="var(--text-secondary)"
-                      textTransform="uppercase"
-                    >
-                      {movie.media_type ? movie.media_type : movie.media_type}
-                    </Text>
-                  </Box>
-                </ChakraLink>
-              ))}
+                  No results found
+                </Text>
+              ) : null}
             </Box>
-          )} */}
-        </Box>
-      )}
-    </Box>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   );
 };
 

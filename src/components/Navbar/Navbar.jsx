@@ -1,12 +1,24 @@
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { Box, Heading, List, Text, Image, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  List,
+  Text,
+  Image,
+  Flex,
+  useBreakpointValue,
+  Group,
+  Button,
+  Input,
+  IconButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { NavList } from "./utils/NavUtil";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./style.css";
 import SearchBar from "../Anime/SearchBar/SearchBar";
-import { X, TvMinimalPlay } from "lucide-react";
-import navIcon from "../../assets/navIcon.png";
+import { X, TvMinimalPlay, Search, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { auth } from "../../firebase";
 
@@ -15,6 +27,7 @@ const Navbar = () => {
   const [authUser, setAuthUser] = useState(null);
   const [profileDialogState, setProfileDialogState] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation().pathname;
   const navigate = useNavigate();
   // const toast = useToast();
@@ -88,13 +101,15 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isLarge = useBreakpointValue({ base: false, lg: true });
+
   return (
     <Box
       position="fixed"
       top="0"
       left="0"
       w="100%"
-      zIndex="9999"
+      zIndex="99"
       py={{ base: "15px", lg: "20px" }}
       transition="all 0.25s ease"
       backdropFilter={scrolled ? "blur(12px)" : "blur(0px)"}
@@ -181,7 +196,7 @@ const Navbar = () => {
             flexWrap="wrap"
             pos={{ base: "absolute", lg: "initial" }}
             left="0"
-            top={{ base: "70px", sm: "71px", md: "71px", lg: "none" }}
+            top={{ base: "70px", sm: "70px", md: "70px", lg: "none" }}
             p={isOpen ? { base: "20px", lg: "0" } : { base: "0 20px", lg: "0" }}
             gap={{ base: "10px 0", lg: "0" }}
             h={
@@ -196,8 +211,6 @@ const Navbar = () => {
             }
             zIndex="999"
           >
-            <SearchBar above="lg" displayProp={isOpen ? "block" : "none"} />
-
             {NavList.map((item, key) => {
               const isActive =
                 location === item.to ||
@@ -304,52 +317,56 @@ const Navbar = () => {
             </Box> */}
           </List.Root>
 
-          <SearchBar below="lg" />
+          {isLarge && (
+            <Button
+              h="40px"
+              w={{ base: "100%", lg: "300px", xl: "350px", "2xl": "400px" }}
+              color="var(--text-secondary)"
+              variant="surface"
+              display="flex"
+              gap="15px"
+              justifyContent="flex-start"
+              alignItems="center"
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <Search color="var(--link-hover-color)" />
+              <Text as="span"> Search anime or movies...</Text>
+            </Button>
+          )}
+
+          {!isLarge && (
+            <IconButton
+              onClick={() => setIsSearchOpen(true)}
+              aria-label="Search"
+              variant="surface"
+            >
+              <Search size={20} color="var(--link-hover-color)" />
+            </IconButton>
+          )}
+
+          {/* SEARCH MODAL */}
+          <SearchBar
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+          />
           {isOpen ? (
-            <Box
-              height="40px"
-              w="40px"
-              _hover={{
-                background: "#333333",
-              }}
-              background="#2a2a2a"
-              transition="all ease 0.25s"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="40px"
-              cursor="pointer"
+            <IconButton
               onClick={openNavbar}
+              aria-label="Close Menu"
+              variant="surface"
               hideFrom="lg"
             >
-              <X h="15px" w="19.5px" color="var(--text-color)" />
-            </Box>
+              <X h="15px" w="19.5px" color="var(--link-hover-color)" />
+            </IconButton>
           ) : (
-            <Box
-              height="40px"
-              w="40px"
-              _hover={{
-                background: "#333333",
-              }}
-              background="#2a2a2a"
-              transition="all ease 0.25s"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="40px"
-              cursor="pointer"
+            <IconButton
               onClick={openNavbar}
+              aria-label="Open Menu"
+              variant="surface"
               hideFrom="lg"
             >
-              <Image
-                h="20px"
-                w="15.5px"
-                cursor="pointer"
-                transform="rotate(-90deg)"
-                transition="all ease 0.25s"
-                src={navIcon}
-              />
-            </Box>
+              <Menu size={20} color="var(--link-hover-color)" />
+            </IconButton>
           )}
 
           {/* Auth Links */}

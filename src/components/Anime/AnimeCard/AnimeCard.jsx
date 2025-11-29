@@ -65,14 +65,6 @@ const AnimeCard = ({ anime, page }) => {
             // bg="var(--card-background-color)"
           >
             <HStack gap="2" flexWrap="wrap">
-              {/* {episodes.sub && (
-                <Badge
-                  variant="surface"
-                  size={{ base: "sm", md: "md", lg: "lg" }}
-                >
-                  {`SUB ${episodes.sub}`}
-                </Badge>
-              )} */}
               {episodes.sub && (
                 <Badge
                   variant="surface"
@@ -81,14 +73,7 @@ const AnimeCard = ({ anime, page }) => {
                   {`SUB ${episodes.sub}`}
                 </Badge>
               )}
-              {/* {tvInfo.dub && (
-                <Badge
-                  variant="surface"
-                  size={{ base: "sm", md: "md", lg: "lg" }}
-                >
-                  {`DUB ${tvInfo.dub}`}
-                </Badge>
-              )} */}
+
               {episodes.dub && (
                 <Badge
                   variant="surface"
