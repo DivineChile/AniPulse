@@ -2,6 +2,7 @@ import {
   Box,
   Breadcrumb,
   Button,
+  Collapsible,
   Grid,
   GridItem,
   Heading,
@@ -73,6 +74,7 @@ const Stream = () => {
   const [nextSessionEpisode, setNextSessionEpisode] = useState("");
   const [sessionResult, setSessionResult] = useState({});
   const [showDub, setShowDub] = useState(dubStatus);
+  const [collapsed, setCollapsed] = useState(false);
 
   //Base URLS
   const backup_api = "https://anime-api-production-bc3d.up.railway.app/";
@@ -519,11 +521,13 @@ const Stream = () => {
                     </Text>
                     <IconButton
                       aria-label="collapse"
-                      icon={<ChevronDown />}
                       size="sm"
                       variant="ghost"
-                      onClick={() => {}}
-                    />
+                      onClick={() => setCollapsed(!collapsed)}
+                      transform={collapsed ? "rotate(0deg)" : "rotate(180deg)"}
+                    >
+                      <ChevronDown color="var(--text-secondary)" />
+                    </IconButton>
                   </HStack>
                 </HStack>
 
@@ -533,24 +537,33 @@ const Stream = () => {
                   overflowY={{ base: "visible", xl: "auto" }}
                   // pr={2}
                 >
-                  {loading ? (
-                    <Text color="var(--primary-color)" fontSize="20px">
-                      Loading...
-                    </Text>
-                  ) : error ? (
-                    <Error bg="none" msg={epError} />
-                  ) : episodes.length === 0 ? (
-                    <Text color="var(--text-secondary)">
-                      No episodes available
-                    </Text>
-                  ) : (
-                    <EpisodeList
-                      items={episodes}
-                      itemId={episodeIds}
-                      streaming={true}
-                      activeEP={activeEpId}
-                    />
-                  )}
+                  <Collapsible.Root
+                    open={collapsed}
+                    onOpenChange={() => setCollapsed(!collapsed)}
+                  >
+                    <Collapsible.Content>
+                      <Box>
+                        {loading ? (
+                          <Text color="var(--primary-color)" fontSize="20px">
+                            Loading...
+                          </Text>
+                        ) : error ? (
+                          <Error bg="none" msg={epError} />
+                        ) : episodes.length === 0 ? (
+                          <Text color="var(--text-secondary)">
+                            No episodes available
+                          </Text>
+                        ) : (
+                          <EpisodeList
+                            items={episodes}
+                            itemId={episodeIds}
+                            streaming={true}
+                            activeEP={activeEpId}
+                          />
+                        )}
+                      </Box>
+                    </Collapsible.Content>
+                  </Collapsible.Root>
                 </Box>
               </Box>
             </GridItem>
