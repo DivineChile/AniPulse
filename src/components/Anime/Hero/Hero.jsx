@@ -130,12 +130,18 @@ const Hero = () => {
                     background={`url(${anime.poster})`}
                     backgroundPosition="center"
                     backgroundSize="cover"
-                    backgroundBlendMode="overlay"
-                    backgroundColor="rgba(0, 0, 0, 0.8)"
                     backgroundRepeat="no-repeat"
                     h="100%"
                     w="100%"
+                    pos="relative"
                   >
+                    <Box
+                      w="100%"
+                      h="100%"
+                      pos="absolute"
+                      bottom="0"
+                      background="linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.99))"
+                    ></Box>
                     <Flex
                       maxW={{
                         base: "90%",
@@ -147,6 +153,8 @@ const Hero = () => {
                       h="100%"
                       alignItems="center"
                       justifyContent="space-between"
+                      pos="relative"
+                      zIndex="1"
                     >
                       <VStack
                         width={{ base: "100%", lg: "550px" }}
