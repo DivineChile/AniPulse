@@ -140,7 +140,7 @@ const Hero = () => {
                       h="100%"
                       pos="absolute"
                       bottom="0"
-                      background="linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.99))"
+                      background="linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.99))"
                     ></Box>
                     <Flex
                       maxW={{

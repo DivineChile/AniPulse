@@ -71,7 +71,7 @@ const Recomend = () => {
         margin="auto"
       >
         <Heading
-          textTransform="uppercase"
+          textTransform="capitalize"
           color="var(--text-color)"
           fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
           fontWeight="600"
@@ -80,7 +80,7 @@ const Recomend = () => {
           fontFamily="var(--font-family)"
           textAlign={{ base: "center", md: "start" }}
         >
-          Top Rated
+          Trending
         </Heading>
 
         <Box mt="30px">

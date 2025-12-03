@@ -104,3 +104,8 @@ Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
 /* .playNowBtn:hover .playIcon {
   color: var(--link-hover-color);
 } */
+
+.swiper-button-next,
+.swiper-button-prev {
+  display: none;
+}

@@ -92,8 +92,9 @@ const DownloadLinksSelect = ({
         <Select.Root
           collection={links}
           size="md"
+          variant="subtle"
           width="100%"
-          isDisabled={loading || downloadLinks.length === 0}
+          disabled={loading || downloadLinks.length === 0}
           onValueChange={(details) => handleChange(details.value)}
         >
           <Select.HiddenSelect />

@@ -1,26 +1,16 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Loading from "../../ErrorPage/Loading";
 import Error from "../../ErrorPage/Error";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/swiper-bundle.css";
-import "swiper/css/navigation";
-import "swiper/css/free-mode";
-import { Navigation, FreeMode } from "swiper/modules";
 import { Link } from "react-router-dom";
-import { cacheFetch } from "../../../utils/cacheFetch";
-import Prev from "../../Anime/HeroSliderButtons/Prev";
-import Next from "../../Anime/HeroSliderButtons/Next";
+import MovieHeroSwiper from "../MovieHeroSwiper/MovieHeroSwiper";
 
 const MovieHero = () => {
   const [movies, setMovies] = useState([]);
-  const [genres, setGenres] = useState([]);
-  const [genreLoading, setGenreLoading] = useState(true);
-  const [genreError, setGenreError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const proxy = "https://fluoridated-recondite-coast.glitch.me/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
+  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
   // const newMovieAPI = "https://jumpfreedom.com/3/movie/popular";
 
   const fetchPopularMovies = async () => {
@@ -28,20 +18,10 @@ const MovieHero = () => {
     setError(null);
 
     try {
-      const data = await cacheFetch(
-        "tmdb_popular",
-        `https://api.themoviedb.org/3/movie/popular?api_key=${
-          import.meta.env.VITE_TMDB_API_KEY
-        }`,
-        10 * 60 * 1000,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_BEARER_TOKEN}`,
-            "Content-Type": "application/json;charset=utf-8",
-          },
-        }
-      );
-      setMovies(data.results || []);
+      const data = await fetch(`${proxy}${kenjitsu_api}api/flixhq/home`);
+      const parsedData = await data.json();
+      console.log(parsedData);
+      setMovies(parsedData.featured || []);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -49,46 +29,19 @@ const MovieHero = () => {
     }
   };
 
-  //Fetch current genres from TMDB API
-  const fetchGenres = async () => {
-    setGenreLoading(true);
-    setGenreError(null);
-    try {
-      const data = await cacheFetch(
-        "tmdb_genres",
-        `https://api.themoviedb.org/3/genre/movie/list?api_key=${
-          import.meta.env.VITE_TMDB_API_KEY
-        }`,
-        7 * 24 * 60 * 60 * 1000,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_BEARER_TOKEN}`,
-            "Content-Type": "application/json;charset=utf-8",
-          },
-        }
-      );
-      setGenres(data.genres || []);
-    } catch (err) {
-      setError(err.message || "Something went wrong");
-      setGenreError(err.message || "Something went wrong");
-    } finally {
-      setGenreLoading(false);
-    }
-  };
-
-  const getGenreNames = (genreIds, allGenres) => {
-    return genreIds
-      .map((id) => {
-        const found = allGenres.find((g) => g.id === id);
-        return found ? found.name : null;
-      })
-      .filter(Boolean); // removes nulls if any id didn't match
-  };
-
   useEffect(() => {
     fetchPopularMovies();
-    fetchGenres();
   }, []);
+
+  const handlePlay = (movie) => {
+    // open player, route, or open modal
+    console.log("Play", movie);
+  };
+
+  const handleDetails = (movie) => {
+    // navigate to details page
+    console.log("Details", movie);
+  };
 
   return (
     <Box
@@ -100,12 +53,13 @@ const MovieHero = () => {
         xl: "calc(100vh - 85px)",
       }}
     >
-      {loading ? (
-        <Loading
-          height="100%"
-          bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
-        />
-      ) : error ? (
+      <Loading
+        // height="100%"
+        bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
+        fullscreen
+        isLoading={loading}
+      />
+      {error ? (
         <Error msg={error} height="100%" bg="#191919" />
       ) : (
         <Box
@@ -116,8 +70,9 @@ const MovieHero = () => {
             lg: "calc(100vh - 84px)",
           }}
           pos="relative"
+          top="71px"
         >
-          <Swiper
+          {/* <Swiper
             modules={[Navigation, FreeMode]}
             autoplay={{ delay: 5000, disableOnInteraction: false }}
             loop
@@ -149,10 +104,10 @@ const MovieHero = () => {
               <Next />
             </Box>
             {movies.map((movie, index) => {
-              //get genre names from genre ids
+             
               const genreNames = getGenreNames(movie.genre_ids, genres);
 
-              //get full date from release_date
+             
               const date = new Date(movie.release_date);
 
               const options = {
@@ -280,7 +235,7 @@ const MovieHero = () => {
                           </Box>
                         </Box>
 
-                        {/* Movie Summary */}
+                       
                         <Box
                           display="flex"
                           flexDir="column"
@@ -336,7 +291,12 @@ const MovieHero = () => {
                 </SwiperSlide>
               );
             })}
-          </Swiper>
+          </Swiper> */}
+          <MovieHeroSwiper
+            movies={movies}
+            onDetails={handleDetails}
+            onPlay={handlePlay}
+          />
         </Box>
       )}
     </Box>

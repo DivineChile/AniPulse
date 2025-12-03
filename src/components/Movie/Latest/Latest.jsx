@@ -7,6 +7,8 @@ import {
   HStack,
   Heading,
   Text,
+  Tabs,
+  SimpleGrid,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -22,59 +24,26 @@ import MovieCard from "../MovieCard";
 
 const Latest = () => {
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [tv, setTv] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const today = new Date();
-  today.setDate(today.getDate() - 1);
-
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  const full = `${year}-${month}-${day}`;
-
-  const API_URL = `https://api.themoviedb.org/3/discover/movie?api_key=${
-    import.meta.env.VITE_TMDB_API_KEY
-  }?include_adult=false&include_video=false&language=en-US&page=1&primary_release_year=${year}&primary_release_date.lte=${full}&sort_by=popularity.desc`;
-  const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
-
-  const fetchAllPages = async () => {
+  const fetchRecentReleases = async () => {
     setLoading(true);
     try {
-      const headers = {
-        Authorization: `Bearer ${BEARER_TOKEN}`,
-        "Content-Type": "application/json;charset=utf-8",
-      };
+      // // Unique cache key per movie
+      const cacheKey = `recent_releases`;
 
-      // First page to get total_pages
-      const firstPage = await cacheFetch(
-        "latest_movies_page_1",
-        `${API_URL}?page=1`,
-        10 * 60 * 1000,
-        { headers }
-      );
+      // Fetch + cache for 10 minutes
+      const data = await cacheFetch(`api/flixhq/home`, { cacheKey });
 
-      const totalPages = Math.min(firstPage.total_pages, 5); // Limit to 5 pages to avoid overload
-      let allResults = [...firstPage.results];
+      console.log(data);
 
-      const fetchPromises = [];
-      for (let i = 2; i <= totalPages; i++) {
-        fetchPromises.push(
-          cacheFetch(
-            `latest_movies_page_${i}`,
-            `${API_URL}?page=${i}`,
-            10 * 60 * 1000,
-            { headers }
-          )
-        );
-      }
-
-      const otherPages = await Promise.all(fetchPromises);
-      otherPages.forEach((pageData) => {
-        allResults = allResults.concat(pageData.results);
-      });
-
-      setMovies(allResults);
+      setMovies(data.recentReleases.Movies.slice(0, 10));
+      setTv(data.recentReleases.Tv.slice(0, 10));
+      setLoading(false);
     } catch (err) {
+      setError(err.message || "Something went wrong");
       console.error("Error fetching pages:", err.message);
     } finally {
       setLoading(false);
@@ -82,17 +51,8 @@ const Latest = () => {
   };
 
   useEffect(() => {
-    fetchAllPages();
+    fetchRecentReleases();
   }, []);
-
-  const chunkArray = (arr, size) => {
-    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-      arr.slice(i * size, i * size + size)
-    );
-  };
-
-  const itemsPerGroup = useItemsPerGroup();
-  const groupedMovies = chunkArray(movies, itemsPerGroup);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -119,8 +79,19 @@ const Latest = () => {
   };
 
   const { dayOfWeek, fullDayName, newFullDate } = getCurrentDate();
+
+  function ReleaseGrid({ items }) {
+    return (
+      <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 5 }} gap="20px">
+        {items?.map((item) => (
+          <MovieCard key={item.id} item={item} />
+        ))}
+      </SimpleGrid>
+    );
+  }
+
   return (
-    <Box bg="var(--primary-background-color)" pt="40px" pb="120px">
+    <Box bg="var(--primary-background-color)" pt="100px" pb="100px">
       <Box
         maxW={{
           base: "90%",
@@ -149,7 +120,7 @@ const Latest = () => {
             letterSpacing="1.5px"
             color="var(--text-color)"
             m="0"
-            textTransform="uppercase"
+            textTransform="capitalize"
             fontFamily="var(--font-family)"
           >
             Latest
@@ -161,13 +132,13 @@ const Latest = () => {
             letterSpacing="1.5px"
             color="var(--text-color)"
             m="0"
-            textTransform="uppercase"
+            textTransform="capitalize"
           >
             {`${fullDayName} ${newFullDate}`}
           </Text>
         </Box>
         {/* Latest Movies Released */}
-        <Box>
+        {/* <Box>
           {loading ? (
             <Grid
               gridTemplateColumns={{
@@ -231,7 +202,101 @@ const Latest = () => {
               })}
             </Swiper>
           )}
-        </Box>
+        </Box> */}
+        {loading && (
+          <Grid
+            gridTemplateColumns={{
+              base: "repeat(2, 1fr)",
+              sm: "repeat(3, 1fr)",
+              md: "repeat(4, 1fr)",
+              lg: "repeat(5, 1fr)",
+            }}
+            gap="20px"
+          >
+            {Array.from({ length: 8 }, (_, index) => (
+              <GridItem key={index}>
+                <Skeleton
+                  h={{
+                    base: "276px",
+                    sm: "290.23px",
+                    md: "285px",
+                    lg: "290px",
+                    "2xl": "284px",
+                  }}
+                  w="100%"
+                  borderRadius="10px"
+                />
+              </GridItem>
+            ))}
+          </Grid>
+        )}
+
+        {error && (
+          <Text
+            as="p"
+            fontSize={{ base: "16px", "2xl": "20px" }}
+            lineHeight={{ base: "17.6px", "2xl": "22px" }}
+            letterSpacing="1.5px"
+            color="var(--text-color)"
+            m="0"
+            textTransform="capitalize"
+          >
+            {error}
+          </Text>
+        )}
+
+        {!loading && !error && (
+          <Tabs.Root
+            variant="enclosed"
+            colorPalette="teal"
+            defaultValue="movies"
+            lazyMount
+            unmountOnExit
+            fitted
+            w="100%"
+          >
+            <Tabs.List overflowX="auto" w="100%">
+              <Tabs.Trigger fontWeight="semibold" value="movies">
+                Movies
+              </Tabs.Trigger>
+              <Tabs.Trigger fontWeight="semibold" value="tv">
+                TV Shows
+              </Tabs.Trigger>
+            </Tabs.List>
+
+            <Tabs.ContentGroup mt="4">
+              <Tabs.Content
+                px="0"
+                value="movies"
+                _open={{
+                  animationName: "fade-in, scale-in",
+                  animationDuration: "300ms",
+                }}
+                _closed={{
+                  animationName: "fade-out, scale-out",
+                  animationDuration: "120ms",
+                }}
+              >
+                <ReleaseGrid items={movies} />
+              </Tabs.Content>
+
+              <Tabs.Content
+                px="0"
+                value="tv"
+                _open={{
+                  animationName: "fade-in, scale-in",
+                  animationDuration: "300ms",
+                }}
+                _closed={{
+                  animationName: "fade-out, scale-out",
+                  animationDuration: "120ms",
+                }}
+              >
+                <ReleaseGrid items={tv} />
+              </Tabs.Content>
+            </Tabs.ContentGroup>
+          </Tabs.Root>
+        )}
       </Box>
     </Box>
   );
