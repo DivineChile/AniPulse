@@ -4,20 +4,16 @@ import {
   Grid,
   GridItem,
   Skeleton,
-  SkeletonText,
-  HStack,
   SimpleGrid,
   Text,
   Tabs,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { cacheFetch } from "../../../utils/cacheFetch";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
-import { Navigation, FreeMode } from "swiper/modules";
 import MovieCard from "../MovieCard";
 
 const Recomend = () => {
@@ -37,9 +33,8 @@ const Recomend = () => {
 
       console.log(data);
 
-      setTrendingMovies(data.trending.Movies.slice(0, 10));
-      setTrendingTV(data.trending.Tv.slice(0, 10));
-      setLoading(false);
+      setTrendingMovies(data?.trending?.Movies?.slice(0, 10) || []);
+      setTrendingTV(data?.trending?.Tv?.slice(0, 10) || []);
     } catch (err) {
       setError(err.message || "Something went wrong");
       console.error("Error fetching pages:", err.message);

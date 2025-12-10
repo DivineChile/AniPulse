@@ -32,7 +32,7 @@ const PopularList = () => {
     setError(null);
     try {
       const data = await cacheFetch("api", { cacheKey: "homeData" }, true);
-      setResults(data.results.mostPopular || []);
+      setResults(data?.results?.mostPopular || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {

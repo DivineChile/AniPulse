@@ -34,7 +34,7 @@ const Recents = () => {
       );
 
       // Assuming data.results.data contains recently updated anime
-      setSubAnimeData(data.results.latestEpisode || []);
+      setSubAnimeData(data?.results?.latestEpisode || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {

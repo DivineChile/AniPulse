@@ -1,53 +1,43 @@
 import {
-  Badge,
   Box,
   Flex,
-  HStack,
+  VStack,
   Heading,
   Text,
-  VStack,
+  HStack,
+  Badge,
+  Skeleton,
+  SkeletonText,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
 import { Navigation, FreeMode } from "swiper/modules";
 import { cacheFetch } from "../../../utils/cacheFetch";
 
-//import components
-import Loading from "../../ErrorPage/Loading";
-import Error from "../../ErrorPage/Error";
+//components
 import Navbar from "../../Navbar/Navbar";
 import Prev from "../HeroSliderButtons/Prev";
 import Next from "../HeroSliderButtons/Next";
 import "./Hero.css";
 
 const Hero = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [animeInfo, setAnimeInfo] = useState([]);
-
-  const apiBase = "https://anime-api-production-bc3d.up.railway.app/";
-  const kenjitsu_api = "https://kenjitsu-api-production.up.railway.app/";
-  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchAnimeData = async () => {
     try {
-      // Fetch top airing anime with cacheFetch
       const homeData = await cacheFetch("api/", { cacheKey: "homeData" }, true);
-
-      // Use the data directly instead of fetching animeInfo by ID
-      setAnimeInfo(homeData?.results.spotlights);
-      console.log(homeData.results);
+      setAnimeInfo(homeData?.results?.spotlights || []);
     } catch (err) {
-      setIsLoading(false);
-      setError(err.message);
+      setError(err.message || "Something went wrong");
       setAnimeInfo([]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -55,18 +45,95 @@ const Hero = () => {
     fetchAnimeData();
   }, []);
 
+  // -------------------------
+  //  SKELETON UI COMPONENT
+  // -------------------------
+  const HeroSkeleton = () => (
+    <Box
+      w="100%"
+      h={{
+        base: "calc(100vh - 70px)",
+        md: "calc(100vh - 73px)",
+        lg: "calc(100vh - 84px)",
+      }}
+      top={{ base: "70px", md: "73px", lg: "84px" }}
+      pos="relative"
+      bg="#1a1a1a"
+      overflow="hidden"
+    >
+      <Flex
+        maxW={{
+          base: "90%",
+          sm: "95%",
+          xl: "85%",
+          "2xl": "container.xl",
+        }}
+        margin="auto"
+        h="100%"
+        alignItems="center"
+        justifyContent="space-between"
+        pos="relative"
+        zIndex="2"
+      >
+        <VStack
+          width={{ base: "100%", lg: "550px" }}
+          align="flex-start"
+          gap="20px"
+        >
+          <Skeleton height="55px" width="80%" borderRadius="md" />
+          <Skeleton height="25px" width="60%" borderRadius="md" />
+
+          <HStack gap="10px" flexWrap="wrap">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} height="28px" width="70px" borderRadius="md" />
+            ))}
+          </HStack>
+
+          <SkeletonText noOfLines={5} spacing="4" width="100%" />
+
+          <Skeleton height="45px" width="150px" borderRadius="md" />
+        </VStack>
+
+        <Box hideBelow="xl">
+          <Skeleton
+            w={{ lg: "550px", "2xl": "670px" }}
+            h={{ lg: "450px", "2xl": "600px" }}
+            borderRadius="20px"
+          />
+        </Box>
+      </Flex>
+    </Box>
+  );
+
+  // -------------------------
+  //  ERROR UI
+  // -------------------------
+  const HeroError = () => (
+    <Box
+      w="100%"
+      h="calc(100vh - 80px)"
+      bg="#191919"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Text color="red.300" fontSize="xl">
+        {error}
+      </Text>
+    </Box>
+  );
+
+  // -------------------------
+  //       MAIN RETURN
+  // -------------------------
   return (
     <Box w="100%" h="100vh">
       <Navbar />
 
-      <Loading
-        bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
-        isLoading={isLoading}
-        fullscreen
-      />
-      {error ? (
-        <Error msg={error} height="100%" bg="#191919" />
-      ) : (
+      {loading && <HeroSkeleton />}
+      {error && <HeroError />}
+
+      {!loading && !error && (
         <Box
           w="100%"
           h={{
@@ -82,8 +149,9 @@ const Hero = () => {
             autoplay={{ delay: 5000, disableOnInteraction: false }}
             loop
             effect="slide"
-            style={{ height: "100%", position: "relative" }}
+            style={{ height: "100%" }}
           >
+            {/* BUTTONS */}
             <Box
               pos="absolute"
               left="20px"
@@ -109,10 +177,10 @@ const Hero = () => {
               <Next />
             </Box>
 
-            {animeInfo?.map((anime, index) => {
+            {/* SLIDES */}
+            {animeInfo.map((anime, index) => {
               const tvInfo = anime.tvInfo;
 
-              // Flatten episodeInfo into main array
               const badgeArray = Object.entries(tvInfo).flatMap(
                 ([key, value]) => {
                   if (typeof value === "object" && value !== null) {
@@ -142,7 +210,8 @@ const Hero = () => {
                       pos="absolute"
                       bottom="0"
                       background="linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.99))"
-                    ></Box>
+                    />
+
                     <Flex
                       maxW={{
                         base: "90%",
@@ -157,14 +226,15 @@ const Hero = () => {
                       pos="relative"
                       zIndex="1"
                     >
+                      {/* LEFT */}
                       <VStack
                         width={{ base: "100%", lg: "550px" }}
-                        alignItems="flex-start"
+                        align="flex-start"
                       >
                         <Heading
                           color="var(--text-color)"
                           textTransform="capitalize"
-                          fontWeight={{ base: "800", md: "800", lg: "800" }}
+                          fontWeight="800"
                           fontSize={{
                             base: "45px",
                             sm: "45px",
@@ -176,14 +246,15 @@ const Hero = () => {
                           lineHeight={{
                             base: "52px",
                             md: "68px",
+                            lg: "72px",
                             "2xl": "88px",
                           }}
                           letterSpacing="1.5px"
+                          lineClamp={2}
                         >
-                          {anime.title?.length > 20
-                            ? `${anime.title.slice(0, 22)}...`
-                            : anime.title}
+                          {anime.title}
                         </Heading>
+
                         <Heading
                           as="h4"
                           textTransform="capitalize"
@@ -202,21 +273,19 @@ const Hero = () => {
                           }}
                           fontWeight="400"
                           mt={{ base: "10px", "2xl": "15px" }}
+                          lineClamp={1}
                         >
-                          <Text as="span" textTransform="capitalize">
-                            {anime.japanese_title.length > 30
-                              ? `${anime.japanese_title.slice(0, 30)}...`
-                              : anime.japanese_title}
-                          </Text>
+                          {anime.japanese_title}
                         </Heading>
-                        <HStack my="10px" gap="10px 10px" flexWrap="wrap">
+
+                        <HStack my="10px" gap="10px" flexWrap="wrap">
                           {badgeArray.map((badge, i) => (
                             <Badge
-                              size={{ base: "sm", md: "md", lg: "lg" }}
                               key={i}
+                              size="md"
                               colorPalette="teal"
                               variant="surface"
-                              bg="var(--primary-background-color)"
+                              bg="rgba(0,0,0,0.5)"
                             >
                               {`${
                                 badge.key.includes("sub")
@@ -229,37 +298,21 @@ const Hero = () => {
                           ))}
                         </HStack>
 
-                        <Text
-                          as="p"
-                          fontSize={{
-                            base: "13.56px",
-                            md: "14.38px",
-                            "2xl": "15.38px",
-                          }}
-                          fontFamily="var(--body-font)"
-                          lineHeight={{
-                            base: "21px",
-                            md: "22px",
-                            "2xl": "24px",
-                          }}
-                          color="var(--text-color)"
-                          my="10px"
-                        >
-                          {anime.description?.length > 200
-                            ? `${anime.description.slice(0, 200)}...`
-                            : anime.description}
+                        <Text color="white" my="10px" maxW="95%">
+                          {anime.description?.slice(0, 200)}...
                         </Text>
-                        <Box width="100%" my={{ base: "15px", md: "10px" }}>
+
+                        <Box width="100%" my="15px">
                           <Link
                             to={`anime/${anime.id}`}
                             className="play-now-btn"
-                            style={{ textAlign: "center" }}
                           >
                             VIEW MORE
                           </Link>
                         </Box>
                       </VStack>
 
+                      {/* RIGHT IMAGE */}
                       <Box hideBelow="xl">
                         <Box
                           background={
@@ -275,7 +328,7 @@ const Hero = () => {
                             cursor: "pointer",
                           }}
                           transition="transform 0.25s ease"
-                        ></Box>
+                        />
                       </Box>
                     </Flex>
                   </Box>

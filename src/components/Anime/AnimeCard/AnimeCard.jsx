@@ -69,7 +69,13 @@ const AnimeCard = ({ anime, page }) => {
               </Badge>
             )}
           </Flex>
-          <Badge colorScheme="purple" hideBelow="sm" borderRadius="md" px="2">
+          <Badge
+            hideBelow="sm"
+            variant="subtle"
+            borderRadius={{ base: "sm", sm: "sm" }}
+            size={{ base: "xs", sm: "sm", md: "sm" }}
+            px="2"
+          >
             {type}
           </Badge>
         </Flex>
