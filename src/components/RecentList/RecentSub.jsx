@@ -3,8 +3,6 @@ import {
   GridItem,
   Box,
   Skeleton,
-  SkeletonText,
-  HStack,
   Grid,
 } from "@chakra-ui/react";
 
@@ -50,7 +48,7 @@ const Recents = () => {
 
   const displayedAnime = showAll
     ? subAnimeData
-    : subAnimeData?.slice(0, Math.min(8, subAnimeData.length));
+    : subAnimeData?.slice(0, Math.min(10, subAnimeData.length));
 
   if (error) {
     return <Error msg={error} pos="absolute" />;
@@ -61,31 +59,27 @@ const Recents = () => {
       <Grid
         gridTemplateColumns={{
           base: "repeat(2, 1fr)",
-          md: "repeat(3, 1fr)",
-          lg: "repeat(4, 1fr)",
+          sm: "repeat(3, 1fr)",
+          md: "repeat(4, 1fr)",
+          lg: "repeat(5, 1fr)",
         }}
-        gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
+        gap="20px"
         position="relative"
       >
         {isLoading
-          ? [...Array(8)].map((_, index) => (
+          ? [...Array(10)].map((_, index) => (
               <GridItem key={index}>
                 <Skeleton
                   h={{
-                    base: "216px",
+                    base: "276px",
                     sm: "290.23px",
-                    md: "350px",
-                    lg: "360px",
-                    "2xl": "408.19px",
+                    md: "285px",
+                    lg: "290px",
+                    "2xl": "284px",
                   }}
                   w="100%"
                   borderRadius="10px"
                 />
-                <HStack mt="10px">
-                  <Skeleton h="20px" w="50px" />
-                  <Skeleton h="20px" w="50px" />
-                </HStack>
-                <SkeletonText noOfLines={2} spacing={1} my="10px" />
               </GridItem>
             ))
           : displayedAnime?.map((item, i) => {

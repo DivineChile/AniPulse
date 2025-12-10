@@ -44,7 +44,7 @@ const PopularList = () => {
     fetchPopularAnimes();
   }, []);
 
-  const truncatedResults = results?.length > 4 ? results?.slice(0, 4) : results;
+  const truncatedResults = results?.length > 4 ? results?.slice(0, 5) : results;
 
   return (
     <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
@@ -80,81 +80,38 @@ const PopularList = () => {
 
         <Box my="30px">
           <Grid
-            display={{ base: "grid", md: "grid", xl: "flex" }}
-            justifyContent="space-between"
-            justifyItems="center"
             gridTemplateColumns={{
               base: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-              lg: "repeat(4, 1fr)",
-              "2xl": "repeat(5, 1fr)",
+              sm: "repeat(3, 1fr)",
+              md: "repeat(4, 1fr)",
+              lg: "repeat(5, 1fr)",
             }}
-            gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
+            gap="20px"
             pos="relative"
           >
             {isLoading &&
-              [...Array(4)].map((_, index) => (
-                <GridItem key={index} w="100%">
+              [...Array(5)].map((_, index) => (
+                <GridItem key={index}>
                   <Skeleton
                     h={{
-                      base: "216px",
+                      base: "276px",
                       sm: "290.23px",
-                      md: "350px",
-                      lg: "360px",
-                      "2xl": "408.19px",
+                      md: "285px",
+                      lg: "290px",
+                      "2xl": "284px",
                     }}
                     w="100%"
                     borderRadius="10px"
                   />
-                  <HStack mt="10px">
-                    <Skeleton h="20px" w="50px" />
-                    <Skeleton h="20px" w="50px" />
-                  </HStack>
-                  <SkeletonText noOfLines={2} spacing={2} my="10px" />
                 </GridItem>
               ))}
             {error && <Error msg={error} pos="absolute" />}
-            {truncatedResults?.map((item, index) => {
-              return <AnimeCard key={item.id} anime={item} />;
-            })}
+            {!isLoading &&
+              !error &&
+              truncatedResults?.map((item, index) => {
+                return <AnimeCard key={item.id} anime={item} />;
+              })}
           </Grid>
-
-          {/* {isLoading ? (
-            <></>
-          ) : error ? (
-            <></>
-          ) : (
-            <Box display="flex" justifyContent="flex-start" mt="20px">
-              <ChakraLink
-                as={ReactRouterLink}
-                to="/popular"
-                color="var(--text-color)"
-                fontSize={{
-                  base: "15px",
-                  md: "17px",
-                  lg: "19px",
-                  "2xl": "22.96px",
-                }}
-                textAlign="center"
-                display="inline-block"
-                border="1px solid var(--secondary-color)"
-                borderRadius="5px"
-                padding="5px 15px"
-                transition="all ease 0.25s"
-                width={{ base: "100%", md: "fit-content" }}
-                _hover={{
-                  textDecor: "none",
-                  color: "var(--link-hover-color)",
-                  background: "var(--accent-color)",
-                  border: "none",
-                  fontWeight: "bold",
-                  padding: { base: "7px 15px", md: "7px 45px" },
-                }}
-              >
-                View More
-              </ChakraLink>
-            </Box>
-          )} */}
         </Box>
       </Box>
     </Box>

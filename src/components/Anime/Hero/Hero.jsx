@@ -41,6 +41,7 @@ const Hero = () => {
 
       // Use the data directly instead of fetching animeInfo by ID
       setAnimeInfo(homeData?.results.spotlights);
+      console.log(homeData.results);
     } catch (err) {
       setIsLoading(false);
       setError(err.message);

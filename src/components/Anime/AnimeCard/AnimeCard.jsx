@@ -2,12 +2,13 @@ import {
   GridItem,
   Image,
   Link as ChakraLink,
-  Card,
-  HStack,
   Badge,
   LinkBox,
   LinkOverlay,
-  AlertTitle,
+  Box,
+  Text,
+  Flex,
+  AspectRatio,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 
@@ -27,90 +28,71 @@ const AnimeCard = ({ anime, page }) => {
   const type = page === "filter" ? anime.type : tvInfo.showType;
 
   return (
-    <GridItem w="100%">
-      <LinkBox
-        pos="relative"
-        overflow="hidden"
-        display="block"
-        h={{
-          base: "250px",
-          sm: "350px",
-          md: "370px",
-          lg: "390px",
-          "2xl": "408px",
-        }}
-        w="100%"
-        _hover={{ transform: "scale(1.02)" }}
-        transition="transform 0.3s"
-      >
-        <Card.Root
-          w="100%"
-          overflow="hidden"
-          variant="elevated"
-          h="100%"
-          transition="opacity 0.3s"
-        >
-          <Image
-            src={posterImg}
-            w="100%"
-            bg="var(--card-background-color)"
-            h={{ base: "60%", sm: "75%", md: "70%" }}
-            alt={title}
-            objectFit="cover"
-          />
+    <LinkBox
+      borderRadius="lg"
+      overflow="hidden"
+      bg="#111111ff"
+      _hover={{ transform: "scale(1.03)", transition: "0.2s" }}
+      cursor="pointer"
+      shadow="md"
+    >
+      <AspectRatio ratio={1}>
+        <Image
+          src={posterImg}
+          alt={title}
+          bg="var(--card-background-color)"
+          transition="0.5s"
+          objectFit="cover"
+        />
+      </AspectRatio>
 
-          <Card.Body
-            gap="2"
-            p={{ base: 2, md: 4 }}
-            // bg="var(--card-background-color)"
-          >
-            <HStack gap="2" flexWrap="wrap">
-              {episodes.sub && (
-                <Badge
-                  variant="surface"
-                  size={{ base: "sm", md: "md", lg: "lg" }}
-                >
-                  {`SUB ${episodes.sub}`}
-                </Badge>
-              )}
+      <Box p="3">
+        <Flex justifyContent="space-between" alignItems="center" mb="1">
+          <Flex gap="5px">
+            <Badge
+              variant="subtle"
+              borderRadius={{ base: "sm", sm: "sm" }}
+              size={{ base: "xs", sm: "sm", md: "sm" }}
+              px="2"
+            >
+              SUB: {episodes.sub}
+            </Badge>
 
-              {episodes.dub && (
-                <Badge
-                  variant="surface"
-                  size={{ base: "sm", md: "md", lg: "lg" }}
-                >
-                  {`DUB ${episodes.dub}`}
-                </Badge>
-              )}
+            {episodes.dub && (
               <Badge
-                hideBelow="md"
-                variant="surface"
-                size={{ base: "sm", md: "md", lg: "lg" }}
+                variant="subtle"
+                borderRadius={{ base: "sm", sm: "sm" }}
+                size={{ base: "xs", sm: "sm", md: "sm" }}
+                px="2"
               >
-                {type}
+                DUB: {episodes.dub}
               </Badge>
-            </HStack>
-            <LinkOverlay asChild>
-              <ReactRouterLink to={`/anime/${id}`}>
-                <Card.Title
-                  fontSize={{
-                    base: "15px",
-                    sm: "18px",
-                    lg: "20px",
-                    "2xl": "22px",
-                  }}
-                  lineHeight="25px"
-                  letterSpacing="0.5px"
-                  fontFamily="var(--font-family)"
-                >
-                  {title}
-                </Card.Title>
-              </ReactRouterLink>
-            </LinkOverlay>
-          </Card.Body>
-        </Card.Root>
-      </LinkBox>
-    </GridItem>
+            )}
+          </Flex>
+          <Badge colorScheme="purple" hideBelow="sm" borderRadius="md" px="2">
+            {type}
+          </Badge>
+        </Flex>
+
+        <LinkOverlay asChild>
+          <ReactRouterLink to={`/anime/${id}`}>
+            <Text lineClamp="1" fontWeight="semibold" fontSize="md">
+              {title}
+            </Text>
+          </ReactRouterLink>
+        </LinkOverlay>
+
+        <Flex
+          mt="2"
+          justifyContent="space-between"
+          fontSize="sm"
+          color="gray.400"
+        >
+          {tvInfo.eps && <Text>Eps: {tvInfo.eps}</Text>}
+          {tvInfo.duration && <Text>{tvInfo.duration}</Text>}
+        </Flex>
+      </Box>
+    </LinkBox>
   );
 };
 
