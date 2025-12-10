@@ -38,8 +38,8 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
   // Small helper to render genre chips
   const GenreBadge = ({ children }) => (
     <Badge
-      variant="subtle"
-      colorPalette="green"
+      variant="surface"
+      // colorPalette="teal"
       mr={2}
       fontSize="sm"
       borderRadius="md"
@@ -102,7 +102,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                 position="relative"
                 w="100%"
                 h="100%"
-                bgImage={`url(${poster})`}
+                bg={`url(${poster})`}
                 bgSize="cover"
                 bgPosition="center"
                 bgRepeat="no-repeat"
@@ -208,7 +208,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                       direction={{ base: "column", sm: "row" }}
                       spacing={3}
                     >
-                      <Button colorPalette="red" size="lg" asChild>
+                      <Button colorPalette="teal" size="lg" asChild>
                         <ReactRouterLink to={`/watch/${m.id}`}>
                           <Play /> Play
                         </ReactRouterLink>

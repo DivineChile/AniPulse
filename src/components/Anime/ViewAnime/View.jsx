@@ -13,7 +13,11 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useParams, Link as ReactRouterLink } from "react-router-dom";
+import {
+  useParams,
+  Link as ReactRouterLink,
+  useLocation,
+} from "react-router-dom";
 import Navbar from "../../Navbar/Navbar";
 import Error from "../../ErrorPage/Error";
 
@@ -57,6 +61,7 @@ const DetailCard = ({ icon, label, value }) => (
 
 const View = () => {
   const { id } = useParams();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [animeData, setAnimeData] = useState([]);
@@ -107,7 +112,7 @@ const View = () => {
 
   useEffect(() => {
     fetchAnimeData();
-  }, []);
+  }, [location.pathname]);
 
   document.body.style.overflow = isLoading ? "hidden!important" : "initial";
   const animeInfoAired = animeData.releaseDate ? animeData.releaseDate : "";

@@ -3,8 +3,6 @@ import {
   Grid,
   GridItem,
   Skeleton,
-  SkeletonText,
-  HStack,
   Heading,
   Text,
   Tabs,
@@ -12,14 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/swiper-bundle.css";
-import "swiper/css/navigation";
-import "swiper/css/free-mode";
-import { Navigation, FreeMode } from "swiper/modules";
 import { cacheFetch } from "../../../utils/cacheFetch";
-import { useItemsPerGroup } from "../../../utils/hooks/useItemsPerGroup";
 import MovieCard from "../MovieCard";
 
 const Latest = () => {
@@ -123,7 +114,7 @@ const Latest = () => {
             textTransform="capitalize"
             fontFamily="var(--font-family)"
           >
-            Latest
+            Latest Releases
           </Heading>
           <Text
             as="p"
@@ -137,72 +128,7 @@ const Latest = () => {
             {`${fullDayName} ${newFullDate}`}
           </Text>
         </Box>
-        {/* Latest Movies Released */}
-        {/* <Box>
-          {loading ? (
-            <Grid
-              gridTemplateColumns={{
-                base: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-                lg: "repeat(4, 1fr)",
-              }}
-              gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
-            >
-              {Array.from({ length: 8 }, (_, index) => (
-                <GridItem key={index}>
-                  <Skeleton
-                    h={{
-                      base: "216px",
-                      sm: "290.23px",
-                      md: "350px",
-                      lg: "360px",
-                      "2xl": "408.19px",
-                    }}
-                    w="100%"
-                    borderRadius="10px"
-                  />
-                  <HStack mt="10px">
-                    <Skeleton h="20px" w="50px" />
-                    <Skeleton h="20px" w="50px" />
-                  </HStack>
-                  <SkeletonText noOfLines={2} spacing={2} my="10px" />
-                </GridItem>
-              ))}
-            </Grid>
-          ) : (
-            <Swiper
-              slidesPerView={1}
-              spaceBetween={10}
-              modules={[Navigation, FreeMode]}
-              freeMode={true}
-              autoplay={{
-                delay: 5000, // Delay between slides in ms (e.g. 3000 = 3s)
-                disableOnInteraction: false,
-              }}
-              speed={1000} // Transition speed in ms (e.g. 800 = 0.8s)
-              loop={true}
-            >
-              {groupedMovies.map((group, index) => {
-                return (
-                  <SwiperSlide key={index}>
-                    <Grid
-                      gridTemplateColumns={{
-                        base: "repeat(2, 1fr)",
-                        md: "repeat(3, 1fr)",
-                        lg: "repeat(4, 1fr)",
-                      }}
-                      gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
-                    >
-                      {group.map((movie) => (
-                        <MovieCard movie={movie} />
-                      ))}
-                    </Grid>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          )}
-        </Box> */}
+
         {loading && (
           <Grid
             gridTemplateColumns={{
@@ -213,7 +139,7 @@ const Latest = () => {
             }}
             gap="20px"
           >
-            {Array.from({ length: 8 }, (_, index) => (
+            {Array.from({ length: 10 }, (_, index) => (
               <GridItem key={index}>
                 <Skeleton
                   h={{

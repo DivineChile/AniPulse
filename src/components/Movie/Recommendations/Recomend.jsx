@@ -6,6 +6,9 @@ import {
   Skeleton,
   SkeletonText,
   HStack,
+  SimpleGrid,
+  Text,
+  Tabs,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { cacheFetch } from "../../../utils/cacheFetch";
@@ -18,29 +21,28 @@ import { Navigation, FreeMode } from "swiper/modules";
 import MovieCard from "../MovieCard";
 
 const Recomend = () => {
-  const [topRated, setTopRated] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
+  const [trendingTV, setTrendingTV] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${
-    import.meta.env.VITE_TMDB_API_KEY
-  }`;
-  const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
-
-  const headers = {
-    Authorization: `Bearer ${BEARER_TOKEN}`,
-    "Content-Type": "application/json;charset=utf-8",
-  };
-
   const fetchTopRated = async () => {
+    setLoading(true);
     try {
-      const data = await cacheFetch(`top_rated_movies`, url, 10 * 60 * 1000, {
-        headers,
-      });
+      // // Unique cache key per movie
+      const cacheKey = `recent_releases`;
 
-      setTopRated(data.results);
-    } catch (error) {
-      console.error("Error fetching Top Rated movies:", error);
+      // Fetch + cache for 10 minutes
+      const data = await cacheFetch(`api/flixhq/home`, { cacheKey });
+
+      console.log(data);
+
+      setTrendingMovies(data.trending.Movies.slice(0, 10));
+      setTrendingTV(data.trending.Tv.slice(0, 10));
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+      console.error("Error fetching pages:", err.message);
     } finally {
       setLoading(false);
     }
@@ -50,17 +52,18 @@ const Recomend = () => {
     fetchTopRated();
   }, []);
 
-  const truncatedResults =
-    topRated.length > 8 ? topRated.slice(0, 8) : topRated;
-
-  // 🔥 Chunk array into groups of 4
-  const chunkedSlides = [];
-  for (let i = 0; i < truncatedResults.length; i += 4) {
-    chunkedSlides.push(truncatedResults.slice(i, i + 4));
+  function ReleaseGrid({ items }) {
+    return (
+      <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 5 }} gap="20px">
+        {items?.map((item) => (
+          <MovieCard key={item.id} item={item} />
+        ))}
+      </SimpleGrid>
+    );
   }
 
   return (
-    <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
+    <Box bg="var(--primary-background-color)" pt="20px" pb="80px">
       <Box
         maxW={{
           base: "90%",
@@ -80,70 +83,103 @@ const Recomend = () => {
           fontFamily="var(--font-family)"
           textAlign={{ base: "center", md: "start" }}
         >
-          Trending
+          Trending Now
         </Heading>
 
         <Box mt="30px">
-          {loading ? (
+          {loading && (
             <Grid
               gridTemplateColumns={{
                 base: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-                lg: "repeat(4, 1fr)",
+                sm: "repeat(3, 1fr)",
+                md: "repeat(4, 1fr)",
+                lg: "repeat(5, 1fr)",
               }}
-              gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
+              gap="20px"
             >
-              {Array.from({ length: 4 }, (_, index) => (
+              {Array.from({ length: 10 }, (_, index) => (
                 <GridItem key={index}>
                   <Skeleton
                     h={{
-                      base: "216px",
+                      base: "276px",
                       sm: "290.23px",
-                      md: "350px",
-                      lg: "360px",
-                      "2xl": "408.19px",
+                      md: "285px",
+                      lg: "290px",
+                      "2xl": "284px",
                     }}
                     w="100%"
                     borderRadius="10px"
                   />
-                  <HStack mt="10px">
-                    <Skeleton h="20px" w="50px" />
-                    <Skeleton h="20px" w="50px" />
-                  </HStack>
-                  <SkeletonText noOfLines={2} spacing={2} my="10px" />
                 </GridItem>
               ))}
             </Grid>
-          ) : (
-            <Swiper
-              slidesPerView={1}
-              spaceBetween={10}
-              modules={[Navigation, FreeMode]}
-              freeMode={true}
-              autoplay={{
-                delay: 5000, // Delay between slides in ms (e.g. 3000 = 3s)
-                disableOnInteraction: false,
-              }}
-              speed={1000} // Transition speed in ms (e.g. 800 = 0.8s)
-              loop={true}
+          )}
+
+          {error && (
+            <Text
+              as="p"
+              fontSize={{ base: "16px", "2xl": "20px" }}
+              lineHeight={{ base: "17.6px", "2xl": "22px" }}
+              letterSpacing="1.5px"
+              color="var(--text-color)"
+              m="0"
+              textTransform="capitalize"
             >
-              {chunkedSlides.map((chunk, index) => (
-                <SwiperSlide key={index}>
-                  <Grid
-                    gridTemplateColumns={{
-                      base: "repeat(2, 1fr)",
-                      md: "repeat(3, 1fr)",
-                      lg: "repeat(4, 1fr)",
-                    }}
-                    gap={{ base: "20px 20px", sm: "20px", md: "40px 25px" }}
-                  >
-                    {chunk.map((movie) => (
-                      <MovieCard key={movie.id} movie={movie} />
-                    ))}
-                  </Grid>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+              {error}
+            </Text>
+          )}
+
+          {!loading && !error && (
+            <Tabs.Root
+              variant="enclosed"
+              colorPalette="teal"
+              defaultValue="movies"
+              lazyMount
+              unmountOnExit
+              fitted
+              w="100%"
+            >
+              <Tabs.List overflowX="auto" w="100%">
+                <Tabs.Trigger fontWeight="semibold" value="movies">
+                  Movies
+                </Tabs.Trigger>
+                <Tabs.Trigger fontWeight="semibold" value="tv">
+                  TV Shows
+                </Tabs.Trigger>
+              </Tabs.List>
+
+              <Tabs.ContentGroup mt="4">
+                <Tabs.Content
+                  px="0"
+                  value="movies"
+                  _open={{
+                    animationName: "fade-in, scale-in",
+                    animationDuration: "300ms",
+                  }}
+                  _closed={{
+                    animationName: "fade-out, scale-out",
+                    animationDuration: "120ms",
+                  }}
+                >
+                  <ReleaseGrid items={trendingMovies} />
+                </Tabs.Content>
+
+                <Tabs.Content
+                  px="0"
+                  value="tv"
+                  _open={{
+                    animationName: "fade-in, scale-in",
+                    animationDuration: "300ms",
+                  }}
+                  _closed={{
+                    animationName: "fade-out, scale-out",
+                    animationDuration: "120ms",
+                  }}
+                >
+                  <ReleaseGrid items={trendingTV} />
+                </Tabs.Content>
+              </Tabs.ContentGroup>
+            </Tabs.Root>
           )}
         </Box>
       </Box>
