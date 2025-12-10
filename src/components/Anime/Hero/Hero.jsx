@@ -25,14 +25,17 @@ import Next from "../HeroSliderButtons/Next";
 import "./Hero.css";
 
 const Hero = () => {
-  const [animeInfo, setAnimeInfo] = useState([]);
+  const [animeInfo, setAnimeInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchAnimeData = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const homeData = await cacheFetch("api/", { cacheKey: "homeData" }, true);
-      setAnimeInfo(homeData?.results?.spotlights || []);
+      const spotlights = homeData?.results?.spotlights ?? [];
+      setAnimeInfo([...spotlights]);
     } catch (err) {
       setError(err.message || "Something went wrong");
       setAnimeInfo([]);
@@ -48,6 +51,7 @@ const Hero = () => {
   // -------------------------
   //  SKELETON UI COMPONENT
   // -------------------------
+  console.log(loading);
   const HeroSkeleton = () => (
     <Box
       w="100%"
@@ -58,7 +62,7 @@ const Hero = () => {
       }}
       top={{ base: "70px", md: "73px", lg: "84px" }}
       pos="relative"
-      bg="#1a1a1a"
+      bg="black"
       overflow="hidden"
     >
       <Flex
@@ -111,8 +115,14 @@ const Hero = () => {
   const HeroError = () => (
     <Box
       w="100%"
-      h="calc(100vh - 80px)"
+      h={{
+        base: "calc(100vh - 70px)",
+        md: "calc(100vh - 73px)",
+        lg: "calc(100vh - 84px)",
+      }}
+      top={{ base: "70px", md: "73px", lg: "84px" }}
       bg="#191919"
+      pos="relative"
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -130,10 +140,10 @@ const Hero = () => {
     <Box w="100%" h="100vh">
       <Navbar />
 
-      {loading && <HeroSkeleton />}
+      {loading && (!animeInfo || !animeInfo.length) && <HeroSkeleton />}
       {error && <HeroError />}
 
-      {!loading && !error && (
+      {!loading && !error && animeInfo && (
         <Box
           w="100%"
           h={{
@@ -244,9 +254,9 @@ const Hero = () => {
                           }}
                           fontFamily="var(--font-family)"
                           lineHeight={{
-                            base: "52px",
-                            md: "68px",
-                            lg: "72px",
+                            base: "62px",
+                            md: "78px",
+                            lg: "89px",
                             "2xl": "88px",
                           }}
                           letterSpacing="1.5px"

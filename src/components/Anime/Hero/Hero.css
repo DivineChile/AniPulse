@@ -11,6 +11,7 @@ a.play-now-btn {
   transition: 0.5s;
   position: relative;
   display: inline-block;
+  text-align: center;
   outline: none;
   z-index: 1;
 }
@@ -53,6 +54,7 @@ a.play-now-btn:hover::after {
     cursor: pointer;
     transition: 0.5s;
     position: relative;
+    text-align: center;
     display: inline-block;
     outline: none;
     z-index: 1;
@@ -76,6 +78,7 @@ a.play-now-btn:hover::after {
     background: var(--primary-background-color);
     border: 2px solid var(--secondary-color);
     cursor: pointer;
+    text-align: center;
     transition: 0.5s;
     position: relative;
     display: inline-block;
@@ -101,6 +104,7 @@ a.play-now-btn:hover::after {
     background: var(--primary-background-color);
     border: 2px solid var(--secondary-color);
     cursor: pointer;
+    text-align: center;
     transition: 0.5s;
     position: relative;
     display: inline-block;

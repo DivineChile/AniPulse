@@ -17,7 +17,7 @@ const Error = ({ msg, height, bg, pos }) => {
       <Text
         fontSize={{ base: "16px", md: "16px", lg: "20px" }}
         color="var(--link-hover-color)"
-        textAlign={{ base: "center", md: "start" }}
+        textAlign={{ base: "center", md: "left" }}
       >
         {msg || "An error occurred!"}
       </Text>
