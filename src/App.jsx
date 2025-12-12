@@ -20,6 +20,7 @@ import Profile from "./pages/Profile/Profile";
 
 import ViewMovie from "./components/Movie/ViewMovie/ViewMovie";
 import { PlayerContext } from "./contexts/PlayerContext";
+import BackToTop from "./components/BackToTop";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,8 +33,8 @@ const router = createBrowserRouter(
       <Route path="/popular" element={<Popular />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/anime/:id" element={<View />} />
-      <Route path="/movies/movie/:id" element={<ViewMovie />} />
-      <Route path="/movies/tv/:id" element={<ViewMovie />} />
+      <Route path="/movie/:id" element={<ViewMovie />} />
+      <Route path="/tv/:id" element={<ViewMovie />} />
       <Route path="/search/keyword/:searchQuery" element={<Filter />} />
       <Route path="/watch/:watchId" element={<Stream />} />
     </>
@@ -53,6 +54,8 @@ const App = () => {
       }}
     >
       <RouterProvider router={router} />
+      {/* Back to top */}
+      <BackToTop />
     </PlayerContext.Provider>
   );
 };

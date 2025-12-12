@@ -11,6 +11,7 @@ import {
   TagLabel,
   Button,
   Image,
+  IconButton,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
@@ -28,6 +29,7 @@ import {
   Calendar,
   CalendarDays,
   CheckCircle2,
+  ChevronLeft,
   Layers,
   ListVideo,
   Loader,
@@ -142,6 +144,14 @@ const View = () => {
             pb={{ base: "30px", md: "30px" }}
             pt={{ base: "60px", md: "0" }}
           >
+            <Box
+              w="100%"
+              h="100%"
+              pos="absolute"
+              bottom="0"
+              background="linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.99))"
+              zIndex="1"
+            ></Box>
             {/* Background */}
             <Box
               pos="absolute"
@@ -149,10 +159,6 @@ const View = () => {
               bgImage={`url(${animeData.posterImage})`}
               bgSize="cover"
               bgPos="center"
-              filter={{
-                base: "blur(10px) brightness(0.3)",
-                md: "blur(10px) brightness(0.3)",
-              }}
               transform={{ base: "scale(1.1)", md: "scale(1)" }}
             ></Box>
 
@@ -172,8 +178,20 @@ const View = () => {
               px={{ base: "0", md: "50px" }}
               pt={{ base: "40px", md: "0" }}
               gap={{ base: "25px", md: "30px" }}
-              alignItems="end"
+              alignItems={{ base: "center", md: "end" }}
             >
+              {/* Back button */}
+              <IconButton
+                as={ReactRouterLink}
+                to="/movies"
+                variant="subtle"
+                position="absolute"
+                top={{ base: "40px", md: "100px" }}
+                left="0"
+                zIndex="2"
+              >
+                <ChevronLeft size={20} color="var(--text-secondary)" />
+              </IconButton>
               {/* Poster */}
               <Image
                 src={animeData.posterImage}

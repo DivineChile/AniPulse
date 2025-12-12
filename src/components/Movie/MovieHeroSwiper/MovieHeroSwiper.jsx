@@ -188,7 +188,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                     </Flex>
 
                     {/* Genres */}
-                    <Flex mb={4} wrap="wrap">
+                    <Flex mb={4} wrap="wrap" gap={2}>
                       {genres.slice(0, 5).map((g) => (
                         <GenreBadge key={g}>{g}</GenreBadge>
                       ))}
@@ -199,7 +199,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                       color="gray.200"
                       maxW={{ base: "100%", md: "80%" }}
                       mb={6}
-                      lineClamp={6}
+                      lineClamp={3}
                     >
                       {synopsis || "Synopsis not available."}
                     </Text>
@@ -207,6 +207,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                     <Stack
                       direction={{ base: "column", sm: "row" }}
                       spacing={3}
+                      mt={4}
                     >
                       <Button colorPalette="teal" size="lg" asChild>
                         <ReactRouterLink to={`/watch/${m.id}`}>
@@ -220,7 +221,9 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                         size="lg"
                         asChild
                       >
-                        <ReactRouterLink to={`/movie/${m.id}`}>
+                        <ReactRouterLink
+                          to={`/${m.type.toLowerCase()}/${m.id}`}
+                        >
                           Details
                         </ReactRouterLink>
                       </Button>

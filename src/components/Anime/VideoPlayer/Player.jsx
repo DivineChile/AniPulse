@@ -93,6 +93,7 @@ const Player = ({ dub, sub }) => {
         console.error("No sources available");
       }
 
+      console.log(data);
       setVideoData(data.data);
     } catch (err) {
       setStreamError(err.message || "An unexpected error occurred.");

@@ -1,8 +1,7 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Skeleton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Loading from "../../ErrorPage/Loading";
 import Error from "../../ErrorPage/Error";
-import { Link } from "react-router-dom";
 import MovieHeroSwiper from "../MovieHeroSwiper/MovieHeroSwiper";
 
 const MovieHero = () => {
@@ -53,12 +52,14 @@ const MovieHero = () => {
         xl: "calc(100vh - 85px)",
       }}
     >
-      <Loading
-        // height="100%"
-        bg="linear-gradient(135deg, #8E44AD 0%, #3498DB 100%)"
-        fullscreen
-        isLoading={loading}
-      />
+      {loading && (
+        <Skeleton
+          height="100%"
+          w="100%"
+          pos="relative"
+          top={{ base: "70px", md: "73px", lg: "84px" }}
+        />
+      )}
       {error ? (
         <Error msg={error} height="100%" bg="#191919" />
       ) : (
@@ -70,12 +71,13 @@ const MovieHero = () => {
             lg: "calc(100vh - 84px)",
           }}
           pos="relative"
-          top="71px"
+          top={{ base: "70px", md: "73px", lg: "84px" }}
         >
           <MovieHeroSwiper
             movies={movies}
             onDetails={handleDetails}
             onPlay={handlePlay}
+            loading={loading}
           />
         </Box>
       )}

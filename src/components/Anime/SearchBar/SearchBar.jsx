@@ -58,13 +58,11 @@ const SearchBar = ({ isOpen, onClose }) => {
   const fetchMovieResults = async (query) => {
     try {
       const res = await fetch(
-        `${url}?query=${query}&include_adult=false&language=en-US&page=1`,
-        {
-          headers: headers,
-        }
+        `${proxy}${backupApi}api/flixhq/media/search?q=${query}&page=1`
       );
       const data = await res.json();
-      return data.results || [];
+
+      return data?.data || [];
     } catch (err) {
       throw new Error("Failed to fetch movies");
     }
@@ -85,7 +83,7 @@ const SearchBar = ({ isOpen, onClose }) => {
       try {
         const [anime, movies] = await Promise.all([
           fetchAnimeResults(value),
-          // fetchMovieResults(value),
+          fetchMovieResults(value),
         ]);
         setAnimeResults(anime);
         setMovieResults(movies);
@@ -165,9 +163,11 @@ const SearchBar = ({ isOpen, onClose }) => {
                 </Text>
               )}
 
-              {!loading && !error && animeResults.length > 0 ? (
+              {(!loading && !error && animeResults.length > 0) ||
+              (!loading && !error && movieResults.length > 0) ? (
                 <VStack align="stretch" spacing={3}>
-                  {animeResults.slice(0, 10).map((item) => (
+                  <Text fontSize={{ base: "md", md: "lg" }}>Anime</Text>
+                  {animeResults.slice(0, 5).map((item) => (
                     <ChakraLink
                       as={ReactRouterLink}
                       key={item.id}
@@ -244,8 +244,84 @@ const SearchBar = ({ isOpen, onClose }) => {
                       </Box>
                     </ChakraLink>
                   ))}
+                  <Text fontSize={{ base: "md", md: "lg" }} mt={3}>
+                    Movies & TV Shows
+                  </Text>
+                  {movieResults.slice(0, 5).map((item) => (
+                    <ChakraLink
+                      as={ReactRouterLink}
+                      key={item.id}
+                      _hover={{
+                        color: "var(--link-hover-color)",
+                        textDecoration: "none",
+                      }}
+                      to={`/${item.type.toLowerCase()}/${item.id}`}
+                      display="flex"
+                      gap="15px"
+                      mb="10px"
+                      alignItems="center"
+                      transition="0.2s ease"
+                    >
+                      <Image
+                        h={{ base: "90px", md: "120px" }}
+                        w={{ base: "70px", md: "90px" }}
+                        borderRadius="5px"
+                        src={item.posterImage}
+                        bg="var(--primary-background-color)"
+                        alt={item.name}
+                      />
+                      <Box display="flex" flexDirection="column" gap="5px">
+                        <Heading
+                          fontSize={{ base: "14px", md: "16px" }}
+                          color="var(--link-color)"
+                          _hover={{ color: "var(--link-hover-color)" }}
+                          transition="all ease 0.25s"
+                          lineHeight="20px"
+                        >
+                          {isLarge
+                            ? item.name.length > 40
+                              ? item.name.slice(0, 40) + "..."
+                              : item.name
+                            : item.name.length > 30
+                            ? item.name.slice(0, 25) + "..."
+                            : item.name}
+                        </Heading>
+
+                        <Flex
+                          gap="5px"
+                          fontSize="12px"
+                          color="var(--text-color)"
+                        >
+                          {item.seasons && (
+                            <Badge variant="surface" size="xs">
+                              {`Seasons: ${item.seasons}`}
+                            </Badge>
+                          )}
+
+                          {item.quality && (
+                            <Badge variant="surface" size="xs">
+                              {`${item.quality}`}
+                            </Badge>
+                          )}
+                          {item.type && (
+                            <Badge variant="surface" size="xs">
+                              {item.type}
+                            </Badge>
+                          )}
+                          {item.totalEpisodes && (
+                            <Badge variant="surface" size="xs">
+                              Eps: {item.totalEpisodes}
+                            </Badge>
+                          )}
+                        </Flex>
+                      </Box>
+                    </ChakraLink>
+                  ))}
                 </VStack>
-              ) : !loading && !error && animeResults.length < 1 ? (
+              ) : !loading &&
+                !error &&
+                animeResults.length < 1 &&
+                movieResults.length < 1 ? (
                 <Text
                   as="span"
                   color="var(--text-color)"
