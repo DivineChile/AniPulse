@@ -33,8 +33,11 @@ const Hero = () => {
     setLoading(true);
     setError(null);
     try {
-      const homeData = await cacheFetch("api/", { cacheKey: "homeData" }, true);
-      const spotlights = homeData?.results?.spotlights ?? [];
+      const homeData = await cacheFetch("api/hianime/home", {
+        cacheKey: "homeData",
+      });
+      const spotlights = homeData?.data ?? [];
+      console.log(homeData);
       setAnimeInfo([...spotlights]);
     } catch (err) {
       setError(err.message || "Something went wrong");
@@ -189,24 +192,11 @@ const Hero = () => {
 
             {/* SLIDES */}
             {animeInfo.map((anime, index) => {
-              const tvInfo = anime.tvInfo;
-
-              const badgeArray = Object.entries(tvInfo).flatMap(
-                ([key, value]) => {
-                  if (typeof value === "object" && value !== null) {
-                    return Object.entries(value).map(([subKey, subValue]) => ({
-                      key: `${key}.${subKey}`,
-                      value: subValue,
-                    }));
-                  }
-                  return { key, value };
-                }
-              );
-
+              const tvInfo = anime.episodes;
               return (
                 <SwiperSlide key={index}>
                   <Box
-                    background={`url(${anime.poster})`}
+                    background={`url(${anime.posterImage})`}
                     backgroundPosition="center"
                     backgroundSize="cover"
                     backgroundRepeat="no-repeat"
@@ -243,73 +233,98 @@ const Hero = () => {
                       >
                         <Heading
                           color="var(--text-color)"
-                          textTransform="capitalize"
-                          fontWeight="800"
-                          fontSize={{
-                            base: "45px",
-                            sm: "45px",
-                            md: "65px",
-                            lg: "67px",
-                            "2xl": "76.25px",
-                          }}
+                          textTransform="uppercase"
+                          fontSize={{ base: "2xl", md: "4xl", lg: "5xl" }}
+                          letterSpacing="wide"
+                          lineHeight={{ base: "40px", md: "48px", lg: "56px" }}
                           fontFamily="var(--font-family)"
-                          lineHeight={{
-                            base: "62px",
-                            md: "78px",
-                            lg: "89px",
-                            "2xl": "88px",
-                          }}
-                          letterSpacing="1.5px"
                           lineClamp={2}
                         >
-                          {anime.title}
+                          {anime.name}
                         </Heading>
 
                         <Heading
                           as="h4"
                           textTransform="capitalize"
-                          color="var(--text-color)"
-                          fontSize={{
-                            base: "18.97px",
-                            md: "27px",
-                            "2xl": "35.97px",
-                          }}
+                          color="gray.300"
+                          fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
+                          letterSpacing="wide"
+                          lineHeight={{ base: "30px", md: "36px", lg: "48px" }}
                           fontStyle="italic"
-                          fontFamily="var(--font-family)"
-                          lineHeight={{
-                            base: "28px",
-                            md: "32px",
-                            "2xl": "36px",
-                          }}
                           fontWeight="400"
+                          fontFamily="var(--font-family)"
                           mt={{ base: "10px", "2xl": "15px" }}
                           lineClamp={1}
                         >
-                          {anime.japanese_title}
+                          {anime.romaji}
                         </Heading>
 
                         <HStack my="10px" gap="10px" flexWrap="wrap">
-                          {badgeArray.map((badge, i) => (
+                          {anime.spotlight && (
                             <Badge
-                              key={i}
-                              size="md"
+                              colorPalette="teal"
+                              variant="subtle"
+                              // bg="rgba(0,0,0,0.5)"
+                            >
+                              {anime.spotlight}
+                            </Badge>
+                          )}
+                          {anime.releaseDate && (
+                            <Badge
                               colorPalette="teal"
                               variant="surface"
                               bg="rgba(0,0,0,0.5)"
                             >
-                              {`${
-                                badge.key.includes("sub")
-                                  ? "SUB"
-                                  : badge.key.includes("dub")
-                                  ? "DUB"
-                                  : ""
-                              } ${badge.value}`}
+                              {anime.releaseDate}
                             </Badge>
-                          ))}
+                          )}
+                          {tvInfo.sub && (
+                            <Badge
+                              colorPalette="teal"
+                              variant="surface"
+                              bg="rgba(0,0,0,0.5)"
+                            >
+                              SUB {tvInfo.sub}
+                            </Badge>
+                          )}
+                          {tvInfo.dub && (
+                            <Badge
+                              colorPalette="teal"
+                              variant="surface"
+                              bg="rgba(0,0,0,0.5)"
+                            >
+                              DUB {tvInfo.dub}
+                            </Badge>
+                          )}
+
+                          {anime.quality && (
+                            <Badge
+                              colorPalette="teal"
+                              variant="surface"
+                              bg="rgba(0,0,0,0.5)"
+                            >
+                              {anime.quality}
+                            </Badge>
+                          )}
+                          {anime.type && (
+                            <Badge
+                              colorPalette="teal"
+                              variant="surface"
+                              bg="rgba(0,0,0,0.5)"
+                            >
+                              {anime.type}
+                            </Badge>
+                          )}
                         </HStack>
 
-                        <Text color="white" my="10px" maxW="95%">
-                          {anime.description?.slice(0, 200)}...
+                        <Text
+                          color="white"
+                          my="10px"
+                          maxW="95%"
+                          lineClamp={3}
+                          fontSize={{ base: "sm", md: "md" }}
+                        >
+                          {anime.synopsis}
                         </Text>
 
                         <Box width="100%" my="15px">
@@ -326,7 +341,9 @@ const Hero = () => {
                       <Box hideBelow="xl">
                         <Box
                           background={
-                            anime.poster ? `url(${anime.poster})` : "#191919"
+                            anime.posterImage
+                              ? `url(${anime.posterImage})`
+                              : "#191919"
                           }
                           w={{ lg: "550px", "2xl": "670px" }}
                           h={{ lg: "450px", "2xl": "600px" }}

@@ -10,22 +10,10 @@ import {
   Flex,
   AspectRatio,
 } from "@chakra-ui/react";
-import { Link as ReactRouterLink, useLocation } from "react-router-dom";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 const AnimeCard = ({ anime, page }) => {
-  const { id, poster, tvInfo } = anime;
-
-  const title =
-    page === "filter"
-      ? anime.name.length > 30
-        ? `${anime.name.slice(0, 25)}...`
-        : anime.name
-      : anime.title.length > 30
-      ? `${anime.title.slice(0, 25)}...`
-      : anime.title;
-  const posterImg = page === "filter" ? anime.posterImage : poster;
-  const episodes = page === "filter" ? anime.episodes : anime.tvInfo;
-  const type = page === "filter" ? anime.type : tvInfo.showType;
+  const { id, posterImage, episodes, name, type, totalEpisodes } = anime;
 
   return (
     <LinkBox
@@ -38,8 +26,8 @@ const AnimeCard = ({ anime, page }) => {
     >
       <AspectRatio ratio={1}>
         <Image
-          src={posterImg}
-          alt={title}
+          src={posterImage}
+          alt={name}
           bg="var(--card-background-color)"
           transition="0.5s"
           objectFit="cover"
@@ -48,42 +36,31 @@ const AnimeCard = ({ anime, page }) => {
 
       <Box p="3">
         <Flex justifyContent="space-between" alignItems="center" mb="1">
-          <Flex gap="5px">
+          <Badge
+            variant="subtle"
+            borderRadius={{ base: "sm", sm: "sm" }}
+            size={{ base: "xs", sm: "sm", md: "sm" }}
+            px="2"
+          >
+            SUB: {episodes.sub}
+          </Badge>
+
+          {episodes.dub && (
             <Badge
               variant="subtle"
               borderRadius={{ base: "sm", sm: "sm" }}
               size={{ base: "xs", sm: "sm", md: "sm" }}
               px="2"
             >
-              SUB: {episodes.sub}
+              DUB: {episodes.dub}
             </Badge>
-
-            {episodes.dub && (
-              <Badge
-                variant="subtle"
-                borderRadius={{ base: "sm", sm: "sm" }}
-                size={{ base: "xs", sm: "sm", md: "sm" }}
-                px="2"
-              >
-                DUB: {episodes.dub}
-              </Badge>
-            )}
-          </Flex>
-          <Badge
-            hideBelow="sm"
-            variant="subtle"
-            borderRadius={{ base: "sm", sm: "sm" }}
-            size={{ base: "xs", sm: "sm", md: "sm" }}
-            px="2"
-          >
-            {type}
-          </Badge>
+          )}
         </Flex>
 
         <LinkOverlay asChild>
           <ReactRouterLink to={`/anime/${id}`}>
             <Text lineClamp="1" fontWeight="semibold" fontSize="md">
-              {title}
+              {name}
             </Text>
           </ReactRouterLink>
         </LinkOverlay>
@@ -94,8 +71,8 @@ const AnimeCard = ({ anime, page }) => {
           fontSize="sm"
           color="gray.400"
         >
-          {tvInfo.eps && <Text>Eps: {tvInfo.eps}</Text>}
-          {tvInfo.duration && <Text>{tvInfo.duration}</Text>}
+          {totalEpisodes && <Text>Eps: {totalEpisodes}</Text>}
+          {type && <Text>{type}</Text>}
         </Flex>
       </Box>
     </LinkBox>

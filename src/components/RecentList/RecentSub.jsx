@@ -23,9 +23,11 @@ const Recents = () => {
       setIsLoading(true);
       setError(null);
 
-      const data = await cacheFetch("api/", { cacheKey: "homeData" }, true);
+      const data = await cacheFetch("api/hianime/home", {
+        cacheKey: "homeData",
+      });
 
-      setSubAnimeData(data?.results?.latestEpisode || []);
+      setSubAnimeData(data?.recentlyUpdated || []);
     } catch (err) {
       setError("Unable to load recent releases. Please try again.");
     } finally {

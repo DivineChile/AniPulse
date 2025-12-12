@@ -107,5 +107,5 @@ Buttons (Hover)	Gradient: #FF6B6B → #FF4757	 */
 
 .swiper-button-next,
 .swiper-button-prev {
-  display: none;
+  display: none !important;
 }

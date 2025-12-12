@@ -43,7 +43,7 @@ a.play-now-btn:hover::after {
 
 @media screen and (max-width: 500px) {
   a.play-now-btn {
-    width: 206.28px !important;
+    width: 100% !important;
     height: 48px;
     color: var(--text-color) !important;
     border-radius: 5px;

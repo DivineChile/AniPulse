@@ -1,11 +1,8 @@
-import { Search } from "lucide-react";
 import {
   Box,
   Heading,
   Image,
   Input,
-  Group,
-  Button,
   Spinner,
   VStack,
   Text,
@@ -19,7 +16,7 @@ import {
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import "../../../index.css";
 import "./style.css";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { debounce } from "lodash";
 
 const SearchBar = ({ isOpen, onClose }) => {
@@ -33,6 +30,7 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   // APIs
   const animeApi = "https://anime-api-production-bc3d.up.railway.app/";
+  const backupApi = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
   const url = `https://api.themoviedb.org/3/search/multi`;
   const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
@@ -46,11 +44,11 @@ const SearchBar = ({ isOpen, onClose }) => {
   const fetchAnimeResults = async (query) => {
     try {
       const res = await fetch(
-        `${proxy}${animeApi}/api/search?keyword=${query}`
+        `${proxy}${backupApi}api/hianime/anime/search?q=${query}&page=1`
       );
       const data = await res.json();
 
-      return data.results.data || [];
+      return data.data || [];
     } catch (err) {
       throw new Error("Failed to fetch anime");
     }
@@ -188,9 +186,9 @@ const SearchBar = ({ isOpen, onClose }) => {
                         h={{ base: "90px", md: "120px" }}
                         w={{ base: "70px", md: "90px" }}
                         borderRadius="5px"
-                        src={item.poster}
+                        src={item.posterImage}
                         bg="var(--primary-background-color)"
-                        alt={item.title}
+                        alt={item.name}
                       />
                       <Box display="flex" flexDirection="column" gap="5px">
                         <Heading
@@ -201,12 +199,12 @@ const SearchBar = ({ isOpen, onClose }) => {
                           lineHeight="20px"
                         >
                           {isLarge
-                            ? item.title.length > 40
-                              ? item.title.slice(0, 40) + "..."
-                              : item.title
-                            : item.title.length > 30
-                            ? item.title.slice(0, 25) + "..."
-                            : item.title}
+                            ? item.name.length > 40
+                              ? item.name.slice(0, 40) + "..."
+                              : item.name
+                            : item.name.length > 30
+                            ? item.name.slice(0, 25) + "..."
+                            : item.name}
                         </Heading>
                         <Text
                           fontSize={{ base: "12px", md: "13px" }}
@@ -214,37 +212,32 @@ const SearchBar = ({ isOpen, onClose }) => {
                           fontStyle="italic"
                         >
                           {isLarge
-                            ? item.title.length > 40
-                              ? item.title.slice(0, 30) + "..."
-                              : item.title
-                            : item.title.length > 30
-                            ? item.title.slice(0, 20) + "..."
-                            : item.title}
+                            ? item.romaji.length > 40
+                              ? item.romaji.slice(0, 30) + "..."
+                              : item.romaji
+                            : item.romaji.length > 30
+                            ? item.romaji.slice(0, 20) + "..."
+                            : item.romaji}
                         </Text>
                         <Flex
                           gap="5px"
                           fontSize="12px"
                           color="var(--text-color)"
                         >
-                          {item.tvInfo.sub && (
+                          {item.episodes.sub && (
                             <Badge variant="surface" size="xs">
-                              {`SUB: ${item.tvInfo.sub}`}
+                              {`SUB: ${item.episodes.sub}`}
                             </Badge>
                           )}
 
-                          {item.tvInfo.dub && (
+                          {item.episodes.dub && (
                             <Badge variant="surface" size="xs">
-                              {`DUB: ${item.tvInfo.dub}`}
+                              {`DUB: ${item.episodes.dub}`}
                             </Badge>
                           )}
-                          {item.tvInfo.showType && (
+                          {item.type && (
                             <Badge variant="surface" size="xs">
-                              {item.tvInfo.showType}
-                            </Badge>
-                          )}
-                          {item.tvInfo.rating && (
-                            <Badge variant="surface" size="xs">
-                              {item.tvInfo.rating}
+                              {item.type}
                             </Badge>
                           )}
                         </Flex>

@@ -12,11 +12,11 @@ import {
 import { Link as ReactRouterLink } from "react-router-dom";
 
 const SmallCard = ({ result, page }) => {
-  const resultId = page == "filter" ? result.id : result.id;
-  const resultImg = page == "filter" ? result.posterImage : result.poster;
-  const resultTitle = page == "filter" ? result.name : result.title;
-  const resultType = page == "filter" ? result.type : result.tvInfo.showType;
-  const episodes = page == "filter" ? result.episodes : result.tvInfo;
+  const resultId = result.id;
+  const resultImg = result.posterImage;
+  const resultTitle = result.name;
+  const resultType = result.type;
+  const episodes = result.episodes;
 
   return (
     <LinkBox
@@ -49,10 +49,9 @@ const SmallCard = ({ result, page }) => {
                   lineHeight={{ base: "18px", md: "22.5px" }}
                   letterSpacing="0.5px"
                   fontFamily="var(--font-family)"
+                  lineClamp={1}
                 >
-                  {resultTitle?.length > 30
-                    ? `${resultTitle.slice(0, 23)}...`
-                    : resultTitle}
+                  {resultTitle}
                 </Card.Title>
               </ReactRouterLink>
             </LinkOverlay>

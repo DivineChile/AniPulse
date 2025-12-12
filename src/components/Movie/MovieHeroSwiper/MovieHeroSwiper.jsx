@@ -199,7 +199,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                       color="gray.200"
                       maxW={{ base: "100%", md: "80%" }}
                       mb={6}
-                      noOfLines={6}
+                      lineClamp={6}
                     >
                       {synopsis || "Synopsis not available."}
                     </Text>

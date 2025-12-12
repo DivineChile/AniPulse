@@ -36,15 +36,14 @@ const Catalog = () => {
 
     try {
       const data = await cacheFetch(
-        "api", // endpoint to fetch from backend
-        { cacheKey: "homeData" }, // options with cacheKey
-        true // isHome flag to use home API
+        "api/hianime/home", // endpoint to fetch from backend
+        { cacheKey: "homeData" } // options with cacheKey
       );
       //
 
-      setTopRatedAnime(data.results.topAiring || []);
-      setRecentlyCompletedAnime(data.results.latestCompleted || []);
-      setNewAnime(data.results.topUpcoming || []);
+      setTopRatedAnime(data?.topAiring || []);
+      setRecentlyCompletedAnime(data?.recentlyCompleted || []);
+      setNewAnime(data?.recentlyAdded || []);
     } catch (err) {
       setCatalogError("Failed to load data. Please try again.");
     } finally {
