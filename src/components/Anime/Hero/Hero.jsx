@@ -262,36 +262,32 @@ const Hero = () => {
                         <HStack my="10px" gap="10px" flexWrap="wrap">
                           {anime.spotlight && (
                             <Badge
-                              colorPalette="teal"
                               variant="subtle"
-                              // bg="rgba(0,0,0,0.5)"
+                              size={{ base: "sm", md: "md" }}
                             >
                               {anime.spotlight}
                             </Badge>
                           )}
                           {anime.releaseDate && (
                             <Badge
-                              colorPalette="teal"
+                              size={{ base: "sm", md: "md" }}
                               variant="surface"
-                              bg="rgba(0,0,0,0.5)"
                             >
                               {anime.releaseDate}
                             </Badge>
                           )}
                           {tvInfo.sub && (
                             <Badge
-                              colorPalette="teal"
+                              size={{ base: "sm", md: "md" }}
                               variant="surface"
-                              bg="rgba(0,0,0,0.5)"
                             >
                               SUB {tvInfo.sub}
                             </Badge>
                           )}
                           {tvInfo.dub && (
                             <Badge
-                              colorPalette="teal"
+                              size={{ base: "sm", md: "md" }}
                               variant="surface"
-                              bg="rgba(0,0,0,0.5)"
                             >
                               DUB {tvInfo.dub}
                             </Badge>
@@ -299,18 +295,16 @@ const Hero = () => {
 
                           {anime.quality && (
                             <Badge
-                              colorPalette="teal"
+                              size={{ base: "sm", md: "md" }}
                               variant="surface"
-                              bg="rgba(0,0,0,0.5)"
                             >
                               {anime.quality}
                             </Badge>
                           )}
                           {anime.type && (
                             <Badge
-                              colorPalette="teal"
+                              size={{ base: "sm", md: "md" }}
                               variant="surface"
-                              bg="rgba(0,0,0,0.5)"
                             >
                               {anime.type}
                             </Badge>
