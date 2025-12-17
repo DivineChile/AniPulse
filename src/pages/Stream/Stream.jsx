@@ -10,25 +10,15 @@ import {
   IconButton,
   Stack,
   Text,
-  useBreakpointValue,
   VStack,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState, useCallback, useMemo } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/ErrorPage/Error";
-import {
-  ChevronDown,
-  ChevronUp,
-  Download,
-  Heading1,
-  ListVideo,
-  Play,
-  Tv,
-} from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 
 import "./style.css";
-import Loading from "../../components/ErrorPage/Loading";
 import Player from "../../components/Anime/VideoPlayer/Player";
 import { PlayerContext } from "../../contexts/PlayerContext";
 import DownloadLinksSelect from "./DownloadLinksSelect";
@@ -39,9 +29,6 @@ import EpisodeList from "../../components/Anime/EpisodeList/EpisodeList";
 const Stream = () => {
   const { watchId } = useParams();
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const season = searchParams.get("season");
-  const episode = searchParams.get("episode");
   const activeEpId =
     location.pathname.includes("episode") &&
     location.pathname.split("-")[location.pathname.split("-").length - 1]; // e.g., "138379"
@@ -55,13 +42,13 @@ const Stream = () => {
   const [episodeNumber, setEpisodeNumber] = useState("");
   const [animeRating, setAnimeRating] = useState("");
   const [animeTitle, setAnimeTitle] = useState("");
-  const [dubStatus, setDubStatus] = useState(null);
+  const [dubStatus, setDubStatus] = useState(false);
   const [isDub, setIsDub] = useState(null);
-  const [subStatus, setSubStatus] = useState(null);
+  const [activeArr, setActiveArr] = useState([]);
 
-  const [activeLink, setActiveLink] = useState(null);
-  const [activeDubLink, setActiveDubLink] = useState(null);
   const [currentEpisode, setCurrentEpisode] = useState(null);
+  const [season, setSeason] = useState(null);
+
   const {
     selectedQuality,
     availableQualities,
@@ -73,7 +60,7 @@ const Stream = () => {
   const [sesssionEpisode, setSessionEpisode] = useState("");
   const [nextSessionEpisode, setNextSessionEpisode] = useState("");
   const [sessionResult, setSessionResult] = useState({});
-  const [showDub, setShowDub] = useState(dubStatus);
+  const [version, setVersion] = useState("sub");
   const [collapsed, setCollapsed] = useState(false);
 
   //Base URLS
@@ -88,14 +75,14 @@ const Stream = () => {
 
   // Determine content type
   useEffect(() => {
-    if (season && episode) {
+    if (location.pathname.includes("/tv")) {
       setContentType("series");
-    } else if (!isNaN(watchId)) {
+    } else if (location.pathname.includes("/movie")) {
       setContentType("movie");
     } else {
       setContentType("anime");
     }
-  }, [watchId, season, episode]);
+  }, [location.pathname]);
 
   //Fetch Anime data
   useEffect(() => {
@@ -118,8 +105,17 @@ const Stream = () => {
         setAnimeTitle(data.data.name);
         setAnimeRating(data.data.score);
         setIsDub(data.data.episodes.dub);
-        setDubStatus(data.data.episodes?.dub);
+        setDubStatus(data.data.episodes?.dub ? true : false);
         setEpisodes(data.providerEpisodes || []);
+        setActiveArr(
+          data?.providerEpisodes?.filter((ep) => ep.episodeId === watchId)
+        );
+        setCurrentEpisode(
+          `Episode ${
+            data.providerEpisodes.find((ep) => ep.episodeId === watchId)
+              .episodeNumber
+          }`
+        );
       } catch (error) {
         setError("Failed to load data. Please try again.");
       } finally {
@@ -134,54 +130,78 @@ const Stream = () => {
   useEffect(() => {
     if (contentType === "anime") return;
 
-    const fetchTMDb = async () => {
+    const fetchMediaData = async () => {
       setLoading(true);
       setEpLoading(true);
+      const mediaArr = watchId.split("-");
+      const mediaName = mediaArr.splice(0, mediaArr.length - 2).join("-");
+      const newMediaName = mediaName
+        .split("-")
+        .toSpliced(1, 0, "watch")
+        .join("-");
+      const cacheKey = `mediaInfo_${newMediaName}`;
+      console.log();
+
       try {
         if (contentType === "movie") {
-          const res = await fetch(
-            `${TMDB_API}/movie/${watchId}?api_key=${TMDB_KEY}`
+          const data = await cacheFetch(`api/flixhq/media/${newMediaName}`, {
+            cacheKey,
+          });
+
+          console.log(data);
+          setAnimeTitle(data?.data?.name);
+          setAnimeRating(data?.data.score);
+          setActiveArr(
+            data?.providerEpisodes?.filter((ep) => ep.episodeId === watchId)
           );
-          const data = await res.json();
-          setAnimeTitle(data.title);
-          setAnimeRating(data.vote_average);
           setEpisodes([
             {
-              title: `Full Movie - ${animeTitle}`,
+              title: `Full Movie - ${data?.data?.name}`,
               number: 1,
               episodeId: watchId, // or just `watchId` if your system expects that
             },
           ]);
-          setCurrentEpisode(`Full Movie - ${animeTitle}`);
+          setCurrentEpisode(`Full Movie - ${data?.data?.name}`);
           setEpisodeNumber(1);
-          document.title = `Watching ${data.title} | AniPulse`;
+          document.title = `Watching ${data?.data?.name} | AniPulse`;
         } else if (contentType === "series") {
-          const res = await fetch(
-            `${TMDB_API}/tv/${watchId}?api_key=${TMDB_KEY}`
+          const data = await cacheFetch(`api/flixhq/media/${newMediaName}`, {
+            cacheKey,
+          });
+
+          console.log(data);
+
+          setAnimeTitle(data?.data?.name);
+          setAnimeRating(data?.data.score);
+          setActiveArr(
+            data?.providerEpisodes?.filter((ep) => ep.episodeId === watchId)
           );
-          const data = await res.json();
-          setAnimeTitle(data.name);
-          setAnimeRating(data.vote_average);
-          document.title = `Watching ${data.name} S${season}E${episode} | AniPulse`;
+          document.title =
+            data?.providerEpisodes?.filter((ep) =>
+              ep.episodeId === watchId
+                ? `Watching ${data?.data?.name} S${ep.seasonNumber} E${ep.episodeNumber} | AniPulse`
+                : null
+            )[0] || `Watching ${data?.data?.name} | AniPulse`;
 
           // Fetch episodes for the series
-          const episodesRes = await fetch(
-            `${TMDB_API}/tv/${watchId}/season/${season}?api_key=${TMDB_KEY}`
-          );
-          const episodesData = await episodesRes.json();
-          const formattedEpisodes = episodesData.episodes.map((ep) => ({
-            title: ep.name,
-            number: ep.episode_number,
-            episodeId: `${watchId}-s${season}-e${ep.episode_number}`,
-          }));
-          setEpisodes(formattedEpisodes);
+
+          setEpisodes(data?.providerEpisodes || []);
           setCurrentEpisode(
-            `Episode ${episode} - ${
-              formattedEpisodes.find((ep) => ep.number === parseInt(episode))
+            `Episode ${data?.providerEpisodes.find(
+              ((ep) => ep.episodeId === watchId)?.episodeNumber
+            )} - ${
+              data?.providerEpisodes.find((ep) => ep.episodeId === watchId)
                 ?.title || "Unknown"
             }`
           );
-          setEpisodeNumber(parseInt(episode));
+          setSeason(
+            data?.providerEpisodes.find((ep) => ep.episodeId === watchId)
+              ?.seasonNumber
+          );
+          setEpisodeNumber(
+            data?.providerEpisodes.find((ep) => ep.episodeId === watchId)
+              ?.episodeNumber
+          );
         }
       } catch (err) {
         setError("Failed to load movie/series data");
@@ -191,8 +211,8 @@ const Stream = () => {
       }
     };
 
-    fetchTMDb();
-  }, [watchId, contentType, season]);
+    fetchMediaData();
+  }, [watchId, contentType]);
   // Set the document title based on the anime title and current episode
   // This will update the title whenever animeTitle, contentType, season, or episode changes
   useEffect(() => {
@@ -201,19 +221,18 @@ const Stream = () => {
     let title = "AniPulse";
     let episodeText = "";
 
-    if (contentType === "series" && season && episode) {
-      const current = episodes?.find((ep) => ep.number === parseInt(episode));
-      title = `Watching ${animeTitle} S${season}E${episode} | AniPulse`;
-      episodeText = `Episode ${episode} - ${current?.title || "Unknown"}`;
+    if (contentType === "series") {
+      title = `Watching ${animeTitle} S${activeArr[0]?.seasonNumber}E${activeArr[0]?.episodeNumber} | AniPulse`;
+      episodeText = `Episode ${activeArr[0]?.episodeNumber} - ${
+        activeArr[0]?.title || "Unknown"
+      }`;
     } else if (contentType === "anime" && activeEpId) {
-      const current = episodes?.find((ep) =>
-        ep.episodeId.endsWith(`${activeEpId}`)
-      );
-
-      const currentEpNo = current?.episodeNumber ?? "??";
+      const currentEpNo = activeArr[0]?.episodeNumber ?? "??";
 
       title = `Watching ${animeTitle} Episode ${currentEpNo} | AniPulse`;
-      episodeText = `Episode ${currentEpNo} - ${current?.title || "Unknown"}`;
+      episodeText = `Episode ${currentEpNo} - ${
+        activeArr[0]?.title || "Unknown"
+      }`;
     } else if (contentType === "movie") {
       title = `Watching ${animeTitle} | AniPulse`;
       episodeText = animeTitle;
@@ -221,7 +240,7 @@ const Stream = () => {
 
     document.title = title;
     setCurrentEpisode(episodeText);
-  }, [animeTitle, contentType, season, episode, episodes, location.search]);
+  }, [animeTitle, contentType, season, episodes, activeArr]);
 
   // Fetch session ID of anime
   const fetchSessionId = async () => {
@@ -353,13 +372,16 @@ const Stream = () => {
 
   const crumbLabel = useMemo(() => {
     if (contentType === "anime") {
-      if (showDub) return `${animeTitle} ${currentEpisode} (Dub)`;
+      if (version === "dub") return `${animeTitle} ${currentEpisode} (Dub)`;
       else return `${animeTitle} ${currentEpisode}`;
     } else if (contentType === "movie") return animeTitle;
     else {
-      return `${animeTitle} ${season} ${currentEpisode}`;
+      return `${animeTitle} Season ${activeArr[0]?.seasonNumber} ${currentEpisode}`;
     }
-  }, [contentType, animeTitle, currentEpisode, showDub]);
+  }, [contentType, animeTitle, currentEpisode, version]);
+
+  console.log("Version value: " + version);
+  console.log("dubStatus value: " + dubStatus);
 
   return (
     <Box>
@@ -415,8 +437,9 @@ const Stream = () => {
                   w="100%"
                   h={{ base: "220px", md: "420px", lg: "500px" }}
                 >
+                  {console.log("Version value: " + version)}
                   {contentType === "anime" ? (
-                    <Player sub={!showDub} dub={showDub} />
+                    <Player version={version} />
                   ) : (
                     <MoviePlayer />
                   )}
@@ -455,7 +478,10 @@ const Stream = () => {
                       <Text color="var(--text-secondary)" fontSize="sm">
                         {contentType === "anime"
                           ? `${currentEpisode}`
+                          : contentType === "series"
+                          ? `Season ${activeArr[0]?.seasonNumber} Episode ${activeArr[0]?.episodeNumber}`
                           : "Now Playing"}
+                        {console.log(currentEpisode)}
                       </Text>
                     </VStack>
 
@@ -464,18 +490,17 @@ const Stream = () => {
                       <HStack spacing={0}>
                         <Button
                           size="sm"
-                          variant={showDub ? "outline" : "solid"}
-                          onClick={() => setShowDub(false)}
-                          aria-pressed={!showDub}
+                          variant={version === "sub" ? "solid" : "outline"}
+                          onClick={() => setVersion("sub")}
+                          aria-pressed={version === "sub"}
                         >
                           SUB
                         </Button>
                         <Button
                           size="sm"
-                          variant={showDub ? "solid" : "outline"}
-                          onClick={() => setShowDub(true)}
-                          aria-pressed={showDub}
-                          disa
+                          variant={version === "dub" ? "solid" : "outline"}
+                          onClick={() => setVersion("dub")}
+                          aria-pressed={version === "dub"}
                           disabled={!dubStatus}
                         >
                           DUB
@@ -561,6 +586,7 @@ const Stream = () => {
                             activeEP={activeEpId}
                           />
                         )}
+                        {/* {console.log(episodeIds)} */}
                       </Box>
                     </Collapsible.Content>
                   </Collapsible.Root>

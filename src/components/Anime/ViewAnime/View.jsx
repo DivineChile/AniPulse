@@ -1,7 +1,6 @@
 import {
   Box,
   Text,
-  Breadcrumb,
   Grid,
   GridItem,
   Heading,
@@ -26,7 +25,6 @@ import EpisodeList from "../EpisodeList/EpisodeList";
 import Loading from "../../ErrorPage/Loading";
 import {
   Building2,
-  Calendar,
   CalendarDays,
   CheckCircle2,
   ChevronLeft,

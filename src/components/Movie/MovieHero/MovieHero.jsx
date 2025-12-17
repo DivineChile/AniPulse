@@ -19,7 +19,7 @@ const MovieHero = () => {
     try {
       const data = await fetch(`${proxy}${kenjitsu_api}api/flixhq/home`);
       const parsedData = await data.json();
-      console.log(parsedData);
+
       setMovies(parsedData.featured || []);
     } catch (err) {
       setError(err.message || "Something went wrong");

@@ -8,7 +8,6 @@ export default function BackToTop() {
   // Show button when page is scrolled down
   const toggleVisibility = () => {
     if (window.pageYOffset > 100) {
-      console.log("passed");
       setIsVisible(true);
     } else {
       setIsVisible(false);

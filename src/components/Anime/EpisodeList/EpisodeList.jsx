@@ -1,49 +1,226 @@
+// import { useState } from "react";
+// import { Box, SimpleGrid, Flex, Button, Text } from "@chakra-ui/react";
+// import { Tooltip } from "../../ui/tooltip";
+// import { Link as ReactRouterLink } from "react-router-dom";
+// import Error from "../../ErrorPage/Error";
+
+// // Utility to divide episodes into groups (pagination)
+// const chunkEpisodes = (arr, size = 30) => {
+//   const chunks = [];
+//   for (let i = 0; i < arr.length; i += size) {
+//     chunks.push(arr.slice(i, i + size));
+//   }
+//   return chunks;
+// };
+
+// const EpisodeList = ({ items, itemId, streaming, activeEP }) => {
+//   if (!items || items.length === 0) {
+//     return <Error bg="none" msg="No Episodes found." pos="relative" />;
+//   }
+
+//   const episodeChunks = chunkEpisodes(items, 30); // max 30 per "page"
+//   const [activePage, setActivePage] = useState(0);
+
+//   const handleNextPage = () => {
+//     if (activePage < episodeChunks.length - 1)
+//       setActivePage((prev) => prev + 1);
+//   };
+
+//   const handlePrevPage = () => {
+//     if (activePage > 0) setActivePage((prev) => prev - 1);
+//   };
+
+//   const renderEpisodeCard = (ep, index) => {
+//     const globalIndex = activePage * 30 + index;
+//     const isActive = streaming && ep.episodeId.endsWith(`${activeEP}`);
+//     return (
+//       <Tooltip
+//         content={ep.title || `Episode ${globalIndex + 1}`}
+//         contentProps={{ css: { "--tooltip-bg": "var(--link-color)" } }}
+//         positioning={{ placement: "top" }}
+//         showArrow
+//       >
+//         <Box
+//           key={globalIndex}
+//           as={ReactRouterLink}
+//           to={`/watch/${itemId[globalIndex]}`}
+//           borderRadius="8px"
+//           p="6px"
+//           bg={
+//             isActive
+//               ? "var(--secondary-color)"
+//               : "var(--primary-background-color)"
+//           }
+//           border="1px solid var(--secondary-color)"
+//           textAlign="center"
+//           color={isActive ? "var(--accent-color)" : "var(--text-color)"}
+//           fontWeight="500"
+//           fontSize={{ base: "11px", sm: "12px", md: "13px" }}
+//           transition="all 0.25s ease"
+//           _hover={{
+//             transform: "scale(1.05)",
+//             bg: "var(--accent-color)",
+//             color: "white",
+//             borderColor: "var(--accent-color)",
+//           }}
+//         >
+//           <Text fontSize={{ base: "12px", md: "14px" }}>{globalIndex + 1}</Text>
+//         </Box>
+//       </Tooltip>
+//     );
+//   };
+
+//   return (
+//     <Box>
+//       {/* Episodes Grid */}
+//       <SimpleGrid columns={{ base: 4, sm: 5, md: 6 }} gap={3}>
+//         {episodeChunks[activePage].map(renderEpisodeCard)}
+//       </SimpleGrid>
+//       {/* Pagination Controls */}
+//       {episodeChunks.length > 1 && (
+//         <Flex justify="center" align="center" mt={4} gap={2}>
+//           <Button
+//             onClick={handlePrevPage}
+//             disabled={activePage === 0}
+//             bg="var(--primary-background-color)"
+//             color="var(--text-color)"
+//             _hover={{
+//               bg: "var(--link-hover-color)",
+//               color: "var(--accent-color)",
+//             }}
+//             size="sm"
+//           >
+//             Prev
+//           </Button>
+//           <Text fontSize="12px" color="var(--text-color)">
+//             Page {activePage + 1} of {episodeChunks.length}
+//           </Text>
+//           <Button
+//             onClick={handleNextPage}
+//             disabled={activePage === episodeChunks.length - 1}
+//             bg="var(--primary-background-color)"
+//             color="var(--text-color)"
+//             _hover={{
+//               bg: "var(--link-hover-color)",
+//               color: "var(--accent-color)",
+//             }}
+//             size="sm"
+//           >
+//             Next
+//           </Button>
+//         </Flex>
+//       )}
+//     </Box>
+//   );
+// };
+
+// export default EpisodeList;
+
 import { useState } from "react";
 import { Box, SimpleGrid, Flex, Button, Text } from "@chakra-ui/react";
 import { Tooltip } from "../../ui/tooltip";
-import { Link as ReactRouterLink } from "react-router-dom";
+import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 import Error from "../../ErrorPage/Error";
+import { ArrowRight } from "lucide-react";
 
-// Utility to divide episodes into groups (pagination)
+// Pagination utility
 const chunkEpisodes = (arr, size = 30) => {
   const chunks = [];
-  for (let i = 0; i < arr.length; i += size) {
+  for (let i = 0; i < arr?.length; i += size)
     chunks.push(arr.slice(i, i + size));
-  }
   return chunks;
 };
 
-const EpisodeList = ({ items, itemId, streaming, activeEP }) => {
-  if (!items || items.length === 0) {
-    return <Error bg="none" msg="No Episodes found." pos="relative" />;
+const location = window.location;
+console.log(location.pathname);
+
+// Normalize input into anime / tv / movie structure
+const normalizeData = (items) => {
+  // MOVIE (no episodes)
+  if (location.pathname.includes("/movie")) {
+    return {
+      type: "movie",
+      seasons: null,
+    };
   }
 
-  const episodeChunks = chunkEpisodes(items, 30); // max 30 per "page"
+  // TV SHOW (grouped by season)
+  if (location.pathname.includes("/tv")) {
+    const grouped = items.reduce((acc, ep) => {
+      const s = ep.seasonNumber || 1;
+      if (!acc[s]) acc[s] = [];
+      acc[s].push(ep);
+      return acc;
+    }, {});
+
+    return {
+      type: "tv",
+      seasons: grouped,
+    };
+  }
+
+  // ANIME (flat list)
+  if (Array.isArray(items)) {
+    return {
+      type: "anime",
+      seasons: { 1: items },
+    };
+  }
+
+  return null;
+};
+
+const EpisodeList = ({ items, itemId, streaming, activeEP }) => {
+  const normalized = normalizeData(items);
+
+  if (!normalized) {
+    return <Error bg="none" msg="No episodes found." pos="relative" />;
+  }
+
+  // MOVIE MODE
+  if (normalized.type === "movie") {
+    return (
+      <Button
+        w="100%"
+        variant="subtle"
+        as={ReactRouterLink}
+        to={`/watch/${itemId}`}
+      >
+        Watch Now <ArrowRight size={20} color="white" />
+      </Button>
+    );
+  }
+
+  // TV or ANIME MODE
+  const seasons = Object.keys(normalized.seasons);
+  const [activeSeason, setActiveSeason] = useState(seasons[0]);
+
+  const episodes = normalized.seasons[activeSeason];
+  const episodeChunks = chunkEpisodes(episodes, 30);
   const [activePage, setActivePage] = useState(0);
 
-  const handleNextPage = () => {
-    if (activePage < episodeChunks.length - 1)
-      setActivePage((prev) => prev + 1);
-  };
+  const handleNext = () =>
+    activePage < episodeChunks.length - 1 && setActivePage((prev) => prev + 1);
 
-  const handlePrevPage = () => {
-    if (activePage > 0) setActivePage((prev) => prev - 1);
-  };
+  const handlePrev = () => activePage > 0 && setActivePage((prev) => prev - 1);
 
   const renderEpisodeCard = (ep, index) => {
     const globalIndex = activePage * 30 + index;
-    const isActive = streaming && ep.episodeId.endsWith(`${activeEP}`);
+    const isActive =
+      streaming &&
+      (ep.episodeId?.endsWith(`${activeEP}`) || ep.number === Number(activeEP));
+
     return (
       <Tooltip
+        key={globalIndex}
         content={ep.title || `Episode ${globalIndex + 1}`}
         contentProps={{ css: { "--tooltip-bg": "var(--link-color)" } }}
         positioning={{ placement: "top" }}
         showArrow
       >
         <Box
-          key={globalIndex}
           as={ReactRouterLink}
-          to={`/watch/${itemId[globalIndex]}`}
+          to={`/watch/${ep.watchId || itemId[globalIndex]}`}
           borderRadius="8px"
           p="6px"
           bg={
@@ -64,7 +241,7 @@ const EpisodeList = ({ items, itemId, streaming, activeEP }) => {
             borderColor: "var(--accent-color)",
           }}
         >
-          <Text fontSize={{ base: "12px", md: "14px" }}>{globalIndex + 1}</Text>
+          <Text>{ep.number || globalIndex + 1}</Text>
         </Box>
       </Tooltip>
     );
@@ -72,38 +249,53 @@ const EpisodeList = ({ items, itemId, streaming, activeEP }) => {
 
   return (
     <Box>
+      {/* Season selection for TV shows */}
+      {normalized.type === "tv" && (
+        <Flex gap={2} mb={4} flexWrap="wrap">
+          {seasons.map((s) => (
+            <Button
+              key={s}
+              onClick={() => {
+                setActiveSeason(s);
+                setActivePage(0);
+              }}
+              size="sm"
+              bg={
+                activeSeason === s
+                  ? "var(--accent-color)"
+                  : "var(--primary-background-color)"
+              }
+              color={activeSeason === s ? "white" : "var(--text-color)"}
+              border="1px solid var(--secondary-color)"
+              _hover={{
+                bg: "var(--accent-color)",
+                color: "white",
+                borderColor: "var(--accent-color)",
+              }}
+            >
+              Season {s}
+            </Button>
+          ))}
+        </Flex>
+      )}
+
       {/* Episodes Grid */}
       <SimpleGrid columns={{ base: 4, sm: 5, md: 6 }} gap={3}>
-        {episodeChunks[activePage].map(renderEpisodeCard)}
+        {episodeChunks[activePage]?.map(renderEpisodeCard)}
       </SimpleGrid>
-      {/* Pagination Controls */}
+
+      {/* Pagination */}
       {episodeChunks.length > 1 && (
         <Flex justify="center" align="center" mt={4} gap={2}>
-          <Button
-            onClick={handlePrevPage}
-            disabled={activePage === 0}
-            bg="var(--primary-background-color)"
-            color="var(--text-color)"
-            _hover={{
-              bg: "var(--link-hover-color)",
-              color: "var(--accent-color)",
-            }}
-            size="sm"
-          >
+          <Button onClick={handlePrev} disabled={activePage === 0} size="sm">
             Prev
           </Button>
-          <Text fontSize="12px" color="var(--text-color)">
+          <Text fontSize="12px">
             Page {activePage + 1} of {episodeChunks.length}
           </Text>
           <Button
-            onClick={handleNextPage}
+            onClick={handleNext}
             disabled={activePage === episodeChunks.length - 1}
-            bg="var(--primary-background-color)"
-            color="var(--text-color)"
-            _hover={{
-              bg: "var(--link-hover-color)",
-              color: "var(--accent-color)",
-            }}
             size="sm"
           >
             Next

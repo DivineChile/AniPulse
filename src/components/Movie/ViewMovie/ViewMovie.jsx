@@ -40,6 +40,7 @@ import {
   TagIcon,
   Users,
 } from "lucide-react";
+import EpisodeList from "../../Anime/EpisodeList/EpisodeList";
 
 const DetailCard = ({ icon, label, value, loading }) => (
   <Skeleton loading={loading}>
@@ -524,7 +525,7 @@ const ViewMovie = () => {
                 <Flex align="center" gap="12px" mb="20px">
                   <ListVideo size={30} color="var(--text-color)" />
                   <Heading fontSize="30px" color="var(--text-color)">
-                    Episode List
+                    {isTV ? "Seasons" : "Full Movie"}
                   </Heading>
                 </Flex>
 
@@ -536,22 +537,12 @@ const ViewMovie = () => {
                     borderRadius="12px"
                     p="20px"
                   >
-                    {isTV ? (
-                      // <EpisodeList
-                      //   items={episodes}
-                      //   itemId={episodes.map((episode) => episode.episodeId)}
-                      // />
-                      <Box>Boy</Box>
-                    ) : (
-                      <Button
-                        w="100%"
-                        variant="subtle"
-                        as={ReactRouterLink}
-                        to={`/watch/${providerEpisodes[0]?.episodeId}`}
-                      >
-                        Watch Now <ArrowRight size={20} color="white" />
-                      </Button>
-                    )}
+                    <EpisodeList
+                      items={providerEpisodes}
+                      itemId={providerEpisodes.map(
+                        (episode) => episode.episodeId
+                      )}
+                    />
                   </Box>
                 </Skeleton>
               </Box>

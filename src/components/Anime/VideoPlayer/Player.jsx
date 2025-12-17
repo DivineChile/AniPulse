@@ -51,7 +51,37 @@ const extractHLSQualities = async (m3u8Url) => {
   }
 };
 
-const Player = ({ dub, sub }) => {
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+
+const getCachedData = (key) => {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+
+    const { data, expiresAt } = JSON.parse(raw);
+
+    if (Date.now() > expiresAt) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return data;
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
+};
+
+const setCachedData = (key, data) => {
+  const payload = {
+    data,
+    expiresAt: Date.now() + CACHE_TTL,
+  };
+
+  localStorage.setItem(key, JSON.stringify(payload));
+};
+
+const Player = ({ version = "sub" }) => {
   const location = useLocation();
   const { watchId } = useParams();
   const queryParams = location?.search || "";
@@ -73,44 +103,54 @@ const Player = ({ dub, sub }) => {
     setAvailableQualities,
   } = useContext(PlayerContext);
 
-  const fetchVideoData = async (category = "sub") => {
+  const fetchVideoData = async (category) => {
     try {
-      setLoading(true);
       setStreamError(null);
-      setVideoData(null);
+      setLoading(true);
 
-      //unique cache key for each streamInfo
-      const cacheKey = `videoData_${watchId}${queryParams}_${category}`;
+      const cacheKey = `videoData:${watchId}:version=${category}`;
 
-      const data = await cacheFetch(
-        `api/hianime/sources/${watchId}${queryParams}?version=${category}&server=hd-2`,
-        { cacheKey }
-      );
-
-      if (!data) throw new Error("Failed to fetch video data.");
-
-      if (!data.data || !data.data?.sources?.map((source) => source.isM3u8)) {
-        console.error("No sources available");
+      // 1️⃣ Check cache first
+      const cached = getCachedData(cacheKey);
+      if (cached) {
+        console.log("Loaded video data from cache:", category);
+        setVideoData(cached);
+        return;
       }
 
-      console.log(data);
-      setVideoData(data.data);
+      // 2️⃣ Fetch fresh data
+      const res = await fetch(
+        `${kenjitsu_api}/api/hianime/sources/${watchId}?version=${category}&server=hd-2`
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+
+      const json = await res.json();
+
+      if (!json?.data) {
+        throw new Error("No video data returned");
+      }
+
+      // 3️⃣ Cache it
+      setCachedData(cacheKey, json.data);
+
+      console.log("Fetched & cached video data:", category);
+      setVideoData(json.data);
     } catch (err) {
       setStreamError(err.message || "An unexpected error occurred.");
+      setVideoData(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (sub) {
-      fetchVideoData("sub");
-    } else if (dub) {
-      fetchVideoData("dub");
-    } else {
-      fetchVideoData("sub");
-    }
-  }, [watchId, queryParams, dub, sub]);
+    if (!watchId) return;
+
+    fetchVideoData(version);
+  }, [watchId, queryParams, version]);
 
   useEffect(() => {
     if (!videoData) return;
@@ -196,14 +236,28 @@ const Player = ({ dub, sub }) => {
         playbackRate: true,
         fullscreen: true,
         quality: qualities,
+        highlight: [
+          {
+            time: videoData?.intro?.start,
+            text: "Intro Start",
+          },
+          {
+            time: videoData?.intro?.end,
+            text: "Intro End",
+          },
+          {
+            time: videoData?.outro?.start,
+            text: "Outro Start",
+          },
+          {
+            time: videoData?.outro?.end,
+            text: "Outro End",
+          },
+        ],
       };
 
-      if (!dub) {
-        if (defaultSubtitle?.url) {
-          artConfig.subtitle = defaultSubtitle;
-        }
-      } else {
-        artConfig.subtitle = {};
+      if (version === "sub" && defaultSubtitle?.url) {
+        artConfig.subtitle = defaultSubtitle;
       }
 
       artRef.current = new Artplayer(artConfig);
@@ -217,7 +271,6 @@ const Player = ({ dub, sub }) => {
           try {
             if (screen.orientation && screen.orientation.lock) {
               await screen.orientation.lock("landscape");
-              console.log("Orientation locked to landscape");
             }
           } catch (err) {
             console.warn("Orientation lock failed:", err);
