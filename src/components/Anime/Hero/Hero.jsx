@@ -54,7 +54,6 @@ const Hero = () => {
   // -------------------------
   //  SKELETON UI COMPONENT
   // -------------------------
-  console.log(loading);
   const HeroSkeleton = () => (
     <Box
       w="100%"

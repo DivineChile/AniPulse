@@ -225,7 +225,9 @@ const Stream = () => {
     } else if (contentType === "anime" && activeEpId) {
       const currentEpNo = activeArr[0]?.episodeNumber ?? "??";
 
-      title = `Watching ${animeTitle} Episode ${currentEpNo} | AniPulse`;
+      title = `Watching ${animeTitle} Episode ${currentEpNo} ${
+        version === "dub" && " (Dub)"
+      } | AniPulse`;
       episodeText = `Episode ${currentEpNo} - ${
         activeArr[0]?.title || "Unknown"
       }`;
