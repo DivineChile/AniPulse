@@ -256,7 +256,7 @@ const Player = ({ version = "sub" }) => {
         ],
       };
 
-      if (version === "sub" && defaultSubtitle?.url) {
+      if (defaultSubtitle?.url && version === "sub") {
         artConfig.subtitle = defaultSubtitle;
       }
 

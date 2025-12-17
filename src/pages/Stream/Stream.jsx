@@ -140,7 +140,6 @@ const Stream = () => {
         .toSpliced(1, 0, "watch")
         .join("-");
       const cacheKey = `mediaInfo_${newMediaName}`;
-      console.log();
 
       try {
         if (contentType === "movie") {
@@ -148,7 +147,6 @@ const Stream = () => {
             cacheKey,
           });
 
-          console.log(data);
           setAnimeTitle(data?.data?.name);
           setAnimeRating(data?.data.score);
           setActiveArr(
@@ -168,8 +166,6 @@ const Stream = () => {
           const data = await cacheFetch(`api/flixhq/media/${newMediaName}`, {
             cacheKey,
           });
-
-          console.log(data);
 
           setAnimeTitle(data?.data?.name);
           setAnimeRating(data?.data.score);
@@ -380,9 +376,6 @@ const Stream = () => {
     }
   }, [contentType, animeTitle, currentEpisode, version]);
 
-  console.log("Version value: " + version);
-  console.log("dubStatus value: " + dubStatus);
-
   return (
     <Box>
       <Navbar />
@@ -437,7 +430,6 @@ const Stream = () => {
                   w="100%"
                   h={{ base: "220px", md: "420px", lg: "500px" }}
                 >
-                  {console.log("Version value: " + version)}
                   {contentType === "anime" ? (
                     <Player version={version} />
                   ) : (
@@ -481,7 +473,6 @@ const Stream = () => {
                           : contentType === "series"
                           ? `Season ${activeArr[0]?.seasonNumber} Episode ${activeArr[0]?.episodeNumber}`
                           : "Now Playing"}
-                        {console.log(currentEpisode)}
                       </Text>
                     </VStack>
 
