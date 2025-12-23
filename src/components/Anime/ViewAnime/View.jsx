@@ -181,7 +181,7 @@ const View = () => {
               {/* Back button */}
               <IconButton
                 as={ReactRouterLink}
-                to="/movies"
+                to="/"
                 variant="subtle"
                 position="absolute"
                 top={{ base: "40px", md: "100px" }}
