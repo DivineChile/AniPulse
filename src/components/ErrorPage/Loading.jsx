@@ -6,8 +6,10 @@ const Loading = ({
   height = "100%",
   bg = "#000",
   pos = "absolute",
+  top = "0",
+  left = "0",
   isLoading,
-  zIndex = 9999,
+  zIndex = 99,
   fullscreen = false, // NEW — controls scroll lock + fullscreen overlay
 }) => {
   const [visible, setVisible] = useState(isLoading);
@@ -35,8 +37,8 @@ const Loading = ({
   return (
     <Box
       pos={fullscreen ? "fixed" : pos}
-      top="0"
-      left="0"
+      top={top}
+      left={left}
       height={fullscreen ? "100vh" : height}
       width={fullscreen ? "100vw" : "100%"}
       display="flex"

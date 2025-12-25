@@ -122,7 +122,18 @@ const View = () => {
   return (
     <Box>
       <Navbar />
-      <Loading bg="var(--linear-gradient)" isLoading={isLoading} fullscreen />
+      <Loading
+        bg="var(--linear-gradient)"
+        isLoading={isLoading}
+        pos="absolute"
+        top={{ base: "70px", sm: "71px", md: "71px", lg: "71px" }}
+        height={{
+          base: "calc(100dvh - 70px)",
+          sm: "calc(100dvh - 71px)",
+          md: "calc(100dvh - 71px)",
+          lg: "calc(100dvh - 71px)",
+        }}
+      />
 
       {error && (
         <Error

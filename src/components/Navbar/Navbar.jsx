@@ -219,7 +219,7 @@ const Navbar = () => {
                   }
                 : { base: "0", lg: "initial" }
             }
-            zIndex="999"
+            zIndex="9999"
           >
             {NavList.map((item, key) => {
               const isActive =
