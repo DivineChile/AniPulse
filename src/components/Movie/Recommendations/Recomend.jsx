@@ -7,6 +7,7 @@ import {
   SimpleGrid,
   Text,
   Tabs,
+  Flex,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { cacheFetch } from "../../../utils/cacheFetch";
@@ -15,6 +16,7 @@ import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
 import MovieCard from "../MovieCard";
+import { TrendingUp } from "lucide-react";
 
 const Recomend = () => {
   const [trendingMovies, setTrendingMovies] = useState([]);
@@ -68,18 +70,21 @@ const Recomend = () => {
         }}
         margin="auto"
       >
-        <Heading
-          textTransform="capitalize"
-          color="var(--text-color)"
-          fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
-          fontWeight="600"
-          lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
-          letterSpacing="1.5px"
-          fontFamily="var(--font-family)"
-          textAlign={{ base: "center", md: "start" }}
-        >
-          Trending Now
-        </Heading>
+        <Flex alignItems="center" justifyContent="start" gap="10px">
+          <TrendingUp size={30} color="var(--accent-color)" />
+          <Heading
+            textTransform="capitalize"
+            color="var(--text-color)"
+            fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
+            fontWeight="600"
+            lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
+            letterSpacing="1.5px"
+            fontFamily="var(--font-family)"
+            textAlign={{ base: "center", md: "start" }}
+          >
+            Trending Now
+          </Heading>
+        </Flex>
 
         <Box mt="30px">
           {loading && (
@@ -127,7 +132,7 @@ const Recomend = () => {
           {!loading && !error && (
             <Tabs.Root
               variant="enclosed"
-              colorPalette="teal"
+              colorPalette="purple"
               defaultValue="movies"
               lazyMount
               unmountOnExit

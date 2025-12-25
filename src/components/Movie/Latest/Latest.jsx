@@ -7,11 +7,13 @@ import {
   Text,
   Tabs,
   SimpleGrid,
+  Flex,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 import { cacheFetch } from "../../../utils/cacheFetch";
 import MovieCard from "../MovieCard";
+import { CalendarClock } from "lucide-react";
 
 const Latest = () => {
   const [movies, setMovies] = useState([]);
@@ -103,25 +105,28 @@ const Latest = () => {
           my="20px"
           pos="relative"
         >
-          <Heading
-            as="h2"
-            fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
-            fontWeight="600"
-            lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
-            letterSpacing="1.5px"
-            color="var(--text-color)"
-            m="0"
-            textTransform="capitalize"
-            fontFamily="var(--font-family)"
-          >
-            Latest Releases
-          </Heading>
+          <Flex alignItems="center" justifyContent="center" gap="10px">
+            <CalendarClock size={30} color="var(--accent-color)" />
+            <Heading
+              as="h2"
+              fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
+              fontWeight="600"
+              lineHeight={{ base: "33px", lg: "38px", "2xl": "44px" }}
+              letterSpacing="1.5px"
+              color="var(--text-color)"
+              m="0"
+              textTransform="capitalize"
+              fontFamily="var(--font-family)"
+            >
+              Latest Releases
+            </Heading>
+          </Flex>
           <Text
             as="p"
             fontSize={{ base: "16px", "2xl": "20px" }}
             lineHeight={{ base: "17.6px", "2xl": "22px" }}
             letterSpacing="1.5px"
-            color="var(--text-color)"
+            color="var(--text-secondary)"
             m="0"
             textTransform="capitalize"
           >
@@ -174,7 +179,7 @@ const Latest = () => {
         {!loading && !error && (
           <Tabs.Root
             variant="enclosed"
-            colorPalette="teal"
+            colorPalette="purple"
             defaultValue="movies"
             lazyMount
             unmountOnExit

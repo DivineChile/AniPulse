@@ -14,7 +14,7 @@ import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
 import { Autoplay, FreeMode } from "swiper/modules";
-import { Play } from "lucide-react";
+import { Info } from "lucide-react";
 import { Link as ReactRouterLink } from "react-router-dom";
 import Next from "../../Anime/HeroSliderButtons/Next";
 import Prev from "../../Anime/HeroSliderButtons/Prev";
@@ -38,8 +38,8 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
   // Small helper to render genre chips
   const GenreBadge = ({ children }) => (
     <Badge
-      variant="surface"
-      // colorPalette="teal"
+      variant="subtle"
+      colorPalette="blackAlpha"
       mr={2}
       fontSize="sm"
       borderRadius="md"
@@ -170,18 +170,34 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                       </Badge>
 
                       {/* Type */}
-                      <Badge variant="outline" px={3} py={1} borderRadius="md">
+                      <Badge
+                        variant="subtle"
+                        px={3}
+                        py={1}
+                        borderRadius="md"
+                        colorPalette="orange"
+                      >
                         {type}
                       </Badge>
 
                       {/* Quality & duration */}
                       {quality && (
-                        <Badge px={3} py={1} borderRadius="md">
+                        <Badge
+                          px={3}
+                          py={1}
+                          borderRadius="md"
+                          colorPalette="purple"
+                        >
                           {quality}
                         </Badge>
                       )}
                       {duration && (
-                        <Badge px={3} py={1} borderRadius="md">
+                        <Badge
+                          px={3}
+                          py={1}
+                          borderRadius="md"
+                          colorPalette="purple"
+                        >
                           {duration}
                         </Badge>
                       )}
@@ -196,7 +212,7 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
 
                     <Text
                       fontSize={{ base: "sm", md: "md" }}
-                      color="gray.200"
+                      color="var(--text-secondary)"
                       maxW={{ base: "100%", md: "80%" }}
                       mb={6}
                       lineClamp={3}
@@ -204,27 +220,18 @@ export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
                       {synopsis || "Synopsis not available."}
                     </Text>
 
-                    <Stack
-                      direction={{ base: "column", sm: "row" }}
-                      spacing={3}
-                      mt={4}
-                    >
-                      <Button colorPalette="teal" size="lg" asChild>
-                        <ReactRouterLink to={`/watch/${m.id}`}>
-                          <Play /> Play
-                        </ReactRouterLink>
-                      </Button>
-
+                    <Stack direction={{ base: "column", sm: "row" }} mt={4}>
                       <Button
-                        variant="outline"
-                        colorPalette="whiteAlpha"
+                        variant="solid"
+                        colorPalette="red"
                         size="lg"
                         asChild
+                        w={{ base: "full", md: "40%" }}
                       >
                         <ReactRouterLink
                           to={`/${m.type.toLowerCase()}/${m.id}`}
                         >
-                          Details
+                          <Info size={20} /> Details
                         </ReactRouterLink>
                       </Button>
                     </Stack>

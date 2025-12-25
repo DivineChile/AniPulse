@@ -53,7 +53,7 @@ export default function BackToTop() {
         _hover={{
           bg: "cinemi.secondary",
           transform: "scale(1.1)",
-          boxShadow: "0 12px 35px rgba(0, 212, 255, 0.5)",
+          boxShadow: "0 12px 35px #8b5cf680",
         }}
         _active={{
           transform: "scale(0.95)",

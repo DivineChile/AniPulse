@@ -17,8 +17,12 @@ const MovieCard = ({ item }) => {
     <LinkBox
       borderRadius="lg"
       overflow="hidden"
-      bg="#111111ff"
-      _hover={{ transform: "scale(1.03)", transition: "0.2s" }}
+      bg="var(--card-background-color)"
+      _hover={{
+        transform: "scale(1.03)",
+        transition: "0.2s",
+        boxShadow: "0 0px 20px rgba(114, 29, 29, 0.32)",
+      }}
       cursor="pointer"
       shadow="md"
     >
@@ -34,18 +38,23 @@ const MovieCard = ({ item }) => {
 
       <Box p="3">
         <Flex justifyContent="space-between" alignItems="center" mb="1">
-          <Badge colorScheme="purple" borderRadius="md" px="2">
+          <Badge colorPalette="purple" borderRadius="md" px="2">
             {item.quality}
           </Badge>
 
-          <Badge colorScheme="gray" borderRadius="md" px="2">
+          <Badge colorPalette="gray" variant="outline" borderRadius="md" px="2">
             {item.type}
           </Badge>
         </Flex>
 
         <LinkOverlay asChild>
           <ReactRouterLink to={`/${is_TV ? "tv" : "movie"}/${item.id}`}>
-            <Text lineClamp="2" fontWeight="semibold" fontSize="md">
+            <Text
+              lineClamp="2"
+              fontWeight="semibold"
+              fontSize="md"
+              color="var(--text-color)"
+            >
               {item.name}
             </Text>
           </ReactRouterLink>
@@ -55,7 +64,7 @@ const MovieCard = ({ item }) => {
           mt="2"
           justifyContent="space-between"
           fontSize="sm"
-          color="gray.400"
+          color="var(--text-secondary)"
         >
           <Text>{is_TV ? `Seasons: ${item.seasons}` : item.releaseDate}</Text>
           <Text>{is_TV ? `Eps: ${item.totalEpisodes}` : item.duration}</Text>
