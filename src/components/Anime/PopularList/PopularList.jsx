@@ -50,7 +50,7 @@ const PopularList = () => {
           alignItems="center"
           justifyContent={{ base: "center", md: "flex-start" }}
         >
-          <Flame size={30} color="var(--primary-color)" />
+          <Flame size={30} color="var(--accent-color)" />
 
           <Heading
             color="var(--text-color)"

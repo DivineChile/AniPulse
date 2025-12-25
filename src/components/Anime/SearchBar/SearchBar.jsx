@@ -32,13 +32,6 @@ const SearchBar = ({ isOpen, onClose }) => {
   const animeApi = "https://anime-api-production-bc3d.up.railway.app/";
   const backupApi = "https://kenjitsu-api-production.up.railway.app/";
   const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
-  const url = `https://api.themoviedb.org/3/search/multi`;
-  const BEARER_TOKEN = import.meta.env.VITE_TMDB_BEARER_TOKEN;
-
-  const headers = {
-    Authorization: `Bearer ${BEARER_TOKEN}`,
-    "Content-Type": "application/json;charset=utf-8",
-  };
 
   // Fetch anime
   const fetchAnimeResults = async (query) => {
@@ -118,6 +111,7 @@ const SearchBar = ({ isOpen, onClose }) => {
     if (!isOpen) {
       setQuery("");
       setAnimeResults([]);
+      setMovieResults([]);
     }
   }, [isOpen]);
 
@@ -126,7 +120,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose} unmountOnExit>
       <Portal>
-        <Dialog.Backdrop />
+        <Dialog.Backdrop bg="#0a0a0a81" backdropFilter="blur(7px)" />
         <Dialog.Positioner>
           <Dialog.Content
             width={{ base: "90%", md: "600px" }}
@@ -138,7 +132,7 @@ const SearchBar = ({ isOpen, onClose }) => {
               placeholder="Search anime or movies"
               _placeholder={{ color: "var(--text-secondary)" }}
               color="var(--text-color)"
-              borderColor="var(--link-hover-color)"
+              borderColor="var(--accent-color)"
               value={query}
               onChange={handleInputChange}
               // onKeyPress={handleKeyPress}
@@ -148,8 +142,8 @@ const SearchBar = ({ isOpen, onClose }) => {
             <Box mt={4} maxH="300px" overflowY="auto">
               {loading && query.trim() && (
                 <VStack>
-                  <Spinner color="var(--link-hover-color)" />
-                  <Text color="var(--link-hover-color)">Loading...</Text>
+                  <Spinner color="var(--accent-color)" />
+                  <Text color="var(--accent-color)">Loading...</Text>
                 </VStack>
               )}
 
@@ -193,7 +187,7 @@ const SearchBar = ({ isOpen, onClose }) => {
                       <Box display="flex" flexDirection="column" gap="5px">
                         <Heading
                           fontSize={{ base: "14px", md: "16px" }}
-                          color="var(--link-color)"
+                          color="var(--text-color)"
                           _hover={{ color: "var(--link-hover-color)" }}
                           transition="all ease 0.25s"
                           lineHeight="20px"
@@ -273,7 +267,7 @@ const SearchBar = ({ isOpen, onClose }) => {
                       <Box display="flex" flexDirection="column" gap="5px">
                         <Heading
                           fontSize={{ base: "14px", md: "16px" }}
-                          color="var(--link-color)"
+                          color="var(--text-color)"
                           _hover={{ color: "var(--link-hover-color)" }}
                           transition="all ease 0.25s"
                           lineHeight="20px"

@@ -99,10 +99,9 @@ const Recents = () => {
           _hover={{
             textDecor: "none",
             background: "var(--accent-color)",
-            color: "var(--text-color)",
+            color: "var(--primary-background-color)",
             border: "none",
             fontWeight: "600",
-            padding: { base: "7px 20px", md: "7px 50px" },
           }}
           m="20px auto 0"
         >

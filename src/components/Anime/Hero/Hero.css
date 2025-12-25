@@ -17,7 +17,7 @@ a.play-now-btn {
 }
 
 a.play-now-btn:hover {
-  color: var(--link-hover-color);
+  color: var(--text-color);
   font-weight: bold;
   border: none;
 }
@@ -31,7 +31,7 @@ a.play-now-btn::after {
   left: 0;
   z-index: -1;
   border-radius: 5px;
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   transition: all 0.3s ease;
 }
 
@@ -61,7 +61,7 @@ a.play-now-btn:hover::after {
   }
 
   a.play-now-btn:hover {
-    color: var(--link-hover-color) !important;
+    color: var(--text-color) !important;
     font-weight: bold;
     border: none;
   }
@@ -87,7 +87,7 @@ a.play-now-btn:hover::after {
   }
 
   a.play-now-btn:hover {
-    color: var(--link-hover-color) !important;
+    color: var(--text-color) !important;
     font-weight: bold;
     border: none;
   }
@@ -113,7 +113,7 @@ a.play-now-btn:hover::after {
   }
 
   a.play-now-btn:hover {
-    color: var(--link-hover-color) !important;
+    color: var(--text-color) !important;
     font-weight: bold;
     border: none;
   }

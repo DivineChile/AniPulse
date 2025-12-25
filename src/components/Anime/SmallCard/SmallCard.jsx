@@ -26,11 +26,15 @@ const SmallCard = ({ result, page }) => {
       }}
       transition={"all 0.2s ease-in-out"}
     >
-      <Card.Root flexDirection="row" overflow="hidden">
+      <Card.Root
+        flexDirection="row"
+        bg="var(--card-background-color)"
+        overflow="hidden"
+      >
         <Image
           objectFit="cover"
           src={resultImg}
-          bg="var(--card-background-color)"
+          bg="#000000ff"
           w={{ base: "60.94px", md: "75px", lg: "85px" }}
           alt={resultId}
         />
@@ -50,6 +54,7 @@ const SmallCard = ({ result, page }) => {
                   letterSpacing="0.5px"
                   fontFamily="var(--font-family)"
                   lineClamp={1}
+                  color="var(--text-color)"
                 >
                   {resultTitle}
                 </Card.Title>
@@ -59,12 +64,21 @@ const SmallCard = ({ result, page }) => {
               {episodes.sub && (
                 <HStack>
                   {episodes.sub && (
-                    <Badge variant="surface" size={{ base: "sm" }}>
+                    <Badge
+                      variant="solid"
+                      // colorPalette="blackAlpha"
+                      size={{ base: "xs", md: "sm" }}
+                      // color="var(--primary-background-color)"
+                    >
                       SUB {episodes.sub}
                     </Badge>
                   )}
                   {episodes.dub && (
-                    <Badge variant="surface" size={{ base: "sm" }}>
+                    <Badge
+                      variant="outline"
+                      size={{ base: "xs", md: "sm" }}
+                      colorPalette="blackAlpha"
+                    >
                       DUB {episodes.dub}
                     </Badge>
                   )}
@@ -75,6 +89,7 @@ const SmallCard = ({ result, page }) => {
                   base: "12.81px",
                   sm: "13px",
                 }}
+                color="var(--text-secondary)"
                 lineHeight={{ base: "18px", md: "22.5px" }}
               >
                 {resultType}

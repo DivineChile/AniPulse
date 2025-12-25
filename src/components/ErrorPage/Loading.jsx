@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { BeatLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 
 const Loading = ({
@@ -48,7 +48,7 @@ const Loading = ({
       transition="opacity 0.45s ease"
       zIndex={zIndex}
     >
-      <BeatLoader color="var(--accent-color)" size={20} />
+      <SyncLoader color="var(--secondary-color)" size={20} />
     </Box>
   );
 };

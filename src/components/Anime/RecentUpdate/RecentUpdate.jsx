@@ -32,12 +32,7 @@ const RecentUpdate = () => {
 
   return (
     // Recent Release
-    <Box
-      // px={{ base: "20px", lg: "20px", xl: "100px" }}
-      bg="var(--primary-background-color)"
-      pt="40px"
-      pb="120px"
-    >
+    <Box bg="var(--primary-background-color)" pt="40px" pb="120px">
       <Box
         maxW={{
           base: "90%",
@@ -59,7 +54,7 @@ const RecentUpdate = () => {
           pos="relative"
         >
           <Flex alignItems="center" justifyContent="center" gap="10px">
-            <Clock size={30} color="var(--primary-color)" />
+            <Clock size={30} color="var(--accent-color)" />
             <Heading
               as="h2"
               fontSize={{ base: "27.59px", lg: "32px", "2xl": "37.97px" }}
@@ -71,7 +66,7 @@ const RecentUpdate = () => {
               textTransform="capitalize"
               fontFamily="var(--font-family)"
             >
-              Recently Added
+              Recently Updated
             </Heading>
           </Flex>
           <Text
@@ -79,7 +74,7 @@ const RecentUpdate = () => {
             fontSize={{ base: "16px", "2xl": "20px" }}
             lineHeight={{ base: "17.6px", "2xl": "22px" }}
             letterSpacing="1.5px"
-            color="var(--text-color)"
+            color="var(--text-secondary)"
             m="0"
             textTransform="capitalize"
           >

@@ -263,6 +263,8 @@ const Hero = () => {
                             <Badge
                               variant="subtle"
                               size={{ base: "sm", md: "md" }}
+                              bg="var(--secondary-color)"
+                              color="var(--primary-background-color)"
                             >
                               {anime.spotlight}
                             </Badge>
@@ -311,7 +313,7 @@ const Hero = () => {
                         </HStack>
 
                         <Text
-                          color="white"
+                          color="var(--text-secondary)"
                           my="10px"
                           maxW="95%"
                           lineClamp={3}

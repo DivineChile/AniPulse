@@ -226,8 +226,9 @@ const Stream = () => {
       const currentEpNo = activeArr[0]?.episodeNumber ?? "??";
 
       title = `Watching ${animeTitle} Episode ${currentEpNo} ${
-        version === "dub" && " (Dub)"
+        version === "dub" ? "(Dub)" : ""
       } | AniPulse`;
+      console.log(title);
       episodeText = `Episode ${currentEpNo} - ${
         activeArr[0]?.title || "Unknown"
       }`;
@@ -238,7 +239,7 @@ const Stream = () => {
 
     document.title = title;
     setCurrentEpisode(episodeText);
-  }, [animeTitle, contentType, season, episodes, activeArr]);
+  }, [animeTitle, contentType, season, episodes, activeArr, version]);
 
   // Fetch session ID of anime
   const fetchSessionId = async () => {
@@ -423,7 +424,7 @@ const Stream = () => {
               <Box
                 bg="var(--primary-background-color)"
                 borderRadius="12px"
-                boxShadow="0 0px 10px rgba(15, 133, 133, 0.35)"
+                shadow="md"
                 overflow="hidden"
               >
                 {/* Player container */}
@@ -525,9 +526,9 @@ const Stream = () => {
               <Box
                 bg="var(--primary-background-color)"
                 borderRadius="12px"
-                p={3}
+                p={4}
                 h={{ base: "auto", xl: "auto" }}
-                boxShadow="0 0px 10px rgba(15, 133, 133, 0.35)"
+                shadow="md"
               >
                 <HStack justify="space-between" mb={3}>
                   <Heading size="sm" color="var(--text-color)">
@@ -562,7 +563,7 @@ const Stream = () => {
                     <Collapsible.Content>
                       <Box>
                         {loading ? (
-                          <Text color="var(--primary-color)" fontSize="20px">
+                          <Text color="var(--accent-color)" fontSize="20px">
                             Loading...
                           </Text>
                         ) : error ? (

@@ -3,7 +3,7 @@
 }
 
 .navbar ul li a {
-  color: var(--text-color);
+  color: var(--text-secondary);
   font-size: 16.75px;
   font-weight: 400;
   line-height: 30px;
@@ -12,12 +12,12 @@
   text-transform: capitalize;
 }
 
-.navbar ul li a:hover {
-  color: var(--link-hover-color);
+.navbar ul li.nav-item:hover > a {
+  color: var(--link-hover-color) !important;
 }
 
-.navbar ul li.active a {
-  color: var(--link-hover-color) !important;
+.navbar ul li.nav-item.active a {
+  color: var(--primary-color) !important;
 }
 
 .navbar ul li::after {

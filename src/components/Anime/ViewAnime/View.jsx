@@ -249,16 +249,11 @@ const View = () => {
                   as={ReactRouterLink}
                   to={`/watch/${episodes[0].episodeId}`}
                   mt="25px"
-                  bg="var(--accent-color)"
-                  _hover={{
-                    bg: "var(--link-hover-color)",
-                    color: "var(--accent-color)",
-                  }}
                   w={{ base: "100%", md: "200px" }}
                   h="50px"
                   fontSize="18px"
                   borderRadius="8px"
-                  color="var(--link-color)"
+                  colorPalette="red"
                 >
                   Watch Now
                 </Button>
@@ -305,6 +300,7 @@ const View = () => {
                       <Text
                         as="span"
                         color="var(--link-color)"
+                        _hover={{ color: "var(--link-hover-color)" }}
                         ml="8px"
                         cursor="pointer"
                         onClick={() => setIsExpanded(!isExpanded)}
@@ -376,7 +372,7 @@ const View = () => {
                           key={g}
                           variant="subtle"
                           bg="var(--accent-color)"
-                          color="white"
+                          color="var(--primary-background-color)"
                           borderRadius="full"
                           px="10px"
                           py="5px"

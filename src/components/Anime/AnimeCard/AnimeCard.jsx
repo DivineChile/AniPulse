@@ -19,38 +19,42 @@ const AnimeCard = ({ anime, page }) => {
     <LinkBox
       borderRadius="lg"
       overflow="hidden"
-      bg="#111111ff"
-      _hover={{ transform: "scale(1.03)", transition: "0.2s" }}
+      bg="var(--card-background-color)"
       cursor="pointer"
-      shadow="md"
+      shadow="lg"
+      transition="all 0.25s ease"
+      _hover={{
+        transform: "scale(1.03)",
+        boxShadow: "0 0px 20px rgba(114, 29, 29, 0.32)",
+      }}
     >
       <AspectRatio ratio={1}>
         <Image
           src={posterImage}
           alt={name}
-          bg="var(--card-background-color)"
+          bg="#000000ff"
           transition="0.5s"
           objectFit="cover"
         />
       </AspectRatio>
 
-      <Box p="3">
-        <Flex justifyContent="space-between" alignItems="center" mb="1">
+      <Box p="3" bg="var(--card-background-color)">
+        <Flex gap={2} alignItems="center" mb="1">
           <Badge
-            variant="subtle"
-            borderRadius={{ base: "sm", sm: "sm" }}
-            size={{ base: "xs", sm: "sm", md: "sm" }}
-            px="2"
+            // px="2"
+            variant="solid"
+            colorPalette="blackAlpha"
+            size={{ base: "xs", md: "sm" }}
           >
             SUB: {episodes.sub}
           </Badge>
 
           {episodes.dub && (
             <Badge
-              variant="subtle"
-              borderRadius={{ base: "sm", sm: "sm" }}
-              size={{ base: "xs", sm: "sm", md: "sm" }}
-              px="2"
+              // px="2"
+              variant="outline"
+              colorPalette="blackAlpha"
+              size={{ base: "xs", md: "sm" }}
             >
               DUB: {episodes.dub}
             </Badge>
@@ -59,7 +63,12 @@ const AnimeCard = ({ anime, page }) => {
 
         <LinkOverlay asChild>
           <ReactRouterLink to={`/anime/${id}`}>
-            <Text lineClamp="1" fontWeight="semibold" fontSize="md">
+            <Text
+              lineClamp="1"
+              fontWeight="semibold"
+              fontSize="md"
+              color="var(--text-color)"
+            >
               {name}
             </Text>
           </ReactRouterLink>
@@ -69,7 +78,7 @@ const AnimeCard = ({ anime, page }) => {
           mt="2"
           justifyContent="space-between"
           fontSize="sm"
-          color="gray.400"
+          color="var(--text-secondary)"
         >
           {totalEpisodes && <Text>Eps: {totalEpisodes}</Text>}
           {type && <Text>{type}</Text>}

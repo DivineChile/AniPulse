@@ -107,19 +107,28 @@ const Navbar = () => {
     <Box
       position="fixed"
       top="0"
+      className="navbar"
       left="0"
       w="100%"
       zIndex="99"
       py={{ base: "15px", lg: "20px" }}
       transition="all 0.25s ease"
-      backdropFilter={scrolled ? "blur(12px)" : "blur(0px)"}
-      backgroundColor={
-        scrolled
-          ? "rgba(11,15,20,0.95)" // blurred-dark-glass
-          : "var(--primary-background-color)"
-      }
+      backdropFilter={{
+        base: "blur(0px)",
+        lg: scrolled ? "blur(12px)" : "blur(0px)",
+      }}
+      backgroundColor={{
+        base: "var(--primary-background-color)",
+        lg: scrolled
+          ? "rgba(10, 10, 10, 0.75)" // blurred-dark-glass
+          : "var(--primary-background-color)",
+      }}
       boxShadow={scrolled ? "0 2px 12px rgba(0,0,0,0.35)" : "none"}
-      borderBottom={scrolled ? "1px solid rgba(255,255,255,0.06)" : "none"}
+      borderBottom={
+        scrolled
+          ? "1px solid rgba(255,255,255,0.06)"
+          : "1px solid rgba(255,255,255,0.06)"
+      }
     >
       <Box
         maxW={{
@@ -144,14 +153,14 @@ const Navbar = () => {
               <TvMinimalPlay
                 className="logo_icon"
                 size={30}
-                color="var(--primary-color)"
+                color="var(--accent-color)"
               />
               <Flex gap="0">
                 <Text
                   as="span"
-                  color="var(--secondary-color)"
+                  color="var(--primary-color)"
                   _hover={{
-                    color: "var(--primary-color)",
+                    color: "var(--link-hover-color)",
                   }}
                   transition="all ease 0.25s"
                 >
@@ -160,7 +169,7 @@ const Navbar = () => {
                 <Text
                   className="logo_tag"
                   as="span"
-                  color="var(--primary-color)"
+                  color="var(--text-color)"
                   _hover={{ color: "var(--secondary-color)" }}
                   transition="all ease 0.25s"
                 >
@@ -184,13 +193,14 @@ const Navbar = () => {
             flexDir={{ base: "column", lg: "row" }}
             alignItems={{ base: "flex-start", lg: "center" }}
             justifyContent={{ base: "flex-start", lg: "center" }}
-            backdropBlur={scrolled ? "12px" : "0px"}
-            backgroundColor={
-              scrolled
-                ? "rgba(11,15,20,0.95)" // blurred-dark-glass
-                : "var(--primary-background-color)"
-            }
-            boxShadow={scrolled ? "0 2px 12px rgba(0,0,0,0.35)" : "none"}
+            background={{
+              base: "var(--primary-background-color)",
+              lg: "none",
+            }}
+            boxShadow={{
+              base: scrolled ? "0 2px 12px rgba(0,0,0,0.35)" : "none",
+              lg: "none",
+            }}
             transition="all ease 0.3s"
             width={{ base: "100%", lg: "fit-content" }}
             flexWrap="wrap"
@@ -231,11 +241,11 @@ const Navbar = () => {
                 >
                   <Link
                     to={item.to}
-                    style={{
-                      color: isActive
-                        ? "var(--link-hover-color)"
-                        : "var(--text-color)",
-                    }}
+                    // style={{
+                    //   color: isActive
+                    //     ? "var(--primary-color)"
+                    //     : "var(--text-secondary)",
+                    // }}
                   >
                     {item.label}
                   </Link>
@@ -329,7 +339,7 @@ const Navbar = () => {
               alignItems="center"
               onClick={() => setIsSearchOpen(true)}
             >
-              <Search color="var(--link-hover-color)" />
+              <Search color="var(--text-color)" />
               <Text as="span"> Search anime or movies...</Text>
             </Button>
           )}
@@ -340,7 +350,7 @@ const Navbar = () => {
               aria-label="Search"
               variant="surface"
             >
-              <Search size={20} color="var(--link-hover-color)" />
+              <Search size={20} color="var(--text-color)" />
             </IconButton>
           )}
 
@@ -356,7 +366,7 @@ const Navbar = () => {
               variant="surface"
               hideFrom="lg"
             >
-              <X h="15px" w="19.5px" color="var(--link-hover-color)" />
+              <X h="15px" w="19.5px" color="var(--text-color)" />
             </IconButton>
           ) : (
             <IconButton
@@ -365,7 +375,7 @@ const Navbar = () => {
               variant="surface"
               hideFrom="lg"
             >
-              <Menu size={20} color="var(--link-hover-color)" />
+              <Menu size={20} color="var(--text-color)" />
             </IconButton>
           )}
 
