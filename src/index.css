@@ -29,38 +29,51 @@
   --card-background-color: #111028;
   --link-hover-color: #b86bff;
   --linear-gradient: linear-gradient(135deg, #6ae3ff 0%, #b86bff 100%); */
-  /* --primary-color: #a855f7;
-  --secondary-color: #ec4899;
-  --primary-background-color: #09090b;
-  --accent-color: #06b6d4;
-  --text-color: #fafafa;
-  --text-secondary: #71717a;
-  --link-color: #a855f7;
-  --card-background-color: #18181b;
-  --link-hover-color: #c084fc;
-  --linear-gradient: linear-gradient(
-    135deg,
-    #09090b 0%,
-    #1c1917 50%,
-    #09090b 100%
-  ); */
 
-  --primary-color: #dc2626; /* Deep Red */
-  --secondary-color: #f59e0b; /* Amber Gold */
-  --primary-background-color: #0a0a0a; /* True Black Base */
-  --accent-color: #8b5cf6; /* Purple Accent */
-  --text-color: #f5f5f5; /* Off-white */
-  --text-secondary: #737373; /* Medium Gray */
-  --link-color: #dc2626; /* Matches Primary */
-  --card-background-color: #171717; /* Elevated Dark Gray */
-  --link-hover-color: #ef4444; /* Lighter Red */
+  /* 
+  --primary-color: #dc2626; 
+  --secondary-color: #f59e0b; 
+  --primary-background-color: #0a0a0a; 
+  --accent-color: #8b5cf6; 
+  --text-color: #f5f5f5; 
+  --text-secondary: #737373; 
+  --link-color: #dc2626; 
+  --card-background-color: #171717; 
+  --link-hover-color: #ef4444; 
   --linear-gradient: linear-gradient(
     180deg,
     #0a0a0a 0%,
     #1c0a0a 50%,
     #0a0a0a 100%
-  );
+  ); */
 
+  /* --primary-color: #ff006e; 
+  --secondary-color: #00f5ff; 
+  --primary-background-color: #0d0d0d; 
+  --accent-color: #ffbe0b;
+  --text-color: #ffffff;
+  --text-secondary: #94a3b8; 
+  --link-color: #00f5ff;
+  --card-background-color: #1a1a1a; 
+  --link-hover-color: #ff006e; 
+  --linear-gradient: linear-gradient(
+    135deg,
+    #0d0d0d 0%,
+    #1a0a1f 25%,
+    #0a1a1f 75%,
+    #0d0d0d 100%
+  ); */
+
+  --primary-color: #e11d48; /* Netflix Red */
+  --secondary-color: #10b981; /* Emerald Green */
+  --primary-background-color: #0c0c0c; /* Almost Black */
+  --accent-color: #6366f1; /* Indigo */
+  --text-color: #f9fafb; /* Off-White */
+  --text-secondary: #9ca3af; /* Neutral Gray */
+  --link-color: #e11d48; /* Matches Primary */
+  --card-background-color: #1c1c1c; /* Elevated Black */
+  --link-hover-color: #fb7185; /* Lighter Red */
+  --linear-gradient: linear-gradient(180deg, #0c0c0c 0%, #1c1c1c 100%);
   scrollbar-width: thin;
   scrollbar-color: var(--secondary-color) #111;
 }
@@ -94,7 +107,36 @@
   color: var(--link-hover-color);
 } */
 
+/* Hero Section Swiper Customization */
 .swiper-button-next,
 .swiper-button-prev {
   display: none !important;
+}
+
+/* Optional: Custom pagination dots styling */
+.swiper-pagination-custom .swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-custom .swiper-pagination-bullet-active {
+  width: 32px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--primary-color);
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
 }

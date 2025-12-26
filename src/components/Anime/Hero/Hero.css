@@ -118,3 +118,8 @@ a.play-now-btn:hover::after {
     border: none;
   }
 }
+
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}

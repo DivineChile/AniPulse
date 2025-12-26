@@ -1,9 +1,16 @@
 import { Box, Heading, Grid, GridItem, Skeleton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Flame } from "lucide-react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/free-mode";
+import "swiper/css/pagination";
+import { Navigation, FreeMode } from "swiper/modules";
+import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Error from "../../ErrorPage/Error";
 import { cacheFetch } from "../../../utils/cacheFetch";
 import AnimeCard from "../AnimeCard/AnimeCard";
+import AnimeCarousel from "../AnimeCarousel/AnimeCarousel";
 
 const PopularList = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +25,7 @@ const PopularList = () => {
       const data = await cacheFetch("api/hianime/home", {
         cacheKey: "homeData",
       });
-      setResults(data?.mostPopular || []);
+      setResults(data?.trending || []);
     } catch (err) {
       setError("Failed to load data. Please try again.");
     } finally {
@@ -30,7 +37,12 @@ const PopularList = () => {
     fetchPopularAnimes();
   }, []);
 
-  const truncated = results.length > 4 ? results.slice(0, 5) : results;
+  const truncated = results.length > 4 ? results.slice(0, 10) : results;
+
+  /** Early Error */
+  if (error && !isLoading) {
+    return <Error msg={error} pos="relative" />;
+  }
 
   return (
     <Box bg="var(--primary-background-color)" pt="60px" pb="80px">
@@ -50,7 +62,9 @@ const PopularList = () => {
           alignItems="center"
           justifyContent={{ base: "center", md: "flex-start" }}
         >
-          <Flame size={30} color="var(--accent-color)" />
+          <Box as="span" fontSize="20px" animation="flicker 1.5s infinite">
+            🔥
+          </Box>
 
           <Heading
             color="var(--text-color)"
@@ -62,48 +76,17 @@ const PopularList = () => {
             fontFamily="var(--font-family)"
             textAlign={{ base: "center", md: "start" }}
           >
-            Popular Now
+            Trending Now
           </Heading>
         </Box>
 
-        {/* Main Grid */}
+        {/* Main carousel */}
         <Box my="30px">
-          <Grid
-            gridTemplateColumns={{
-              base: "repeat(2, 1fr)",
-              sm: "repeat(3, 1fr)",
-              md: "repeat(4, 1fr)",
-              lg: "repeat(5, 1fr)",
-            }}
-            gap="20px"
-            position="relative"
-          >
-            {/* SKELETONS */}
-            {isLoading &&
-              [...Array(5)].map((_, i) => (
-                <GridItem key={i}>
-                  <Skeleton
-                    h={{
-                      base: "276px",
-                      sm: "290px",
-                      md: "285px",
-                      lg: "290px",
-                      "2xl": "284px",
-                    }}
-                    w="100%"
-                    borderRadius="10px"
-                  />
-                </GridItem>
-              ))}
-
-            {/* ERROR */}
-            {error && <Error msg={error} pos="absolute" />}
-
-            {/* DATA */}
-            {!isLoading &&
-              !error &&
-              truncated.map((item) => <AnimeCard key={item.id} anime={item} />)}
-          </Grid>
+          <AnimeCarousel
+            animeList={truncated}
+            uniqueId="trending"
+            isLoading={isLoading}
+          />
         </Box>
       </Box>
     </Box>

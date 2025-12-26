@@ -1,9 +1,45 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-
-import RecentSub from "../../RecentList/RecentSub";
-import { Clock } from "lucide-react";
+import { Box, Flex, Heading, Skeleton, Text } from "@chakra-ui/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/free-mode";
+import "swiper/css/pagination";
+import { Navigation, FreeMode } from "swiper/modules";
+import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import AnimeCard from "../AnimeCard/AnimeCard";
+import { useEffect, useState } from "react";
+import { cacheFetch } from "../../../utils/cacheFetch";
+import Error from "../../ErrorPage/Error";
+import AnimeCarousel from "../AnimeCarousel/AnimeCarousel";
 
 const RecentUpdate = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [subAnimeData, setSubAnimeData] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+
+  const loadRecentAnime = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const data = await cacheFetch("api/hianime/home", {
+        cacheKey: "homeData",
+      });
+
+      setSubAnimeData(data?.recentlyUpdated || []);
+    } catch (err) {
+      setError("Unable to load recent releases. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadRecentAnime();
+  }, []);
+
+  const displayedAnime = showAll ? subAnimeData : subAnimeData.slice(0, 10);
   const getCurrentDate = () => {
     const today = new Date();
 
@@ -29,6 +65,11 @@ const RecentUpdate = () => {
   };
 
   const { dayOfWeek, fullDayName, newFullDate } = getCurrentDate();
+
+  /** Early Error */
+  if (error && !isLoading) {
+    return <Error msg={error} pos="relative" />;
+  }
 
   return (
     // Recent Release
@@ -66,7 +107,7 @@ const RecentUpdate = () => {
               textTransform="capitalize"
               fontFamily="var(--font-family)"
             >
-              Recently Updated
+              New Releases
             </Heading>
           </Flex>
           <Text
@@ -83,7 +124,12 @@ const RecentUpdate = () => {
         </Box>
         {/* Recent Animes Released */}
         <Box>
-          <RecentSub />
+          {/* CAROUSEL */}
+          <AnimeCarousel
+            animeList={displayedAnime}
+            isLoading={isLoading}
+            uniqueId="new-releases"
+          />
         </Box>
       </Box>
     </Box>

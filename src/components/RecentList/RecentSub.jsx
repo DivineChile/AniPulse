@@ -79,7 +79,7 @@ const Recents = () => {
       </Grid>
 
       {/* Show All / Show Less Button */}
-      {!isLoading && subAnimeData.length > 10 && (
+      {/* {!isLoading && subAnimeData.length > 10 && (
         <ChakraLink
           as="button"
           onClick={() => setShowAll((prev) => !prev)}
@@ -94,20 +94,20 @@ const Recents = () => {
           border="1px solid var(--secondary-color)"
           borderRadius="5px"
           padding="6px 20px"
-          transition="all ease 0.25s"
+          transition="all ease 0.35s"
           width={{ base: "100%", md: "fit-content" }}
           _hover={{
             textDecor: "none",
-            background: "var(--accent-color)",
-            color: "var(--primary-background-color)",
+            background: "var(--link-hover-color)",
+            color: "var(--text-color)",
             border: "none",
-            fontWeight: "600",
+            transform: "scale(1.1)",
           }}
           m="20px auto 0"
         >
           {showAll ? "Show Less" : "Show All"}
         </ChakraLink>
-      )}
+      )} */}
     </Box>
   );
 };

@@ -12,6 +12,7 @@ import {
   Flex,
   Badge,
   useBreakpointValue,
+  LinkBox,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import "../../../index.css";
@@ -162,154 +163,137 @@ const SearchBar = ({ isOpen, onClose }) => {
                 <VStack align="stretch" spacing={3}>
                   <Text fontSize={{ base: "md", md: "lg" }}>Anime</Text>
                   {animeResults.slice(0, 5).map((item) => (
-                    <ChakraLink
+                    <LinkBox
                       as={ReactRouterLink}
-                      key={item.id}
-                      _hover={{
-                        color: "var(--link-hover-color)",
-                        textDecoration: "none",
-                      }}
                       to={`/anime/${item.id}`}
                       display="flex"
-                      gap="15px"
-                      mb="10px"
-                      alignItems="center"
-                      transition="0.2s ease"
+                      gap="12px"
+                      p="8px"
+                      borderRadius="6px"
+                      bg="var(--card-background-color)"
+                      _hover={{
+                        bg: "rgba(28, 28, 28, 0.8)",
+                        cursor: "pointer",
+                      }}
+                      transition="all 0.2s ease"
+                      key={item.id}
                     >
+                      {/* THUMBNAIL */}
                       <Image
-                        h={{ base: "90px", md: "120px" }}
-                        w={{ base: "70px", md: "90px" }}
-                        borderRadius="5px"
                         src={item.posterImage}
-                        bg="var(--primary-background-color)"
                         alt={item.name}
+                        w="50px"
+                        h="70px"
+                        objectFit="cover"
+                        borderRadius="4px"
+                        bg="var(--primary-background-color)"
                       />
-                      <Box display="flex" flexDirection="column" gap="5px">
-                        <Heading
-                          fontSize={{ base: "14px", md: "16px" }}
-                          color="var(--text-color)"
-                          _hover={{ color: "var(--link-hover-color)" }}
-                          transition="all ease 0.25s"
-                          lineHeight="20px"
-                        >
-                          {isLarge
-                            ? item.name.length > 40
-                              ? item.name.slice(0, 40) + "..."
-                              : item.name
-                            : item.name.length > 30
-                            ? item.name.slice(0, 25) + "..."
-                            : item.name}
-                        </Heading>
-                        <Text
-                          fontSize={{ base: "12px", md: "13px" }}
-                          color="var(--text-secondary)"
-                          fontStyle="italic"
-                        >
-                          {isLarge
-                            ? item.romaji.length > 40
-                              ? item.romaji.slice(0, 30) + "..."
-                              : item.romaji
-                            : item.romaji.length > 30
-                            ? item.romaji.slice(0, 20) + "..."
-                            : item.romaji}
-                        </Text>
-                        <Flex
-                          gap="5px"
-                          fontSize="12px"
-                          color="var(--text-color)"
-                        >
-                          {item.episodes.sub && (
-                            <Badge variant="surface" size="xs">
-                              {`SUB: ${item.episodes.sub}`}
-                            </Badge>
-                          )}
 
-                          {item.episodes.dub && (
-                            <Badge variant="surface" size="xs">
-                              {`DUB: ${item.episodes.dub}`}
-                            </Badge>
-                          )}
-                          {item.type && (
-                            <Badge variant="surface" size="xs">
-                              {item.type}
-                            </Badge>
+                      {/* INFO */}
+                      <Flex
+                        flexDirection="column"
+                        justifyContent="center"
+                        flex="1"
+                        overflow="hidden"
+                      >
+                        <Text
+                          fontSize="13px"
+                          fontWeight="600"
+                          color="var(--text-color)"
+                          lineClamp={2}
+                          mb="4px"
+                          _hover={{ color: "var(--link-color)" }}
+                        >
+                          {item.name}
+                        </Text>
+
+                        <Flex
+                          alignItems="center"
+                          gap="6px"
+                          fontSize="11px"
+                          color="var(--text-secondary)"
+                        >
+                          {item.type && <Text>{item.type}</Text>}
+                          <Text>•</Text>
+                          {item.totalEpisodes && (
+                            <Text>{item.totalEpisodes} Episodes</Text>
                           )}
                         </Flex>
-                      </Box>
-                    </ChakraLink>
+                      </Flex>
+                    </LinkBox>
                   ))}
                   <Text fontSize={{ base: "md", md: "lg" }} mt={3}>
                     Movies & TV Shows
                   </Text>
                   {movieResults.slice(0, 5).map((item) => (
-                    <ChakraLink
+                    <LinkBox
                       as={ReactRouterLink}
-                      key={item.id}
-                      _hover={{
-                        color: "var(--link-hover-color)",
-                        textDecoration: "none",
-                      }}
                       to={`/${item.type.toLowerCase()}/${item.id}`}
                       display="flex"
-                      gap="15px"
-                      mb="10px"
-                      alignItems="center"
-                      transition="0.2s ease"
+                      gap="12px"
+                      p="8px"
+                      borderRadius="6px"
+                      bg="var(--card-background-color)"
+                      _hover={{
+                        bg: "rgba(28, 28, 28, 0.8)",
+                        cursor: "pointer",
+                      }}
+                      transition="all 0.2s ease"
+                      key={item.id}
                     >
+                      {/* THUMBNAIL */}
                       <Image
-                        h={{ base: "90px", md: "120px" }}
-                        w={{ base: "70px", md: "90px" }}
-                        borderRadius="5px"
                         src={item.posterImage}
-                        bg="var(--primary-background-color)"
                         alt={item.name}
+                        w="50px"
+                        h="70px"
+                        objectFit="cover"
+                        borderRadius="4px"
+                        bg="var(--primary-background-color)"
                       />
-                      <Box display="flex" flexDirection="column" gap="5px">
-                        <Heading
-                          fontSize={{ base: "14px", md: "16px" }}
+
+                      {/* INFO */}
+                      <Flex
+                        flexDirection="column"
+                        justifyContent="center"
+                        flex="1"
+                        overflow="hidden"
+                      >
+                        <Text
+                          fontSize="13px"
+                          fontWeight="600"
                           color="var(--text-color)"
-                          _hover={{ color: "var(--link-hover-color)" }}
-                          transition="all ease 0.25s"
-                          lineHeight="20px"
+                          lineClamp={2}
+                          mb="4px"
+                          _hover={{ color: "var(--link-color)" }}
                         >
-                          {isLarge
-                            ? item.name.length > 40
-                              ? item.name.slice(0, 40) + "..."
-                              : item.name
-                            : item.name.length > 30
-                            ? item.name.slice(0, 25) + "..."
-                            : item.name}
-                        </Heading>
+                          {item.name}
+                        </Text>
 
                         <Flex
-                          gap="5px"
-                          fontSize="12px"
-                          color="var(--text-color)"
+                          alignItems="center"
+                          gap="6px"
+                          fontSize="11px"
+                          color="var(--text-secondary)"
                         >
-                          {item.seasons && (
-                            <Badge variant="surface" size="xs">
-                              {`Seasons: ${item.seasons}`}
-                            </Badge>
+                          {item.type && <Text>{item.type}</Text>}
+                          {item.quality && <Text>•</Text>}
+                          {item.quality && <Text>{item.quality}</Text>}
+                          {item.duration && <Text>•</Text>}
+                          {item.type === "Movie" && (
+                            <Text>{item.duration}</Text>
                           )}
-
-                          {item.quality && (
-                            <Badge variant="surface" size="xs">
-                              {`${item.quality}`}
-                            </Badge>
+                          {item.type === "TV" && <Text>•</Text>}
+                          {item.type === "TV" && (
+                            <Text>{item.seasons} Seasons</Text>
                           )}
-                          {item.type && (
-                            <Badge variant="surface" size="xs">
-                              {item.type}
-                            </Badge>
-                          )}
-                          {item.totalEpisodes && (
-                            <Badge variant="surface" size="xs">
-                              Eps: {item.totalEpisodes}
-                            </Badge>
+                          {item.type === "TV" && <Text>•</Text>}
+                          {item.type === "TV" && (
+                            <Text>{item.totalEpisodes} Episodes</Text>
                           )}
                         </Flex>
-                      </Box>
-                    </ChakraLink>
+                      </Flex>
+                    </LinkBox>
                   ))}
                 </VStack>
               ) : !loading &&
