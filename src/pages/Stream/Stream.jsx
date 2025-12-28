@@ -505,7 +505,7 @@ const Stream = () => {
                       fontWeight="600"
                       fontSize="14px"
                       onClick={() => setVersion("dub")}
-                      isDisabled={!hasDub}
+                      disabled={!hasDub}
                       _hover={{
                         bg:
                           version === "dub"

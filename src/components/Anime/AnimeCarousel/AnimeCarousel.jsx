@@ -5,9 +5,10 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import { Navigation, FreeMode } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Box, Skeleton } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import AnimeCard from "../AnimeCard/AnimeCard";
 import { useRef } from "react";
+import { AnimeCardSkeleton } from "../../Skeleton/CardSkeleton";
 
 const AnimeCarousel = ({ animeList, uniqueId, isLoading }) => {
   const prevRef = useRef(null);
@@ -15,16 +16,7 @@ const AnimeCarousel = ({ animeList, uniqueId, isLoading }) => {
 
   const skeletons = [...Array(10)].map((_, index) => (
     <SwiperSlide key={index} style={{ width: "auto" }}>
-      <Skeleton
-        h={{
-          base: "270px",
-          sm: "290px",
-          md: "285px",
-          lg: "290px",
-        }}
-        w="100%"
-        borderRadius="10px"
-      />
+      <AnimeCardSkeleton />
     </SwiperSlide>
   ));
 

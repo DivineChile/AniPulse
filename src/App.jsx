@@ -13,10 +13,10 @@ import Movies from "./pages/Movies/Movies";
 import Popular from "./pages/Popular/Popular";
 import Stream from "./pages/Stream/Stream";
 import View from "./components/Anime/ViewAnime/View";
-import Filter from "./pages/Search/Filter";
 import Login from "./auth/Login/Login";
 import Signup from "./auth/Signup/Signup";
 import Profile from "./pages/Profile/Profile";
+import GenresPage from "./pages/Home/GenresPage/GenresPage";
 
 import ViewMovie from "./components/Movie/ViewMovie/ViewMovie";
 import { PlayerContext } from "./contexts/PlayerContext";
@@ -33,9 +33,9 @@ const router = createBrowserRouter(
       <Route path="/popular" element={<Popular />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/anime/:id" element={<View />} />
+      <Route path="/anime/genre/:genre" element={<GenresPage />} />
       <Route path="/movie/:id" element={<ViewMovie />} />
       <Route path="/tv/:id" element={<ViewMovie />} />
-      <Route path="/search/keyword/:searchQuery" element={<Filter />} />
       <Route path="/watch/:watchId" element={<Stream />} />
     </>
   )
