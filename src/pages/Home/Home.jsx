@@ -7,6 +7,7 @@ import PopularList from "../../components/Anime/PopularList/PopularList";
 import Footer from "../../components/Footer/Footer";
 import Catalog from "../../components/Anime/Catalog";
 import WeeklySchedule from "../../components/Anime/WeeklySchedule";
+import GenresSection from "../../components/Anime/GenresSection/GenresSection";
 
 const Home = () => {
   document.title = `Home - AniPulse`;
@@ -16,12 +17,15 @@ const Home = () => {
       <Box>
         {/* Hero */}
         <Hero />
-        {/* Recent Updates */}
-        <RecentUpdate />
-        {/* Upcoming Anime*/}
-        <Upcoming />
         {/* Popular animes */}
         <PopularList />
+        {/* Recent Updates */}
+        <RecentUpdate />
+        {/* Browse By Genres */}
+        <GenresSection />
+        {/* Upcoming Anime*/}
+        {/* <Upcoming /> */}
+
         {/* <WeeklySchedule /> */}
         {/* <WeeklySchedule /> */}
         {/* Top Anime */}

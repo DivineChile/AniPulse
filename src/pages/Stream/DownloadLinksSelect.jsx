@@ -24,6 +24,7 @@ const DownloadLinksSelect = ({
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const animePahe_api = "https://pahe-api.fly.dev/";
+  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
 
   const fetchDownloadLinks = async (key, isPrefetch = false) => {
     try {
@@ -86,7 +87,7 @@ const DownloadLinksSelect = ({
       flexDir="column"
       width={{ base: "100%", lg: "350px" }}
       gap="10px"
-      pt={2}
+      pt={{ base: 0, md: 2 }}
     >
       <Box display="flex" gap="10px" flexDir={{ base: "column", sm: "row" }}>
         <Select.Root
