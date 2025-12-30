@@ -101,10 +101,6 @@ const DownloadLinksSelect = ({
           quality,
           downloadUrl: `${BACKEND_BASE}/download/${token}`,
         }));
-
-        console.log("Download links:", downloadLinks);
-        console.log("Encoded links:", links);
-        console.log("proxy links", withProxy);
         setProxiedLinks(withProxy);
       } catch (error) {
         console.error(error);

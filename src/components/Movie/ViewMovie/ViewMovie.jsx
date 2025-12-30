@@ -557,6 +557,8 @@
 // export default ViewMovie;
 
 // pages/Movies/MovieDetailPage.jsx
+// components/Movies/ViewMovie.jsx (or MovieDetailPage.jsx)
+// components/Movies/MovieDetailPage.jsx (or ViewMovie.jsx)
 import {
   Box,
   Flex,
@@ -570,9 +572,10 @@ import {
   Badge,
   Image,
   AspectRatio,
+  Container,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, Link as ReactRouterLink } from "react-router-dom";
 import {
   ChevronLeft,
   Play,
@@ -582,9 +585,11 @@ import {
   Calendar,
   Clock,
   Film,
-  Globe,
   Award,
   Users,
+  Building2,
+  Tag,
+  Video,
 } from "lucide-react";
 import Navbar from "../../Navbar/Navbar";
 import MovieCarousel from "../MovieCarousel/MovieCarousel";
@@ -594,48 +599,54 @@ import { cacheFetch } from "../../../utils/cacheFetch";
 
 const ViewMovie = () => {
   const { id } = useParams();
-  console.log(id);
-  const navigate = useNavigate();
 
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [movieData, setMovieData] = useState(null);
-  const [providerEpisodes, setProviderEpisodes] = useState([]);
-  const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
+  const [trailerOpen, setTrailerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  // Fetch movie data
+  // Fetch movie details
   useEffect(() => {
-    const fetchMovieData = async () => {
+    const fetchMovieDetails = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const cacheKey = `movie_${id}`;
+        const cacheKey = `movieInfo_${id}`;
+        const data = await cacheFetch(`api/flixhq/media/${id}`, { cacheKey });
 
-        // Fetch movie details
-        const data = await await cacheFetch(`api/flixhq/media/${id}`, {
-          cacheKey,
-        });
+        console.log("Movie Data:", data);
 
-        setMovieData(data.data);
-        setProviderEpisodes(data.providerEpisodes || []);
-        setRecommendedMovies(data.recommended || []);
-        console.log(data);
+        setMovieDetails(data?.data);
+        setRecommendedMovies(data?.recommended || []);
 
-        document.title = `${data.data.name || data.data.title} - AniPulse`;
+        document.title = `${data?.data?.name || "Movie"} - AniPulse`;
       } catch (err) {
+        console.error("Failed to fetch movie details", err);
         setError("Failed to load movie details. Please try again.");
-        console.error("Error fetching movie data:", err);
       } finally {
         setLoading(false);
       }
     };
 
     if (id) {
-      fetchMovieData();
+      fetchMovieDetails();
     }
   }, [id]);
+
+  // Format release date
+  const formattedDate = movieDetails?.releaseDate
+    ? new Date(movieDetails.releaseDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "Unknown";
+
+  const synopsis = movieDetails?.synopsis || movieDetails?.description || "";
 
   if (loading) {
     return (
@@ -656,7 +667,7 @@ const ViewMovie = () => {
     );
   }
 
-  if (error || !movieData) {
+  if (error || !movieDetails) {
     return (
       <Box>
         <Navbar />
@@ -669,66 +680,70 @@ const ViewMovie = () => {
     );
   }
 
-  const movieTitle = movieData.name || movieData.title;
-  const synopsis = movieData.description || movieData.synopsis || "";
-  const truncatedSynopsis =
-    synopsis.length > 400 ? synopsis.slice(0, 400) + "..." : synopsis;
-
   return (
     <Box bg="var(--primary-background-color)" minH="100vh">
       <Navbar />
 
-      {/* HERO SECTION WITH BACKDROP */}
-      <Box position="relative" pt={{ base: "70px", md: "84px" }}>
-        {/* BLURRED BACKDROP */}
+      {/* ================= FULL-WIDTH HERO BANNER ================= */}
+      <Box
+        pos="relative"
+        top={{ base: "70px", md: "73px", lg: "84px" }}
+        height={{
+          base: "100%",
+          md: "calc(100dvh - 73px)",
+          lg: "calc(100dvh - 84px)",
+        }}
+        overflow="hidden"
+        mb="120px"
+      >
+        {/* BACKDROP IMAGE */}
         <Box
           position="absolute"
           top="0"
           left="0"
           w="100%"
-          h={{ base: "500px", md: "650px" }}
+          h="100%"
           bgImage={`url(${
-            movieData.coverImage ||
-            movieData.backdropImage ||
-            movieData.posterImage
+            movieDetails.coverImage || movieDetails.posterImage
           })`}
           bgSize="cover"
           bgPosition="center"
-          filter="blur(8px)"
-          transform="scale(1.1)"
-          zIndex="1"
         />
 
-        {/* GRADIENT OVERLAY */}
+        {/* GRADIENT OVERLAYS */}
         <Box
           position="absolute"
           top="0"
           left="0"
           w="100%"
-          h={{ base: "500px", md: "650px" }}
-          bgGradient="linear(to-b, rgba(12,12,12,0.3) 0%, rgba(12,12,12,0.7) 50%, var(--primary-background-color) 100%)"
-          zIndex="2"
+          h="100%"
+          background="linear-gradient(to bottom, rgba(12, 12, 12, 0.3) 0%, rgba(12, 12, 12, 0.7) 50%, var(--primary-background-color) 100%)"
         />
 
-        {/* CONTENT */}
-        <Box
-          position="relative"
-          zIndex="3"
+        {/* CONTENT OVERLAY */}
+        <Container
           maxW={{
             base: "95%",
             xl: "85%",
             "2xl": "container.xl",
           }}
-          mx="auto"
-          py={{ base: "32px", md: "48px" }}
+          position="relative"
+          h="100%"
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-end"
+          pb={{ base: "40px", md: "60px" }}
+          pt={{ base: "100px", md: "120px" }}
         >
           {/* BACK BUTTON */}
           <IconButton
-            as={Link}
+            as={ReactRouterLink}
             to="/movies"
             aria-label="Back to movies"
+            position="absolute"
+            top={{ base: "20px", md: "30px" }}
+            left={{ base: "10px", md: "0" }}
             size="md"
-            mb="24px"
             bg="rgba(28, 28, 28, 0.8)"
             backdropFilter="blur(10px)"
             border="1px solid rgba(255, 255, 255, 0.1)"
@@ -745,246 +760,379 @@ const ViewMovie = () => {
             <ChevronLeft size={20} />
           </IconButton>
 
-          {/* MAIN CONTENT GRID */}
-          <Grid
-            templateColumns={{ base: "1fr", md: "280px 1fr" }}
-            gap={{ base: "24px", md: "40px" }}
+          {/* HERO CONTENT */}
+          <Flex
+            direction={{ base: "column", lg: "row" }}
+            gap={{ base: "24px", lg: "40px" }}
+            alignItems={{ base: "center", lg: "flex-end" }}
           >
-            {/* LEFT - POSTER */}
-            <Box>
+            {/* POSTER */}
+            <Box flexShrink="0">
               <AspectRatio
                 ratio={2 / 3}
-                w="100%"
-                maxW={{ base: "200px", md: "280px" }}
-                mx={{ base: "auto", md: "0" }}
+                w={{ base: "200px", sm: "240px", md: "280px" }}
               >
                 <Image
-                  src={movieData.posterImage}
-                  alt={movieTitle}
-                  borderRadius="8px"
+                  src={movieDetails.posterImage}
+                  alt={movieDetails.name}
+                  borderRadius="12px"
                   objectFit="cover"
-                  border="2px solid rgba(255, 255, 255, 0.1)"
-                  boxShadow="0 20px 25px -5px rgba(0, 0, 0, 0.7)"
+                  boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.8)"
+                  border="3px solid rgba(255, 255, 255, 0.1)"
                 />
               </AspectRatio>
-
-              {/* STATUS BADGE ON POSTER */}
-              {movieData.status && (
-                <Badge
-                  position="absolute"
-                  top="12px"
-                  left="12px"
-                  bg={
-                    movieData.status.toLowerCase().includes("released")
-                      ? "var(--secondary-color)"
-                      : "var(--accent-color)"
-                  }
-                  color="var(--text-color)"
-                  fontSize="11px"
-                  fontWeight="700"
-                  px="12px"
-                  py="6px"
-                  borderRadius="4px"
-                  textTransform="uppercase"
-                >
-                  {movieData.status}
-                </Badge>
-              )}
             </Box>
 
-            {/* RIGHT - MOVIE INFO */}
-            <VStack align="stretch" spacing="24px">
-              {/* TITLE & BADGES */}
-              <Box>
-                <Heading
-                  as="h1"
-                  fontSize={{ base: "32px", md: "40px", lg: "48px" }}
-                  fontWeight="700"
-                  color="var(--text-color)"
-                  mb="12px"
-                  lineHeight="1.1"
-                >
-                  {movieTitle}
-                </Heading>
+            {/* INFO */}
+            <VStack
+              align={{ base: "center", lg: "flex-start" }}
+              spacing="20px"
+              flex="1"
+              textAlign={{ base: "center", lg: "left" }}
+            >
+              {/* BADGES */}
+              <HStack
+                spacing="8px"
+                flexWrap="wrap"
+                justify={{ base: "center", lg: "flex-start" }}
+              >
+                {movieDetails.quality && (
+                  <Badge
+                    bg="var(--secondary-color)"
+                    color="var(--text-color)"
+                    fontSize="12px"
+                    fontWeight="700"
+                    px="14px"
+                    py="6px"
+                    borderRadius="6px"
+                    textTransform="uppercase"
+                  >
+                    {movieDetails.quality}
+                  </Badge>
+                )}
+                {/* {movieDetails.score && (
+                  <Badge
+                    bg="rgba(255, 255, 255, 0.15)"
+                    color="var(--text-color)"
+                    fontSize="12px"
+                    fontWeight="700"
+                    px="14px"
+                    py="6px"
+                    borderRadius="6px"
+                  >
+                    {movieDetails.score}
+                  </Badge>
+                )} */}
+              </HStack>
 
-                {movieData.originalTitle &&
-                  movieData.originalTitle !== movieTitle && (
-                    <Text
-                      fontSize="16px"
-                      color="var(--text-secondary)"
-                      mb="16px"
-                      fontStyle="italic"
-                    >
-                      {movieData.originalTitle}
+              {/* TITLE */}
+              <Heading
+                as="h1"
+                fontSize={{ base: "36px", md: "52px", lg: "64px" }}
+                fontWeight="700"
+                color="var(--text-color)"
+                lineHeight="1.2"
+                lineClamp={2}
+                maxW="900px"
+              >
+                {movieDetails.name}
+              </Heading>
+
+              {/* META INFO */}
+              <HStack
+                spacing="16px"
+                fontSize={{ base: "14px", md: "16px" }}
+                color="var(--text-secondary)"
+                divider={<Text>•</Text>}
+                flexWrap="wrap"
+                justify={{ base: "center", lg: "flex-start" }}
+              >
+                {movieDetails.releaseDate && (
+                  <Text fontWeight="500">
+                    {new Date(movieDetails.releaseDate).getFullYear()}
+                  </Text>
+                )}
+                <Text>•</Text>
+                {movieDetails.duration && (
+                  <Text fontWeight="500">{movieDetails.duration}</Text>
+                )}
+                <Text>•</Text>
+                {movieDetails.score && (
+                  <Flex alignItems="center" gap="6px">
+                    <Star
+                      size={16}
+                      fill="var(--secondary-color)"
+                      color="var(--secondary-color)"
+                    />
+                    <Text fontWeight="700" color="var(--text-color)">
+                      {parseFloat(movieDetails.score).toFixed(1)}
                     </Text>
-                  )}
+                  </Flex>
+                )}
+              </HStack>
 
-                {/* METADATA BADGES */}
-                <HStack spacing="8px" flexWrap="wrap">
-                  {movieData.quality && (
+              {/* GENRES */}
+              {movieDetails.genre && movieDetails.genre.length > 0 && (
+                <HStack
+                  spacing="8px"
+                  flexWrap="wrap"
+                  justify={{ base: "center", lg: "flex-start" }}
+                >
+                  {movieDetails.genre.slice(0, 4).map((genre) => (
                     <Badge
-                      bg="var(--secondary-color)"
-                      color="var(--text-color)"
-                      fontSize="12px"
-                      fontWeight="600"
-                      px="12px"
-                      py="6px"
-                      borderRadius="4px"
-                    >
-                      {movieData.quality}
-                    </Badge>
-                  )}
-                  {movieData.type && (
-                    <Badge
-                      bg="var(--accent-color)"
-                      color="var(--text-color)"
-                      fontSize="12px"
-                      fontWeight="600"
-                      px="12px"
-                      py="6px"
-                      borderRadius="4px"
-                    >
-                      {movieData.type}
-                    </Badge>
-                  )}
-                  {movieData.rating && (
-                    <Badge
+                      key={genre}
                       bg="rgba(255, 255, 255, 0.1)"
                       color="var(--text-color)"
-                      fontSize="12px"
-                      fontWeight="600"
+                      fontSize="13px"
+                      fontWeight="500"
                       px="12px"
                       py="6px"
-                      borderRadius="4px"
+                      borderRadius="6px"
                     >
-                      {movieData.rating}
+                      {genre}
                     </Badge>
-                  )}
+                  ))}
                 </HStack>
-              </Box>
+              )}
 
               {/* ACTION BUTTONS */}
-              <HStack spacing="12px" flexWrap="wrap">
+              <HStack
+                spacing="12px"
+                pt="8px"
+                flexWrap="wrap"
+                justify={{ base: "center", lg: "flex-start" }}
+              >
                 <Button
-                  as={Link}
-                  to={`/watch-movie/${providerEpisodes[0]?.episodeId}`}
+                  as={ReactRouterLink}
+                  to={`/watch-movie/${id}`}
                   size="lg"
                   bg="var(--primary-color)"
                   color="var(--text-color)"
-                  h="52px"
-                  px="32px"
-                  fontSize="15px"
+                  leftIcon={<Play size={20} fill="currentColor" />}
+                  h="56px"
+                  px="40px"
+                  fontSize="16px"
                   fontWeight="600"
                   borderRadius="8px"
                   _hover={{
                     filter: "brightness(110%)",
-                    transform: "scale(1.02)",
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 10px 20px rgba(225, 29, 72, 0.4)",
                   }}
                   transition="all 0.2s ease"
                 >
-                  <Play size={18} />
                   Watch Now
                 </Button>
 
-                <Button
+                <IconButton
+                  aria-label="Add to list"
                   size="lg"
-                  bg="transparent"
+                  bg="rgba(255, 255, 255, 0.1)"
+                  backdropFilter="blur(10px)"
+                  border="2px solid rgba(255, 255, 255, 0.2)"
                   color="var(--text-color)"
-                  border="2px solid"
-                  borderColor="rgba(255, 255, 255, 0.3)"
-                  h="52px"
-                  px="32px"
-                  fontSize="15px"
-                  fontWeight="600"
+                  w="56px"
+                  h="56px"
                   borderRadius="8px"
                   _hover={{
+                    bg: "rgba(255, 255, 255, 0.15)",
                     borderColor: "var(--text-color)",
-                    bg: "rgba(255, 255, 255, 0.05)",
+                    transform: "translateY(-2px)",
                   }}
                   transition="all 0.2s ease"
                 >
-                  <Plus size={18} />
-                  My List
-                </Button>
+                  <Plus size={22} />
+                </IconButton>
+
+                {movieDetails.trailer && (
+                  <IconButton
+                    aria-label="Play trailer"
+                    size="lg"
+                    bg="rgba(255, 255, 255, 0.1)"
+                    backdropFilter="blur(10px)"
+                    border="2px solid rgba(255, 255, 255, 0.2)"
+                    color="var(--text-color)"
+                    w="56px"
+                    h="56px"
+                    borderRadius="8px"
+                    onClick={() => setTrailerOpen(true)}
+                    _hover={{
+                      bg: "rgba(255, 255, 255, 0.15)",
+                      borderColor: "var(--text-color)",
+                      transform: "translateY(-2px)",
+                    }}
+                    transition="all 0.2s ease"
+                  >
+                    <Video size={22} />
+                  </IconButton>
+                )}
 
                 <IconButton
                   aria-label="Share"
                   size="lg"
-                  bg="transparent"
+                  bg="rgba(255, 255, 255, 0.1)"
+                  backdropFilter="blur(10px)"
+                  border="2px solid rgba(255, 255, 255, 0.2)"
                   color="var(--text-color)"
-                  border="2px solid"
-                  borderColor="rgba(255, 255, 255, 0.3)"
-                  w="52px"
-                  h="52px"
+                  w="56px"
+                  h="56px"
                   borderRadius="8px"
                   _hover={{
+                    bg: "rgba(255, 255, 255, 0.15)",
                     borderColor: "var(--text-color)",
-                    bg: "rgba(255, 255, 255, 0.05)",
+                    transform: "translateY(-2px)",
                   }}
                   transition="all 0.2s ease"
                 >
-                  <Share2 size={18} />
+                  <Share2 size={22} />
                 </IconButton>
               </HStack>
+            </VStack>
+          </Flex>
+        </Container>
+      </Box>
 
-              {/* RATING */}
-              {movieData.score && (
-                <Flex alignItems="center" gap="12px">
-                  <HStack gap="4px">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={20}
-                        fill={
-                          i < Math.floor(parseFloat(movieData.score) / 2)
-                            ? "var(--secondary-color)"
-                            : "none"
-                        }
-                        color={
-                          i < Math.floor(parseFloat(movieData.score) / 2)
-                            ? "var(--secondary-color)"
-                            : "rgba(255, 255, 255, 0.2)"
-                        }
-                      />
-                    ))}
-                  </HStack>
-                  <Text
-                    fontSize="18px"
-                    fontWeight="700"
-                    color="var(--text-color)"
-                  >
-                    {(parseFloat(movieData.score) / 2).toFixed(1)}/5
-                  </Text>
-                  <Text fontSize="14px" color="var(--text-secondary)">
-                    ({movieData.score}/10)
-                  </Text>
-                </Flex>
-              )}
-
-              {/* SYNOPSIS */}
-              <Box
-                bg="rgba(28, 28, 28, 0.6)"
-                backdropFilter="blur(10px)"
-                borderRadius="12px"
-                p={{ base: "20px", md: "32px" }}
-                border="1px solid rgba(255, 255, 255, 0.05)"
+      {/* ================= TABS NAVIGATION ================= */}
+      <Box
+        borderBottom="1px solid rgba(255, 255, 255, 0.05)"
+        bg="rgba(12, 12, 12, 0.8)"
+        backdropFilter="blur(20px)"
+        position="sticky"
+        top={{ base: "70px", md: "84px" }}
+        zIndex="100"
+      >
+        <Container
+          maxW={{
+            base: "95%",
+            xl: "85%",
+            "2xl": "container.xl",
+          }}
+        >
+          <HStack
+            spacing="0"
+            overflow="auto"
+            css={{
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+            }}
+          >
+            <Button
+              variant="ghost"
+              h="56px"
+              px="24px"
+              borderRadius="0"
+              color={
+                activeTab === "overview"
+                  ? "var(--text-color)"
+                  : "var(--text-secondary)"
+              }
+              fontWeight="600"
+              fontSize="15px"
+              borderBottom="3px solid"
+              borderColor={
+                activeTab === "overview"
+                  ? "var(--primary-color)"
+                  : "transparent"
+              }
+              _hover={{
+                color: "var(--text-color)",
+                bg: "rgba(255, 255, 255, 0.02)",
+              }}
+              onClick={() => setActiveTab("overview")}
+            >
+              Overview
+            </Button>
+            <Button
+              variant="ghost"
+              h="56px"
+              px="24px"
+              borderRadius="0"
+              color={
+                activeTab === "details"
+                  ? "var(--text-color)"
+                  : "var(--text-secondary)"
+              }
+              fontWeight="600"
+              fontSize="15px"
+              borderBottom="3px solid"
+              borderColor={
+                activeTab === "details" ? "var(--primary-color)" : "transparent"
+              }
+              _hover={{
+                color: "var(--text-color)",
+                bg: "rgba(255, 255, 255, 0.02)",
+              }}
+              onClick={() => setActiveTab("details")}
+            >
+              Details
+            </Button>
+            {recommendedMovies.length > 0 && (
+              <Button
+                variant="ghost"
+                h="56px"
+                px="24px"
+                borderRadius="0"
+                color={
+                  activeTab === "similar"
+                    ? "var(--text-color)"
+                    : "var(--text-secondary)"
+                }
+                fontWeight="600"
+                fontSize="15px"
+                borderBottom="3px solid"
+                borderColor={
+                  activeTab === "similar"
+                    ? "var(--primary-color)"
+                    : "transparent"
+                }
+                _hover={{
+                  color: "var(--text-color)",
+                  bg: "rgba(255, 255, 255, 0.02)",
+                }}
+                onClick={() => setActiveTab("similar")}
               >
+                More Like This
+              </Button>
+            )}
+          </HStack>
+        </Container>
+      </Box>
+
+      {/* ================= TAB CONTENT ================= */}
+      <Container
+        maxW={{
+          base: "95%",
+          xl: "85%",
+          "2xl": "container.xl",
+        }}
+        py={{ base: "40px", md: "60px" }}
+      >
+        {/* OVERVIEW TAB */}
+        {activeTab === "overview" && (
+          <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap="40px">
+            {/* LEFT - SYNOPSIS */}
+            <VStack align="stretch" spacing="32px">
+              {/* Synopsis */}
+              <Box>
                 <Heading
-                  as="h3"
-                  fontSize="18px"
-                  fontWeight="600"
+                  fontSize="24px"
+                  fontWeight="700"
                   color="var(--text-color)"
-                  mb="12px"
+                  mb="16px"
                 >
                   Synopsis
                 </Heading>
                 <Text
-                  fontSize="15px"
+                  fontSize="16px"
                   lineHeight="1.8"
                   color="var(--text-secondary)"
                   mb={synopsis.length > 400 ? "12px" : "0"}
                 >
-                  {showFullSynopsis ? synopsis : truncatedSynopsis}
+                  {showFullSynopsis
+                    ? synopsis
+                    : synopsis.length > 400
+                    ? synopsis.slice(0, 400) + "..."
+                    : synopsis}
                 </Text>
                 {synopsis.length > 400 && (
                   <Button
@@ -1001,265 +1149,323 @@ const ViewMovie = () => {
                   </Button>
                 )}
               </Box>
+
+              {/* Cast */}
+              {movieDetails.casts && movieDetails.casts.length > 0 && (
+                <Box>
+                  <Flex alignItems="center" gap="12px" mb="16px">
+                    <Users size={22} color="var(--primary-color)" />
+                    <Heading
+                      fontSize="20px"
+                      fontWeight="700"
+                      color="var(--text-color)"
+                    >
+                      Cast
+                    </Heading>
+                  </Flex>
+                  <Text
+                    fontSize="15px"
+                    color="var(--text-secondary)"
+                    lineHeight="1.7"
+                  >
+                    {movieDetails.casts.join(", ")}
+                  </Text>
+                </Box>
+              )}
+            </VStack>
+
+            {/* RIGHT - QUICK INFO */}
+            <VStack align="stretch" spacing="20px">
+              <InfoItem
+                icon={<Calendar size={18} />}
+                label="Release Date"
+                value={formattedDate}
+              />
+              <InfoItem
+                icon={<Clock size={18} />}
+                label="Duration"
+                value={movieDetails.duration || "Unknown"}
+              />
+              {movieDetails.score && (
+                <InfoItem
+                  icon={<Award size={18} />}
+                  label="Rating"
+                  value={`${movieDetails.score}/10 (${(
+                    parseFloat(movieDetails.score) / 2
+                  ).toFixed(1)}/5)`}
+                />
+              )}
+              {movieDetails.type && (
+                <InfoItem
+                  icon={<Film size={18} />}
+                  label="Type"
+                  value={movieDetails.type}
+                />
+              )}
+              {movieDetails.production &&
+                movieDetails.production.length > 0 && (
+                  <InfoItem
+                    icon={<Building2 size={18} />}
+                    label="Production"
+                    value={movieDetails.production.join(", ")}
+                  />
+                )}
             </VStack>
           </Grid>
-        </Box>
-      </Box>
+        )}
 
-      {/* MOVIE DETAILS SECTION */}
-      <Box
-        maxW={{
-          base: "95%",
-          xl: "85%",
-          "2xl": "container.xl",
-        }}
-        mx="auto"
-        py={{ base: "32px", md: "48px" }}
-      >
-        {/* DETAILS GRID */}
-        <Grid
-          templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-          gap="16px"
-          mb={{ base: "32px", md: "48px" }}
-        >
-          {/* Release Date */}
-          {movieData.releaseDate && (
+        {/* DETAILS TAB */}
+        {activeTab === "details" && (
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              md: "repeat(2, 1fr)",
+              lg: "repeat(3, 1fr)",
+            }}
+            gap="16px"
+            maxW="1200px"
+          >
             <DetailCard
               icon={<Calendar size={20} color="var(--accent-color)" />}
               label="Release Date"
-              value={movieData.releaseDate}
+              value={formattedDate}
             />
-          )}
-
-          {/* Duration */}
-          {movieData.duration && (
             <DetailCard
               icon={<Clock size={20} color="var(--accent-color)" />}
               label="Duration"
-              value={movieData.duration}
+              value={movieDetails.duration || "Unknown"}
             />
-          )}
-
-          {/* Type */}
-          {movieData.type && (
             <DetailCard
               icon={<Film size={20} color="var(--accent-color)" />}
               label="Type"
-              value={movieData.type}
+              value={movieDetails.type || "Movie"}
             />
-          )}
-
-          {/* Language */}
-          {movieData.language && (
-            <DetailCard
-              icon={<Globe size={20} color="var(--accent-color)" />}
-              label="Language"
-              value={movieData.language}
-            />
-          )}
-
-          {/* Production */}
-          {movieData.production && (
-            <DetailCard
-              icon={<Film size={20} color="var(--accent-color)" />}
-              label="Production"
-              value={movieData.production}
-            />
-          )}
-
-          {/* Rating */}
-          {movieData.score && (
-            <DetailCard
-              icon={<Award size={20} color="var(--secondary-color)" />}
-              label="Rating"
-              value={`${movieData.score}/10`}
-            />
-          )}
-        </Grid>
-
-        {/* CAST & CREW */}
-        {(movieData.cast || movieData.director) && (
-          <Box
-            bg="var(--card-background-color)"
-            borderRadius="12px"
-            p={{ base: "20px", md: "32px" }}
-            border="1px solid rgba(255, 255, 255, 0.05)"
-            mb={{ base: "32px", md: "48px" }}
-          >
-            <Flex alignItems="center" gap="12px" mb="20px">
-              <Users size={24} color="var(--primary-color)" />
-              <Heading
-                as="h3"
-                fontSize="20px"
-                fontWeight="700"
-                color="var(--text-color)"
+            {movieDetails.score && (
+              <DetailCard
+                icon={<Award size={20} color="var(--secondary-color)" />}
+                label="Rating"
+                value={`${movieDetails.score}/10`}
+              />
+            )}
+            {movieDetails.quality && (
+              <DetailCard
+                icon={<Film size={20} color="var(--secondary-color)" />}
+                label="Quality"
+                value={movieDetails.quality}
+              />
+            )}
+            {movieDetails.language && (
+              <DetailCard
+                icon={<Film size={20} color="var(--accent-color)" />}
+                label="Language"
+                value={movieDetails.language}
+              />
+            )}
+            {movieDetails.genre && movieDetails.genre.length > 0 && (
+              <Box
+                gridColumn={{ base: "1", md: "1 / -1" }}
+                bg="rgba(255, 255, 255, 0.03)"
+                borderRadius="12px"
+                p="20px"
+                border="1px solid rgba(255, 255, 255, 0.05)"
               >
-                Cast & Crew
-              </Heading>
-            </Flex>
-
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-              gap="16px"
-            >
-              {movieData.director && (
-                <Box>
-                  <Text
-                    fontSize="13px"
+                <Flex alignItems="center" gap="12px" mb="12px">
+                  <Tag size={20} color="var(--accent-color)" />
+                  <Heading
+                    fontSize="16px"
                     fontWeight="600"
-                    color="var(--text-secondary)"
-                    mb="4px"
-                  >
-                    Director
-                  </Text>
-                  <Text
-                    fontSize="15px"
-                    fontWeight="500"
                     color="var(--text-color)"
                   >
-                    {movieData.director}
-                  </Text>
-                </Box>
-              )}
-
-              {movieData.cast && (
-                <Box>
-                  <Text
-                    fontSize="13px"
+                    Genres
+                  </Heading>
+                </Flex>
+                <Flex gap="8px" flexWrap="wrap">
+                  {movieDetails.genre.map((genre) => (
+                    <Badge
+                      key={genre}
+                      as={ReactRouterLink}
+                      to={`/movies/genre/${genre
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}`}
+                      bg="rgba(99, 102, 241, 0.15)"
+                      border="1px solid var(--accent-color)"
+                      color="var(--accent-color)"
+                      fontSize="13px"
+                      fontWeight="500"
+                      px="14px"
+                      py="6px"
+                      borderRadius="20px"
+                      cursor="pointer"
+                      _hover={{
+                        bg: "var(--accent-color)",
+                        color: "var(--text-color)",
+                      }}
+                    >
+                      {genre}
+                    </Badge>
+                  ))}
+                </Flex>
+              </Box>
+            )}
+            {movieDetails.production && movieDetails.production.length > 0 && (
+              <Box
+                gridColumn={{ base: "1", md: "1 / -1" }}
+                bg="rgba(255, 255, 255, 0.03)"
+                borderRadius="12px"
+                p="20px"
+                border="1px solid rgba(255, 255, 255, 0.05)"
+              >
+                <Flex alignItems="center" gap="12px" mb="12px">
+                  <Building2 size={20} color="var(--accent-color)" />
+                  <Heading
+                    fontSize="16px"
                     fontWeight="600"
-                    color="var(--text-secondary)"
-                    mb="4px"
-                  >
-                    Cast
-                  </Text>
-                  <Text
-                    fontSize="15px"
-                    fontWeight="500"
                     color="var(--text-color)"
                   >
-                    {Array.isArray(movieData.cast)
-                      ? movieData.cast.slice(0, 5).join(", ")
-                      : movieData.cast}
-                  </Text>
-                </Box>
-              )}
-            </Grid>
-          </Box>
+                    Production Companies
+                  </Heading>
+                </Flex>
+                <Flex gap="8px" flexWrap="wrap">
+                  {movieDetails.production.map((prod) => (
+                    <Badge
+                      key={prod}
+                      bg="rgba(99, 102, 241, 0.15)"
+                      border="1px solid var(--accent-color)"
+                      color="var(--accent-color)"
+                      fontSize="13px"
+                      fontWeight="500"
+                      px="14px"
+                      py="6px"
+                      borderRadius="20px"
+                    >
+                      {prod}
+                    </Badge>
+                  ))}
+                </Flex>
+              </Box>
+            )}
+          </Grid>
         )}
 
-        {/* GENRES */}
-        {movieData.genres && movieData.genres.length > 0 && (
-          <Box
-            bg="var(--card-background-color)"
-            borderRadius="12px"
-            p={{ base: "20px", md: "32px" }}
-            border="1px solid rgba(255, 255, 255, 0.05)"
-            mb={{ base: "32px", md: "48px" }}
-          >
-            <Heading
-              as="h3"
-              fontSize="18px"
-              fontWeight="600"
-              color="var(--text-color)"
-              mb="16px"
-            >
-              Genres
-            </Heading>
-            <Flex gap="12px" flexWrap="wrap">
-              {movieData.genres.map((genre) => (
-                <Badge
-                  key={genre}
-                  as={Link}
-                  to={`/movies/genre/${genre
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`}
-                  bg="rgba(99, 102, 241, 0.15)"
-                  border="1px solid var(--accent-color)"
-                  color="var(--accent-color)"
-                  fontSize="13px"
-                  fontWeight="500"
-                  px="16px"
-                  py="8px"
-                  borderRadius="20px"
-                  cursor="pointer"
-                  _hover={{
-                    bg: "var(--accent-color)",
-                    color: "var(--text-color)",
-                    transform: "scale(1.05)",
-                  }}
-                  transition="all 0.2s ease"
-                >
-                  {genre}
-                </Badge>
-              ))}
-            </Flex>
-          </Box>
-        )}
-
-        {/* SIMILAR MOVIES */}
-        {recommendedMovies.length > 0 && (
+        {/* SIMILAR MOVIES TAB */}
+        {activeTab === "similar" && recommendedMovies.length > 0 && (
           <Box>
-            <Flex justifyContent="space-between" alignItems="center" mb="24px">
-              <Heading
-                fontSize={{ base: "20px", md: "24px" }}
-                fontWeight="700"
-                color="var(--text-color)"
-              >
-                Similar Movies
-              </Heading>
-              <Button
-                variant="ghost"
-                size="sm"
-                color="var(--link-color)"
-                _hover={{
-                  color: "var(--link-hover-color)",
-                  bg: "transparent",
-                }}
-              >
-                View All
-              </Button>
-            </Flex>
-            <MovieCarousel
-              movies={recommendedMovies}
-              uniqueId="recommended-movies"
-              isLoading={loading}
-            />
+            <Heading
+              fontSize="24px"
+              fontWeight="700"
+              color="var(--text-color)"
+              mb="24px"
+            >
+              Similar Movies
+            </Heading>
+            <MovieCarousel movies={recommendedMovies} uniqueId="recommended" />
           </Box>
         )}
-      </Box>
+      </Container>
+
+      {/* ================= TRAILER MODAL ================= */}
+      {trailerOpen && movieDetails.trailer && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          w="100vw"
+          h="100vh"
+          bg="rgba(0, 0, 0, 0.95)"
+          backdropFilter="blur(10px)"
+          zIndex="9999"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          onClick={() => setTrailerOpen(false)}
+        >
+          <Box
+            w={{ base: "95%", md: "85%", lg: "1000px" }}
+            maxW="1200px"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Flex justifyContent="space-between" alignItems="center" mb="16px">
+              <Heading fontSize="20px" color="var(--text-color)">
+                {movieDetails.name} - Trailer
+              </Heading>
+              <IconButton
+                aria-label="Close"
+                size="md"
+                variant="ghost"
+                color="var(--text-color)"
+                onClick={() => setTrailerOpen(false)}
+                _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+              >
+                <ChevronLeft size={20} />
+              </IconButton>
+            </Flex>
+            <AspectRatio ratio={16 / 9} borderRadius="12px" overflow="hidden">
+              <iframe
+                src={movieDetails.trailer}
+                title={`${movieDetails.name} Trailer`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </AspectRatio>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };
 
-// DETAIL CARD COMPONENT
-const DetailCard = ({ icon, label, value }) => {
-  return (
-    <Flex
-      alignItems="center"
-      gap="16px"
-      bg="rgba(255, 255, 255, 0.03)"
-      borderRadius="8px"
-      p="16px"
-      border="1px solid rgba(255, 255, 255, 0.05)"
-    >
-      <Box flexShrink="0">{icon}</Box>
-      <Box flex="1">
-        <Text
-          fontSize="12px"
-          fontWeight="600"
-          color="var(--text-secondary)"
-          mb="4px"
-          textTransform="uppercase"
-          letterSpacing="0.5px"
-        >
-          {label}
-        </Text>
-        <Text fontSize="15px" fontWeight="600" color="var(--text-color)">
-          {value}
-        </Text>
-      </Box>
+// ================= COMPONENTS =================
+
+const InfoItem = ({ icon, label, value }) => (
+  <Flex gap="12px" alignItems="flex-start">
+    <Box color="var(--text-secondary)" mt="2px">
+      {icon}
+    </Box>
+    <Box flex="1">
+      <Text
+        fontSize="13px"
+        color="var(--text-secondary)"
+        mb="4px"
+        fontWeight="600"
+      >
+        {label}
+      </Text>
+      <Text fontSize="15px" color="var(--text-color)" fontWeight="500">
+        {value}
+      </Text>
+    </Box>
+  </Flex>
+);
+
+const DetailCard = ({ icon, label, value }) => (
+  <Box
+    bg="rgba(255, 255, 255, 0.03)"
+    borderRadius="12px"
+    p="20px"
+    border="1px solid rgba(255, 255, 255, 0.05)"
+    transition="all 0.2s ease"
+    _hover={{
+      bg: "rgba(255, 255, 255, 0.05)",
+      borderColor: "rgba(255, 255, 255, 0.1)",
+    }}
+  >
+    <Flex alignItems="center" gap="12px" mb="8px">
+      {icon}
+      <Text
+        fontSize="13px"
+        fontWeight="600"
+        color="var(--text-secondary)"
+        textTransform="uppercase"
+        letterSpacing="0.5px"
+      >
+        {label}
+      </Text>
     </Flex>
-  );
-};
+    <Text fontSize="16px" fontWeight="600" color="var(--text-color)">
+      {value || "Unknown"}
+    </Text>
+  </Box>
+);
 
 export default ViewMovie;
