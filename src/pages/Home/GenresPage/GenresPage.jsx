@@ -317,7 +317,7 @@ const GenresPage = () => {
           <Flex alignItems="center" gap="12px" mb="20px">
             <IconButton
               as={Link}
-              to="/anime"
+              to="/"
               aria-label="Back to anime"
               size="sm"
               bg="rgba(28, 28, 28, 0.8)"
@@ -342,7 +342,7 @@ const GenresPage = () => {
                 <Breadcrumb.Item>
                   <Breadcrumb.Link
                     as={Link}
-                    to="/anime"
+                    to="/"
                     _hover={{ color: "var(--link-color)" }}
                     transition="color 0.2s"
                   >

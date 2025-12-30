@@ -1,297 +1,334 @@
+// components/Movies/HeroSection.jsx
 import {
   Box,
+  Flex,
   Heading,
   Text,
-  Badge,
-  Flex,
   Button,
-  Stack,
-  useBreakpointValue,
+  Badge,
+  HStack,
 } from "@chakra-ui/react";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay, Pagination } from "swiper/modules";
+import {
+  FaPlay,
+  FaPlus,
+  FaChevronLeft,
+  FaChevronRight,
+  FaStar,
+} from "react-icons/fa";
 import "swiper/css";
-import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
-import "swiper/css/free-mode";
-import { Autoplay, FreeMode } from "swiper/modules";
-import { Info } from "lucide-react";
-import { Link as ReactRouterLink } from "react-router-dom";
-import Next from "../../Anime/HeroSliderButtons/Next";
-import Prev from "../../Anime/HeroSliderButtons/Prev";
+import "swiper/css/pagination";
 
-/**
- * MovieHeroSwiper
- *
- * Props:
- *  - movies: Array of movie objects with fields:
- *      id, score, posterImage, genres (array), name, type, quality, duration, synopsis
- *  - onPlay(movie) optional callback when Play clicked
- *  - onDetails(movie) optional callback when Details clicked
- */
-export default function MovieHeroSwiper({ movies = [], onPlay, onDetails }) {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+const MovieHeroSwiper = ({ movies }) => {
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
 
-  if (!movies || movies.length === 0) {
-    return null;
-  }
-
-  // Small helper to render genre chips
-  const GenreBadge = ({ children }) => (
-    <Badge
-      variant="subtle"
-      colorPalette="blackAlpha"
-      mr={2}
-      fontSize="sm"
-      borderRadius="md"
-      px={2}
-      py={1}
-    >
-      {children}
-    </Badge>
-  );
+  if (!movies || movies.length === 0) return null;
 
   return (
-    <Box as="section" position="relative" w="100%" h="100%">
+    <Box
+      position="relative"
+      w="100%"
+      h={{
+        base: "calc(100vh - 70px)",
+        md: "calc(100vh - 73px)",
+        lg: "calc(100vh - 84px)",
+      }}
+      top={{ base: "70px", md: "73px", lg: "84px" }}
+      pos="relative"
+    >
       <Swiper
-        modules={[Autoplay, FreeMode]}
-        slidesPerView={1}
-        navigation={!isMobile}
-        autoplay={{ delay: 7000, disableOnInteraction: false }}
-        loop
-        effect="fade"
-        style={{ width: "100%", height: "100%" }}
+        modules={[Navigation, Autoplay, Pagination]}
+        navigation={{
+          prevEl: prevRef.current,
+          nextEl: nextRef.current,
+        }}
+        onBeforeInit={(swiper) => {
+          swiper.params.navigation.prevEl = prevRef.current;
+          swiper.params.navigation.nextEl = nextRef.current;
+        }}
+        pagination={{
+          clickable: true,
+          el: ".swiper-pagination-custom",
+        }}
+        autoplay={{
+          delay: 7000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        loop={true}
+        speed={800}
+        style={{ height: "100%" }}
       >
-        <Box
-          pos="absolute"
-          left="20px"
-          top="0"
-          hideBelow="lg"
-          zIndex="2"
-          h="100%"
-          display="flex"
-          alignItems="center"
-        >
-          <Prev />
-        </Box>
-        <Box
-          pos="absolute"
-          right="20px"
-          top="0"
-          hideBelow="lg"
-          zIndex="2"
-          h="100%"
-          display="flex"
-          alignItems="center"
-        >
-          <Next />
-        </Box>
-        {movies.map((m) => {
-          const title = m.name || "Untitled";
-          const poster = m.posterImage || "";
-          const genresArr = Array.isArray(m.genre) ? m.genre[0] : [];
-          const genres = genresArr.split(", ");
-          const score = m.score ?? "N/A";
-          const type = m.type ?? "Unknown";
-          const quality = m.quality ?? null;
-          const duration = m.duration ?? null;
-          const synopsis = m.synopsis ?? "";
-
-          return (
-            <SwiperSlide key={m.id}>
+        {movies.map((movie) => (
+          <SwiperSlide key={movie.id}>
+            <Box position="relative" h="100%" w="100%">
+              {/* BACKGROUND IMAGE */}
               <Box
-                position="relative"
+                position="absolute"
+                top="0"
+                left="0"
                 w="100%"
                 h="100%"
-                bg={`url(${poster})`}
+                bgImage={`url(${movie.coverImage || movie.posterImage})`}
                 bgSize="cover"
                 bgPosition="center"
-                bgRepeat="no-repeat"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                pos="relative"
+                filter="blur(8px)"
+                transform="scale(1.1)"
+                zIndex="1"
+              />
+
+              {/* GRADIENT OVERLAYS */}
+              <Box
+                w="100%"
+                h="100%"
+                pos="absolute"
+                top="0"
+                left="0"
+                background="linear-gradient(to bottom, rgba(12, 12, 12, 0.2) 0%, rgba(12, 12, 12, 0.6) 50%, var(--primary-background-color) 100%), linear-gradient(to right, rgba(12, 12, 12, 0.85) 0%, rgba(12, 12, 12, 0.4) 50%, rgba(12, 12, 12, 0.85) 100%)"
+                zIndex="3"
+              />
+
+              {/* CONTENT */}
+              <Flex
+                position="absolute"
+                bottom={{ base: "40px", md: "80px" }}
+                left="0"
+                w="100%"
+                zIndex="4"
+                alignItems="flex-end"
+                px={{ base: "5vw", xl: "7.5vw" }}
               >
                 <Box
-                  w="100%"
-                  h="100%"
-                  pos="absolute"
-                  bottom="0"
-                  background="linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.99))"
-                ></Box>
-                <Box
-                  maxW={{
-                    base: "90%",
-                    sm: "95%",
-                    xl: "85%",
-                    "2xl": "container.xl",
-                  }}
-                  m="auto"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  pos="relative"
-                  zIndex="1"
+                  maxW={{ base: "100%", md: "600px", lg: "700px" }}
+                  bg="rgba(12, 12, 12, 0.7)"
+                  backdropFilter="blur(20px)"
+                  borderRadius="16px"
+                  p={{ base: "24px", md: "32px" }}
+                  border="1px solid rgba(255, 255, 255, 0.1)"
                 >
-                  {/* Left column - textual content */}
-                  <Box
-                    flex="1"
-                    color="white"
-                    zIndex={2}
-                    maxW={{ base: "100%", md: "60%" }}
-                  >
-                    <Heading
-                      as="h1"
-                      fontSize={{ base: "2xl", md: "4xl", lg: "5xl" }}
-                      letterSpacing="wide"
-                      lineHeight={{ base: "40px", md: "48px", lg: "56px" }}
-                      mb={4}
-                      textTransform="uppercase"
-                      fontFamily="var(--font-family)"
+                  {/* BADGES */}
+                  <HStack spacing="8px" mb="16px" flexWrap="wrap">
+                    <Badge
+                      bg="var(--primary-color)"
+                      color="var(--text-color)"
+                      fontSize="11px"
+                      fontWeight="700"
+                      px="10px"
+                      py="4px"
+                      borderRadius="4px"
                     >
-                      {title.length > 40 ? `${title.slice(0, 40)}...` : title}
-                    </Heading>
-
-                    <Flex wrap="wrap" mb={4} align="center" gap={3}>
-                      {/* Score */}
+                      FEATURED
+                    </Badge>
+                    {movie.quality && (
                       <Badge
-                        colorPalette={
-                          score >= 7
-                            ? "green"
-                            : score === "N/A"
-                            ? "gray"
-                            : "orange"
-                        }
-                        fontWeight="bold"
-                        px={3}
-                        py={1}
-                        borderRadius="md"
+                        bg="var(--secondary-color)"
+                        color="var(--text-color)"
+                        fontSize="11px"
+                        fontWeight="700"
+                        px="10px"
+                        py="4px"
+                        borderRadius="4px"
                       >
-                        ⭐ {score}
+                        {movie.quality}
                       </Badge>
+                    )}
+                  </HStack>
 
-                      {/* Type */}
-                      <Badge
-                        variant="subtle"
-                        px={3}
-                        py={1}
-                        borderRadius="md"
-                        colorPalette="orange"
-                      >
-                        {type}
-                      </Badge>
-
-                      {/* Quality & duration */}
-                      {quality && (
-                        <Badge
-                          px={3}
-                          py={1}
-                          borderRadius="md"
-                          colorPalette="purple"
-                        >
-                          {quality}
-                        </Badge>
-                      )}
-                      {duration && (
-                        <Badge
-                          px={3}
-                          py={1}
-                          borderRadius="md"
-                          colorPalette="purple"
-                        >
-                          {duration}
-                        </Badge>
-                      )}
-                    </Flex>
-
-                    {/* Genres */}
-                    <Flex mb={4} wrap="wrap" gap={2}>
-                      {genres.slice(0, 5).map((g) => (
-                        <GenreBadge key={g}>{g}</GenreBadge>
-                      ))}
-                    </Flex>
-
-                    <Text
-                      fontSize={{ base: "sm", md: "md" }}
-                      color="var(--text-secondary)"
-                      maxW={{ base: "100%", md: "80%" }}
-                      mb={6}
-                      lineClamp={3}
-                    >
-                      {synopsis || "Synopsis not available."}
-                    </Text>
-
-                    <Stack direction={{ base: "column", sm: "row" }} mt={4}>
-                      <Button
-                        variant="solid"
-                        colorPalette="red"
-                        size="lg"
-                        asChild
-                        w={{ base: "full", md: "40%" }}
-                      >
-                        <ReactRouterLink
-                          to={`/${m.type.toLowerCase()}/${m.id}`}
-                        >
-                          <Info size={20} /> Details
-                        </ReactRouterLink>
-                      </Button>
-                    </Stack>
-                  </Box>
-
-                  {/* Right column - poster card */}
-                  <Box
-                    w={{ base: "0", md: "300px", lg: "330px" }}
-                    display={{ base: "none", md: "block" }}
-                    position="relative"
+                  {/* TITLE */}
+                  <Heading
+                    as="h1"
+                    fontSize={{ base: "32px", md: "48px", lg: "56px" }}
+                    fontWeight="700"
+                    color="var(--text-color)"
+                    mb="12px"
+                    lineHeight="1.1"
+                    lineClamp={2}
                   >
-                    <Box
-                      bg="rgba(255,255,255,0.05)"
-                      borderRadius="lg"
-                      overflow="hidden"
-                      boxShadow="lg"
-                      transform="translateY(-30px)"
-                    >
-                      <Box
-                        as="img"
-                        src={poster}
-                        alt={`${title} poster`}
-                        w="100%"
-                        h="320px"
-                        objectFit="cover"
-                        loading="lazy"
-                      />
-                      <Flex
-                        px={4}
-                        py={3}
-                        align="center"
-                        justify="space-between"
-                        bg="blackAlpha.600"
-                      >
-                        <Box>
-                          <Text fontWeight="bold" color="white">
-                            {title}
-                          </Text>
-                          <Text fontSize="sm" color="gray.300">
-                            {type} • {duration ?? "—"}
-                          </Text>
-                        </Box>
-                        <Badge
-                          colorScheme="yellow"
-                          px={3}
-                          py={1}
-                          borderRadius="md"
-                          alignSelf="flex-start"
-                        >
-                          {score}
-                        </Badge>
+                    {movie.name || movie.title}
+                  </Heading>
+
+                  {/* META INFO */}
+                  <HStack
+                    spacing="12px"
+                    mb="16px"
+                    fontSize="14px"
+                    color="var(--text-secondary)"
+                  >
+                    {movie.score && (
+                      <Flex alignItems="center" gap="4px">
+                        <FaStar size={14} color="var(--secondary-color)" />
+                        <Text fontWeight="600" color="var(--text-color)">
+                          {movie.score}
+                        </Text>
                       </Flex>
-                    </Box>
-                  </Box>
+                    )}
+                    <Text>•</Text>
+                    {movie.duration && <Text>{movie.duration}</Text>}
+                    <Text>•</Text>
+                    {movie.type && <Text>{movie.type}</Text>}
+                  </HStack>
+
+                  {/* DESCRIPTION */}
+                  <Text
+                    fontSize={{ base: "14px", md: "15px" }}
+                    color="var(--text-secondary)"
+                    mb="24px"
+                    lineClamp={3}
+                    lineHeight="1.7"
+                  >
+                    {movie.description ||
+                      movie.synopsis ||
+                      "No description available."}
+                  </Text>
+
+                  {/* ACTION BUTTONS */}
+                  <HStack spacing="12px">
+                    <Button
+                      as={Link}
+                      to={`/movie/${movie.id}`}
+                      size="lg"
+                      bg="var(--primary-color)"
+                      color="var(--text-color)"
+                      leftIcon={<FaPlay />}
+                      borderRadius="8px"
+                      fontWeight="600"
+                      fontSize="15px"
+                      h="52px"
+                      px="32px"
+                      _hover={{
+                        filter: "brightness(110%)",
+                        transform: "scale(1.02)",
+                      }}
+                      transition="all 0.2s ease"
+                    >
+                      Watch Now
+                    </Button>
+
+                    <Button
+                      size="lg"
+                      bg="transparent"
+                      color="var(--text-color)"
+                      border="2px solid"
+                      borderColor="rgba(255, 255, 255, 0.3)"
+                      leftIcon={<FaPlus />}
+                      borderRadius="8px"
+                      fontWeight="600"
+                      fontSize="15px"
+                      h="52px"
+                      px="32px"
+                      _hover={{
+                        borderColor: "var(--text-color)",
+                        bg: "rgba(255, 255, 255, 0.1)",
+                      }}
+                      transition="all 0.2s ease"
+                    >
+                      My List
+                    </Button>
+                  </HStack>
                 </Box>
-              </Box>
-            </SwiperSlide>
-          );
-        })}
+              </Flex>
+            </Box>
+          </SwiperSlide>
+        ))}
       </Swiper>
+
+      {/* NAVIGATION BUTTONS */}
+      <Box
+        ref={prevRef}
+        position="absolute"
+        left="24px"
+        top="50%"
+        transform="translateY(-50%)"
+        zIndex="10"
+        w="48px"
+        h="48px"
+        bg="rgba(28, 28, 28, 0.8)"
+        backdropFilter="blur(10px)"
+        borderRadius="50%"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        cursor="pointer"
+        opacity="0"
+        transition="opacity 0.3s ease"
+        _hover={{
+          bg: "var(--primary-color)",
+        }}
+        sx={{
+          ".swiper:hover &": {
+            opacity: 1,
+          },
+        }}
+      >
+        <FaChevronLeft size={20} color="var(--text-color)" />
+      </Box>
+
+      <Box
+        ref={nextRef}
+        position="absolute"
+        right="24px"
+        top="50%"
+        transform="translateY(-50%)"
+        zIndex="10"
+        w="48px"
+        h="48px"
+        bg="rgba(28, 28, 28, 0.8)"
+        backdropFilter="blur(10px)"
+        borderRadius="50%"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        cursor="pointer"
+        opacity="0"
+        transition="opacity 0.3s ease"
+        _hover={{
+          bg: "var(--primary-color)",
+        }}
+        sx={{
+          ".swiper:hover &": {
+            opacity: 1,
+          },
+        }}
+      >
+        <FaChevronRight size={20} color="var(--text-color)" />
+      </Box>
+
+      {/* PAGINATION DOTS */}
+      <Box
+        className="swiper-pagination-custom"
+        pos="absolute"
+        bottom="20px !important"
+        left="50% !important"
+        transform="translateX(-50%) !important"
+        display="flex"
+        width="fit-content !important"
+        position="absolute"
+        zIndex="10"
+        gap="8px"
+        sx={{
+          ".swiper-pagination-bullet": {
+            w: "6px",
+            h: "6px",
+            borderRadius: "50%",
+            bg: "rgba(255, 255, 255, 0.3)",
+            transition: "all 0.3s ease",
+            cursor: "pointer",
+          },
+          ".swiper-pagination-bullet-active": {
+            w: "32px",
+            h: "6px",
+            borderRadius: "3px",
+            bg: "var(--primary-color)",
+          },
+        }}
+      />
     </Box>
   );
-}
+};
+
+export default MovieHeroSwiper;

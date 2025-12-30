@@ -6,7 +6,6 @@ import {
   Portal,
   createListCollection,
   Box,
-  Link,
   Text,
   Button,
   HStack,
@@ -20,34 +19,34 @@ const DownloadLinksSelect = ({
   nextSessionEpisode,
 }) => {
   const [downloadLinks, setDownloadLinks] = useState([]);
-  const [selectedLink, setSelectedLink] = useState("");
+  const [proxiedLinks, setProxiedLinks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-  const animePahe_api = "https://pahe-api.fly.dev/";
-  const proxy = "https://cors-anywhere-aifwkw.fly.dev/";
+
+  const BACKEND_BASE = "https://download-proxy.fly.dev"; // Update with your backend URL
 
   const fetchDownloadLinks = async (key, isPrefetch = false) => {
     try {
       if (downloadLinksCache.has(key)) {
-        if (!isPrefetch) {
-          console.log(`[⚡] Using cached links for ${key}`);
-          setDownloadLinks(downloadLinksCache.get(key));
-          setLoading(false);
-        }
+        if (!isPrefetch) setDownloadLinks(downloadLinksCache.get(key));
         return;
       }
 
       if (!isPrefetch) setLoading(true);
-      const response = await fetch(
-        `${animePahe_api}download/${sessionId}/${key}`
-      );
-      const data = await response.json();
 
-      if (data.results.length > 0) {
+      const res = await fetch(
+        `https://pahe-api.fly.dev/download/${sessionId}/${key}`
+      );
+
+      if (!res.ok) {
+        throw new Error("Download links fetch failed");
+      }
+
+      const data = await res.json();
+
+      if (data.results?.length) {
         downloadLinksCache.set(key, data.results);
-        if (!isPrefetch) {
-          setDownloadLinks(data.results);
-        }
+        if (!isPrefetch) setDownloadLinks(data.results);
       } else {
         if (!isPrefetch)
           setErr("No download links available for this episode.");
@@ -60,25 +59,73 @@ const DownloadLinksSelect = ({
     }
   };
 
+  // Fetch raw download links first
   useEffect(() => {
     if (sessionId && episodeSession) {
       fetchDownloadLinks(episodeSession);
     }
 
     if (sessionId && nextSessionEpisode) {
-      // Prefetch in background
       fetchDownloadLinks(nextSessionEpisode, true);
     }
   }, [sessionId, episodeSession, nextSessionEpisode]);
 
-  const handleChange = (value) => {
-    window.open(value, "_blank"); // open in new tab
+  // Once raw downloadLinks are loaded, encode on backend
+  useEffect(() => {
+    const encodeLinks = async () => {
+      if (!downloadLinks || downloadLinks.length === 0) return;
+
+      try {
+        setLoading(true);
+        setErr("");
+
+        const encodeRes = await fetch(`${BACKEND_BASE}/encode`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            links: downloadLinks.map(({ quality, direct_url }) => ({
+              quality,
+              url: direct_url,
+            })),
+          }),
+        });
+
+        if (!encodeRes.ok) {
+          throw new Error("Failed to encode links");
+        }
+
+        const { links } = await encodeRes.json();
+
+        // Build proxied download URLs from tokens
+        const withProxy = links.map(({ quality, token }) => ({
+          quality,
+          downloadUrl: `${BACKEND_BASE}/download/${token}`,
+        }));
+
+        console.log("Download links:", downloadLinks);
+        console.log("Encoded links:", links);
+        console.log("proxy links", withProxy);
+        setProxiedLinks(withProxy);
+      } catch (error) {
+        console.error(error);
+        setErr("Failed to generate download tokens.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    encodeLinks();
+  }, [downloadLinks]);
+
+  const handleDownload = (url) => {
+    // Triggers a normal browser download via the backend proxy
+    window.open(url, "_blank");
   };
 
   const links = createListCollection({
-    items: downloadLinks,
-    itemToString: (item) => item.quality, // text shown in the select
-    itemToValue: (item) => item.direct_url, // actual selected value
+    items: proxiedLinks,
+    itemToString: (item) => item.quality,
+    itemToValue: (item) => item.downloadUrl,
   });
 
   return (
@@ -95,8 +142,8 @@ const DownloadLinksSelect = ({
           size="md"
           variant="subtle"
           width="100%"
-          disabled={loading || downloadLinks.length === 0}
-          onValueChange={(details) => handleChange(details.value)}
+          disabled={loading || proxiedLinks.length === 0}
+          onValueChange={(details) => handleDownload(details.value)}
         >
           <Select.HiddenSelect />
 
@@ -115,7 +162,7 @@ const DownloadLinksSelect = ({
             <Select.Positioner>
               <Select.Content>
                 {links.items.map((item) => (
-                  <Select.Item key={item.direct_url} item={item}>
+                  <Select.Item key={item.downloadUrl} item={item}>
                     {item.quality}
                     <Select.ItemIndicator />
                   </Select.Item>

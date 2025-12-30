@@ -42,6 +42,41 @@ const MovieHero = () => {
     console.log("Details", movie);
   };
 
+  if (loading) {
+    return (
+      <Box
+        w="100%"
+        h={{
+          base: "calc(100vh - 70px)",
+          md: "calc(100vh - 73px)",
+          lg: "calc(100vh - 84px)",
+          xl: "calc(100vh - 85px)",
+        }}
+      >
+        <Skeleton
+          height="100%"
+          w="100%"
+          pos="relative"
+          top={{ base: "70px", md: "73px", lg: "84px" }}
+        />
+      </Box>
+    );
+  }
+  if (error)
+    return (
+      <Box
+        w="100%"
+        h={{
+          base: "calc(100vh - 70px)",
+          md: "calc(100vh - 73px)",
+          lg: "calc(100vh - 84px)",
+          xl: "calc(100vh - 85px)",
+        }}
+      >
+        <Error msg={error} height="100%" bg="#191919" />
+      </Box>
+    );
+
   return (
     <Box
       w="100%"
@@ -52,34 +87,13 @@ const MovieHero = () => {
         xl: "calc(100vh - 85px)",
       }}
     >
-      {loading && (
-        <Skeleton
-          height="100%"
-          w="100%"
-          pos="relative"
-          top={{ base: "70px", md: "73px", lg: "84px" }}
+      {!loading && movies.length > 0 && (
+        <MovieHeroSwiper
+          movies={movies}
+          onDetails={handleDetails}
+          onPlay={handlePlay}
+          loading={loading}
         />
-      )}
-      {error ? (
-        <Error msg={error} height="100%" bg="#191919" />
-      ) : (
-        <Box
-          w="100%"
-          h={{
-            base: "calc(100vh - 70px)",
-            md: "calc(100vh - 73px)",
-            lg: "calc(100vh - 84px)",
-          }}
-          pos="relative"
-          top={{ base: "70px", md: "73px", lg: "84px" }}
-        >
-          <MovieHeroSwiper
-            movies={movies}
-            onDetails={handleDetails}
-            onPlay={handlePlay}
-            loading={loading}
-          />
-        </Box>
       )}
     </Box>
   );
