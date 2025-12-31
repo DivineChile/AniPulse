@@ -13,7 +13,7 @@ const Home = () => {
   document.title = `Home - AniPulse`;
 
   return (
-    <Box>
+    <Box className="dark">
       <Box>
         {/* Hero */}
         <Hero />

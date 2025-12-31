@@ -51,7 +51,6 @@ const GenresSection = () => {
       w="100%"
       bg="var(--linear-gradient)"
       py={{ base: "60px", lg: "88px" }}
-      mb={{ base: "40px", lg: "60px" }}
       borderTop="1px solid rgba(255, 255, 255, 0.05)"
       borderBottom="1px solid rgba(255, 255, 255, 0.05)"
     >

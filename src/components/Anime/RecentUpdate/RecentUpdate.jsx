@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { cacheFetch } from "../../../utils/cacheFetch";
 import Error from "../../ErrorPage/Error";
 import AnimeCarousel from "../AnimeCarousel/AnimeCarousel";
+import { ColorModeButton } from "../../ui/color-mode";
 
 const RecentUpdate = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -130,6 +131,7 @@ const RecentUpdate = () => {
             isLoading={isLoading}
             uniqueId="new-releases"
           />
+          {/* <ColorModeButton /> */}
         </Box>
       </Box>
     </Box>

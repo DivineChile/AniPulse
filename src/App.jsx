@@ -4,7 +4,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 //import Pages
 import Home from "./pages/Home/Home";
@@ -44,6 +44,18 @@ const router = createBrowserRouter(
 const App = () => {
   const [selectedQuality, setSelectedQuality] = useState(null);
   const [availableQualities, setAvailableQualities] = useState([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+
+    if (stored !== "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      return;
+    }
+  }, []);
+
   return (
     <PlayerContext.Provider
       value={{
