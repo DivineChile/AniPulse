@@ -46,14 +46,14 @@ const Footer = () => {
             >
               <Link to="/" className="logo">
                 <Text as="span" color="var(--secondary-color)">
-                  Ani
+                  Ci
                 </Text>
                 <Text
                   className="logo_tag"
                   as="span"
                   color="var(--primary-color)"
                 >
-                  Pulse
+                  nemi
                 </Text>
               </Link>
             </Heading>

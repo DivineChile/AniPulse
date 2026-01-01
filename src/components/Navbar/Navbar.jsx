@@ -164,7 +164,7 @@ const Navbar = () => {
                   }}
                   transition="all ease 0.25s"
                 >
-                  Ani
+                  Ci
                 </Text>
                 <Text
                   className="logo_tag"
@@ -173,7 +173,7 @@ const Navbar = () => {
                   _hover={{ color: "var(--secondary-color)" }}
                   transition="all ease 0.25s"
                 >
-                  Pulse
+                  nemi
                 </Text>
               </Flex>
             </Link>
